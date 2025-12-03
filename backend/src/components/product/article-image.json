@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_product_article_images",
+  "info": {
+    "displayName": "ArticleImage"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "caption": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

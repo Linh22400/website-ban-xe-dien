@@ -1,0 +1,121 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { trackOrder } from '@/lib/order-api';
+import { Order } from '@/types/order';
+import { Search, Loader2 } from 'lucide-react';
+import OrderItem from '@/components/account/OrderItem';
+
+export default function TrackingForm() {
+    const searchParams = useSearchParams();
+    const [orderCode, setOrderCode] = useState('');
+    const [phone, setPhone] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [foundOrder, setFoundOrder] = useState<Order | null>(null);
+
+    // Auto-fill and submit if URL params exist
+    useEffect(() => {
+        const codeParam = searchParams?.get('code');
+        const phoneParam = searchParams?.get('phone');
+
+        if (codeParam && phoneParam) {
+            setOrderCode(codeParam);
+            setPhone(phoneParam);
+
+            // Auto-submit after a short delay
+            setTimeout(() => {
+                handleTrack(codeParam, phoneParam);
+            }, 500);
+        }
+    }, [searchParams]);
+
+    const handleTrack = async (code: string, phoneNumber: string) => {
+        setError('');
+        setFoundOrder(null);
+        setIsLoading(true);
+
+        try {
+            const order = await trackOrder(code, phoneNumber);
+            if (order) {
+                setFoundOrder(order);
+            } else {
+                setError('Không tìm thấy đơn hàng hoặc thông tin không chính xác.');
+            }
+        } catch (err: any) {
+            setError(err.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        handleTrack(orderCode, phone);
+    };
+
+    return (
+        <div className="space-y-8">
+            <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-xl mx-auto">
+                <h3 className="text-xl font-bold text-white mb-6 text-center">Tra cứu đơn hàng</h3>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
+                            Mã đơn hàng
+                        </label>
+                        <input
+                            type="text"
+                            value={orderCode}
+                            onChange={(e) => setOrderCode(e.target.value.toUpperCase())}
+                            placeholder="VD: DH123456"
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary transition-colors"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
+                            Số điện thoại đặt hàng
+                        </label>
+                        <input
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="Nhập số điện thoại"
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary transition-colors"
+                            required
+                        />
+                    </div>
+
+                    {error && (
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center">
+                            {error}
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-all hover:shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Search className="w-5 h-5" />
+                        )}
+                        Tra cứu ngay
+                    </button>
+                </form>
+            </div>
+
+            {foundOrder && (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <h3 className="text-xl font-bold text-white mb-4">Kết quả tra cứu</h3>
+                    <OrderItem order={foundOrder} />
+                </div>
+            )}
+        </div>
+    );
+}

@@ -1,0 +1,216 @@
+'use client';
+
+import { useCheckout } from '@/contexts/CheckoutContext';
+import { useState } from 'react';
+import { CreditCard, Smartphone, Building2, Check, Loader2 } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
+import { createOrder } from '@/lib/order-api';
+
+import PaymentModal from './PaymentModal';
+
+export default function PaymentGatewaySelector() {
+    const {
+        paymentMethod,
+        selectedVehicle,
+        installmentMonths,
+        customerInfo,
+        selectedShowroom,
+        selectedColor,
+        selectedBattery,
+        selectedGifts,
+        goToNextStep,
+        setCreatedOrder,
+        getOrderData
+    } = useCheckout();
+
+    const [selectedGateway, setSelectedGateway] = useState('momo');
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [createdOrderId, setCreatedOrderId] = useState<number | null>(null);
+
+    if (!selectedVehicle) return null;
+
+    // Calculate totals (duplicated logic, ideally should be in context or hook)
+    const basePrice = selectedVehicle.price || 0;
+    const discount = selectedVehicle.discount || 0;
+    const registrationFee = basePrice * 0.1;
+    const licensePlateFee = 1500000;
+    const totalAmount = basePrice - discount + registrationFee + licensePlateFee;
+
+    let depositAmount = 0;
+    if (paymentMethod === 'deposit') {
+        depositAmount = 3000000;
+    } else if (paymentMethod === 'full_payment') {
+        depositAmount = totalAmount;
+    } else if (paymentMethod === 'installment') {
+        depositAmount = totalAmount * 0.3;
+    }
+
+    const handlePlaceOrder = async () => {
+        setIsProcessing(true);
+        try {
+            const orderData = getOrderData();
+            // Override preferred gateway with locally selected one
+            orderData.PreferredGateway = selectedGateway as any;
+
+            console.log('Submitting order:', orderData);
+            const result = await createOrder(orderData);
+
+            if (result && result.data) {
+                setCreatedOrder(result.data);
+
+                // If QR payment (Momo/VNPay), show modal
+                if (selectedGateway === 'momo' || selectedGateway === 'vnpay') {
+                    setCreatedOrderId(result.data.id);
+                    setShowPaymentModal(true);
+                } else {
+                    // Normal flow for other methods
+                    goToNextStep();
+                    setTimeout(() => {
+                        goToNextStep();
+                    }, 1500);
+                }
+            } else {
+                alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.');
+            }
+        } catch (error) {
+            console.error('Order creation failed:', error);
+            alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handlePaymentSuccess = () => {
+        setShowPaymentModal(false);
+        goToNextStep();
+        setTimeout(() => {
+            goToNextStep();
+        }, 1500);
+    };
+
+    return (
+        <div className="space-y-8">
+            <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">Thanh toán</h2>
+                <p className="text-muted-foreground">
+                    Vui lòng chọn cổng thanh toán để hoàn tất đơn hàng
+                </p>
+            </div>
+
+            <div className="bg-card/30 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="flex justify-between items-center mb-6 pb-6 border-b border-white/10">
+                    <span className="text-muted-foreground">Số tiền cần thanh toán:</span>
+                    <span className="text-3xl font-bold text-primary">
+                        {formatCurrency(depositAmount)}
+                    </span>
+                </div>
+
+                <div className="space-y-4">
+                    {/* MoMo */}
+                    <div
+                        onClick={() => setSelectedGateway('momo')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'momo'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-[#A50064] rounded-lg flex items-center justify-center shrink-0">
+                            <Smartphone className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="font-bold text-white">Ví MoMo</h3>
+                            <p className="text-sm text-muted-foreground">Thanh toán qua ứng dụng MoMo</p>
+                        </div>
+                        {selectedGateway === 'momo' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* VNPay */}
+                    <div
+                        onClick={() => setSelectedGateway('vnpay')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'vnpay'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-[#005BAA] rounded-lg flex items-center justify-center shrink-0">
+                            <CreditCard className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="font-bold text-white">VNPay QR</h3>
+                            <p className="text-sm text-muted-foreground">Quét mã QR qua ứng dụng ngân hàng</p>
+                        </div>
+                        {selectedGateway === 'vnpay' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Bank Transfer */}
+                    <div
+                        onClick={() => setSelectedGateway('bank_transfer')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'bank_transfer'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center shrink-0">
+                            <Building2 className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="font-bold text-white">Chuyển khoản ngân hàng</h3>
+                            <p className="text-sm text-muted-foreground">Chuyển khoản trực tiếp 24/7</p>
+                        </div>
+                        {selectedGateway === 'bank_transfer' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <button
+                onClick={handlePlaceOrder}
+                disabled={isProcessing}
+                className="w-full bg-primary text-black px-8 py-4 rounded-full font-bold 
+                   hover:bg-primary-dark transition-all hover:shadow-glow
+                   disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+                {isProcessing ? (
+                    <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Đang xử lý...
+                    </>
+                ) : (
+                    'Thanh toán & Hoàn tất'
+                )}
+            </button>
+
+            {/* Payment Modal */}
+            {createdOrderId && (
+                <PaymentModal
+                    isOpen={showPaymentModal}
+                    onClose={() => setShowPaymentModal(false)}
+                    orderId={createdOrderId}
+                    amount={depositAmount}
+                    onSuccess={handlePaymentSuccess}
+                />
+            )}
+        </div>
+    );
+}

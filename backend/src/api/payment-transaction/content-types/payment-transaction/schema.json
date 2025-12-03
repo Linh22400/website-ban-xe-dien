@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payment_transactions",
+  "info": {
+    "singularName": "payment-transaction",
+    "pluralName": "payment-transactions",
+    "displayName": "PaymentTransaction"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "TransactionId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "Currency": {
+      "type": "string",
+      "default": "VND"
+    },
+    "RefundReason": {
+      "type": "text"
+    },
+    "Gateway": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "momo",
+        "zalopay",
+        "vnpay",
+        "viettel_money",
+        "visa",
+        "mastercard",
+        "bank_transfer"
+      ]
+    },
+    "Statuses": {
+      "type": "enumeration",
+      "default": "pending",
+      "enum": [
+        "pending",
+        "processing",
+        "success",
+        "failed",
+        "cancelled",
+        "refunded"
+      ]
+    },
+    "Amount": {
+      "type": "decimal",
+      "required": true
+    },
+    "RefundedAt": {
+      "type": "datetime"
+    },
+    "GatewayResponse": {
+      "type": "json"
+    },
+    "Metadata": {
+      "type": "json"
+    },
+    "Order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "payment_transactions"
+    }
+  }
+}

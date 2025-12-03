@@ -1,0 +1,89 @@
+{
+  "kind": "collectionType",
+  "collectionName": "articles",
+  "info": {
+    "singularName": "article",
+    "pluralName": "articles",
+    "displayName": "Article"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Title",
+      "required": true
+    },
+    "Excerpt": {
+      "type": "text",
+      "required": true
+    },
+    "Cover_image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Tags": {
+      "type": "string",
+      "required": true
+    },
+    "Author": {
+      "type": "string",
+      "required": true
+    },
+    "Published_Date": {
+      "type": "date",
+      "required": true
+    },
+    "Reading_Time": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "Featured": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "seoTitle": {
+      "type": "string",
+      "required": true
+    },
+    "seoDescription": {
+      "type": "text",
+      "required": true
+    },
+    "OG_Image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::article-category.article-category",
+      "inversedBy": "articles"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "product.article-image",
+        "product.article-text",
+        "product.article-section",
+        "product.article-gallery",
+        "product.article-two-column"
+      ]
+    }
+  }
+}

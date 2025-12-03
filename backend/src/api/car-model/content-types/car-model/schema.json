@@ -1,0 +1,113 @@
+{
+  "kind": "collectionType",
+  "collectionName": "car_models",
+  "info": {
+    "singularName": "car-model",
+    "pluralName": "car-models",
+    "displayName": "Car Model"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "brand": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "required": true,
+      "default": "bicycle",
+      "enum": [
+        "bicycle",
+        "motorcycle"
+      ]
+    },
+    "price": {
+      "type": "decimal",
+      "required": true
+    },
+    "range": {
+      "type": "integer",
+      "required": true
+    },
+    "topSpeed": {
+      "type": "integer",
+      "required": true
+    },
+    "acceleration": {
+      "type": "decimal",
+      "default": 0
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "model3D": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "specifications": {
+      "type": "json"
+    },
+    "color": {
+      "type": "component",
+      "component": "product.colors",
+      "repeatable": true
+    },
+    "sold": {
+      "type": "integer",
+      "default": 0
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "VehicleModel"
+    },
+    "features": {
+      "type": "json"
+    },
+    "technicalImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "warranty": {
+      "type": "component",
+      "component": "product-info.warranty-policy",
+      "repeatable": false
+    }
+  }
+}

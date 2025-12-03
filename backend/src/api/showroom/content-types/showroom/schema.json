@@ -1,0 +1,76 @@
+{
+  "kind": "collectionType",
+  "collectionName": "showrooms",
+  "info": {
+    "singularName": "showroom",
+    "pluralName": "showrooms",
+    "displayName": "Showroom"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Code": {
+      "type": "string",
+      "unique": true
+    },
+    "Address": {
+      "type": "text",
+      "required": true
+    },
+    "City": {
+      "type": "string",
+      "required": true
+    },
+    "District": {
+      "type": "string"
+    },
+    "Phone": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "email"
+    },
+    "Manager": {
+      "type": "string"
+    },
+    "Latitude": {
+      "type": "decimal"
+    },
+    "Longitude": {
+      "type": "decimal"
+    },
+    "WorkingHours": {
+      "type": "json",
+      "required": true
+    },
+    "Inventory": {
+      "type": "json"
+    },
+    "IsActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "Images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "SelectedShowroom"
+    }
+  }
+}

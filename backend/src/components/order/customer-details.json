@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_order_customer_details",
+  "info": {
+    "displayName": "CustomerDetails"
+  },
+  "options": {},
+  "attributes": {
+    "FullName": {
+      "type": "string",
+      "required": true
+    },
+    "Phone": {
+      "type": "string",
+      "required": true,
+      "regex": "^(84|0[3|5|7|8|9])+([0-9]{8})$"
+    },
+    "Email": {
+      "type": "email",
+      "required": true
+    },
+    "IdCard": {
+      "type": "string"
+    },
+    "DeliveryAddress": {
+      "type": "text",
+      "required": true
+    },
+    "City": {
+      "type": "string"
+    },
+    "District": {
+      "type": "string"
+    },
+    "Ward": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_product_info_warranty_policies",
+  "info": {
+    "displayName": "Warranty Policy"
+  },
+  "options": {},
+  "attributes": {
+    "warrantyPeriod": {
+      "type": "string",
+      "required": true
+    },
+    "batteryWarranty": {
+      "type": "string",
+      "required": true
+    },
+    "motorWarranty": {
+      "type": "string",
+      "required": true
+    },
+    "maintenance": {
+      "type": "text",
+      "required": true
+    },
+    "returnPolicy": {
+      "type": "text",
+      "required": true
+    },
+    "conditions": {
+      "type": "richtext",
+      "required": true
+    },
+    "exclusions": {
+      "type": "richtext",
+      "required": true
+    },
+    "process": {
+      "type": "richtext",
+      "required": true
+    }
+  },
+  "config": {}
+}

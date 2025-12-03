@@ -1,0 +1,151 @@
+{
+    "kind": "collectionType",
+    "collectionName": "orders",
+    "info": {
+        "singularName": "order",
+        "pluralName": "orders",
+        "displayName": "Order",
+        "description": "Electric vehicle orders and deposits"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "OrderCode": {
+            "type": "string",
+            "unique": true,
+            "required": true,
+            "regex": "^DH\\d{6,}$"
+        },
+        "Status": {
+            "type": "enumeration",
+            "enum": [
+                "pending_payment",
+                "deposit_paid",
+                "processing",
+                "ready_for_pickup",
+                "completed",
+                "cancelled",
+                "refunded"
+            ],
+            "default": "pending_payment",
+            "required": true
+        },
+        "PaymentMethod": {
+            "type": "enumeration",
+            "enum": [
+                "full_payment",
+                "deposit",
+                "installment"
+            ],
+            "required": true
+        },
+        "PaymentStatus": {
+            "type": "enumeration",
+            "enum": [
+                "pending",
+                "partial",
+                "completed",
+                "failed",
+                "refunded"
+            ],
+            "default": "pending"
+        },
+        "VehicleModel": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::car-model.car-model",
+            "inversedBy": "orders"
+        },
+        "SelectedColor": {
+            "type": "string"
+        },
+        "SelectedBattery": {
+            "type": "string"
+        },
+        "SelectedGifts": {
+            "type": "json",
+            "default": []
+        },
+        "BasePrice": {
+            "type": "decimal",
+            "required": true
+        },
+        "Discount": {
+            "type": "decimal",
+            "default": 0
+        },
+        "RegistrationFee": {
+            "type": "decimal",
+            "default": 0
+        },
+        "LicensePlateFee": {
+            "type": "decimal",
+            "default": 0
+        },
+        "TotalAmount": {
+            "type": "decimal",
+            "required": true
+        },
+        "DepositAmount": {
+            "type": "decimal",
+            "default": 0
+        },
+        "RemainingAmount": {
+            "type": "decimal"
+        },
+        "InstallmentPlan": {
+            "type": "json"
+        },
+        "Customer": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "CustomerInfo": {
+            "type": "component",
+            "component": "order.customer-details",
+            "required": true
+        },
+        "SelectedShowroom": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::showroom.showroom"
+        },
+        "AppointmentDate": {
+            "type": "datetime"
+        },
+        "PaymentTransactions": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::payment-transaction.payment-transaction",
+            "mappedBy": "Order"
+        },
+        "Notes": {
+            "type": "text"
+        },
+        "InternalNotes": {
+            "type": "text"
+        },
+        "TrackingHistory": {
+            "type": "json",
+            "default": []
+        },
+        "Documents": {
+            "type": "media",
+            "multiple": true,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos"
+            ]
+        },
+        "DeliveryDate": {
+            "type": "date"
+        },
+        "CompletedDate": {
+            "type": "datetime"
+        }
+    }
+}

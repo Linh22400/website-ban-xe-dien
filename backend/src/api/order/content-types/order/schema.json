@@ -1,0 +1,160 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "OrderCode": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "regex": "^DH\\d{6,}$"
+    },
+    "SelectedColor": {
+      "type": "string"
+    },
+    "SelectedBattery": {
+      "type": "string"
+    },
+    "Notes": {
+      "type": "text"
+    },
+    "InternalNotes": {
+      "type": "text"
+    },
+    "Statuses": {
+      "type": "enumeration",
+      "required": true,
+      "default": "pending_payment",
+      "enum": [
+        "pending_payment",
+        "deposit_paid",
+        "processing",
+        "ready_for_pickup",
+        "completed",
+        "cancelled",
+        "refunded"
+      ]
+    },
+    "PaymentMethod": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "full_payment",
+        "deposit",
+        "installment"
+      ]
+    },
+    "PaymentStatus": {
+      "type": "enumeration",
+      "default": "pending",
+      "enum": [
+        "pending",
+        "partial",
+        "completed",
+        "failed",
+        "refunded"
+      ]
+    },
+    "BasePrice": {
+      "type": "decimal",
+      "required": true
+    },
+    "Discount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "RegistrationFee": {
+      "type": "decimal",
+      "default": 0
+    },
+    "LicensePlateFee": {
+      "type": "decimal",
+      "default": 0
+    },
+    "TotalAmount": {
+      "type": "decimal",
+      "required": true
+    },
+    "DepositAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "RemainingAmount": {
+      "type": "decimal"
+    },
+    "SelectedGifts": {
+      "type": "json"
+    },
+    "InstallmentPlan": {
+      "type": "json"
+    },
+    "TrackingHistory": {
+      "type": "json"
+    },
+    "AppointmentDate": {
+      "type": "datetime"
+    },
+    "DeliveryDate": {
+      "type": "date"
+    },
+    "CompletedDate": {
+      "type": "datetime"
+    },
+    "CustomerInfo": {
+      "type": "component",
+      "component": "order.customer-details",
+      "repeatable": false,
+      "required": true
+    },
+    "VehicleModel": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::car-model.car-model",
+      "inversedBy": "orders"
+    },
+    "Customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "orders"
+    },
+    "SelectedShowroom": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::showroom.showroom",
+      "inversedBy": "orders"
+    },
+    "Documents": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
+    },
+    "payment_transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::payment-transaction.payment-transaction",
+      "mappedBy": "Order"
+    },
+    "PreferredGateway": {
+      "type": "string"
+    },
+    "payment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::payment.payment",
+      "mappedBy": "order"
+    }
+  }
+}

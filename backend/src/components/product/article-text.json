@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_product_article_texts",
+  "info": {
+    "displayName": "ArticleText"
+  },
+  "options": {},
+  "attributes": {
+    "content": {
+      "type": "richtext",
+      "required": true
+    }
+  },
+  "config": {}
+}

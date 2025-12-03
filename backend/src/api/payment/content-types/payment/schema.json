@@ -1,0 +1,59 @@
+{
+    "kind": "collectionType",
+    "collectionName": "payments",
+    "info": {
+        "singularName": "payment",
+        "pluralName": "payments",
+        "displayName": "Payment",
+        "description": "Stores payment transaction details"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "order": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "api::order.order",
+            "inversedBy": "payment"
+        },
+        "amount": {
+            "type": "decimal",
+            "required": true
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "PENDING",
+                "PAID",
+                "FAILED",
+                "CANCELLED"
+            ],
+            "default": "PENDING",
+            "required": true
+        },
+        "method": {
+            "type": "enumeration",
+            "enum": [
+                "QR_CODE",
+                "COD",
+                "INSTALLMENT"
+            ],
+            "required": true
+        },
+        "provider": {
+            "type": "string",
+            "default": "mock"
+        },
+        "providerTransactionId": {
+            "type": "string"
+        },
+        "qrUrl": {
+            "type": "text"
+        },
+        "rawResponse": {
+            "type": "json"
+        }
+    }
+}

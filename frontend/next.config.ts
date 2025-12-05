@@ -18,12 +18,16 @@ const nextConfig: NextConfig = {
         hostname: 'via.placeholder.com',
       },
       {
+        protocol: 'https',
+        hostname: 'website-ban-xe-dien.onrender.com', // Backend Render domain
+      },
+      {
         protocol: 'http',
         hostname: '127.0.0.1',
         port: '1337',
       },
     ],
-    unoptimized: true, // Disable optimization for local development
+    // unoptimized: true, // Commented out for production - Vercel will optimize images
   },
 };
 

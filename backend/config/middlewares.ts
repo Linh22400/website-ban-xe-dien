@@ -1,4 +1,4 @@
-export default [
+export default ({ env }) => [
   'strapi::logger',
   'strapi::errors',
   {
@@ -28,10 +28,9 @@ export default [
   {
     name: 'strapi::cors',
     config: {
-      origin: ({ env }) => {
-        const origins = env('CLIENT_URL', 'http://localhost:3000');
-        return origins.split(',').map((origin: string) => origin.trim());
-      },
+      origin: env('CLIENT_URL', 'http://localhost:3000')
+        .split(',')
+        .map((origin: string) => origin.trim()),
       credentials: true,
     },
   },

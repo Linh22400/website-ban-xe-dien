@@ -25,7 +25,16 @@ export default [
       },
     },
   },
-  'strapi::cors',
+  {
+    name: 'strapi::cors',
+    config: {
+      origin: ({ env }) => {
+        const origins = env('CLIENT_URL', 'http://localhost:3000');
+        return origins.split(',').map((origin: string) => origin.trim());
+      },
+      credentials: true,
+    },
+  },
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',

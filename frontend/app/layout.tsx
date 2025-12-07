@@ -5,6 +5,8 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { AuthProvider } from "@/lib/auth-context";
 import { CompareProvider } from "@/lib/compare-context";
+import { CartProvider } from "@/lib/cart-context";
+import { WishlistProvider } from "@/lib/wishlist-context";
 import CompareFloatingBar from "@/components/compare/CompareFloatingBar";
 
 const geistSans = Geist({
@@ -33,12 +35,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <CompareProvider>
-            <Navbar />
-            {children}
-            <CompareFloatingBar />
-            <Footer />
-          </CompareProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <CompareProvider>
+                <Navbar />
+                {children}
+                <CompareFloatingBar />
+                <Footer />
+              </CompareProvider>
+            </WishlistProvider>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

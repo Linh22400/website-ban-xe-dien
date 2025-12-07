@@ -10,7 +10,7 @@ export default function ProductSort() {
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("sort", e.target.value);
-        router.push(`/cars?${params.toString()}`);
+        router.push(`/cars?${params.toString()}`, { scroll: false });
     };
 
     return (

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Zap, Battery, Gauge, Tag } from "lucide-react";
+import { Search, Zap, Battery, Gauge, Tag, Sparkles, TrendingUp, GraduationCap, Wallet } from "lucide-react";
+import CustomSelect from "../ui/CustomSelect";
 
 export default function QuickFinder() {
     const router = useRouter();
@@ -11,6 +12,44 @@ export default function QuickFinder() {
     const [price, setPrice] = useState("");
     const [range, setRange] = useState("");
     const [speed, setSpeed] = useState("");
+
+    // Options data
+    const typeOptions = [
+        { value: "", label: "Tất cả loại" },
+        { value: "bicycle", label: "🚲 Xe Đạp Điện" },
+        { value: "motorcycle", label: "🏍️ Xe Máy Điện" },
+    ];
+
+    const brandOptions = [
+        { value: "", label: "Tất cả hãng" },
+        { value: "VinFast", label: "VinFast" },
+        { value: "Yadea", label: "Yadea" },
+        { value: "Pega", label: "Pega" },
+        { value: "Dibao", label: "Dibao" },
+        { value: "Dat Bike", label: "Dat Bike" },
+        { value: "Giant", label: "Giant" },
+    ];
+
+    const priceOptions = [
+        { value: "", label: "Tất cả mức giá" },
+        { value: "low", label: "💵 Dưới 10 triệu" },
+        { value: "mid", label: "💰 10 - 20 triệu" },
+        { value: "high", label: "💎 Trên 20 triệu" },
+    ];
+
+    const rangeOptions = [
+        { value: "", label: "Tùy chọn" },
+        { value: "short", label: "< 50km" },
+        { value: "medium", label: "50 - 80km" },
+        { value: "long", label: "> 80km" },
+    ];
+
+    const speedOptions = [
+        { value: "", label: "Tùy chọn" },
+        { value: "slow", label: "< 40km/h" },
+        { value: "medium", label: "40 - 60km/h" },
+        { value: "fast", label: "> 60km/h" },
+    ];
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,124 +132,149 @@ export default function QuickFinder() {
     };
 
     return (
-        <div className="w-full h-full bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col justify-center shadow-2xl relative overflow-hidden group">
-            {/* Decorative gradient */}
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-all duration-700" />
+        <div className="w-full bg-black/60 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shadow-black/40 relative group">
+            {/* Semi-transparent overlay for better readability */}
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-gray-800/70 to-gray-900/80" />
 
-            <div className="mb-8 relative z-10">
-                <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <Search className="w-6 h-6 text-primary" />
-                    Tìm Xe Nhanh
-                </h3>
-                <p className="text-gray-400 text-sm">Chọn chiếc xe phù hợp với nhu cầu của bạn</p>
-            </div>
 
-            {/* Quick Tags */}
-            <div className="flex flex-wrap gap-2 mb-6 relative z-10">
-                <button onClick={() => applyQuickTag("bestseller")} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white hover:bg-primary hover:text-black hover:border-primary transition-all">
-                    🔥 Xe bán chạy
-                </button>
-                <button onClick={() => applyQuickTag("student")} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white hover:bg-primary hover:text-black hover:border-primary transition-all">
-                    🎓 Học sinh
-                </button>
-                <button onClick={() => applyQuickTag("cheap")} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white hover:bg-primary hover:text-black hover:border-primary transition-all">
-                    💰 Dưới 15tr
-                </button>
-            </div>
 
-            <form onSubmit={handleSearch} className="space-y-4 relative z-10">
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-gray-400 flex items-center gap-1">
-                            <Zap className="w-3 h-3" /> Loại Xe
-                        </label>
-                        <select
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                            value={type}
-                            onChange={(e) => setType(e.target.value)}
-                        >
-                            <option value="" className="bg-gray-900">Tất cả</option>
-                            <option value="bicycle" className="bg-gray-900">Xe Đạp Điện</option>
-                            <option value="motorcycle" className="bg-gray-900">Xe Máy Điện</option>
-                        </select>
+            <div className="relative z-10 p-8">
+                {/* Header */}
+                <div className="mb-8 text-center">
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-2xl mb-4 shadow-lg shadow-primary/20">
+                        <Search className="w-7 h-7 text-white" />
                     </div>
+                    <h3 className="text-3xl font-black text-white mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                        Tìm Xe Nhanh
+                    </h3>
+                    <p className="text-gray-400 text-sm">
+                        Chọn chiếc xe phù hợp với nhu cầu của bạn
+                    </p>
+                </div>
 
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-gray-400 flex items-center gap-1">
-                            <Tag className="w-3 h-3" /> Thương Hiệu
-                        </label>
-                        <select
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                            value={brand}
-                            onChange={(e) => setBrand(e.target.value)}
+                {/* Quick Tags - Prominent */}
+                <div className="mb-8">
+                    <p className="text-xs font-semibold text-gray-400 mb-3 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        GỢI Ý PHỔ BIẾN
+                    </p>
+                    <div className="grid grid-cols-3 gap-3">
+                        <button
+                            onClick={() => applyQuickTag("bestseller")}
+                            className="group/tag bg-gradient-to-br from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 border border-orange-500/30 hover:border-orange-500/50 rounded-xl p-4 transition-all hover:scale-105"
                         >
-                            <option value="" className="bg-gray-900">Tất cả</option>
-                            <option value="VinFast" className="bg-gray-900">VinFast</option>
-                            <option value="Yadea" className="bg-gray-900">Yadea</option>
-                            <option value="Pega" className="bg-gray-900">Pega</option>
-                            <option value="Dibao" className="bg-gray-900">Dibao</option>
-                            <option value="Dat Bike" className="bg-gray-900">Dat Bike</option>
-                            <option value="Giant" className="bg-gray-900">Giant</option>
-                        </select>
+                            <TrendingUp className="w-5 h-5 text-orange-400 mb-2 mx-auto" />
+                            <p className="text-xs font-bold text-white">Bán Chạy</p>
+                        </button>
+                        <button
+                            onClick={() => applyQuickTag("student")}
+                            className="group/tag bg-gradient-to-br from-blue-500/10 to-cyan-500/10 hover:from-blue-500/20 hover:to-cyan-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl p-4 transition-all hover:scale-105"
+                        >
+                            <GraduationCap className="w-5 h-5 text-blue-400 mb-2 mx-auto" />
+                            <p className="text-xs font-bold text-white">Học Sinh</p>
+                        </button>
+                        <button
+                            onClick={() => applyQuickTag("cheap")}
+                            className="group/tag bg-gradient-to-br from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border border-green-500/30 hover:border-green-500/50 rounded-xl p-4 transition-all hover:scale-105"
+                        >
+                            <Wallet className="w-5 h-5 text-green-400 mb-2 mx-auto" />
+                            <p className="text-xs font-bold text-white">Dưới 15tr</p>
+                        </button>
                     </div>
                 </div>
 
-                <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-gray-400">Mức Giá</label>
-                    <select
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
+                {/* Divider */}
+                <div className="relative mb-8">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-800" />
+                    </div>
+                    <div className="relative flex justify-center text-xs">
+                        <span className="bg-card px-3 text-gray-500 font-medium">HOẶC TÌM KIẾM CHI TIẾT</span>
+                    </div>
+                </div>
+
+                {/* Search Form */}
+                <form onSubmit={handleSearch} className="space-y-5">
+                    {/* Row 1: Type & Brand */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wide">
+                                <Zap className="w-3.5 h-3.5 text-primary" />
+                                Loại Xe
+                            </label>
+                            <CustomSelect
+                                value={type}
+                                onChange={setType}
+                                options={typeOptions}
+                                icon={<Zap className="w-3.5 h-3.5 text-primary" />}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wide">
+                                <Tag className="w-3.5 h-3.5 text-primary" />
+                                Thương Hiệu
+                            </label>
+                            <CustomSelect
+                                value={brand}
+                                onChange={setBrand}
+                                options={brandOptions}
+                                icon={<Tag className="w-3.5 h-3.5 text-primary" />}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Row 2: Price (Full width) */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wide">
+                            💰 Mức Giá
+                        </label>
+                        <CustomSelect
+                            value={price}
+                            onChange={setPrice}
+                            options={priceOptions}
+                        />
+                    </div>
+
+                    {/* Row 3: Range & Speed */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wide">
+                                <Battery className="w-3.5 h-3.5 text-primary" />
+                                Quãng Đường
+                            </label>
+                            <CustomSelect
+                                value={range}
+                                onChange={setRange}
+                                options={rangeOptions}
+                                icon={<Battery className="w-3.5 h-3.5 text-primary" />}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wide">
+                                <Gauge className="w-3.5 h-3.5 text-primary" />
+                                Tốc Độ
+                            </label>
+                            <CustomSelect
+                                value={speed}
+                                onChange={setSpeed}
+                                options={speedOptions}
+                                icon={<Gauge className="w-3.5 h-3.5 text-primary" />}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-primary via-primary to-accent text-black font-black py-4 rounded-xl hover:shadow-2xl hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 flex items-center justify-center gap-2.5 text-base"
                     >
-                        <option value="" className="bg-gray-900">Tất cả mức giá</option>
-                        <option value="low" className="bg-gray-900">Dưới 10 triệu</option>
-                        <option value="mid" className="bg-gray-900">10 - 20 triệu</option>
-                        <option value="high" className="bg-gray-900">Trên 20 triệu</option>
-                    </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-gray-400 flex items-center gap-1">
-                            <Battery className="w-3 h-3" /> Quãng Đường
-                        </label>
-                        <select
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                            value={range}
-                            onChange={(e) => setRange(e.target.value)}
-                        >
-                            <option value="" className="bg-gray-900">Tùy chọn</option>
-                            <option value="short" className="bg-gray-900">&lt; 50km</option>
-                            <option value="medium" className="bg-gray-900">50 - 80km</option>
-                            <option value="long" className="bg-gray-900">&gt; 80km</option>
-                        </select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-gray-400 flex items-center gap-1">
-                            <Gauge className="w-3 h-3" /> Tốc Độ
-                        </label>
-                        <select
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                            value={speed}
-                            onChange={(e) => setSpeed(e.target.value)}
-                        >
-                            <option value="" className="bg-gray-900">Tùy chọn</option>
-                            <option value="slow" className="bg-gray-900">&lt; 40km/h</option>
-                            <option value="medium" className="bg-gray-900">40 - 60km/h</option>
-                            <option value="fast" className="bg-gray-900">&gt; 60km/h</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-primary text-black font-bold py-3.5 rounded-xl hover:bg-white transition-all hover:scale-[1.02] shadow-lg shadow-primary/20 mt-2 flex items-center justify-center gap-2"
-                >
-                    <Search className="w-5 h-5" />
-                    Tìm Kiếm Ngay
-                </button>
-            </form>
+                        <Search className="w-5 h-5" />
+                        <span>Tìm Kiếm Ngay</span>
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }

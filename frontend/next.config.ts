@@ -26,8 +26,13 @@ const nextConfig: NextConfig = {
         hostname: '127.0.0.1',
         port: '1337',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '1337',
+      },
     ],
-    // unoptimized: true, // Commented out for production - Vercel will optimize images
+    unoptimized: process.env.NODE_ENV === 'development', // Unoptimized for local dev only
   },
 };
 

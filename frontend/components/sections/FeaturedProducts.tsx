@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Car, getFeaturedCars, getPromotions } from "@/lib/api";
-import { ArrowRight, Battery, Gauge, Zap } from "lucide-react";
+import ProductCard from "../product/ProductCard";
+import { ArrowRight } from "lucide-react";
 
 export default function FeaturedProducts() {
     const [cars, setCars] = useState<Car[]>([]);
@@ -32,13 +32,9 @@ export default function FeaturedProducts() {
             .finally(() => setLoading(false));
     }, []);
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-    };
-
     if (loading) {
         return (
-            <section className="py-20 px-6 bg-black/20">
+            <section className="py-20 px-6 bg-background">
                 <div className="container mx-auto">
                     <div className="h-10 w-64 bg-white/10 rounded-lg mb-12 animate-pulse mx-auto" />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -54,90 +50,37 @@ export default function FeaturedProducts() {
     if (cars.length === 0) return null;
 
     return (
-        <section className="py-24 px-6 bg-background relative">
+        <section className="py-20 px-6 bg-background">
             <div className="container mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
                             Sản Phẩm Nổi Bật
                         </h2>
-                        <p className="text-muted-foreground text-lg">
-                            Những mẫu xe được yêu thích nhất năm 2025
+                        <p className="text-muted-foreground">
+                            Những mẫu xe được yêu thích nhất
                         </p>
                     </div>
                     <Link
                         href="/cars"
-                        className="group flex items-center gap-2 text-primary font-bold hover:text-white transition-colors"
+                        className="group flex items-center gap-2 text-primary hover:text-white transition-colors"
                     >
-                        Xem Tất Cả
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                        <span className="font-semibold">Xem tất cả</span>
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
+                {/* Products Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {cars.slice(0, 4).map((car) => {
-                        const discountPercent = discounts[car.id] || 0;
-                        const finalPrice = discountPercent > 0 ? car.price * (1 - discountPercent / 100) : car.price;
-
+                        const discountPercent = discounts[car.id] || discounts[car.documentId || ''] || 0;
                         return (
-                            <Link
-                                href={`/cars/${car.slug}`}
+                            <ProductCard
                                 key={car.id}
-                                className="group relative bg-card/30 border border-white/10 rounded-3xl overflow-hidden hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10"
-                            >
-                                {/* Image Container */}
-                                <div className="relative h-64 w-full overflow-hidden bg-white/5">
-                                    <Image
-                                        src={car.thumbnail}
-                                        alt={car.name}
-                                        fill
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                    {/* Discount Badge */}
-                                    {discountPercent > 0 && (
-                                        <div className="absolute top-3 right-3">
-                                            <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg animate-pulse">
-                                                -{discountPercent}%
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {/* Quick Specs Overlay */}
-                                    <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 flex justify-between text-xs font-medium text-white/90">
-                                        <div className="flex items-center gap-1">
-                                            <Battery className="w-3 h-3 text-primary" />
-                                            {car.range}km
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Gauge className="w-3 h-3 text-primary" />
-                                            {car.topSpeed}km/h
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className="p-6">
-                                    <div className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">{car.brand}</div>
-                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors line-clamp-1">{car.name}</h3>
-                                    <div className="flex items-center justify-between mt-4">
-                                        <div>
-                                            <div className={`text-lg font-bold ${discountPercent > 0 ? 'text-red-500' : 'text-white'}`}>
-                                                {formatPrice(finalPrice)}
-                                            </div>
-                                            {discountPercent > 0 && (
-                                                <div className="text-xs text-gray-500 line-through">
-                                                    {formatPrice(car.price)}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors">
-                                            <ArrowRight className="w-4 h-4" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                                car={car}
+                                discountPercent={discountPercent}
+                            />
                         );
                     })}
                 </div>

@@ -2,12 +2,13 @@
 
 import HeroSlider from "@/components/hero/HeroSlider";
 import QuickFinder from "@/components/hero/QuickFinder";
+import MonthlyOffers from "@/components/sections/MonthlyOffers";
 import CategoryExplorer from "@/components/sections/CategoryExplorer";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import ElectricMotorcycles from "@/components/sections/ElectricMotorcycles";
 import ElectricBicycles from "@/components/sections/ElectricBicycles";
 import FeaturedAccessories from "@/components/sections/FeaturedAccessories";
-import MonthlyOffers from "@/components/sections/MonthlyOffers";
+import LiveChatWidget from "@/components/ui/LiveChatWidget";
 
 export default function Home() {
   return (
@@ -20,6 +21,8 @@ export default function Home() {
         </div>
       </div>
 
+      <MonthlyOffers />
+
       <CategoryExplorer />
 
       <FeaturedProducts />
@@ -30,7 +33,7 @@ export default function Home() {
 
       <FeaturedAccessories />
 
-      <MonthlyOffers />
+      <LiveChatWidget />
     </main>
   );
 }

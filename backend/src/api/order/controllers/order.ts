@@ -153,7 +153,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                         populate: {
                             thumbnail: true,
                             color: {
-                                populate: ['image']
+                                populate: ['images'] // Changed from 'image' to 'images'
                             }
                         }
                     },

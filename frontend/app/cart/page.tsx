@@ -1,12 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import Link from "next/link";
-import Image from "next/image";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
+import CartImageGallery from "@/components/cart/CartImageGallery";
+import ImageModal from "@/components/cart/ImageModal";
 
 export default function CartPage() {
     const { items, removeFromCart, updateQuantity, clearCart, total, itemCount } = useCart();
+    const [modalState, setModalState] = useState<{ isOpen: boolean; images: string[]; index: number; name: string }>({
+        isOpen: false,
+        images: [],
+        index: 0,
+        name: ""
+    });
 
     if (items.length === 0) {
         return (
@@ -50,19 +58,22 @@ export default function CartPage() {
                         <div className="lg:col-span-2 space-y-4">
                             {items.map((item) => (
                                 <div
-                                    key={item.id}
+                                    key={`${item.id}-${item.colorName || 'default'}`}
                                     className="bg-card border border-white/10 rounded-xl p-6 hover:border-primary/30 transition-all"
                                 >
                                     <div className="flex gap-6">
-                                        {/* Image */}
-                                        <div className="relative w-24 h-24 bg-white/5 rounded-lg overflow-hidden flex-shrink-0">
-                                            <Image
-                                                src={item.image}
-                                                alt={item.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
+                                        {/* Gallery */}
+                                        <CartImageGallery
+                                            images={item.gallery || [item.image]}
+                                            productName={item.name}
+                                            size="small"
+                                            onImageClick={() => setModalState({
+                                                isOpen: true,
+                                                images: item.gallery || [item.image],
+                                                index: 0,
+                                                name: item.name
+                                            })}
+                                        />
 
                                         {/* Details */}
                                         <div className="flex-1">
@@ -72,15 +83,57 @@ export default function CartPage() {
                                             >
                                                 {item.name}
                                             </Link>
-                                            <p className="text-primary font-bold text-xl mt-2">
-                                                {item.price.toLocaleString("vi-VN")} VNĐ
-                                            </p>
+
+                                            {/* Color Badge */}
+                                            {item.colorName && item.colorName !== "Mặc định" && (
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="text-xs text-muted-foreground">Màu:</span>
+                                                    <span className="px-2 py-0.5 bg-primary/20 border border-primary/30 rounded-full text-xs font-semibold text-primary">
+                                                        {item.colorName}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {/* Price Display */}
+                                            <div className="mt-3">
+                                                {item.originalPrice && item.originalPrice > item.price ? (
+                                                    // Has discount - show full breakdown
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center gap-3 flex-wrap">
+                                                            {/* Original Price */}
+                                                            <span className="text-gray-500 line-through text-sm">
+                                                                {item.originalPrice.toLocaleString("vi-VN")} VNĐ
+                                                            </span>
+
+                                                            {/* Discounted Price */}
+                                                            <span className="text-primary font-bold text-xl">
+                                                                {item.price.toLocaleString("vi-VN")} VNĐ
+                                                            </span>
+
+                                                            {/* Discount Badge */}
+                                                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                                                -{Math.round((1 - item.price / item.originalPrice) * 100)}%
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Savings Amount */}
+                                                        <p className="text-green-600 text-xs font-semibold">
+                                                            Tiết kiệm: {(item.originalPrice - item.price).toLocaleString("vi-VN")} VNĐ
+                                                        </p>
+                                                    </div>
+                                                ) : (
+                                                    // No discount - show regular price
+                                                    <p className="text-primary font-bold text-xl">
+                                                        {item.price.toLocaleString("vi-VN")} VNĐ
+                                                    </p>
+                                                )}
+                                            </div>
 
                                             {/* Quantity Controls */}
                                             <div className="flex items-center gap-4 mt-4">
                                                 <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg">
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(item.id, item.quantity - 1, item.colorName)}
                                                         className="p-2 hover:bg-white/10 transition-colors"
                                                     >
                                                         <Minus className="w-4 h-4 text-white" />
@@ -89,7 +142,7 @@ export default function CartPage() {
                                                         {item.quantity}
                                                     </span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.colorName)}
                                                         className="p-2 hover:bg-white/10 transition-colors"
                                                     >
                                                         <Plus className="w-4 h-4 text-white" />
@@ -97,7 +150,7 @@ export default function CartPage() {
                                                 </div>
 
                                                 <button
-                                                    onClick={() => removeFromCart(item.id)}
+                                                    onClick={() => removeFromCart(item.id, item.colorName)}
                                                     className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 className="w-5 h-5" />
@@ -163,6 +216,15 @@ export default function CartPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Image Modal */}
+            <ImageModal
+                images={modalState.images}
+                initialIndex={modalState.index}
+                isOpen={modalState.isOpen}
+                onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+                productName={modalState.name}
+            />
         </main>
     );
 }

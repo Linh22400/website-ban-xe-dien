@@ -14,7 +14,6 @@ export default function CategoryExplorer() {
         async function fetchData() {
             try {
                 const data = await getCategories();
-                console.log('Categories data:', data); // Debug log
                 setCategories(data);
             } catch (error) {
                 console.error("Failed to fetch categories", error);

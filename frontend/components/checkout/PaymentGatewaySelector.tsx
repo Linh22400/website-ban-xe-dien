@@ -1,6 +1,7 @@
 'use client';
 
 import { useCheckout } from '@/contexts/CheckoutContext';
+import { useCart } from '@/lib/cart-context';
 import { useState } from 'react';
 import { CreditCard, Smartphone, Building2, Check, Loader2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -11,31 +12,25 @@ import PaymentModal from './PaymentModal';
 export default function PaymentGatewaySelector() {
     const {
         paymentMethod,
-        selectedVehicle,
         installmentMonths,
         customerInfo,
         selectedShowroom,
-        selectedColor,
-        selectedBattery,
-        selectedGifts,
         goToNextStep,
         setCreatedOrder,
         getOrderData
     } = useCheckout();
+
+    const { total } = useCart();
 
     const [selectedGateway, setSelectedGateway] = useState('momo');
     const [isProcessing, setIsProcessing] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [createdOrderId, setCreatedOrderId] = useState<number | null>(null);
 
-    if (!selectedVehicle) return null;
-
-    // Calculate totals (duplicated logic, ideally should be in context or hook)
-    const basePrice = selectedVehicle.price || 0;
-    const discount = selectedVehicle.discount || 0;
-    const registrationFee = basePrice * 0.1;
-    const licensePlateFee = 1500000;
-    const totalAmount = basePrice - discount + registrationFee + licensePlateFee;
+    // Calculate totals from cart
+    const basePrice = total;
+    const vat = basePrice * 0.1;
+    const totalAmount = basePrice + vat; // No shipping fee (FREE)
 
     let depositAmount = 0;
     if (paymentMethod === 'deposit') {

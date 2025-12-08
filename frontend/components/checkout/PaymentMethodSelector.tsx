@@ -1,6 +1,7 @@
 'use client';
 
 import { useCheckout } from '@/contexts/CheckoutContext';
+import { useCart } from '@/lib/cart-context';
 import { useState } from 'react';
 import { Check, CreditCard, Wallet, Building2, Calculator } from 'lucide-react';
 import { calculateInstallment } from '@/lib/order-api';
@@ -11,17 +12,18 @@ export default function PaymentMethodSelector() {
         setPaymentMethod,
         installmentMonths,
         setInstallmentMonths,
-        selectedVehicle,
         goToNextStep
     } = useCheckout();
 
+    const { total } = useCart();
+
     const [showCalculator, setShowCalculator] = useState(false);
 
-    if (!selectedVehicle) return null;
-
-    const basePrice = selectedVehicle.price || 0;
-    const discount = selectedVehicle.discount || 0;
-    const totalAmount = basePrice - discount + (basePrice * 0.1) + 1500000;
+    // Calculate total amount (cart total + VAT + shipping)
+    const basePrice = total;
+    const vat = basePrice * 0.1;
+    const shipping = 0; // FREE SHIPPING
+    const totalAmount = basePrice + vat + shipping;
 
     const installmentOptions = [6, 12, 18, 24];
 

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getFeaturedCars, getPromotions, Car } from "@/lib/api";
+import ProductCard from "@/components/product/ProductCard";
 
 export default function FeaturedModels() {
     const [featuredCars, setFeaturedCars] = useState<Car[]>([]);
@@ -20,15 +20,7 @@ export default function FeaturedModels() {
                 promotions.forEach(promo => {
                     if (promo.isActive && promo.discountPercent && promo.car_models) {
                         promo.car_models.forEach((car: any) => {
-                            // Use documentId or id depending on Strapi version, usually id in v4/v5 response
-                            // But wait, getFeaturedCars returns Car objects with 'id' as string.
-                            // Strapi relation data usually has 'id' (number) or 'documentId'.
-                            // Let's assume 'id' matches.
-                            // We need to check if the car in the relation matches the featured car.
-                            // The relation data might be minimal (id, attributes).
-                            // Let's use ID.
                             discounts[car.id] = promo.discountPercent!;
-                            // Also try matching by documentId if available
                             if (car.documentId) discounts[car.documentId] = promo.discountPercent!;
                         });
                     }
@@ -46,9 +38,10 @@ export default function FeaturedModels() {
                     <div className="animate-pulse space-y-4">
                         <div className="h-8 bg-white/10 w-1/3 mx-auto rounded"></div>
                         <div className="h-4 bg-white/10 w-1/2 mx-auto rounded"></div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                            <div className="h-[400px] bg-white/10 rounded-2xl"></div>
-                            <div className="h-[400px] bg-white/10 rounded-2xl"></div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-12">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="h-[400px] bg-white/10 rounded-2xl"></div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -56,7 +49,7 @@ export default function FeaturedModels() {
         );
     }
 
-    // If no featured cars, don't render the section (or render fallback)
+    // If no featured cars, don't render the section
     if (featuredCars.length === 0) {
         return null;
     }
@@ -73,51 +66,16 @@ export default function FeaturedModels() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {featuredCars.map((car) => {
                         const discount = carDiscounts[car.id] || 0;
-                        const finalPrice = discount > 0 ? car.price * (1 - discount / 100) : car.price;
 
                         return (
-                            <Link
-                                key={car.slug}
-                                href={`/cars/${car.slug}`}
-                                className="group relative h-[400px] rounded-2xl overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-500"
-                            >
-                                <Image
-                                    src={car.thumbnail}
-                                    alt={car.name}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-
-                                {discount > 0 && (
-                                    <div className="absolute top-4 right-4 bg-red-500 text-white font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
-                                        -{discount}%
-                                    </div>
-                                )}
-
-                                <div className="absolute bottom-0 left-0 right-0 p-8">
-                                    <p className="text-primary text-sm font-bold mb-2">{car.brand}</p>
-                                    <h3 className="text-3xl font-bold text-white mb-4">{car.name}</h3>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex flex-col">
-                                            {discount > 0 && (
-                                                <span className="text-gray-400 text-sm line-through decoration-red-500 decoration-2">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(car.price)}
-                                                </span>
-                                            )}
-                                            <span className={`font-bold text-xl ${discount > 0 ? 'text-red-500' : 'text-white'}`}>
-                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalPrice)}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center text-white font-bold group-hover:text-primary transition-colors">
-                                            Khám Phá <span className="ml-2">→</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                            <ProductCard
+                                key={`featured-${car.id}-${car.slug}`}
+                                car={car}
+                                discountPercent={discount}
+                            />
                         );
                     })}
                 </div>

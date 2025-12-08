@@ -2,8 +2,9 @@
 
 import { Car } from "@/lib/api";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/lib/cart-context";
 
 interface StickyActionBarProps {
     car: Car;
@@ -15,6 +16,8 @@ interface StickyActionBarProps {
 export default function StickyActionBar({ car, selectedColorName, selectedColorIndex, discountPercent = 0 }: StickyActionBarProps) {
     const [isVisible, setIsVisible] = useState(false);
     const finalPrice = discountPercent > 0 ? car.price * (1 - discountPercent / 100) : car.price;
+    const { addToCart } = useCart();
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -25,6 +28,28 @@ export default function StickyActionBar({ car, selectedColorName, selectedColorI
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const handleAddToCart = () => {
+        // Get current color's images
+        const currentColorImages = car.colors?.[selectedColorIndex]?.images || [];
+        const galleryImages = currentColorImages.length > 0
+            ? currentColorImages
+            : (car.colors?.[selectedColorIndex]?.images || [car.thumbnail]);
+
+        addToCart({
+            id: car.id,
+            name: car.name,
+            price: finalPrice,
+            originalPrice: discountPercent > 0 ? car.price : undefined,
+            image: galleryImages[0],
+            gallery: galleryImages,
+            colorName: selectedColorName,
+            slug: car.slug
+        });
+
+        // Navigate to cart
+        router.push("/cart");
+    };
 
     return (
         <AnimatePresence>
@@ -54,12 +79,12 @@ export default function StickyActionBar({ car, selectedColorName, selectedColorI
                                 )}
                             </div>
 
-                            <Link
-                                href={`/checkout?vehicle=${car.id}${car.colors && car.colors.length > 0 ? `&color=${encodeURIComponent(selectedColorName)}` : ''}${discountPercent > 0 ? `&discount=${discountPercent}` : ''}`}
+                            <button
+                                onClick={handleAddToCart}
                                 className="flex-1 md:flex-none px-8 py-3 bg-primary text-black font-bold rounded-full hover:bg-white transition-colors text-center"
                             >
-                                Đặt Mua Ngay
-                            </Link>
+                                Thêm Vào Giỏ
+                            </button>
                         </div>
                     </div>
                 </motion.div>

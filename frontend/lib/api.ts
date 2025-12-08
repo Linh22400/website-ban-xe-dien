@@ -365,9 +365,12 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
 
 export async function getFeaturedCars(): Promise<Car[]> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/car-models?filters[isFeatured][$eq]=true&populate=*`, {
-            next: { revalidate: 60 } // Revalidate every minute
-        });
+        const response = await fetch(
+            `${STRAPI_URL}/api/car-models?filters[isFeatured][$eq]=true&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
+            {
+                next: { revalidate: 60 } // Revalidate every minute
+            }
+        );
 
         if (!response.ok) return [];
 
@@ -702,7 +705,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
         if (!response.ok) return [];
 
         const data = await response.json();
-        console.log("Accessories raw data sample:", JSON.stringify(data.data?.[0], null, 2));
+
 
         const allAccessories = data.data.map((item: any) => {
             // Handle Strapi v4 nested attributes if present
@@ -820,11 +823,11 @@ export async function getCategories(): Promise<Category[]> {
         if (!response.ok) return [];
 
         const data = await response.json();
-        console.log('Raw Strapi categories response:', data); // Debug
+
         return data.data.map((item: any) => {
             const attrs = item.attributes || item;
             const colorValue = attrs.Color || attrs.color || 'from-blue-600 to-cyan-500';
-            console.log('Category color value:', { title: attrs.Name, color: colorValue }); // Debug
+
             return {
                 id: item.id,
                 title: attrs.Name || '',

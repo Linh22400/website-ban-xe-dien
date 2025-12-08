@@ -8,6 +8,7 @@ import { useCompare } from "@/lib/compare-context";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { Heart, ShoppingCart } from "lucide-react";
+import ColorPicker from "./ColorPicker";
 
 interface ProductCardProps {
     car: Car;
@@ -20,9 +21,16 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
     const { addToCart } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
     const [showToast, setShowToast] = useState<string | null>(null);
+    const [selectedColorIndex, setSelectedColorIndex] = useState(0);
 
     const isSelected = isInCompare(car.id);
     const inWishlist = isInWishlist(car.id);
+
+    // Get selected color data
+    const selectedColor = car.colors?.[selectedColorIndex] || car.colors?.[0];
+    const displayImage = selectedColor?.images?.[0] || car.thumbnail;
+
+
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -41,11 +49,19 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
+
+        // Get images from selected color
+        const colorImages = selectedColor?.images || [];
+        const gallery = colorImages.length > 0 ? colorImages : [car.thumbnail];
+
         addToCart({
             id: car.id,
             name: car.name,
             price: finalPrice,
-            image: car.thumbnail,
+            originalPrice: discountPercent > 0 ? car.price : undefined,
+            image: gallery[0],
+            gallery: gallery,
+            colorName: selectedColor?.name || "Mặc định",
             slug: car.slug,
         });
         setShowToast("Đã thêm vào giỏ hàng!");
@@ -82,7 +98,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
             {/* Image Container */}
             <Link href={`/cars/${car.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-gray-900">
                 <Image
-                    src={car.thumbnail}
+                    src={displayImage}
                     alt={car.name}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -135,6 +151,22 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         {car.name}
                     </h3>
                 </Link>
+
+                {/* Color Picker */}
+                {car.colors && car.colors.length > 1 && (
+                    <div className="mb-3">
+                        <ColorPicker
+                            colors={car.colors}
+                            selectedIndex={selectedColorIndex}
+                            onSelectColor={setSelectedColorIndex}
+                            size="small"
+                            maxDisplay={5}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1.5">
+                            Màu: <span className="text-primary font-medium">{selectedColor?.name}</span>
+                        </p>
+                    </div>
+                )}
 
                 <div className="flex items-end justify-between mt-4">
                     <div>

@@ -1,12 +1,14 @@
 'use client';
 
 import { useCheckout } from '@/contexts/CheckoutContext';
+import { useCart } from '@/lib/cart-context';
 import { CheckCircle, Calendar, MapPin, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 
 export default function OrderSuccess() {
     const { createdOrder, resetCheckout } = useCheckout();
+    const { total } = useCart();
 
     if (!createdOrder) {
         return (
@@ -53,7 +55,24 @@ export default function OrderSuccess() {
                                     createdOrder.PaymentMethod === 'full_payment' ? 'Thanh toán đầy đủ' : 'Trả góp'}
                             </p>
                             <p className="text-sm text-primary font-bold">
-                                {formatCurrency(createdOrder.TotalAmount)}
+                                {(() => {
+                                    // Use cart total + VAT for consistency with checkout
+                                    const cartTotal = total;
+                                    const vat = cartTotal * 0.1;
+                                    const totalAmount = cartTotal + vat; // No shipping (FREE)
+
+                                    let depositAmount = 0;
+
+                                    if (createdOrder.PaymentMethod === 'deposit') {
+                                        depositAmount = 3000000; // Fixed deposit
+                                    } else if (createdOrder.PaymentMethod === 'full_payment') {
+                                        depositAmount = totalAmount; // Full payment
+                                    } else if (createdOrder.PaymentMethod === 'installment') {
+                                        depositAmount = totalAmount * 0.3; // 30% down payment
+                                    }
+
+                                    return formatCurrency(depositAmount);
+                                })()}
                             </p>
                         </div>
                     </div>
@@ -86,24 +105,24 @@ export default function OrderSuccess() {
                         )}
                     </div>
                 </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                    href="/"
-                    onClick={resetCheckout}
-                    className="px-8 py-3 rounded-full border border-white/10 hover:bg-white/5 transition-colors text-white font-medium"
-                >
-                    Về trang chủ
-                </Link>
-                <Link
-                    href={`/tracking?code=${encodeURIComponent(createdOrder.OrderCode)}&phone=${encodeURIComponent(createdOrder.CustomerInfo?.Phone || '')}`}
-                    onClick={resetCheckout}
-                    className="px-8 py-3 rounded-full bg-primary text-black font-bold hover:bg-primary-dark transition-all hover:shadow-glow flex items-center gap-2"
-                >
-                    Theo dõi đơn hàng
-                    <ArrowRight className="w-4 h-4" />
-                </Link>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <Link
+                        href="/"
+                        onClick={resetCheckout}
+                        className="px-8 py-3 rounded-full border border-white/10 hover:bg-white/5 transition-colors text-white font-medium"
+                    >
+                        Về trang chủ
+                    </Link>
+                    <Link
+                        href={`/tracking?code=${encodeURIComponent(createdOrder.OrderCode)}&phone=${encodeURIComponent(createdOrder.CustomerInfo?.Phone || '')}`}
+                        onClick={resetCheckout}
+                        className="px-8 py-3 rounded-full bg-primary text-black font-bold hover:bg-primary-dark transition-all hover:shadow-glow flex items-center gap-2"
+                    >
+                        Theo dõi đơn hàng
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                </div>
             </div>
         </div>
     );

@@ -3,7 +3,7 @@
 import { Order } from '@/types/order';
 import { formatCurrency } from '@/lib/utils';
 import { Calendar, MapPin } from 'lucide-react';
-import Image from 'next/image';
+import CartImageGallery from '@/components/cart/CartImageGallery';
 
 interface OrderItemProps {
     order: Order;
@@ -37,37 +37,78 @@ export default function OrderItem({ order }: OrderItemProps) {
         }
     };
 
+    // Get payment method badge (more accurate than backend status)
+    const getPaymentMethodBadge = () => {
+        const method = order.PaymentMethod;
+        if (method === 'full_payment') {
+            return { text: 'Thanh toán đủ', color: 'text-green-500 bg-green-500/10' };
+        } else if (method === 'deposit') {
+            return { text: 'Đặt cọc', color: 'text-yellow-500 bg-yellow-500/10' };
+        } else if (method === 'installment') {
+            return { text: 'Trả góp', color: 'text-blue-500 bg-blue-500/10' };
+        }
+        return { text: getStatusText(order.Statuses), color: getStatusColor(order.Statuses) };
+    };
+
     // Safely handle VehicleModel rendering
     const vehicleName = order.VehicleModel?.name || 'Xe điện';
 
     // Fallback Strapi URL if env variable is not set
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
-    // Find the selected color's image (backend uses PascalCase: SelectedColor)
+    // Find the selected color's images (backend uses PascalCase: SelectedColor)
     const selectedColorData = order.VehicleModel?.color?.find(
         (c: any) => c.name === (order as any).SelectedColor
     );
 
-    // Use color-specific image if available, otherwise fall back to thumbnail
-    const vehicleImage = selectedColorData?.image?.url
-        ? `${strapiUrl}${selectedColorData.image.url}`
-        : order.VehicleModel?.thumbnail?.url
-            ? `${strapiUrl}${order.VehicleModel.thumbnail.url}`
-            : '/placeholder-car.png';
+    // Get all images from selected color for gallery
+    const colorImages = selectedColorData?.images || (selectedColorData?.image ? [selectedColorData.image] : []);
+    const galleryUrls = colorImages.map((img: any) =>
+        img.url ? `${strapiUrl}${img.url}` : ''
+    ).filter(Boolean);
+
+    // Fallback to thumbnail if no color images
+    if (galleryUrls.length === 0 && order.VehicleModel?.thumbnail?.url) {
+        galleryUrls.push(`${strapiUrl}${order.VehicleModel.thumbnail.url}`);
+    }
+
+    // Final fallback
+    if (galleryUrls.length === 0) {
+        galleryUrls.push('/placeholder-car.png');
+    }
+
+    // Calculate deposit amount based on payment method (consistent with checkout)
+    // IMPORTANT: Backend TotalAmount includes old fees (registration, license plate)
+    // We need to recalculate using cart-based logic: Price + VAT only
+    const calculateDepositAmount = () => {
+        // Get vehicle base price  
+        const vehiclePrice = order.VehicleModel?.price || 0;
+        const vat = vehiclePrice * 0.1;
+        const correctTotal = vehiclePrice + vat; // No shipping (FREE), no registration fees
+
+        if (order.PaymentMethod === 'deposit') {
+            return 3000000; // Fixed deposit
+        } else if (order.PaymentMethod === 'full_payment') {
+            return correctTotal; // Corrected full payment (not backend TotalAmount!)
+        } else if (order.PaymentMethod === 'installment') {
+            return correctTotal * 0.3; // 30% down payment
+        }
+        return correctTotal;
+    };
+
+    const paymentBadge = getPaymentMethodBadge();
 
     return (
         <div className="bg-card/30 border border-white/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all group">
             <div className="p-6">
                 <div className="flex flex-col md:flex-row gap-6">
-                    {/* Image */}
-                    <div className="w-full md:w-32 h-24 bg-white/5 rounded-lg relative overflow-hidden shrink-0">
-                        <Image
-                            src={vehicleImage}
-                            alt={vehicleName}
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
+                    {/* Image Gallery */}
+                    <CartImageGallery
+                        images={galleryUrls}
+                        productName={vehicleName}
+                        size="large"
+                        onImageClick={() => { }} // No modal for now
+                    />
 
                     {/* Content */}
                     <div className="flex-1 space-y-4">
@@ -75,17 +116,23 @@ export default function OrderItem({ order }: OrderItemProps) {
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
                                     <h3 className="font-bold text-lg text-white">{vehicleName}</h3>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.Statuses)}`}>
-                                        {getStatusText(order.Statuses)}
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${paymentBadge.color}`}>
+                                        {paymentBadge.text}
                                     </span>
                                 </div>
                                 <p className="text-sm text-muted-foreground">
                                     Mã đơn: <span className="font-mono text-white">{order.OrderCode}</span>
                                 </p>
+                                {/* Display selected color */}
+                                {(order as any).SelectedColor && (
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                        Màu: <span className="text-white font-medium">{(order as any).SelectedColor}</span>
+                                    </p>
+                                )}
                             </div>
                             <div className="text-right">
                                 <p className="text-lg font-bold text-primary">
-                                    {formatCurrency(order.TotalAmount)}
+                                    {formatCurrency(calculateDepositAmount())}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
                                     {order.PaymentMethod === 'deposit' ? 'Đặt cọc' :

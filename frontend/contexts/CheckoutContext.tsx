@@ -105,9 +105,16 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     };
 
     const getOrderData = (): OrderData => {
+        // For cart-based checkout, get vehicle from first cart item
+        // TODO: In future, support multiple items in order
+        const cartItems = typeof window !== 'undefined'
+            ? JSON.parse(localStorage.getItem('cart') || '[]')
+            : [];
+        const firstItem = cartItems[0];
+
         return {
-            VehicleModel: selectedVehicle?.id,
-            SelectedColor: selectedColor,
+            VehicleModel: selectedVehicle?.id || firstItem?.id, // Fallback to cart item
+            SelectedColor: selectedColor || firstItem?.colorName || '',
             SelectedBattery: selectedBattery,
             SelectedGifts: selectedGifts,
             PaymentMethod: paymentMethod,

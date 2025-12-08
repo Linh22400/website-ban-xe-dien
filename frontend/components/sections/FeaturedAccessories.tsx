@@ -63,6 +63,8 @@ export default function FeaturedAccessories() {
             price: accessory.price,
             image: accessory.image,
             slug: accessory.slug,
+            gallery: [accessory.image], // Single image as gallery
+            colorName: "Mặc định" // Accessories don't have color variants
         });
         setToastMessage({ id: accessory.id, message: "Đã thêm vào giỏ hàng!" });
         setTimeout(() => setToastMessage(null), 2000);

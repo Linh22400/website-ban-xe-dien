@@ -11,7 +11,12 @@ export default function WishlistPage() {
     const { addToCart } = useCart();
 
     const handleAddToCart = (item: typeof items[0]) => {
-        addToCart(item);
+        // Transform WishlistItem to CartItem format
+        addToCart({
+            ...item,
+            gallery: [item.image], // Convert single image to gallery array
+            colorName: "Mặc định" // Default color for wishlist items
+        });
         // Optionally remove from wishlist after adding to cart
         // removeFromWishlist(item.id);
     };

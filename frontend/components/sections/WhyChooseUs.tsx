@@ -65,7 +65,7 @@ export default function WhyChooseUs() {
                             <div className={`w-16 h-16 ${item.bg} rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 ${item.color}`}>
                                 {item.icon}
                             </div>
-                            <h3 className={`text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors`}>{item.title}</h3>
+                            <h3 className={`text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary transition-colors`}>{item.title}</h3>
                             <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
                                 {item.desc}
                             </p>

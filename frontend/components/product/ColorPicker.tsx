@@ -19,15 +19,16 @@ export default function ColorPicker({
 }: ColorPickerProps) {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-    const dotSize = size === 'small' ? 'w-6 h-6' : 'w-8 h-8';
+    const dotSize = size === 'small' ? 'w-7 h-7' : 'w-9 h-9';
     const displayColors = colors.slice(0, maxDisplay);
     const remainingCount = colors.length - maxDisplay;
 
     return (
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
             {displayColors.map((color, index) => {
                 const isSelected = selectedIndex === index;
                 const isHovered = hoveredIndex === index;
+                const isWhite = color.hex.toLowerCase() === '#ffffff' || color.hex.toLowerCase() === '#fff';
 
                 return (
                     <div key={index} className="relative group">
@@ -39,34 +40,41 @@ export default function ColorPicker({
                             }}
                             onMouseEnter={() => setHoveredIndex(index)}
                             onMouseLeave={() => setHoveredIndex(null)}
-                            className={`${dotSize} rounded-full border-2 transition-all duration-200 ${isSelected
-                                    ? 'border-primary ring-2 ring-primary/30 scale-110 shadow-lg shadow-primary/30'
-                                    : 'border-white/20 hover:border-primary/50 hover:scale-105'
+                            className={`${dotSize} rounded-full transition-all duration-200 relative ${isSelected ? 'scale-125' : 'hover:scale-110'
                                 }`}
-                            style={{ backgroundColor: color.hex }}
+                            style={{
+                                backgroundColor: color.hex,
+                                boxShadow: isSelected
+                                    ? `0 0 0 3px white, 0 0 0 5px ${isWhite ? '#00b8d4' : color.hex}, 0 4px 12px rgba(0,0,0,0.3)`
+                                    : isWhite
+                                        ? '0 0 0 2px #d0d7de, 0 2px 6px rgba(0,0,0,0.15)'
+                                        : '0 0 0 2px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.2)'
+                            }}
                             aria-label={`Chọn màu ${color.name}`}
                         >
                             {/* Checkmark for selected */}
                             {isSelected && (
-                                <svg
-                                    className="w-3 h-3 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <svg
+                                        className={`w-4 h-4 drop-shadow-lg ${isWhite ? 'text-gray-800' : 'text-white'}`}
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                </div>
                             )}
                         </button>
 
                         {/* Tooltip on hover */}
                         {isHovered && (
-                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded whitespace-nowrap backdrop-blur-sm z-10 pointer-events-none">
+                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-gray-900 dark:bg-black text-white text-xs font-medium rounded-lg whitespace-nowrap shadow-xl z-10 pointer-events-none">
                                 {color.name}
-                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-black/90 rotate-45" />
+                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-black rotate-45" />
                             </div>
                         )}
                     </div>
@@ -75,8 +83,8 @@ export default function ColorPicker({
 
             {/* "+N more" indicator */}
             {remainingCount > 0 && (
-                <div className={`${dotSize} rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center`}>
-                    <span className="text-xs font-bold text-white">+{remainingCount}</span>
+                <div className={`${dotSize} rounded-full bg-gray-200 dark:bg-white/10 flex items-center justify-center shadow-md`}>
+                    <span className="text-xs font-bold text-gray-700 dark:text-white">+{remainingCount}</span>
                 </div>
             )}
         </div>

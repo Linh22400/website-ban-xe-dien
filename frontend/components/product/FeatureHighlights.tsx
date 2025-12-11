@@ -1,6 +1,7 @@
 "use client";
 
 import { Car } from "@/lib/api";
+import { SectionHeading, FeatureTitle } from './ProductTextComponents';
 import { Battery, Zap, Shield, Smartphone, Wind, Gauge } from "lucide-react";
 
 interface FeatureHighlightsProps {
@@ -67,9 +68,9 @@ export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
         <section className="py-20 bg-background relative overflow-hidden">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                    <SectionHeading className="mb-4">
                         Công Nghệ Vượt Trội
-                    </h2>
+                    </SectionHeading>
                     <p className="text-muted-foreground max-w-2xl mx-auto">
                         Trải nghiệm những công nghệ tiên tiến nhất được tích hợp trên {car.name}
                     </p>
@@ -84,9 +85,9 @@ export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
                             <div className={`w-16 h-16 rounded-2xl ${feature.bg || 'bg-primary/10'} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                                 {getIcon(feature.icon)}
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">
+                            <FeatureTitle className="mb-3">
                                 {feature.title}
-                            </h3>
+                            </FeatureTitle>
                             <p className="text-muted-foreground leading-relaxed">
                                 {feature.desc}
                             </p>

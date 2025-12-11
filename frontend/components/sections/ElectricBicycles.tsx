@@ -40,7 +40,7 @@ export default function ElectricBicycles() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-foreground">
                             Xe Đạp Điện
                         </h2>
                         <p className="text-muted-foreground">
@@ -49,9 +49,19 @@ export default function ElectricBicycles() {
                     </div>
                     <Link
                         href="/cars?type=bicycle"
-                        className="group flex items-center gap-2 text-primary hover:text-white transition-colors"
+                        className="group flex items-center gap-2 font-semibold transition-colors"
+                        style={{
+                            color: '#00b8d4'
+                        }}
+                        onMouseEnter={(e) => {
+                            const isDark = document.documentElement.classList.contains('dark');
+                            e.currentTarget.style.color = isDark ? '#ffffff' : '#374151';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#00b8d4';
+                        }}
                     >
-                        <span className="font-semibold">Xem tất cả</span>
+                        Xem tất cả
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>

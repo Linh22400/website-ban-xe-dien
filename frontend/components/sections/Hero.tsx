@@ -37,10 +37,10 @@ export default function Hero() {
                         { icon: "💳", title: "Trả Góp 0%", desc: "Thủ tục đơn giản" },
                         { icon: "🔧", title: "Bảo Dưỡng Tận Nơi", desc: "Đội ngũ chuyên nghiệp" },
                     ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-card/30 border border-white/5 backdrop-blur-sm hover:bg-card/50 transition-colors">
+                        <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-card/30 border border-border backdrop-blur-sm hover:bg-card/50 transition-colors">
                             <div className="text-3xl">{item.icon}</div>
                             <div>
-                                <div className="font-bold text-white text-sm md:text-base">{item.title}</div>
+                                <div className="font-bold text-foreground text-sm md:text-base">{item.title}</div>
                                 <div className="text-xs text-muted-foreground">{item.desc}</div>
                             </div>
                         </div>

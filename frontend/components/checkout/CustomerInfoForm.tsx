@@ -3,6 +3,7 @@
 import { useCheckout } from '@/contexts/CheckoutContext';
 import { useState } from 'react';
 import { Check } from 'lucide-react';
+import { ThemeText, ThemeInput, ThemeTextarea, ThemeSelect, ThemeButton } from '@/components/common/ThemeText';
 
 export default function CustomerInfoForm() {
     const { customerInfo, setCustomerInfo, goToNextStep, goToPreviousStep } = useCheckout();
@@ -60,20 +61,19 @@ export default function CustomerInfoForm() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Thông tin khách hàng</h2>
+            <ThemeText className="text-2xl font-bold text-white mb-6">Thông tin khách hàng</ThemeText>
 
             {/* Full Name */}
             <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <ThemeText className="block text-sm font-medium text-white mb-2">
                     Họ và tên <span className="text-red-500">*</span>
-                </label>
-                <input
+                </ThemeText>
+                <ThemeInput
                     type="text"
                     value={customerInfo.FullName || ''}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, FullName: e.target.value })}
-                    className={`w-full bg-white/5 border-2 rounded-xl px-4 py-3 text-white
-                     focus:outline-none focus:border-primary transition-all
-                     ${errors.FullName ? 'border-red-500' : 'border-white/10'}`}
+                    hasError={!!errors.FullName}
+                    className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     placeholder="Nguyễn Văn A"
                 />
                 {errors.FullName && (
@@ -85,16 +85,15 @@ export default function CustomerInfoForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Phone */}
                 <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <ThemeText className="block text-sm font-medium text-white mb-2">
                         Số điện thoại <span className="text-red-500">*</span>
-                    </label>
-                    <input
+                    </ThemeText>
+                    <ThemeInput
                         type="tel"
                         value={customerInfo.Phone || ''}
                         onChange={(e) => setCustomerInfo({ ...customerInfo, Phone: e.target.value })}
-                        className={`w-full bg-white/5 border-2 rounded-xl px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all
-                       ${errors.Phone ? 'border-red-500' : 'border-white/10'}`}
+                        hasError={!!errors.Phone}
+                        className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="0901234567"
                     />
                     {errors.Phone && (
@@ -104,16 +103,15 @@ export default function CustomerInfoForm() {
 
                 {/* Email */}
                 <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <ThemeText className="block text-sm font-medium text-white mb-2">
                         Email <span className="text-red-500">*</span>
-                    </label>
-                    <input
+                    </ThemeText>
+                    <ThemeInput
                         type="email"
                         value={customerInfo.Email || ''}
                         onChange={(e) => setCustomerInfo({ ...customerInfo, Email: e.target.value })}
-                        className={`w-full bg-white/5 border-2 rounded-xl px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all
-                       ${errors.Email ? 'border-red-500' : 'border-white/10'}`}
+                        hasError={!!errors.Email}
+                        className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="email@example.com"
                     />
                     {errors.Email && (
@@ -124,31 +122,29 @@ export default function CustomerInfoForm() {
 
             {/* ID Card (Optional) */}
             <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <ThemeText className="block text-sm font-medium text-white mb-2">
                     CMND/CCCD <span className="text-muted-foreground text-xs">(Tùy chọn)</span>
-                </label>
-                <input
+                </ThemeText>
+                <ThemeInput
                     type="text"
                     value={customerInfo.IdCard || ''}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, IdCard: e.target.value })}
-                    className="w-full bg-white/5 border-2 border-white/10 rounded-xl px-4 py-3 text-white
-                     focus:outline-none focus:border-primary transition-all"
+                    className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     placeholder="001234567890"
                 />
             </div>
 
             {/* Delivery Address */}
             <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <ThemeText className="block text-sm font-medium text-white mb-2">
                     Địa chỉ nhận xe <span className="text-red-500">*</span>
-                </label>
-                <textarea
+                </ThemeText>
+                <ThemeTextarea
                     value={customerInfo.DeliveryAddress || ''}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, DeliveryAddress: e.target.value })}
                     rows={3}
-                    className={`w-full bg-white/5 border-2 rounded-xl px-4 py-3 text-white
-                     focus:outline-none focus:border-primary transition-all resize-none
-                     ${errors.DeliveryAddress ? 'border-red-500' : 'border-white/10'}`}
+                    hasError={!!errors.DeliveryAddress}
+                    className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     placeholder="Số nhà, tên đường, phường/xã..."
                 />
                 {errors.DeliveryAddress && (
@@ -160,15 +156,14 @@ export default function CustomerInfoForm() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* City */}
                 <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <ThemeText className="block text-sm font-medium text-white mb-2">
                         Thành phố <span className="text-red-500">*</span>
-                    </label>
-                    <select
+                    </ThemeText>
+                    <ThemeSelect
                         value={customerInfo.City || ''}
                         onChange={(e) => setCustomerInfo({ ...customerInfo, City: e.target.value })}
-                        className={`w-full bg-white/5 border-2 rounded-xl px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all
-                       ${errors.City ? 'border-red-500' : 'border-white/10'}`}
+                        hasError={!!errors.City}
+                        className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"
                     >
                         <option value="">Chọn thành phố</option>
                         {cities.map((city) => (
@@ -176,7 +171,7 @@ export default function CustomerInfoForm() {
                                 {city}
                             </option>
                         ))}
-                    </select>
+                    </ThemeSelect>
                     {errors.City && (
                         <p className="text-red-500 text-sm mt-1">{errors.City}</p>
                     )}
@@ -184,30 +179,28 @@ export default function CustomerInfoForm() {
 
                 {/* District */}
                 <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <ThemeText className="block text-sm font-medium text-white mb-2">
                         Quận/Huyện
-                    </label>
-                    <input
+                    </ThemeText>
+                    <ThemeInput
                         type="text"
                         value={customerInfo.District || ''}
                         onChange={(e) => setCustomerInfo({ ...customerInfo, District: e.target.value })}
-                        className="w-full bg-white/5 border-2 border-white/10 rounded-xl px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all"
+                        className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="Quận/Huyện"
                     />
                 </div>
 
                 {/* Ward */}
                 <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <ThemeText className="block text-sm font-medium text-white mb-2">
                         Phường/Xã
-                    </label>
-                    <input
+                    </ThemeText>
+                    <ThemeInput
                         type="text"
                         value={customerInfo.Ward || ''}
                         onChange={(e) => setCustomerInfo({ ...customerInfo, Ward: e.target.value })}
-                        className="w-full bg-white/5 border-2 border-white/10 rounded-xl px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all"
+                        className="w-full bg-white/5 border-2 rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all placeholder:text-gray-500 dark:placeholder:text-gray-400"
                         placeholder="Phường/Xã"
                     />
                 </div>
@@ -224,13 +217,13 @@ export default function CustomerInfoForm() {
 
             {/* Action Buttons */}
             <div className="flex gap-4">
-                <button
+                <ThemeButton
                     onClick={goToPreviousStep}
                     className="flex-1 bg-white/5 text-white px-8 py-4 rounded-full font-bold 
                      border-2 border-white/10 hover:border-primary/50 transition-all"
                 >
                     Quay lại
-                </button>
+                </ThemeButton>
                 <button
                     onClick={handleContinue}
                     className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 

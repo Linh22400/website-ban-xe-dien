@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { MapPin, Phone, Clock, Navigation } from 'lucide-react';
 import { getShowrooms } from '@/lib/order-api';
 import type { Showroom } from '@/types/order';
+import { SubHeading, SectionHeading, FormLabel, ThemeSelect, ThemeInput, ThemeText, ThemeButton } from '@/components/common/ThemeText';
 
 export default function ShowroomSelector() {
     const {
@@ -39,23 +40,22 @@ export default function ShowroomSelector() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Chọn đại lý nhận xe</h2>
+            <SubHeading className="mb-6">Chọn đại lý nhận xe</SubHeading>
 
             {/* City Filter */}
             {customerInfo.City && (
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <FormLabel>
                         Lọc theo thành phố
-                    </label>
-                    <select
+                    </FormLabel>
+                    <ThemeSelect
                         value={selectedCity}
                         onChange={(e) => setSelectedCity(e.target.value)}
-                        className="w-full bg-background border-2 border-white/10 rounded-lg px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all"
+                        className="w-full bg-background border-2 rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-all"
                     >
                         <option value="">Tất cả showroom</option>
                         <option value={customerInfo.City}>{customerInfo.City}</option>
-                    </select>
+                    </ThemeSelect>
                 </div>
             )}
 
@@ -68,7 +68,7 @@ export default function ShowroomSelector() {
             ) : showrooms.length === 0 ? (
                 <div className="text-center py-12 bg-white/5 border border-white/10 rounded-xl">
                     <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-white font-semibold mb-2">Không tìm thấy showroom</p>
+                    <ThemeText className="font-semibold mb-2">Không tìm thấy showroom</ThemeText>
                     <p className="text-muted-foreground text-sm">
                         Vui lòng liên hệ hotline để được hỗ trợ
                     </p>
@@ -89,7 +89,7 @@ export default function ShowroomSelector() {
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-white mb-2">{showroom.Name}</h3>
+                                    <SectionHeading className="mb-2">{showroom.Name}</SectionHeading>
 
                                     <div className="space-y-2">
                                         <div className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -146,28 +146,26 @@ export default function ShowroomSelector() {
             {/* Appointment Date (Optional) */}
             {selectedShowroom && (
                 <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <FormLabel>
                         Đặt lịch nhận xe <span className="text-muted-foreground text-xs">(Tùy chọn)</span>
-                    </label>
-                    <input
+                    </FormLabel>
+                    <ThemeInput
                         type="datetime-local"
                         value={appointmentDate ? new Date(appointmentDate.getTime() - appointmentDate.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''}
                         onChange={(e) => setAppointmentDate(e.target.value ? new Date(e.target.value) : null)}
-                        className="w-full bg-background border-2 border-white/10 rounded-lg px-4 py-3 text-white
-                       focus:outline-none focus:border-primary transition-all"
+                        className="w-full bg-background border-2 rounded-lg px-4 py-3 focus:outline-none focus:border-primary transition-all"
                     />
                 </div>
             )}
 
             {/* Action Buttons */}
             <div className="flex gap-4">
-                <button
+                <ThemeButton
                     onClick={goToPreviousStep}
-                    className="flex-1 bg-white/5 text-white px-8 py-4 rounded-full font-bold 
-                     border-2 border-white/10 hover:border-primary/50 transition-all"
+                    className="flex-1 bg-white/5 px-8 py-4 rounded-full font-bold border-2 border-white/10 hover:border-primary/50 transition-all"
                 >
                     Quay lại
-                </button>
+                </ThemeButton>
                 <button
                     onClick={handleContinue}
                     disabled={!selectedShowroom}

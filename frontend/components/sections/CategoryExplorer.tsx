@@ -99,7 +99,7 @@ export default function CategoryExplorer() {
             <div className="container mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                             Khám Phá Danh Mục
                         </h2>
                         <p className="text-gray-400">
@@ -108,7 +108,17 @@ export default function CategoryExplorer() {
                     </div>
                     <Link
                         href="/cars"
-                        className="flex items-center gap-2 text-primary hover:text-white transition-colors font-medium group"
+                        className="flex items-center gap-2 font-medium transition-colors group"
+                        style={{
+                            color: '#00b8d4'
+                        }}
+                        onMouseEnter={(e) => {
+                            const isDark = document.documentElement.classList.contains('dark');
+                            e.currentTarget.style.color = isDark ? '#ffffff' : '#374151';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#00b8d4';
+                        }}
                     >
                         Xem tất cả sản phẩm
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -132,19 +142,19 @@ export default function CategoryExplorer() {
                                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
 
-                                {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                                {/* Gradient Overlay - Theme aware */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent dark:from-black/90 dark:via-black/40 opacity-80 group-hover:opacity-90 transition-opacity" />
 
                                 {/* Content */}
                                 <div className="absolute inset-0 p-8 flex flex-col justify-end">
                                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         <span
-                                            className={`inline-block px-3 py-1 rounded-full text-xs font-bold text-white mb-3 shadow-lg ${colorStyle.className}`}
+                                            className={`inline-block px-3 py-1 rounded-full text-xs font-bold text-foreground dark:text-white mb-3 shadow-lg ${colorStyle.className}`}
                                             style={colorStyle.style}
                                         >
                                             {cat.subtitle}
                                         </span>
-                                        <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                                        <h3 className="text-foreground dark:text-white text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
                                             {cat.title}
                                         </h3>
                                         <div className="flex items-center gap-2 text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">

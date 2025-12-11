@@ -6,6 +6,7 @@ import { trackOrder } from '@/lib/order-api';
 import { Order } from '@/types/order';
 import { Search, Loader2 } from 'lucide-react';
 import OrderItem from '@/components/account/OrderItem';
+import { SectionHeading, ThemeInput } from '@/components/common/ThemeText';
 
 export default function TrackingForm() {
     const searchParams = useSearchParams();
@@ -58,19 +59,19 @@ export default function TrackingForm() {
     return (
         <div className="space-y-8">
             <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-xl mx-auto">
-                <h3 className="text-xl font-bold text-white mb-6 text-center">Tra cứu đơn hàng</h3>
+                <SectionHeading className="mb-6 text-center">Tra cứu đơn hàng</SectionHeading>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-muted-foreground mb-1">
                             Mã đơn hàng
                         </label>
-                        <input
+                        <ThemeInput
                             type="text"
                             value={orderCode}
                             onChange={(e) => setOrderCode(e.target.value.toUpperCase())}
                             placeholder="VD: DH123456"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary transition-colors"
+                            className="w-full bg-white/5 border rounded-lg px-4 py-3 placeholder:text-gray-500 focus:outline-none focus:border-primary transition-colors"
                             required
                         />
                     </div>
@@ -79,12 +80,12 @@ export default function TrackingForm() {
                         <label className="block text-sm font-medium text-muted-foreground mb-1">
                             Số điện thoại đặt hàng
                         </label>
-                        <input
+                        <ThemeInput
                             type="tel"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Nhập số điện thoại"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary transition-colors"
+                            className="w-full bg-white/5 border rounded-lg px-4 py-3 placeholder:text-gray-500 focus:outline-none focus:border-primary transition-colors"
                             required
                         />
                     </div>
@@ -112,7 +113,7 @@ export default function TrackingForm() {
 
             {foundOrder && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <h3 className="text-xl font-bold text-white mb-4">Kết quả tra cứu</h3>
+                    <SectionHeading className="mb-4">Kết quả tra cứu</SectionHeading>
                     <OrderItem order={foundOrder} />
                 </div>
             )}

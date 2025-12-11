@@ -189,7 +189,7 @@ export default function QuickFinder() {
                         <div className="w-full border-t border-gray-800" />
                     </div>
                     <div className="relative flex justify-center text-xs">
-                        <span className="bg-card px-3 text-gray-500 font-medium">HOẶC TÌM KIẾM CHI TIẾT</span>
+                        <span className="px-3 text-gray-500 font-medium">HOẶC TÌM KIẾM CHI TIẾT</span>
                     </div>
                 </div>
 

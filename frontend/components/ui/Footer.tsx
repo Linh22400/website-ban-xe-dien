@@ -10,7 +10,7 @@ export default function Footer() {
             <div className="border-b border-white/10 bg-gradient-to-r from-primary/5 to-accent/5">
                 <div className="container mx-auto px-6 py-8">
                     <div className="max-w-2xl mx-auto text-center">
-                        <h3 className="text-2xl font-bold text-white mb-2">
+                        <h3 className="text-2xl font-bold text-foreground mb-2">
                             Đăng Ký Nhận Tin Khuyến Mãi
                         </h3>
                         <p className="text-muted-foreground mb-4 text-sm">
@@ -20,7 +20,7 @@ export default function Footer() {
                             <input
                                 type="email"
                                 placeholder="Nhập email của bạn..."
-                                className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                                className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                             <button
                                 type="submit"
@@ -75,7 +75,7 @@ export default function Footer() {
 
                     {/* Column 2: Products */}
                     <div>
-                        <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Sản Phẩm</h4>
+                        <h4 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">Sản Phẩm</h4>
                         <ul className="space-y-3 text-sm">
                             <li>
                                 <Link href="/cars?type=motorcycle" className="text-muted-foreground hover:text-primary transition-colors">
@@ -107,7 +107,7 @@ export default function Footer() {
 
                     {/* Column 3: Support */}
                     <div>
-                        <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Hỗ Trợ</h4>
+                        <h4 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">Hỗ Trợ</h4>
                         <ul className="space-y-3 text-sm">
                             <li>
                                 <Link href="/faq" className="text-muted-foreground hover:text-primary transition-colors">
@@ -144,7 +144,7 @@ export default function Footer() {
 
                     {/* Column 4: Legal */}
                     <div>
-                        <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Chính Sách</h4>
+                        <h4 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">Chính Sách</h4>
                         <ul className="space-y-3 text-sm">
                             <li>
                                 <Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">
@@ -181,12 +181,12 @@ export default function Footer() {
 
                     {/* Column 5: Contact */}
                     <div>
-                        <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Liên Hệ</h4>
+                        <h4 className="font-bold text-foreground mb-4 text-sm uppercase tracking-wider">Liên Hệ</h4>
                         <ul className="space-y-3 text-sm text-muted-foreground">
                             <li className="flex items-start gap-2">
                                 <Phone className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <div className="font-semibold text-white">Hotline</div>
+                                    <div className="font-semibold text-foreground">Hotline</div>
                                     <a href="tel:1900xxxx" className="hover:text-primary transition-colors">
                                         1900 XXXX (Miễn phí)
                                     </a>
@@ -195,7 +195,7 @@ export default function Footer() {
                             <li className="flex items-start gap-2">
                                 <Mail className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <div className="font-semibold text-white">Email</div>
+                                    <div className="font-semibold text-foreground">Email</div>
                                     <a href="mailto:support@xedienviet.com" className="hover:text-primary transition-colors">
                                         support@xedienviet.com
                                     </a>
@@ -204,14 +204,14 @@ export default function Footer() {
                             <li className="flex items-start gap-2">
                                 <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <div className="font-semibold text-white">Địa Chỉ</div>
+                                    <div className="font-semibold text-foreground">Địa Chỉ</div>
                                     <span>123 Đường ABC, Quận 1<br />TP. Hồ Chí Minh</span>
                                 </div>
                             </li>
                             <li className="flex items-start gap-2">
                                 <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <div className="font-semibold text-white">Giờ Làm Việc</div>
+                                    <div className="font-semibold text-foreground">Giờ Làm Việc</div>
                                     <span>T2-T6: 8:00 - 18:00<br />T7-CN: 8:00 - 17:00</span>
                                 </div>
                             </li>
@@ -224,50 +224,50 @@ export default function Footer() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Payment Methods */}
                         <div>
-                            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
+                            <h4 className="text-foreground font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
                                 <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full"></div>
                                 Phương Thức Thanh Toán
                             </h4>
                             <div className="grid grid-cols-3 gap-2">
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">VISA</div>
+                                    <div className="text-foreground font-bold text-xs">VISA</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">MasterCard</div>
+                                    <div className="text-foreground font-bold text-xs">MasterCard</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">MoMo</div>
+                                    <div className="text-foreground font-bold text-xs">MoMo</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">ZaloPay</div>
+                                    <div className="text-foreground font-bold text-xs">ZaloPay</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">Ngân Hàng</div>
+                                    <div className="text-foreground font-bold text-xs">Ngân Hàng</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">Tiền Mặt</div>
+                                    <div className="text-foreground font-bold text-xs">Tiền Mặt</div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Shipping Partners */}
                         <div>
-                            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
+                            <h4 className="text-foreground font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
                                 <div className="w-1 h-5 bg-gradient-to-b from-accent to-primary rounded-full"></div>
                                 Đơn Vị Vận Chuyển
                             </h4>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">Giao Hàng Nhanh</div>
+                                    <div className="text-foreground font-bold text-xs">Giao Hàng Nhanh</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">Grab Express</div>
+                                    <div className="text-foreground font-bold text-xs">Grab Express</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">GHTK</div>
+                                    <div className="text-foreground font-bold text-xs">GHTK</div>
                                 </div>
                                 <div className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/30 rounded-lg p-3 transition-all text-center">
-                                    <div className="text-white font-bold text-xs">Viettel Post</div>
+                                    <div className="text-foreground font-bold text-xs">Viettel Post</div>
                                 </div>
                             </div>
                         </div>
@@ -277,7 +277,7 @@ export default function Footer() {
                 {/* Brand Partners */}
                 <div className="border-t border-white/10 pt-8 pb-4">
                     <div className="text-center mb-6">
-                        <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-1 inline-flex items-center gap-2">
+                        <h4 className="text-foreground font-bold text-sm uppercase tracking-wider mb-1 inline-flex items-center gap-2">
                             <div className="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
                             Thương Hiệu Chính Hãng
                             <div className="w-8 h-px bg-gradient-to-r from-transparent via-accent to-transparent"></div>
@@ -286,22 +286,22 @@ export default function Footer() {
                     </div>
                     <div className="flex flex-wrap justify-center gap-3">
                         <div className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg transition-all">
-                            <span className="text-white font-bold text-sm">VinFast</span>
+                            <span className="text-foreground font-bold text-sm">VinFast</span>
                         </div>
                         <div className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg transition-all">
-                            <span className="text-white font-bold text-sm">Yadea</span>
+                            <span className="text-foreground font-bold text-sm">Yadea</span>
                         </div>
                         <div className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg transition-all">
-                            <span className="text-white font-bold text-sm">Giant</span>
+                            <span className="text-foreground font-bold text-sm">Giant</span>
                         </div>
                         <div className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg transition-all">
-                            <span className="text-white font-bold text-sm">Pega</span>
+                            <span className="text-foreground font-bold text-sm">Pega</span>
                         </div>
                         <div className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg transition-all">
-                            <span className="text-white font-bold text-sm">Dibao</span>
+                            <span className="text-foreground font-bold text-sm">Dibao</span>
                         </div>
                         <div className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg transition-all">
-                            <span className="text-white font-bold text-sm">Dat Bike</span>
+                            <span className="text-foreground font-bold text-sm">Dat Bike</span>
                         </div>
                     </div>
                 </div>

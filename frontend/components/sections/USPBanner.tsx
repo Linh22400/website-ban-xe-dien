@@ -55,7 +55,7 @@ export default function USPBanner() {
                                     </div>
 
                                     {/* Content */}
-                                    <h3 className="text-lg font-bold text-white mb-1">
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                                         {item.title}
                                     </h3>
                                     <p className="text-sm text-gray-400">

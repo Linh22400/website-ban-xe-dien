@@ -5,6 +5,7 @@ import { useCart } from '@/lib/cart-context';
 import { CheckCircle, Calendar, MapPin, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
+import { SubHeading, SectionHeading, ThemeText } from '@/components/common/ThemeText';
 
 export default function OrderSuccess() {
     const { createdOrder, resetCheckout } = useCheckout();
@@ -27,7 +28,7 @@ export default function OrderSuccess() {
                 <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6 animate-bounce">
                     <CheckCircle className="w-10 h-10 text-primary" />
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-2">Đặt hàng thành công!</h2>
+                <SubHeading className="mb-2">Đặt hàng thành công!</SubHeading>
                 <p className="text-muted-foreground max-w-md mx-auto">
                     Cảm ơn bạn đã tin tưởng và lựa chọn Xe Điện Xanh.
                     Mã đơn hàng của bạn là <span className="text-primary font-bold">#{createdOrder.OrderCode}</span>
@@ -35,25 +36,25 @@ export default function OrderSuccess() {
             </div>
 
             <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-2xl mx-auto text-left">
-                <h3 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-4">
+                <SectionHeading className="mb-6 border-b border-white/10 pb-4">
                     Thông tin đơn hàng
-                </h3>
+                </SectionHeading>
 
                 <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                         <div>
                             <p className="text-sm text-muted-foreground mb-1">Khách hàng</p>
-                            <p className="font-medium text-white">{createdOrder.CustomerInfo?.FullName || 'N/A'}</p>
+                            <ThemeText className="font-medium">{createdOrder.CustomerInfo?.FullName || 'N/A'}</ThemeText>
                             <p className="text-sm text-white/70">{createdOrder.CustomerInfo?.Phone || 'N/A'}</p>
                             <p className="text-sm text-white/70">{createdOrder.CustomerInfo?.Email || 'N/A'}</p>
                         </div>
 
                         <div>
                             <p className="text-sm text-muted-foreground mb-1">Phương thức thanh toán</p>
-                            <p className="font-medium text-white">
+                            <ThemeText className="font-medium">
                                 {createdOrder.PaymentMethod === 'deposit' ? 'Đặt cọc online' :
                                     createdOrder.PaymentMethod === 'full_payment' ? 'Thanh toán đầy đủ' : 'Trả góp'}
-                            </p>
+                            </ThemeText>
                             <p className="text-sm text-primary font-bold">
                                 {(() => {
                                     // Use cart total + VAT for consistency with checkout
@@ -84,11 +85,11 @@ export default function OrderSuccess() {
                                     <MapPin className="w-4 h-4" />
                                     <span>Nơi nhận xe</span>
                                 </div>
-                                <p className="font-medium text-white">
+                                <ThemeText className="font-medium">
                                     {typeof createdOrder.SelectedShowroom === 'object'
                                         ? createdOrder.SelectedShowroom.Name
                                         : `Showroom #${createdOrder.SelectedShowroom}`}
-                                </p>
+                                </ThemeText>
                             </div>
                         )}
 
@@ -98,9 +99,9 @@ export default function OrderSuccess() {
                                     <Calendar className="w-4 h-4" />
                                     <span>Lịch hẹn</span>
                                 </div>
-                                <p className="font-medium text-white">
+                                <ThemeText className="font-medium">
                                     {new Date(createdOrder.AppointmentDate).toLocaleDateString('vi-VN')}
-                                </p>
+                                </ThemeText>
                             </div>
                         )}
                     </div>

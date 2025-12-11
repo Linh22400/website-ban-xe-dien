@@ -3,6 +3,7 @@
 import { Car } from "@/lib/api";
 import { motion } from "framer-motion";
 import ProductGallery from "./ProductGallery";
+import { ProductHeading, StatValue } from './ProductTextComponents';
 
 interface ProductHeroProps {
     car: Car;
@@ -38,9 +39,9 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                                 </span>
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight">
+                            <ProductHeading>
                                 {car.name}
-                            </h1>
+                            </ProductHeading>
 
                             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                                 {car.description}
@@ -55,17 +56,17 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                             className="grid grid-cols-3 gap-6 py-8 border-y border-white/10"
                         >
                             <div>
-                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">{car.range}</div>
+                                <StatValue className="mb-1">{car.range}</StatValue>
                                 <div className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Km / Lần sạc</div>
                             </div>
                             <div>
-                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">{car.topSpeed}</div>
+                                <StatValue className="mb-1">{car.topSpeed}</StatValue>
                                 <div className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Km/h Tối đa</div>
                             </div>
                             <div>
-                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                                <StatValue className="mb-1">
                                     {car.acceleration > 0 ? car.acceleration : 'N/A'}
-                                </div>
+                                </StatValue>
                                 <div className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Giây 0-50km/h</div>
                             </div>
                         </motion.div>

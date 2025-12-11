@@ -55,13 +55,13 @@ export default async function BlogPage() {
                                             <div className="text-xs text-muted-foreground">{post.readingTime} phút đọc</div>
                                         )}
                                     </div>
-                                    <h2 className="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                                    <h2 className="text-xl font-bold text-gray mb-3 group-hover:text-primary transition-colors line-clamp-2">
                                         {post.title}
                                     </h2>
                                     <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-grow">
                                         {post.excerpt}
                                     </p>
-                                    <div className="flex items-center text-sm font-bold text-white group-hover:text-primary transition-colors">
+                                    <div className="flex items-center text-sm font-bold text-gray group-hover:text-primary transition-colors">
                                         Đọc Bài Viết <span className="ml-2">→</span>
                                     </div>
                                 </div>

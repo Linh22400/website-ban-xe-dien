@@ -12,6 +12,7 @@ import Pagination from "@/components/product/Pagination";
 import Link from "next/link";
 import { Filter } from "lucide-react";
 import type { Car } from "@/lib/api";
+import { PageTitle, BreadcrumbText, ResultCount, EmptyStateTitle } from "@/components/cars/CarsPageComponents";
 
 export default function CarsPage() {
     const searchParams = useSearchParams();
@@ -87,13 +88,13 @@ export default function CarsPage() {
             {/* Header */}
             <div className="bg-secondary/30 border-b border-white/5 py-12 mb-8">
                 <div className="container mx-auto px-6">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                    <PageTitle>
                         Danh Sách Sản Phẩm
-                    </h1>
+                    </PageTitle>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Link href="/" className="hover:text-primary transition-colors">Trang Chủ</Link>
                         <span>/</span>
-                        <span className="text-white">Sản Phẩm</span>
+                        <BreadcrumbText>Sản Phẩm</BreadcrumbText>
                     </div>
                 </div>
             </div>
@@ -129,7 +130,7 @@ export default function CarsPage() {
                         <div className="sticky top-20 lg:top-0 z-30 bg-background/95 backdrop-blur-lg lg:bg-transparent lg:backdrop-blur-none mb-6">
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 lg:p-4 bg-card/30 rounded-xl border border-white/5">
                                 <div className="text-sm text-muted-foreground">
-                                    Hiển thị <span className="text-white font-bold">{cars.length}</span> sản phẩm
+                                    Hiển thị <ResultCount>{cars.length}</ResultCount> sản phẩm
                                 </div>
                                 <ProductSort />
                             </div>
@@ -167,7 +168,7 @@ export default function CarsPage() {
                         ) : (
                             <div className="text-center py-20 bg-card/30 rounded-2xl border border-white/5">
                                 <div className="text-4xl mb-4">🔍</div>
-                                <h3 className="text-xl font-bold text-white mb-2">Không tìm thấy sản phẩm</h3>
+                                <EmptyStateTitle>Không tìm thấy sản phẩm</EmptyStateTitle>
                                 <p className="text-muted-foreground">
                                     Vui lòng thử lại với bộ lọc khác.
                                 </p>

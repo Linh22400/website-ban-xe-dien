@@ -87,7 +87,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
     };
 
     return (
-        <div className="group block bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative">
+        <div className="group block bg-white dark:bg-card rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-white/5 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
             {/* Toast Notification */}
             {showToast && (
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-primary text-black text-sm font-bold rounded-full shadow-lg animate-bounce">
@@ -96,7 +96,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
             )}
 
             {/* Image Container */}
-            <Link href={`/cars/${car.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-gray-900">
+            <Link href={`/cars/${car.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
                 <Image
                     src={displayImage}
                     alt={car.name}
@@ -135,7 +135,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                     onClick={handleWishlistClick}
                     className={`absolute top-3 right-3 ${discountPercent > 0 ? 'top-14' : 'top-3'} w-10 h-10 rounded-full flex items-center justify-center transition-all backdrop-blur-sm ${inWishlist
                         ? 'bg-red-500 text-white hover:bg-red-600'
-                        : 'bg-black/40 hover:bg-black/60 text-white border border-white/20 shadow-lg'
+                        : 'bg-card/40 hover:bg-card/60 text-foreground border border-border shadow-lg'
                         }`}
                     title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                 >
@@ -147,7 +147,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
             <div className="p-5">
                 <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">{car.brand}</div>
                 <Link href={`/cars/${car.slug}`}>
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-1">
                         {car.name}
                     </h3>
                 </Link>

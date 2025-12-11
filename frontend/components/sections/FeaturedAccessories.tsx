@@ -95,7 +95,7 @@ export default function FeaturedAccessories() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
                             Phụ Kiện & Pin
                         </h2>
                         <p className="text-muted-foreground">
@@ -104,9 +104,19 @@ export default function FeaturedAccessories() {
                     </div>
                     <Link
                         href="/accessories"
-                        className="group flex items-center gap-2 text-primary hover:text-white transition-colors"
+                        className="group flex items-center gap-2 font-semibold transition-colors"
+                        style={{
+                            color: '#00b8d4'
+                        }}
+                        onMouseEnter={(e) => {
+                            const isDark = document.documentElement.classList.contains('dark');
+                            e.currentTarget.style.color = isDark ? '#ffffff' : '#374151';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#00b8d4';
+                        }}
                     >
-                        <span className="font-semibold">Xem tất cả</span>
+                        Xem tất cả
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
@@ -120,7 +130,7 @@ export default function FeaturedAccessories() {
                         return (
                             <div
                                 key={accessory.id}
-                                className="group bg-card/30 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 relative"
+                                className="group bg-white dark:bg-card border-2 border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/10 relative"
                             >
                                 {/* Toast Notification */}
                                 {showToast && (
@@ -160,7 +170,7 @@ export default function FeaturedAccessories() {
                                 {/* Info */}
                                 <div className="p-6">
                                     <Link href={`/accessories/${accessory.slug}`}>
-                                        <h3 className="font-bold text-white mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                                        <h3 className="font-bold text-gray-900 dark:text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                                             {accessory.name}
                                         </h3>
                                     </Link>

@@ -12,6 +12,7 @@ import CartImageGallery from '@/components/cart/CartImageGallery';
 import ImageModal from '@/components/cart/ImageModal';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, ShoppingCart } from 'lucide-react';
+import { PageHeading, SubHeading, SectionHeading, ThemeText, ThemeDiv } from '@/components/common/ThemeText';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart-context';
@@ -91,16 +92,16 @@ function CheckoutContent() {
                         <Link href="/cart" className="text-muted-foreground hover:text-primary transition-colors">
                             <ArrowLeft className="w-5 h-5" />
                         </Link>
-                        <h1 className="text-3xl md:text-4xl font-bold text-white">
+                        <PageHeading className="mb-4">
                             Đặt cọc / Mua xe
-                        </h1>
+                        </PageHeading>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Link href="/" className="hover:text-primary transition-colors">Trang chủ</Link>
                         <span>/</span>
                         <Link href="/cart" className="hover:text-primary transition-colors">Giỏ hàng</Link>
                         <span>/</span>
-                        <span className="text-white">Thanh toán</span>
+                        <ThemeText>Thanh toán</ThemeText>
                     </div>
                 </div>
             </div>
@@ -156,7 +157,7 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
     if (currentStep === 1) {
         return (
             <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-white mb-6">Xác Nhận Đơn Hàng</h2>
+                <SubHeading className="mb-6">Xác Nhận Đơn Hàng</SubHeading>
 
                 {/* Cart Items Review */}
                 <div className="space-y-4">
@@ -176,9 +177,9 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
 
                                 {/* Details */}
                                 <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-white">
+                                    <SectionHeading>
                                         {item.name}
-                                    </h3>
+                                    </SectionHeading>
 
                                     {/* Color Badge */}
                                     {item.colorName && item.colorName !== "Mặc định" && (
@@ -193,18 +194,18 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
                                     <div className="mt-4 space-y-2">
                                         <div className="flex justify-between text-sm">
                                             <span className="text-muted-foreground">Đơn giá:</span>
-                                            <span className="text-white font-semibold">
+                                            <ThemeText className="font-semibold">
                                                 {item.price.toLocaleString("vi-VN")} VNĐ
-                                            </span>
+                                            </ThemeText>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-muted-foreground">Số lượng:</span>
-                                            <span className="text-white font-semibold">
+                                            <ThemeText className="font-semibold">
                                                 {item.quantity}
-                                            </span>
+                                            </ThemeText>
                                         </div>
                                         <div className="flex justify-between text-base pt-2 border-t border-white/10">
-                                            <span className="text-white font-bold">Tổng:</span>
+                                            <ThemeText className="font-bold">Tổng:</ThemeText>
                                             <span className="text-primary font-bold">
                                                 {(item.price * item.quantity).toLocaleString("vi-VN")} VNĐ
                                             </span>
@@ -218,7 +219,7 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
 
                 {/* Total Summary with Breakdown */}
                 <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/30 rounded-xl p-6 space-y-3">
-                    <h3 className="text-lg font-bold text-white mb-3">Chi Tiết Thanh Toán</h3>
+                    <SectionHeading className="mb-3">Chi Tiết Thanh Toán</SectionHeading>
 
                     {/* Original Price (if items have originalPrice) */}
                     {items.some(item => item.originalPrice) && (
@@ -254,17 +255,17 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
                         <span className="text-muted-foreground">
                             Tạm tính ({items.length} sản phẩm):
                         </span>
-                        <span className="text-white font-semibold">
+                        <ThemeText className="font-semibold">
                             {total.toLocaleString("vi-VN")} VNĐ
-                        </span>
+                        </ThemeText>
                     </div>
 
                     {/* VAT */}
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">VAT (10%):</span>
-                        <span className="text-white font-semibold">
+                        <ThemeText className="font-semibold">
                             {(total * 0.1).toLocaleString("vi-VN")} VNĐ
-                        </span>
+                        </ThemeText>
                     </div>
 
                     {/* Shipping - FREE */}
@@ -280,9 +281,9 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
                         <div className="flex justify-between items-center">
                             <div>
                                 <p className="text-sm text-muted-foreground mb-1">Tổng thanh toán</p>
-                                <p className="text-3xl font-bold text-white">
+                                <ThemeText className="text-3xl font-bold">
                                     {(total + total * 0.1).toLocaleString("vi-VN")} VNĐ
-                                </p>
+                                </ThemeText>
                                 {items.some(item => item.originalPrice) && (
                                     <p className="text-xs text-primary mt-1">
                                         Tiết kiệm: {items.reduce((sum, item) => {
@@ -331,7 +332,7 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
                 <div className="inline-block p-4 rounded-full bg-primary/10 mb-4">
                     <Loader2 className="w-8 h-8 text-primary animate-spin" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Đang xử lý đơn hàng...</h2>
+                <SubHeading className="mb-2">Đang xử lý đơn hàng...</SubHeading>
                 <p className="text-muted-foreground">Vui lòng không tắt trình duyệt</p>
             </div>
         );

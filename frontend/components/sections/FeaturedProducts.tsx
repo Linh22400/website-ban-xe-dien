@@ -55,7 +55,7 @@ export default function FeaturedProducts() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
                             Sản Phẩm Nổi Bật
                         </h2>
                         <p className="text-muted-foreground">
@@ -64,9 +64,19 @@ export default function FeaturedProducts() {
                     </div>
                     <Link
                         href="/cars"
-                        className="group flex items-center gap-2 text-primary hover:text-white transition-colors"
+                        className="group flex items-center gap-2 font-semibold transition-colors"
+                        style={{
+                            color: '#00b8d4' // primary color
+                        }}
+                        onMouseEnter={(e) => {
+                            const isDark = document.documentElement.classList.contains('dark');
+                            e.currentTarget.style.color = isDark ? '#ffffff' : '#374151'; // white in dark, gray-700 in light
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#00b8d4'; // back to primary
+                        }}
                     >
-                        <span className="font-semibold">Xem tất cả</span>
+                        Xem tất cả
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>

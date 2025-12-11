@@ -102,7 +102,7 @@ export default function SmartFeatures() {
                                             {feature.subtitle}
                                         </span>
                                     </div>
-                                    <h3 className="text-3xl font-bold text-white mb-3 group-hover:text-primary transition-colors">
+                                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary transition-colors">
                                         {feature.title}
                                     </h3>
                                     <p className="text-gray-300 leading-relaxed transform transition-all duration-500 translate-y-4 opacity-80 group-hover:translate-y-0 group-hover:opacity-100">

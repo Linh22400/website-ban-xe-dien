@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
 import CartImageGallery from "@/components/cart/CartImageGallery";
 import ImageModal from "@/components/cart/ImageModal";
+import { ThemeDiv, ThemeLink, ThemeText } from "@/components/common/ThemeText";
 
 export default function CartPage() {
     const { items, removeFromCart, updateQuantity, clearCart, total, itemCount } = useCart();
@@ -24,7 +25,7 @@ export default function CartPage() {
                         <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                             <ShoppingBag className="w-12 h-12 text-muted-foreground" />
                         </div>
-                        <h1 className="text-3xl font-bold text-white mb-4">Giỏ Hàng Trống</h1>
+                        <h1 className="text-3xl font-bold text-foreground mb-4">Giỏ Hàng Trống</h1>
                         <p className="text-muted-foreground mb-8">
                             Bạn chưa có sản phẩm nào trong giỏ hàng. Hãy khám phá các sản phẩm tuyệt vời!
                         </p>
@@ -47,7 +48,7 @@ export default function CartPage() {
                 <div className="max-w-6xl mx-auto">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-white mb-2">Giỏ Hàng Của Bạn</h1>
+                        <h1 className="text-3xl font-bold text-foreground mb-2">Giỏ Hàng Của Bạn</h1>
                         <p className="text-muted-foreground">
                             {itemCount} sản phẩm trong giỏ hàng
                         </p>
@@ -79,7 +80,7 @@ export default function CartPage() {
                                         <div className="flex-1">
                                             <Link
                                                 href={`/cars/${item.slug}`}
-                                                className="text-lg font-bold text-white hover:text-primary transition-colors"
+                                                className="text-lg font-bold text-foreground hover:text-primary transition-colors"
                                             >
                                                 {item.name}
                                             </Link>
@@ -136,16 +137,16 @@ export default function CartPage() {
                                                         onClick={() => updateQuantity(item.id, item.quantity - 1, item.colorName)}
                                                         className="p-2 hover:bg-white/10 transition-colors"
                                                     >
-                                                        <Minus className="w-4 h-4 text-white" />
+                                                        <Minus className="w-4 h-4" style={{ color: 'currentColor' }} />
                                                     </button>
-                                                    <span className="px-4 text-white font-bold">
+                                                    <ThemeText className="px-4 font-bold">
                                                         {item.quantity}
-                                                    </span>
+                                                    </ThemeText>
                                                     <button
                                                         onClick={() => updateQuantity(item.id, item.quantity + 1, item.colorName)}
                                                         className="p-2 hover:bg-white/10 transition-colors"
                                                     >
-                                                        <Plus className="w-4 h-4 text-white" />
+                                                        <Plus className="w-4 h-4" style={{ color: 'currentColor' }} />
                                                     </button>
                                                 </div>
 
@@ -161,9 +162,9 @@ export default function CartPage() {
                                         {/* Subtotal */}
                                         <div className="text-right">
                                             <p className="text-sm text-muted-foreground mb-1">Tổng</p>
-                                            <p className="text-xl font-bold text-white">
+                                            <ThemeText className="text-xl font-bold">
                                                 {(item.price * item.quantity).toLocaleString("vi-VN")} VNĐ
-                                            </p>
+                                            </ThemeText>
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +182,7 @@ export default function CartPage() {
                         {/* Order Summary */}
                         <div className="lg:col-span-1">
                             <div className="bg-card border border-white/10 rounded-xl p-6 sticky top-32">
-                                <h2 className="text-xl font-bold text-white mb-6">Tổng Đơn Hàng</h2>
+                                <h2 className="text-xl font-bold text-foreground mb-6">Tổng Đơn Hàng</h2>
 
                                 <div className="space-y-4 mb-6">
                                     <div className="flex justify-between text-muted-foreground">
@@ -192,10 +193,10 @@ export default function CartPage() {
                                         <span>Phí vận chuyển</span>
                                         <span className="text-primary">Miễn phí</span>
                                     </div>
-                                    <div className="border-t border-white/10 pt-4 flex justify-between text-white font-bold text-lg">
+                                    <ThemeDiv className="border-t border-white/10 pt-4 flex justify-between font-bold text-lg">
                                         <span>Tổng cộng</span>
                                         <span className="text-primary">{total.toLocaleString("vi-VN")} VNĐ</span>
-                                    </div>
+                                    </ThemeDiv>
                                 </div>
 
                                 <Link
@@ -205,12 +206,12 @@ export default function CartPage() {
                                     Tiến Hành Thanh Toán
                                 </Link>
 
-                                <Link
+                                <ThemeLink
                                     href="/cars"
-                                    className="block w-full text-center px-6 py-3 border-2 border-white/10 text-white font-semibold rounded-full hover:border-primary hover:text-primary transition-all"
+                                    className="block w-full text-center px-6 py-3 border-2 border-white/10 font-semibold rounded-full hover:border-primary hover:text-primary transition-all"
                                 >
                                     Tiếp Tục Mua Hàng
-                                </Link>
+                                </ThemeLink>
                             </div>
                         </div>
                     </div>

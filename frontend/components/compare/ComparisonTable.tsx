@@ -39,7 +39,7 @@ export default function ComparisonTable({ cars }: ComparisonTableProps) {
         return (
             <div className="text-center py-20 bg-card/30 rounded-2xl border border-white/5">
                 <div className="text-4xl mb-4">⚖️</div>
-                <h3 className="text-xl font-bold text-white mb-2">Chưa có xe nào để so sánh</h3>
+                <h3 className="text-xl font-bold text-gray mb-2">Chưa có xe nào để so sánh</h3>
                 <p className="text-muted-foreground mb-6">
                     Hãy thêm xe vào danh sách để bắt đầu so sánh.
                 </p>

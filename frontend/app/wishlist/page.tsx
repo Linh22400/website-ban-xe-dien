@@ -5,6 +5,7 @@ import { useCart } from "@/lib/cart-context";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingCart, Trash2, ArrowLeft } from "lucide-react";
+import { WishlistHeading, ProductName, ViewButton } from "@/components/wishlist/WishlistComponents";
 
 export default function WishlistPage() {
     const { items, removeFromWishlist, clearWishlist } = useWishlist();
@@ -29,7 +30,7 @@ export default function WishlistPage() {
                         <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                             <Heart className="w-12 h-12 text-muted-foreground" />
                         </div>
-                        <h1 className="text-3xl font-bold text-white mb-4">Danh Sách Yêu Thích Trống</h1>
+                        <WishlistHeading>Danh Sách Yêu Thích Trống</WishlistHeading>
                         <p className="text-muted-foreground mb-8">
                             Bạn chưa có sản phẩm yêu thích nào. Hãy lưu các sản phẩm ưa thích để dễ dàng tìm lại!
                         </p>
@@ -53,7 +54,7 @@ export default function WishlistPage() {
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h1 className="text-3xl font-bold text-white mb-2">Danh Sách Yêu Thích</h1>
+                            <WishlistHeading className="mb-2">Danh Sách Yêu Thích</WishlistHeading>
                             <p className="text-muted-foreground">
                                 {items.length} sản phẩm
                             </p>
@@ -85,18 +86,15 @@ export default function WishlistPage() {
                                         onClick={() => removeFromWishlist(item.id)}
                                         className="absolute top-4 right-4 p-2 bg-red-500/90 hover:bg-red-500 rounded-full transition-colors"
                                     >
-                                        <Trash2 className="w-5 h-5 text-white" />
+                                        <Trash2 className="w-5 h-5 text-gray-900 dark:text-white" />
                                     </button>
                                 </div>
 
                                 {/* Details */}
                                 <div className="p-6">
-                                    <Link
-                                        href={`/cars/${item.slug}`}
-                                        className="text-lg font-bold text-white hover:text-primary transition-colors line-clamp-2 mb-2 block"
-                                    >
+                                    <ProductName href={`/cars/${item.slug}`}>
                                         {item.name}
-                                    </Link>
+                                    </ProductName>
                                     <p className="text-primary font-bold text-2xl mb-4">
                                         {item.price.toLocaleString("vi-VN")} VNĐ
                                     </p>
@@ -109,12 +107,9 @@ export default function WishlistPage() {
                                             <ShoppingCart className="w-5 h-5" />
                                             Thêm Vào Giỏ
                                         </button>
-                                        <Link
-                                            href={`/cars/${item.slug}`}
-                                            className="px-4 py-3 border-2 border-white/10 text-white font-semibold rounded-full hover:border-primary hover:text-primary transition-all"
-                                        >
+                                        <ViewButton href={`/cars/${item.slug}`}>
                                             Xem
-                                        </Link>
+                                        </ViewButton>
                                     </div>
                                 </div>
                             </div>

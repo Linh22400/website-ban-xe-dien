@@ -5,6 +5,7 @@ import { sendOtp, verifyOtp, getUserOrders } from '@/lib/order-api';
 import { Order } from '@/types/order';
 import { Loader2, Send, Lock, Phone, LogOut } from 'lucide-react';
 import OrderList from '@/components/account/OrderList';
+import { SectionHeading, ThemeText, ThemeInput } from '@/components/common/ThemeText';
 
 export default function OtpLoginForm() {
     const [step, setStep] = useState<'phone' | 'otp' | 'orders'>('phone');
@@ -99,7 +100,7 @@ export default function OtpLoginForm() {
                             {user?.name?.[0] || 'U'}
                         </div>
                         <div>
-                            <p className="font-medium text-white">{user?.name || 'Khách hàng'}</p>
+                            <ThemeText className="font-medium">{user?.name || 'Khách hàng'}</ThemeText>
                             <p className="text-sm text-muted-foreground">{user?.phone || phone}</p>
                         </div>
                     </div>
@@ -112,7 +113,7 @@ export default function OtpLoginForm() {
                     </button>
                 </div>
 
-                <h3 className="text-xl font-bold text-white">Lịch sử đơn hàng ({orders.length})</h3>
+                <SectionHeading>Lịch sử đơn hàng ({orders.length})</SectionHeading>
                 <OrderList orders={orders} isLoading={isLoading} />
             </div>
         );
@@ -120,9 +121,9 @@ export default function OtpLoginForm() {
 
     return (
         <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-xl mx-auto">
-            <h3 className="text-xl font-bold text-white mb-6 text-center">
+            <SectionHeading className="mb-6 text-center">
                 {step === 'phone' ? 'Đăng nhập bằng SĐT' : 'Nhập mã xác thực'}
-            </h3>
+            </SectionHeading>
 
             {step === 'phone' ? (
                 <form onSubmit={handleSendOtp} className="space-y-4">
@@ -132,12 +133,12 @@ export default function OtpLoginForm() {
                         </label>
                         <div className="relative">
                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                            <input
+                            <ThemeInput
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 placeholder="Nhập số điện thoại của bạn"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-white/5 border rounded-lg pl-10 pr-4 py-3 placeholder:text-gray-500 focus:outline-none focus:border-primary transition-colors"
                                 required
                             />
                         </div>
@@ -162,7 +163,7 @@ export default function OtpLoginForm() {
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
                     <div className="text-center mb-4">
                         <p className="text-muted-foreground text-sm">
-                            Mã OTP đã được gửi đến số <span className="text-white font-bold">{phone}</span>
+                            Mã OTP đã được gửi đến số <ThemeText className="font-bold">{phone}</ThemeText>
                         </p>
                         <button
                             type="button"
@@ -179,12 +180,12 @@ export default function OtpLoginForm() {
                         </label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                            <input
+                            <ThemeInput
                                 type="text"
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
                                 placeholder="Nhập mã 6 số"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary transition-colors tracking-widest text-center font-bold text-lg"
+                                className="w-full bg-white/5 border rounded-lg pl-10 pr-4 py-3 placeholder:text-gray-500 focus:outline-none focus:border-primary transition-colors tracking-widest text-center font-bold text-lg"
                                 required
                                 maxLength={6}
                             />

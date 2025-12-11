@@ -22,13 +22,13 @@ export default async function ComparePage({ searchParams }: PageProps) {
             {/* Header */}
             <div className="bg-secondary/30 border-b border-white/5 py-12 mb-8">
                 <div className="container mx-auto px-6">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-foreground">
                         So Sánh Xe
                     </h1>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Link href="/" className="hover:text-primary transition-colors">Trang Chủ</Link>
                         <span>/</span>
-                        <span className="text-white">So Sánh</span>
+                        <span className="text-gray">So Sánh</span>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
                     <p className="text-muted-foreground">
-                        Đang so sánh <span className="text-white font-bold">{cars.length}</span> / 3 xe
+                        Đang so sánh <span className="text-gray">{cars.length}</span> / 3 xe
                     </p>
                     <ComparisonSearch />
                 </div>

@@ -5,6 +5,7 @@ import { useCart } from '@/lib/cart-context';
 import { useState } from 'react';
 import { Check, CreditCard, Wallet, Building2, Calculator } from 'lucide-react';
 import { calculateInstallment } from '@/lib/order-api';
+import { ThemeText } from '@/components/common/ThemeText';
 
 export default function PaymentMethodSelector() {
     const {
@@ -33,7 +34,7 @@ export default function PaymentMethodSelector() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Chọn hình thức thanh toán</h2>
+            <ThemeText className="text-2xl font-bold text-white mb-6">Chọn hình thức thanh toán</ThemeText>
 
             {/* Full Payment */}
             <div
@@ -57,7 +58,7 @@ export default function PaymentMethodSelector() {
                         <CreditCard className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-2">Thanh toán đầy đủ</h3>
+                        <ThemeText className="text-xl font-bold text-white mb-2">Thanh toán đầy đủ</ThemeText>
                         <p className="text-3xl font-bold text-primary mb-3">
                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalAmount)}
                         </p>
@@ -101,7 +102,7 @@ export default function PaymentMethodSelector() {
                         <Wallet className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-2">Đặt cọc online</h3>
+                        <ThemeText className="text-xl font-bold text-white mb-2">Đặt cọc online</ThemeText>
                         <div className="flex items-baseline gap-2 mb-3">
                             <p className="text-3xl font-bold text-primary">3,000,000₫</p>
                             <span className="text-sm text-muted-foreground">(Cọc)</span>
@@ -146,7 +147,7 @@ export default function PaymentMethodSelector() {
                         <Building2 className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-2">Trả góp 0% lãi suất</h3>
+                        <ThemeText className="text-xl font-bold text-white mb-2">Trả góp 0% lãi suất</ThemeText>
                         <div className="flex items-center gap-2 mb-4">
                             <Calculator className="w-5 h-5 text-primary" />
                             <button

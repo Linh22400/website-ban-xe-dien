@@ -1,6 +1,7 @@
 "use client";
 
 import { Car } from "@/lib/api";
+import { SectionHeading, SpecValue } from './ProductTextComponents';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -30,9 +31,9 @@ export default function TechSpecs({ car }: TechSpecsProps) {
             <div className="container mx-auto px-4">
                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                        <SectionHeading className="mb-6">
                             Thông Số Kỹ Thuật
-                        </h2>
+                        </SectionHeading>
                         <p className="text-muted-foreground mb-8 text-lg">
                             Chi tiết cấu hình xe {car.name}. Mọi thông số đều được kiểm định nghiêm ngặt để đảm bảo hiệu suất tốt nhất.
                         </p>
@@ -72,7 +73,7 @@ export default function TechSpecs({ car }: TechSpecsProps) {
                                 className="grid grid-cols-2 p-5 bg-background/95 hover:bg-white/5 transition-colors"
                             >
                                 <span className="text-muted-foreground font-medium">{spec.label}</span>
-                                <span className="text-white font-bold text-right">{spec.value}</span>
+                                <SpecValue>{spec.value}</SpecValue>
                             </div>
                         ))}
                     </div>

@@ -58,7 +58,7 @@ export default function FeaturedModels() {
         <section className="py-20 px-6 bg-background">
             <div className="container mx-auto">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-foreground">
                         Sản Phẩm Nổi Bật
                     </h2>
                     <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -83,7 +83,7 @@ export default function FeaturedModels() {
                 <div className="text-center mt-12">
                     <Link
                         href="/cars"
-                        className="inline-block px-8 py-4 border border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-black transition-all"
+                        className="inline-block px-8 py-4 border border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-primary-foreground transition-all"
                     >
                         Xem Tất Cả Sản Phẩm
                     </Link>

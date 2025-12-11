@@ -4,6 +4,7 @@ import { Order } from '@/types/order';
 import { formatCurrency } from '@/lib/utils';
 import { Calendar, MapPin } from 'lucide-react';
 import CartImageGallery from '@/components/cart/CartImageGallery';
+import { SectionHeading, ThemeText } from '@/components/common/ThemeText';
 
 interface OrderItemProps {
     order: Order;
@@ -115,18 +116,18 @@ export default function OrderItem({ order }: OrderItemProps) {
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
-                                    <h3 className="font-bold text-lg text-white">{vehicleName}</h3>
+                                    <SectionHeading className="text-lg">{vehicleName}</SectionHeading>
                                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${paymentBadge.color}`}>
                                         {paymentBadge.text}
                                     </span>
                                 </div>
                                 <p className="text-sm text-muted-foreground">
-                                    Mã đơn: <span className="font-mono text-white">{order.OrderCode}</span>
+                                    Mã đơn: <ThemeText className="font-mono">{order.OrderCode}</ThemeText>
                                 </p>
                                 {/* Display selected color */}
                                 {(order as any).SelectedColor && (
                                     <p className="text-sm text-muted-foreground mt-1">
-                                        Màu: <span className="text-white font-medium">{(order as any).SelectedColor}</span>
+                                        Màu: <ThemeText className="font-medium">{(order as any).SelectedColor}</ThemeText>
                                     </p>
                                 )}
                             </div>

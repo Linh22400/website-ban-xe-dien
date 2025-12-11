@@ -15,7 +15,7 @@ export default function TestDrivePage() {
                         <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm font-bold mb-6">
                             🚗 Trải Nghiệm Thực Tế
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
                             Đăng Ký Lái Thử <span className="text-primary">Miễn Phí</span>
                         </h1>
                         <p className="text-xl text-muted-foreground mb-4">
@@ -24,7 +24,7 @@ export default function TestDrivePage() {
                         <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
                             <Link href="/" className="hover:text-primary transition-colors">Trang Chủ</Link>
                             <span>/</span>
-                            <span className="text-white">Lái Thử</span>
+                            <span className="text-gray-900 dark:text-white">Lái Thử</span>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@ export default function TestDrivePage() {
                 <div className="grid lg:grid-cols-3 gap-12">
                     {/* Benefits Section */}
                     <div className="lg:col-span-1 space-y-6">
-                        <h2 className="text-2xl font-bold text-white mb-6">Tại Sao Nên Lái Thử?</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Tại Sao Nên Lái Thử?</h2>
 
                         <div className="space-y-4">
                             {[
@@ -67,7 +67,7 @@ export default function TestDrivePage() {
                                 <div key={i} className="flex gap-4 p-4 bg-card/30 rounded-xl border border-white/5 hover:border-primary/30 transition-colors">
                                     <div className="text-3xl">{benefit.icon}</div>
                                     <div>
-                                        <h3 className="font-bold text-white mb-1">{benefit.title}</h3>
+                                        <h3 className="font-bold text-gray-900 dark:text-white mb-1">{benefit.title}</h3>
                                         <p className="text-sm text-muted-foreground">{benefit.desc}</p>
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@ export default function TestDrivePage() {
 
                         {/* Trust Indicators */}
                         <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-white/5 rounded-2xl p-6 mt-8">
-                            <h3 className="font-bold text-white mb-4">Cam Kết Của Chúng Tôi</h3>
+                            <h3 className="font-bold text-gray-900 dark:text-white mb-4">Cam Kết Của Chúng Tôi</h3>
                             <ul className="space-y-2 text-sm text-muted-foreground">
                                 <li className="flex items-center gap-2">
                                     <span className="text-primary">✓</span> Hoàn toàn miễn phí
@@ -97,7 +97,7 @@ export default function TestDrivePage() {
                     {/* Form Section */}
                     <div className="lg:col-span-2">
                         <div className="bg-card/50 backdrop-blur-sm border border-white/5 rounded-3xl p-8">
-                            <h2 className="text-2xl font-bold text-white mb-6">Đăng Ký Ngay</h2>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Đăng Ký Ngay</h2>
                             <TestDriveForm />
                         </div>
                     </div>

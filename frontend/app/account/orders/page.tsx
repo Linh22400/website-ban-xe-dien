@@ -50,10 +50,10 @@ export default function OrdersPage() {
                             href="/account"
                             className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
                         >
-                            <ArrowLeft className="w-5 h-5 text-white" />
+                            <ArrowLeft className="w-5 h-5 text-gray-900 dark:text-white" />
                         </Link>
                         <div>
-                            <h1 className="text-3xl font-bold text-white">Đơn hàng của tôi</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Đơn hàng của tôi</h1>
                             <p className="text-muted-foreground">Theo dõi và quản lý lịch sử mua hàng</p>
                         </div>
                     </div>

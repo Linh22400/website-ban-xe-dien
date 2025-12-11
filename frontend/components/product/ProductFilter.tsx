@@ -14,6 +14,7 @@ import {
     ChevronDown,
     Check
 } from "lucide-react";
+import { FilterHeading, FilterOptionLabel, QuickSuggestionTitle } from './FilterComponents';
 
 interface FilterSection {
     id: string;
@@ -85,10 +86,10 @@ export default function ProductFilter() {
         <div className="space-y-6">
             {/* Quick Suggestions */}
             <div>
-                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                <FilterHeading>
                     <TrendingUp className="w-4 h-4 text-primary" />
                     Gợi ý nhanh
-                </h3>
+                </FilterHeading>
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={() => applyQuickTag("bestseller")}
@@ -98,7 +99,7 @@ export default function ProductFilter() {
                             <TrendingUp className="w-4 h-4 text-orange-400" />
                         </div>
                         <div className="flex-1">
-                            <div className="text-sm font-semibold text-white">Xe bán chạy</div>
+                            <QuickSuggestionTitle>Xe bán chạy</QuickSuggestionTitle>
                             <div className="text-xs text-gray-400">Được nhiều người chọn</div>
                         </div>
                     </button>
@@ -111,7 +112,7 @@ export default function ProductFilter() {
                             <GraduationCap className="w-4 h-4 text-blue-400" />
                         </div>
                         <div className="flex-1">
-                            <div className="text-sm font-semibold text-white">Dành cho học sinh</div>
+                            <QuickSuggestionTitle>Dành cho học sinh</QuickSuggestionTitle>
                             <div className="text-xs text-gray-400">Xe đạp điện giá tốt</div>
                         </div>
                     </button>
@@ -124,7 +125,7 @@ export default function ProductFilter() {
                             <Wallet className="w-4 h-4 text-green-400" />
                         </div>
                         <div className="flex-1">
-                            <div className="text-sm font-semibold text-white">Dưới 15 triệu</div>
+                            <QuickSuggestionTitle>Dưới 15 triệu</QuickSuggestionTitle>
                             <div className="text-xs text-gray-400">Giá phải chăng</div>
                         </div>
                     </button>
@@ -139,10 +140,10 @@ export default function ProductFilter() {
                     onClick={() => toggleSection("type")}
                     className="w-full flex items-center justify-between mb-3 group"
                 >
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <FilterHeading>
                         {sections.find(s => s.id === "type")?.icon}
                         {sections.find(s => s.id === "type")?.title}
-                    </h3>
+                    </FilterHeading>
                     <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${sections.find(s => s.id === "type")?.isOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <div className={`grid transition-all duration-300 ease-in-out ${sections.find(s => s.id === "type")?.isOpen
@@ -170,10 +171,9 @@ export default function ProductFilter() {
                                         checked={type === item.value}
                                         onChange={() => applyFilter("type", item.value)}
                                     />
-                                    <span className={`text-sm transition-colors ${type === item.value ? "text-white font-medium" : "text-gray-400 group-hover:text-white"
-                                        }`}>
+                                    <FilterOptionLabel isActive={type === item.value}>
                                         {item.label}
-                                    </span>
+                                    </FilterOptionLabel>
                                 </label>
                             ))}
                         </div>
@@ -189,10 +189,10 @@ export default function ProductFilter() {
                         onClick={() => toggleSection("brand")}
                         className="w-full flex items-center justify-between mb-3 group"
                     >
-                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <FilterHeading>
                             {sections.find(s => s.id === "brand")?.icon}
                             {sections.find(s => s.id === "brand")?.title}
-                        </h3>
+                        </FilterHeading>
                         <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${sections.find(s => s.id === "brand")?.isOpen ? 'rotate-180' : ''}`} />
                     </button>
                     <div className={`grid transition-all duration-300 ease-in-out ${sections.find(s => s.id === "brand")?.isOpen
@@ -223,10 +223,9 @@ export default function ProductFilter() {
                                             onChange={() => applyFilter("brand", brand === item.value ? "" : item.value)}
                                             className="hidden"
                                         />
-                                        <span className={`text-sm transition-colors ${brand === item.value ? "text-white font-medium" : "text-gray-400 group-hover:text-white"
-                                            }`}>
+                                        <FilterOptionLabel isActive={brand === item.value}>
                                             {item.label}
-                                        </span>
+                                        </FilterOptionLabel>
                                     </label>
                                 ))}
                             </div>
@@ -241,10 +240,10 @@ export default function ProductFilter() {
                                 onClick={() => toggleSection("price")}
                                 className="w-full flex items-center justify-between mb-3 group"
                             >
-                                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                <FilterHeading>
                                     {sections.find(s => s.id === "price")?.icon}
                                     {sections.find(s => s.id === "price")?.title}
-                                </h3>
+                                </FilterHeading>
                                 <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${sections.find(s => s.id === "price")?.isOpen ? 'rotate-180' : ''}`} />
                             </button>
                             <div className={`grid transition-all duration-300 ease-in-out ${sections.find(s => s.id === "price")?.isOpen
@@ -287,10 +286,9 @@ export default function ProductFilter() {
                                                     }}
                                                     className="hidden"
                                                 />
-                                                <span className={`text-sm transition-colors ${priceRange === item.value ? "text-white font-medium" : "text-gray-400 group-hover:text-white"
-                                                    }`}>
+                                                <FilterOptionLabel isActive={priceRange === item.value}>
                                                     {item.label}
-                                                </span>
+                                                </FilterOptionLabel>
                                             </label>
                                         ))}
                                     </div>
@@ -305,10 +303,10 @@ export default function ProductFilter() {
                                         onClick={() => toggleSection("range")}
                                         className="w-full flex items-center justify-between mb-3 group"
                                     >
-                                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                        <FilterHeading>
                                             {sections.find(s => s.id === "range")?.icon}
                                             {sections.find(s => s.id === "range")?.title}
-                                        </h3>
+                                        </FilterHeading>
                                         <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${sections.find(s => s.id === "range")?.isOpen ? 'rotate-180' : ''}`} />
                                     </button>
                                     <div className={`grid transition-all duration-300 ease-in-out ${sections.find(s => s.id === "range")?.isOpen
@@ -351,10 +349,9 @@ export default function ProductFilter() {
                                                             }}
                                                             className="hidden"
                                                         />
-                                                        <span className={`text-sm transition-colors ${range === item.value ? "text-white font-medium" : "text-gray-400 group-hover:text-white"
-                                                            }`}>
+                                                        <FilterOptionLabel isActive={range === item.value}>
                                                             {item.label}
-                                                        </span>
+                                                        </FilterOptionLabel>
                                                     </label>
                                                 ))}
                                             </div>
@@ -369,10 +366,10 @@ export default function ProductFilter() {
                                                 onClick={() => toggleSection("speed")}
                                                 className="w-full flex items-center justify-between mb-3 group"
                                             >
-                                                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                                <FilterHeading>
                                                     {sections.find(s => s.id === "speed")?.icon}
                                                     {sections.find(s => s.id === "speed")?.title}
-                                                </h3>
+                                                </FilterHeading>
                                                 <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${sections.find(s => s.id === "speed")?.isOpen ? 'rotate-180' : ''}`} />
                                             </button>
                                             <div className={`grid transition-all duration-300 ease-in-out ${sections.find(s => s.id === "speed")?.isOpen
@@ -415,10 +412,9 @@ export default function ProductFilter() {
                                                                     }}
                                                                     className="hidden"
                                                                 />
-                                                                <span className={`text-sm transition-colors ${speed === item.value ? "text-white font-medium" : "text-gray-400 group-hover:text-white"
-                                                                    }`}>
+                                                                <FilterOptionLabel isActive={speed === item.value}>
                                                                     {item.label}
-                                                                </span>
+                                                                </FilterOptionLabel>
                                                             </label>
                                                         ))}
                                                     </div>

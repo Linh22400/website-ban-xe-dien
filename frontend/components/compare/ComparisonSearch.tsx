@@ -62,7 +62,7 @@ export default function ComparisonSearch() {
                 className="flex items-center gap-2 px-6 py-3 bg-card border border-white/10 rounded-full text-white hover:border-primary transition-colors"
             >
                 <span className="text-xl">➕</span>
-                <span className="font-bold">Thêm Xe So Sánh</span>
+                <span className="font-bold text-gray-500">Thêm Xe So Sánh</span>
             </button>
 
             {isOpen && (

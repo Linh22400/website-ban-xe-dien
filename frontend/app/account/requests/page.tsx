@@ -30,7 +30,7 @@ export default function RequestsPage() {
     if (authLoading || loading) {
         return (
             <main className="min-h-screen bg-background pt-24 pb-20 flex items-center justify-center">
-                <div className="text-white text-lg">Đang tải...</div>
+                <div className="text-gray-900 dark:text-white text-lg">Đang tải...</div>
             </main>
         );
     }
@@ -44,7 +44,7 @@ export default function RequestsPage() {
             <div className="container mx-auto px-6">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-white mb-2">Lịch Sử Yêu Cầu</h1>
+                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Lịch Sử Yêu Cầu</h1>
                     <p className="text-muted-foreground">
                         Danh sách tất cả yêu cầu bạn đã gửi
                     </p>
@@ -56,7 +56,7 @@ export default function RequestsPage() {
                         <div className="bg-card/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 space-y-2">
                             <Link
                                 href="/account"
-                                className="block px-4 py-3 rounded-xl hover:bg-white/5 text-white transition-colors"
+                                className="block px-4 py-3 rounded-xl hover:bg-white/5 text-gray-900 dark:text-white transition-colors"
                             >
                                 Tổng Quan
                             </Link>
@@ -78,7 +78,7 @@ export default function RequestsPage() {
                     {/* Main Content */}
                     <div className="lg:col-span-2">
                         <div className="bg-card/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6">
-                            <h2 className="text-2xl font-bold text-white mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                 Danh Sách Yêu Cầu ({leads.length})
                             </h2>
 
@@ -106,7 +106,7 @@ export default function RequestsPage() {
                                             >
                                                 <div className="flex items-start justify-between mb-3">
                                                     <div>
-                                                        <div className="text-white font-bold mb-1">
+                                                        <div className="text-gray-900 dark:text-white font-bold mb-1">
                                                             {lead.type === 'test-drive' ? '🚗 Lái Thử' : '💬 Liên Hệ'}
                                                         </div>
                                                         <div className="text-sm text-muted-foreground">
@@ -119,12 +119,12 @@ export default function RequestsPage() {
                                                 </div>
                                                 {lead.model && (
                                                     <div className="text-sm text-muted-foreground mb-2">
-                                                        <span className="text-white font-bold">Mẫu xe:</span> {lead.model}
+                                                        <span className="text-gray-900 dark:text-white font-bold">Mẫu xe:</span> {lead.model}
                                                     </div>
                                                 )}
                                                 {lead.message && (
                                                     <div className="text-sm text-muted-foreground">
-                                                        <span className="text-white font-bold">Ghi chú:</span>
+                                                        <span className="text-gray-900 dark:text-white font-bold">Ghi chú:</span>
                                                         <div className="mt-1 line-clamp-2">{lead.message}</div>
                                                     </div>
                                                 )}

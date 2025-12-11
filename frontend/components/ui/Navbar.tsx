@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import {
     ShoppingCart,
     Heart,
@@ -129,7 +130,7 @@ export default function Navbar() {
                     <div className="hidden lg:flex items-center gap-8">
                         <Link
                             href="/"
-                            className="text-sm font-semibold text-white hover:text-primary transition-colors"
+                            className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
                         >
                             Trang Chủ
                         </Link>
@@ -140,12 +141,12 @@ export default function Navbar() {
                                 Sản Phẩm
                                 <ChevronDown className="w-4 h-4" />
                             </button>
-                            <div className="absolute top-full left-0 mt-2 w-48 bg-card/60 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                            <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-card/60 backdrop-blur-xl border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                                 {productCategories.map((cat) => (
                                     <Link
                                         key={cat.href}
                                         href={cat.href}
-                                        className="block px-4 py-3 text-sm text-white hover:bg-primary/10 hover:text-primary transition-colors first:rounded-t-xl last:rounded-b-xl"
+                                        className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors first:rounded-t-xl last:rounded-b-xl"
                                     >
                                         {cat.label}
                                     </Link>
@@ -186,11 +187,14 @@ export default function Navbar() {
                         >
                             <Heart className="w-5 h-5 group-hover:fill-primary transition-all" />
                             {wishlistCount > 0 && (
-                                <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1 animate-pulse">
+                                <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-foreground text-xs font-bold rounded-full flex items-center justify-center px-1 animate-pulse">
                                     {wishlistCount}
                                 </span>
                             )}
                         </Link>
+
+                        {/* Theme Toggle */}
+                        <ThemeToggle />
 
                         {/* Shopping Cart */}
                         <Link
@@ -209,26 +213,26 @@ export default function Navbar() {
                         {/* Account */}
                         {isAuthenticated ? (
                             <div className="hidden md:block relative group">
-                                <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white hover:text-primary transition-colors">
+                                <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
                                     <User className="w-4 h-4" />
                                     {user?.username}
                                 </button>
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-card/60 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-card/60 backdrop-blur-xl border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                                     <Link
                                         href="/account"
-                                        className="block px-4 py-3 text-sm text-white hover:bg-primary/10 hover:text-primary transition-colors rounded-t-xl"
+                                        className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors rounded-t-xl"
                                     >
                                         Tài Khoản
                                     </Link>
                                     <Link
                                         href="/orders"
-                                        className="block px-4 py-3 text-sm text-white hover:bg-primary/10 hover:text-primary transition-colors"
+                                        className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors"
                                     >
                                         Đơn Hàng
                                     </Link>
                                     <button
                                         onClick={logout}
-                                        className="w-full text-left px-4 py-3 text-sm text-white hover:bg-primary/10 hover:text-primary transition-colors rounded-b-xl"
+                                        className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors rounded-b-xl"
                                     >
                                         Đăng Xuất
                                     </button>
@@ -254,7 +258,7 @@ export default function Navbar() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="lg:hidden p-2 text-white"
+                            className="lg:hidden p-2 text-foreground"
                             aria-label="Toggle menu"
                         >
                             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -270,7 +274,7 @@ export default function Navbar() {
                         <input
                             type="text"
                             placeholder="Tìm kiếm xe điện, phụ kiện..."
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
                             autoFocus={showSearch}
                         />
                     </div>
@@ -283,14 +287,14 @@ export default function Navbar() {
                             <Link
                                 href="/"
                                 onClick={() => setIsOpen(false)}
-                                className="text-white font-semibold hover:text-primary transition-colors"
+                                className="text-foreground font-semibold hover:text-primary transition-colors"
                             >
                                 Trang Chủ
                             </Link>
 
                             {/* Mobile Products */}
                             <div>
-                                <div className="text-white font-semibold mb-2">Sản Phẩm</div>
+                                <div className="text-foreground font-semibold mb-2">Sản Phẩm</div>
                                 <div className="pl-4 flex flex-col gap-2">
                                     {productCategories.map((cat) => (
                                         <Link
@@ -349,7 +353,7 @@ export default function Navbar() {
                                     <Link
                                         href="/account"
                                         onClick={() => setIsOpen(false)}
-                                        className="text-white font-bold"
+                                        className="text-foreground font-bold"
                                     >
                                         <User className="w-4 h-4 inline mr-2" />
                                         {user?.username}

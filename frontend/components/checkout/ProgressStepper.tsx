@@ -2,6 +2,7 @@
 
 import { useCheckout } from '@/contexts/CheckoutContext';
 import { Check } from 'lucide-react';
+import { ThemeText } from '@/components/common/ThemeText';
 
 const steps = [
     { number: 1, label: 'Chọn xe' },
@@ -41,17 +42,17 @@ export default function ProgressStepper() {
                                     step.number
                                 )}
                             </div>
-                            <span
+                            <ThemeText
                                 className={`
                   mt-2 text-xs font-medium whitespace-nowrap
                   ${currentStep >= step.number
-                                        ? 'text-white'
+                                        ? ''
                                         : 'text-muted-foreground'
                                     }
                 `}
                             >
                                 {step.label}
-                            </span>
+                            </ThemeText>
                         </div>
 
                         {/* Connector line */}

@@ -52,7 +52,7 @@ export default function FilterDrawer({ isOpen, onClose, activeFilterCount }: Fil
             >
                 {/* Header */}
                 <div className="sticky top-0 bg-background/95 backdrop-blur-lg border-b border-white/10 p-4 flex items-center justify-between z-10">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         Bộ Lọc
                         {activeFilterCount > 0 && (
                             <span className="px-2 py-0.5 bg-primary text-black text-xs font-bold rounded-full">
@@ -65,7 +65,7 @@ export default function FilterDrawer({ isOpen, onClose, activeFilterCount }: Fil
                         className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                         aria-label="Close filter"
                     >
-                        <X className="w-6 h-6 text-white" />
+                        <X className="w-6 h-6 text-gray-900 dark:text-white" />
                     </button>
                 </div>
 

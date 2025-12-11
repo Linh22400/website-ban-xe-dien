@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { CreditCard, Smartphone, Building2, Check, Loader2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { createOrder } from '@/lib/order-api';
+import { SubHeading, SectionHeading } from '@/components/common/ThemeText';
 
 import PaymentModal from './PaymentModal';
 
@@ -87,7 +88,7 @@ export default function PaymentGatewaySelector() {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Thanh toán</h2>
+                <SubHeading className="mb-2">Thanh toán</SubHeading>
                 <p className="text-muted-foreground">
                     Vui lòng chọn cổng thanh toán để hoàn tất đơn hàng
                 </p>
@@ -117,7 +118,7 @@ export default function PaymentGatewaySelector() {
                             <Smartphone className="w-6 h-6 text-white" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="font-bold text-white">Ví MoMo</h3>
+                            <SectionHeading>Ví MoMo</SectionHeading>
                             <p className="text-sm text-muted-foreground">Thanh toán qua ứng dụng MoMo</p>
                         </div>
                         {selectedGateway === 'momo' && (
@@ -142,7 +143,7 @@ export default function PaymentGatewaySelector() {
                             <CreditCard className="w-6 h-6 text-white" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="font-bold text-white">VNPay QR</h3>
+                            <SectionHeading>VNPay QR</SectionHeading>
                             <p className="text-sm text-muted-foreground">Quét mã QR qua ứng dụng ngân hàng</p>
                         </div>
                         {selectedGateway === 'vnpay' && (
@@ -167,7 +168,7 @@ export default function PaymentGatewaySelector() {
                             <Building2 className="w-6 h-6 text-white" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="font-bold text-white">Chuyển khoản ngân hàng</h3>
+                            <SectionHeading>Chuyển khoản ngân hàng</SectionHeading>
                             <p className="text-sm text-muted-foreground">Chuyển khoản trực tiếp 24/7</p>
                         </div>
                         {selectedGateway === 'bank_transfer' && (

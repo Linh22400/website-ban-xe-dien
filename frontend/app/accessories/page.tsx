@@ -28,13 +28,13 @@ export default async function AccessoriesPage({ searchParams }: PageProps) {
             {/* Header */}
             <div className="bg-secondary/30 border-b border-white/5 py-12 mb-8">
                 <div className="container mx-auto px-6">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
                         Phụ Kiện & Pin
                     </h1>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Link href="/" className="hover:text-primary transition-colors">Trang Chủ</Link>
                         <span>/</span>
-                        <span className="text-white">Phụ Kiện</span>
+                        <ThemeText>Phụ Kiện</ThemeText>
                     </div>
                 </div>
             </div>
@@ -86,11 +86,11 @@ export default async function AccessoriesPage({ searchParams }: PageProps) {
                                         {item.category === 'battery' ? 'Pin & Sạc' :
                                             item.category === 'helmet' ? 'Mũ Bảo Hiểm' : 'Phụ Kiện'}
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 min-h-[3.5rem]">
-                                        {item.name}
+                                    <h3 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.5rem]">
+                                        <ThemeText>{item.name}</ThemeText>
                                     </h3>
                                     <div className="flex items-center justify-between mt-4">
-                                        <div className="text-xl font-bold text-white">
+                                        <div className="text-xl font-bold text-gray-900 dark:text-white">
                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                                         </div>
                                         <button className="w-10 h-10 rounded-full bg-primary text-black flex items-center justify-center hover:bg-white transition-colors shadow-lg shadow-primary/20">
@@ -104,7 +104,7 @@ export default async function AccessoriesPage({ searchParams }: PageProps) {
                 ) : (
                     <div className="text-center py-20 bg-card/30 rounded-2xl border border-white/5">
                         <div className="text-4xl mb-4">📦</div>
-                        <h3 className="text-xl font-bold text-white mb-2">Chưa có sản phẩm nào</h3>
+                        <h3 className="text-xl font-bold mb-2"><ThemeText>Chưa có sản phẩm nào</ThemeText></h3>
                         <p className="text-muted-foreground">
                             Danh mục này đang được cập nhật. Vui lòng quay lại sau!
                         </p>

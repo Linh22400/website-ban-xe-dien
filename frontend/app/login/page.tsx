@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { PageHeading, FormLabel, ThemeInput } from "@/components/common/ThemeText";
 
 export default function LoginPage() {
     const { login } = useAuth();
@@ -45,7 +46,7 @@ export default function LoginPage() {
                 <div className="max-w-md mx-auto">
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <h1 className="text-4xl font-bold text-white mb-4">Đăng Nhập</h1>
+                        <PageHeading className="mb-4">Đăng Nhập</PageHeading>
                         <p className="text-muted-foreground">
                             Chào mừng bạn quay lại! Đăng nhập để quản lý tài khoản.
                         </p>
@@ -62,33 +63,33 @@ export default function LoginPage() {
 
                             {/* Email */}
                             <div>
-                                <label className="block text-sm font-bold text-white mb-2">
+                                <FormLabel>
                                     Email
-                                </label>
-                                <input
+                                </FormLabel>
+                                <ThemeInput
                                     type="email"
                                     name="identifier"
                                     required
                                     value={formData.identifier}
                                     onChange={handleChange}
-                                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
                                     placeholder="email@example.com"
                                 />
                             </div>
 
                             {/* Password */}
                             <div>
-                                <label className="block text-sm font-bold text-white mb-2">
+                                <FormLabel>
                                     Mật Khẩu
-                                </label>
+                                </FormLabel>
                                 <div className="relative">
-                                    <input
+                                    <ThemeInput
                                         type={showPassword ? "text" : "password"}
                                         name="password"
                                         required
                                         value={formData.password}
                                         onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary pr-12"
+                                        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary pr-12"
                                         placeholder="••••••••"
                                     />
                                     <button

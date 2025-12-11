@@ -9,6 +9,7 @@ import StickyActionBar from "../product/StickyActionBar";
 import CostCalculator from "../product/CostCalculator";
 import WarrantyInfo from "../product/WarrantyInfo";
 import ProductFAQ from "../product/ProductFAQ";
+import { SectionHeading } from '../product/ProductTextComponents';
 
 interface CarConfiguratorProps {
     car: Car;
@@ -23,7 +24,7 @@ export default function CarConfigurator({ car, discountPercent = 0 }: CarConfigu
         : 'Mặc định';
 
     return (
-        <div className="min-h-screen bg-background text-white" id="configurator">
+        <div className="min-h-screen bg-background" id="configurator">
             {/* 1. Hero Section (Immersive) */}
             <ProductHero
                 car={car}
@@ -47,9 +48,9 @@ export default function CarConfigurator({ car, discountPercent = 0 }: CarConfigu
             {/* 4. Cost Calculator (Existing) */}
             <section className="py-20 bg-background">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-12 text-center">
+                    <SectionHeading className="mb-12 text-center">
                         Dự Toán Chi Phí
-                    </h2>
+                    </SectionHeading>
                     <div className="max-w-4xl mx-auto">
                         <CostCalculator />
                     </div>

@@ -31,6 +31,7 @@ export interface OrderData {
 
 export interface Order {
     id: number;
+    documentId: string;
     OrderCode: string;
     Statuses: 'pending_payment' | 'deposit_paid' | 'processing' | 'ready_for_pickup' | 'completed' | 'cancelled' | 'refunded';
     PaymentMethod: 'full_payment' | 'deposit' | 'installment';

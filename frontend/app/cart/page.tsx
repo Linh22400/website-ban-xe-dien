@@ -62,7 +62,7 @@ export default function CartPage() {
                                     key={`${item.id}-${item.colorName || 'default'}`}
                                     className="bg-card border border-white/10 rounded-xl p-6 hover:border-primary/30 transition-all"
                                 >
-                                    <div className="flex gap-6">
+                                    <div className="flex flex-col sm:flex-row gap-6">
                                         {/* Gallery */}
                                         <CartImageGallery
                                             images={item.gallery || [item.image]}

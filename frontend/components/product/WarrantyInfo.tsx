@@ -50,7 +50,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                             <Shield className="w-5 h-5 text-primary" />
                             <span className="text-sm font-semibold text-primary">Cam Kết Chất Lượng</span>
                         </div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
                             Chính Sách Bảo Hành
                         </h2>
                         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -63,8 +63,8 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                         <button
                             onClick={() => setActiveTab('overview')}
                             className={`px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'overview'
-                                    ? 'bg-primary text-black shadow-lg shadow-primary/30'
-                                    : 'bg-card/30 text-muted-foreground hover:bg-card/50'
+                                ? 'bg-primary text-black shadow-lg shadow-primary/30'
+                                : 'bg-card/30 text-muted-foreground hover:bg-card/50'
                                 }`}
                         >
                             Tổng Quan
@@ -72,8 +72,8 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                         <button
                             onClick={() => setActiveTab('details')}
                             className={`px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'details'
-                                    ? 'bg-primary text-black shadow-lg shadow-primary/30'
-                                    : 'bg-card/30 text-muted-foreground hover:bg-card/50'
+                                ? 'bg-primary text-black shadow-lg shadow-primary/30'
+                                : 'bg-card/30 text-muted-foreground hover:bg-card/50'
                                 }`}
                         >
                             Chi Tiết
@@ -97,7 +97,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                             <h3 className="text-sm font-medium text-muted-foreground mb-2">
                                                 {item.label}
                                             </h3>
-                                            <p className="text-lg font-bold text-white leading-relaxed">
+                                            <p className="text-lg font-bold text-foreground leading-relaxed">
                                                 {item.value}
                                             </p>
                                         </div>
@@ -116,7 +116,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                             <h3 className="text-sm font-semibold text-primary mb-2">
                                                 Chính Sách Đổi Trả
                                             </h3>
-                                            <p className="text-white leading-relaxed">
+                                            <p className="text-foreground leading-relaxed">
                                                 {warranty.returnPolicy}
                                             </p>
                                         </div>
@@ -133,7 +133,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                         <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
                                             <FileCheck className="w-5 h-5 text-blue-400" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Điều Kiện Bảo Hành</h3>
+                                        <h3 className="text-xl font-bold text-foreground">Điều Kiện Bảo Hành</h3>
                                     </div>
                                     <div
                                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
@@ -149,7 +149,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                         <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
                                             <AlertCircle className="w-5 h-5 text-red-400" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Trường Hợp Không Bảo Hành</h3>
+                                        <h3 className="text-xl font-bold text-foreground">Trường Hợp Không Bảo Hành</h3>
                                     </div>
                                     <div
                                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
@@ -165,7 +165,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                         <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
                                             <Shield className="w-5 h-5 text-green-400" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Quy Trình Bảo Hành</h3>
+                                        <h3 className="text-xl font-bold text-foreground">Quy Trình Bảo Hành</h3>
                                     </div>
                                     <div
                                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"

@@ -1,4 +1,5 @@
 import { Order, OrderData, CreateOrderResponse, Showroom } from '@/types/order';
+import qs from 'qs';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
@@ -71,6 +72,131 @@ export async function getUserOrders(token: string): Promise<Order[]> {
     } catch (error) {
         console.error('Error fetching user orders:', error);
         return [];
+    }
+}
+
+/**
+ * Get all orders (Admin)
+ */
+export async function getAdminOrders(token: string, params: any = {}): Promise<{ data: Order[], meta: any }> {
+    try {
+        const { page = 1, pageSize = 10, status, search } = params;
+
+        let url = `${STRAPI_URL}/api/orders?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (status && status !== 'all') {
+            url += `&filters[Statuses][$eq]=${status}`;
+        }
+
+        if (search) {
+            url += `&filters[$or][0][OrderCode][$contains]=${search}&filters[$or][1][CustomerInfo][Phone][$contains]=${search}`;
+        }
+
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch admin orders');
+
+        const result = await response.json();
+        return { data: result.data, meta: result.meta };
+    } catch (error) {
+        console.error('Error fetching admin orders:', error);
+        return { data: [], meta: {} };
+    }
+}
+
+/**
+ * Update Order Status (Admin)
+ */
+export async function updateOrderStatus(token: string, documentId: string, status: string): Promise<boolean> {
+    try {
+        const response = await fetch(`${STRAPI_URL}/api/orders/${documentId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                data: { Statuses: status }
+            }),
+        });
+
+        return response.ok;
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        return false;
+    }
+}
+
+/**
+ * Get Order by ID (Admin)
+ */
+export async function getOrderById(token: string, documentId: string): Promise<Order | null> {
+    try {
+        // Use qs for structured populate query
+        const query = qs.stringify({
+            populate: {
+                VehicleModel: {
+                    fields: ['name', 'brand', 'price', 'type', 'range', 'topSpeed', 'acceleration', 'description', 'documentId', 'slug'],
+                    populate: {
+                        thumbnail: {
+                            fields: ['url']
+                        },
+                        color: {
+                            populate: {
+                                images: {
+                                    fields: ['url']
+                                }
+                            }
+                        }
+                    }
+                },
+                CustomerInfo: true,
+                SelectedShowroom: true,
+                payment_transactions: true,
+                payment: true
+            }
+        }, {
+            encodeValuesOnly: true,
+        });
+
+        const fullUrl = `${STRAPI_URL}/api/orders/${documentId}?${query}`;
+
+        const response = await fetch(fullUrl, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`GetOrderById Failed: ${response.status} ${response.statusText}`, errorText);
+            throw new Error(`Order not found (${response.status})`);
+        }
+
+        const result = await response.json();
+
+        // Debug logging
+        console.log('=== ORDER DATA DEBUG ===');
+        console.log('Full result:', JSON.stringify(result, null, 2));
+        console.log('VehicleModel:', result.data?.VehicleModel);
+        console.log('========================');
+
+        // Map snake_case to PascalCase for frontend compatibility
+        const orderData = result.data;
+        if (orderData && orderData.payment_transactions) {
+            orderData.PaymentTransactions = orderData.payment_transactions;
+        }
+
+        return orderData;
+    } catch (error) {
+        console.error('Error fetching order:', error);
+        return null;
     }
 }
 

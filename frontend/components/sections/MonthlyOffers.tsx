@@ -14,7 +14,13 @@ export default function MonthlyOffers() {
         getPromotions()
             .then(data => {
                 if (data.length > 0) {
-                    setPromotion(data[0]); // Get the latest active promotion
+                    // Sort to prioritize TAILG promotions
+                    const sortedPromotions = data.sort((a, b) => {
+                        const aTailg = a.title?.toLowerCase().includes('tailg') ? 1 : 0;
+                        const bTailg = b.title?.toLowerCase().includes('tailg') ? 1 : 0;
+                        return bTailg - aTailg;
+                    });
+                    setPromotion(sortedPromotions[0]); // Get highest priority promotion
                 }
             })
             .catch(err => console.error(err))
@@ -45,7 +51,30 @@ export default function MonthlyOffers() {
         return () => clearInterval(timer);
     }, [promotion]);
 
-    if (loading) return null; // Or a skeleton
+    // Loading skeleton
+    if (loading) {
+        return (
+            <section className="py-20 px-6 bg-gradient-to-r from-primary/10 to-accent/10 relative overflow-hidden">
+                <div className="container mx-auto">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+                        <div className="md:w-1/2 space-y-6">
+                            <div className="h-10 w-32 bg-gray-700/20 rounded-full animate-pulse" />
+                            <div className="h-12 w-full bg-gray-700/20 rounded animate-pulse" />
+                            <div className="h-6 w-3/4 bg-gray-700/20 rounded animate-pulse" />
+                            <div className="flex gap-4">
+                                <div className="h-12 w-32 bg-gray-700/20 rounded-full animate-pulse" />
+                                <div className="h-12 w-32 bg-gray-700/20 rounded-full animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="md:w-1/2">
+                            <div className="aspect-[4/3] bg-gray-700/20 rounded-3xl animate-pulse" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     if (!promotion) return null;
 
     return (

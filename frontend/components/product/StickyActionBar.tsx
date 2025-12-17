@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/lib/cart-context";
+import { ShoppingCart } from "lucide-react";
 
 interface StickyActionBarProps {
     car: Car;
@@ -62,7 +63,7 @@ export default function StickyActionBar({ car, selectedColorName, selectedColorI
                 >
                     <div className="container mx-auto flex items-center justify-between">
                         <div className="hidden md:block">
-                            <h3 className="text-lg font-bold text-white">{car.name}</h3>
+                            <h3 className="text-lg font-bold text-foreground">{car.name}</h3>
                             <p className="text-sm text-muted-foreground">Màu: {selectedColorName}</p>
                         </div>
 
@@ -81,9 +82,10 @@ export default function StickyActionBar({ car, selectedColorName, selectedColorI
 
                             <button
                                 onClick={handleAddToCart}
-                                className="flex-1 md:flex-none px-8 py-3 bg-primary text-black font-bold rounded-full hover:bg-white transition-colors text-center"
+                                className="flex-1 md:flex-none px-8 py-3 bg-primary text-black font-bold rounded-full hover:bg-white transition-colors text-center flex items-center gap-2"
                             >
-                                Thêm Vào Giỏ
+                                <ShoppingCart className="w-5 h-5" />
+                                Thêm Vào Giỏ Hàng
                             </button>
                         </div>
                     </div>

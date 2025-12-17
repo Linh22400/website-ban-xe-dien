@@ -54,7 +54,7 @@ export default function CostCalculator() {
                     </svg>
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-white">Tính Toán Tiết Kiệm</h3>
+                    <h3 className="text-lg font-bold text-foreground">Tính Toán Tiết Kiệm</h3>
                     <p className="text-xs text-muted-foreground">So với xe xăng thông thường</p>
                 </div>
             </div>
@@ -63,7 +63,7 @@ export default function CostCalculator() {
             <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Bạn đi bao nhiêu km mỗi ngày?</span>
-                    <span className="font-bold text-white">{dailyDistance} km</span>
+                    <span className="font-bold text-foreground">{dailyDistance} km</span>
                 </div>
                 <input
                     type="range"

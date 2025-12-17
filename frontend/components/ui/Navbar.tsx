@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useCart } from "@/lib/cart-context";
@@ -24,6 +25,8 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const [showMobileProducts, setShowMobileProducts] = useState(false);
 
     const { isAuthenticated, user, logout } = useAuth();
     const { itemCount: cartCount } = useCart();
@@ -66,13 +69,30 @@ export default function Navbar() {
         { href: "/accessories", label: "Phụ Kiện" },
     ];
 
+    const pathname = usePathname();
+
+    // Hide Navbar on Admin pages
+    if (pathname?.startsWith('/admin')) return null;
+
+    const isHomePage = pathname === '/';
+
+    // Dynamic background: 
+    // - Home: transparent at top, visible on hover or when scrolled
+    // - Others: always visible
+    const showBackground = isHomePage ? (isScrolled || isHovered) : true;
+
+    // Add text shadow only when navbar is transparent (Home top)
+    const textShadowClass = (isHomePage && !showBackground) ? "[text-shadow:0_2px_8px_rgba(0,0,0,0.8)]" : "";
+
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                ? "bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-lg"
-                : "bg-background/60 backdrop-blur-lg border-b border-white/5"
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${showBackground
+                ? "bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-lg"
+                : "bg-transparent border-b border-transparent"
                 } ${isVisible ? "translate-y-0" : "-translate-y-full"
                 }`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <div className="container mx-auto px-4">
                 {/* Top Bar - Hotline & Quick Links */}
@@ -120,7 +140,7 @@ export default function Navbar() {
                             <div className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                                 XE ĐIỆN XANH
                             </div>
-                            <div className="text-[10px] text-muted-foreground -mt-1">
+                            <div className={`text-[10px] -mt-1 ${!showBackground ? 'text-white/80' : 'text-muted-foreground'} ${textShadowClass}`}>
                                 Chính Hãng - Uy Tín
                             </div>
                         </div>
@@ -130,14 +150,14 @@ export default function Navbar() {
                     <div className="hidden lg:flex items-center gap-8">
                         <Link
                             href="/"
-                            className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                            className={`text-sm font-semibold ${!showBackground ? 'text-white' : 'text-foreground'} hover:text-primary transition-colors ${textShadowClass}`}
                         >
                             Trang Chủ
                         </Link>
 
                         {/* Products Dropdown */}
                         <div className="relative group">
-                            <button className="flex items-center gap-1 text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors">
+                            <button className={`flex items-center gap-1 text-sm font-semibold ${!showBackground ? 'text-white' : 'text-muted-foreground'} group-hover:text-primary transition-colors ${textShadowClass}`}>
                                 Sản Phẩm
                                 <ChevronDown className="w-4 h-4" />
                             </button>
@@ -156,13 +176,13 @@ export default function Navbar() {
 
                         <Link
                             href="/compare"
-                            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+                            className={`text-sm font-semibold ${!showBackground ? 'text-white' : 'text-muted-foreground'} hover:text-primary transition-colors ${textShadowClass}`}
                         >
                             So Sánh
                         </Link>
                         <Link
                             href="/blog"
-                            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+                            className={`text-sm font-semibold ${!showBackground ? 'text-white' : 'text-muted-foreground'} hover:text-primary transition-colors ${textShadowClass}`}
                         >
                             Tin Tức
                         </Link>
@@ -294,19 +314,30 @@ export default function Navbar() {
 
                             {/* Mobile Products */}
                             <div>
-                                <div className="text-foreground font-semibold mb-2">Sản Phẩm</div>
-                                <div className="pl-4 flex flex-col gap-2">
-                                    {productCategories.map((cat) => (
-                                        <Link
-                                            key={cat.href}
-                                            href={cat.href}
-                                            onClick={() => setIsOpen(false)}
-                                            className="text-muted-foreground hover:text-primary transition-colors"
-                                        >
-                                            {cat.label}
-                                        </Link>
-                                    ))}
-                                </div>
+                                <button
+                                    onClick={() => setShowMobileProducts(!showMobileProducts)}
+                                    className="text-foreground font-semibold mb-2 flex items-center justify-between w-full"
+                                >
+                                    <span>Sản Phẩm</span>
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${showMobileProducts ? 'rotate-180' : ''}`} />
+                                </button>
+                                {showMobileProducts && (
+                                    <div className="pl-4 flex flex-col gap-2">
+                                        {productCategories.map((cat) => (
+                                            <Link
+                                                key={cat.href}
+                                                href={cat.href}
+                                                onClick={() => {
+                                                    setIsOpen(false);
+                                                    setShowMobileProducts(false);
+                                                }}
+                                                className="text-muted-foreground hover:text-primary transition-colors"
+                                            >
+                                                {cat.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             <Link

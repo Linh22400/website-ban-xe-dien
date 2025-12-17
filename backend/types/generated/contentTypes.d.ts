@@ -630,6 +630,7 @@ export interface ApiCarModelCarModel extends Struct.CollectionTypeSchema {
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     sold: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     specifications: Schema.Attribute.JSON;
+    stock: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     technicalImage: Schema.Attribute.Media<'images'>;
     thumbnail: Schema.Attribute.Media<'images'>;
     topSpeed: Schema.Attribute.Integer & Schema.Attribute.Required;

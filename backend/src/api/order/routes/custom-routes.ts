@@ -2,27 +2,10 @@ export default {
     routes: [
         {
             method: 'GET',
-            path: '/orders/code/:code',
-            handler: 'order.findByCode',
-            config: {
-                policies: [],
-                middlewares: [],
-            },
-        },
-        {
-            method: 'POST',
-            path: '/orders/:id/status',
-            handler: 'order.updateStatus',
-            config: {
-                policies: [],
-                middlewares: [],
-            },
-        },
-        {
-            method: 'GET',
             path: '/orders/my-orders',
             handler: 'order.findUserOrders',
             config: {
+                auth: {},
                 policies: [],
                 middlewares: [],
             },

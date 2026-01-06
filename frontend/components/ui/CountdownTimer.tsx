@@ -34,7 +34,7 @@ export default function CountdownTimer({ expiryDate, compact = false }: Countdow
 
     if (compact) {
         return (
-            <div className="inline-flex gap-1 text-sm font-bold">
+            <div className="inline-flex gap-1 text-sm font-bold text-white">
                 <span>{String(timeLeft.days).padStart(2, '0')}d</span>
                 <span>:</span>
                 <span>{String(timeLeft.hours).padStart(2, '0')}h</span>
@@ -47,20 +47,20 @@ export default function CountdownTimer({ expiryDate, compact = false }: Countdow
     }
 
     return (
-        <div className="flex gap-2">
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[50px] text-center">
+        <div className="flex gap-2 text-white">
+            <div className="bg-white/10 rounded-lg p-2 min-w-[50px] text-center border border-white/10">
                 <div className="text-2xl font-bold">{String(timeLeft.days).padStart(2, '0')}</div>
                 <div className="text-[10px] opacity-70">Ngày</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[50px] text-center">
+            <div className="bg-white/10 rounded-lg p-2 min-w-[50px] text-center border border-white/10">
                 <div className="text-2xl font-bold">{String(timeLeft.hours).padStart(2, '0')}</div>
                 <div className="text-[10px] opacity-70">Giờ</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[50px] text-center">
+            <div className="bg-white/10 rounded-lg p-2 min-w-[50px] text-center border border-white/10">
                 <div className="text-2xl font-bold">{String(timeLeft.minutes).padStart(2, '0')}</div>
                 <div className="text-[10px] opacity-70">Phút</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[50px] text-center">
+            <div className="bg-white/10 rounded-lg p-2 min-w-[50px] text-center border border-white/10">
                 <div className="text-2xl font-bold">{String(timeLeft.seconds).padStart(2, '0')}</div>
                 <div className="text-[10px] opacity-70">Giây</div>
             </div>

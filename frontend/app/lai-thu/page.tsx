@@ -96,7 +96,7 @@ export default function TestDrivePage() {
 
                     {/* Form Section */}
                     <div className="lg:col-span-2">
-                        <div className="bg-card/50 backdrop-blur-sm border border-white/5 rounded-3xl p-8">
+                        <div className="bg-card/50 border border-white/5 rounded-3xl p-8">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Đăng Ký Ngay</h2>
                             <TestDriveForm />
                         </div>

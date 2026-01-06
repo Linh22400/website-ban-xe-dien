@@ -82,7 +82,8 @@ export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
                             key={index}
                             className="p-8 rounded-3xl bg-card/30 border border-white/5 hover:border-primary/30 transition-all hover:-translate-y-1 group"
                         >
-                            <div className={`w-16 h-16 rounded-2xl ${feature.bg || 'bg-primary/10'} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                            <div className={`w-16 h-16 rounded-2xl ${feature.bg || 'bg-primary/10'} flex items-center justify-center mb-6 group-hover:scale-105 transition-transform`}
+                                style={{ willChange: 'transform' }}>
                                 {getIcon(feature.icon)}
                             </div>
                             <FeatureTitle className="mb-3">

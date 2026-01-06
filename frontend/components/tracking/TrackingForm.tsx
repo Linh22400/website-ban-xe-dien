@@ -58,7 +58,7 @@ export default function TrackingForm() {
 
     return (
         <div className="space-y-8">
-            <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-xl mx-auto">
+            <div className="bg-card/80 border border-white/10 rounded-2xl p-8 max-w-xl mx-auto">
                 <SectionHeading className="mb-6 text-center">Tra cứu đơn hàng</SectionHeading>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -99,7 +99,7 @@ export default function TrackingForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-all hover:shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-colors hover:shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />

@@ -80,7 +80,15 @@ function CheckoutContent() {
         }
     }, [items, router]);
 
-    if (items.length === 0) {
+    // Flow hiện tại chỉ hỗ trợ 1 xe / 1 đơn.
+    // Nếu dữ liệu cũ có nhiều xe trong giỏ, đưa về trang giỏ để người dùng xử lý.
+    useEffect(() => {
+        if (items.length > 1) {
+            router.push('/cart');
+        }
+    }, [items, router]);
+
+    if (items.length === 0 || items.length > 1) {
         return null; // Will redirect
     }
 
@@ -111,7 +119,7 @@ function CheckoutContent() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                        <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+                        <div className="bg-card/30 border border-white/10 rounded-2xl p-8">
                             <StepContent
                                 items={items}
                                 total={total}

@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Zap, Battery, Gauge, Tag, Sparkles, TrendingUp, GraduationCap, Wallet } from "lucide-react";
 import CustomSelect from "../ui/CustomSelect";
 import { useTheme, ThemeText } from "@/components/common/ThemeText";
+import { getCars } from "@/lib/api";
 
 export default function QuickFinder() {
     const router = useRouter();
     const isDark = useTheme();
     const [type, setType] = useState("");
-    const [brand, setBrand] = useState("");
+    const [brand, setBrand] = useState("TAILG");
     const [price, setPrice] = useState("");
     const [range, setRange] = useState("");
     const [speed, setSpeed] = useState("");
@@ -22,15 +23,61 @@ export default function QuickFinder() {
         { value: "motorcycle", label: "🏍️ Xe Máy Điện" },
     ];
 
-    const brandOptions = [
-        { value: "", label: "Tất cả hãng" },
-        { value: "VinFast", label: "VinFast" },
-        { value: "Yadea", label: "Yadea" },
-        { value: "Pega", label: "Pega" },
-        { value: "Dibao", label: "Dibao" },
-        { value: "Dat Bike", label: "Dat Bike" },
-        { value: "Giant", label: "Giant" },
-    ];
+    const [availableBrands, setAvailableBrands] = useState<string[]>([]);
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                // Lightweight sampling: enough to build a brand list for the selector.
+                const cars = await getCars({ pageSize: 60, sort: 'createdAt:desc' });
+                if (cancelled) return;
+                const brandSet = new Set(
+                    (cars || [])
+                        .map((c: any) => (c?.brand ? String(c.brand).trim() : ''))
+                        .filter(Boolean)
+                );
+                setAvailableBrands(Array.from(brandSet));
+            } catch {
+                // Silent: selector will still work with default options.
+                if (!cancelled) setAvailableBrands([]);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const brandOptions = useMemo(() => {
+        const normalized = Array.from(
+            new Set(
+                availableBrands
+                    .map((b) => b.trim())
+                    .filter(Boolean)
+            )
+        );
+
+        // Prefer TAILG first if present.
+        normalized.sort((a, b) => a.localeCompare(b, 'vi'));
+        const tailgIndex = normalized.findIndex((b) => b.toLowerCase() === 'tailg');
+        if (tailgIndex > 0) {
+            const [tailg] = normalized.splice(tailgIndex, 1);
+            normalized.unshift(tailg);
+        }
+
+        const options = [{ value: "", label: "Tất cả thương hiệu" }];
+        for (const b of normalized) {
+            options.push({
+                value: b,
+                label: b.toLowerCase() === 'tailg' ? 'TAILG (đại lý ủy quyền)' : b,
+            });
+        }
+        // Fallback: if API has no data yet, still show TAILG.
+        if (options.length === 1) {
+            options.push({ value: 'TAILG', label: 'TAILG (đại lý ủy quyền)' });
+        }
+        return options;
+    }, [availableBrands]);
 
     const priceOptions = [
         { value: "", label: "Tất cả mức giá" },
@@ -120,6 +167,7 @@ export default function QuickFinder() {
 
     const applyQuickTag = (tag: string) => {
         const params = new URLSearchParams();
+        if (brand) params.append("brand", brand);
         if (tag === "student") {
             params.append("minPrice", "20000000");
             params.append("priceRange", "20000000-100000000");
@@ -135,25 +183,12 @@ export default function QuickFinder() {
 
     return (
         <div
-            className="w-full backdrop-blur-xl border rounded-3xl shadow-2xl relative group"
+            className="w-full border rounded-3xl relative"
             style={{
-                backgroundColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.3)',
+                backgroundColor: isDark ? 'rgba(0, 0, 0, 0.55)' : 'rgba(255, 255, 255, 0.85)',
                 borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
-                boxShadow: isDark ? '0 25px 50px -12px rgba(0, 0, 0, 0.4)' : '0 25px 50px -12px rgba(0, 0, 0, 0.2)'
             }}
         >
-            {/* Semi-transparent overlay */}
-            <div
-                className="absolute inset-0 rounded-3xl"
-                style={{
-                    backgroundImage: isDark
-                        ? 'linear-gradient(to bottom right, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.7), rgba(17, 24, 39, 0.8))'
-                        : 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(243, 244, 246, 0.3), rgba(255, 255, 255, 0.4))'
-                }}
-            />
-
-
-
             <div className="relative z-10 p-8">
                 {/* Header */}
                 <div className="mb-8 text-center">
@@ -177,21 +212,21 @@ export default function QuickFinder() {
                     <div className="grid grid-cols-3 gap-3">
                         <button
                             onClick={() => applyQuickTag("bestseller")}
-                            className="group/tag bg-gradient-to-br from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 border border-orange-500/30 hover:border-orange-500/50 rounded-xl p-4 transition-all hover:scale-105"
+                            className="group/tag bg-gradient-to-br from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 border border-orange-500/30 hover:border-orange-500/50 rounded-xl p-4 transition-all"
                         >
                             <TrendingUp className="w-5 h-5 text-orange-400 mb-2 mx-auto" />
                             <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Bán Chạy</p>
                         </button>
                         <button
                             onClick={() => applyQuickTag("student")}
-                            className="group/tag bg-gradient-to-br from-blue-500/10 to-cyan-500/10 hover:from-blue-500/20 hover:to-cyan-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl p-4 transition-all hover:scale-105"
+                            className="group/tag bg-gradient-to-br from-blue-500/10 to-cyan-500/10 hover:from-blue-500/20 hover:to-cyan-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl p-4 transition-all"
                         >
                             <GraduationCap className="w-5 h-5 text-blue-400 mb-2 mx-auto" />
                             <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Học Sinh</p>
                         </button>
                         <button
                             onClick={() => applyQuickTag("cheap")}
-                            className="group/tag bg-gradient-to-br from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border border-green-500/30 hover:border-green-500/50 rounded-xl p-4 transition-all hover:scale-105"
+                            className="group/tag bg-gradient-to-br from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border border-green-500/30 hover:border-green-500/50 rounded-xl p-4 transition-all"
                         >
                             <Wallet className="w-5 h-5 text-green-400 mb-2 mx-auto" />
                             <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Dưới 15tr</p>
@@ -287,7 +322,7 @@ export default function QuickFinder() {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-primary via-primary to-accent text-black font-black py-4 rounded-xl hover:shadow-2xl hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 flex items-center justify-center gap-2.5 text-base"
+                        className="w-full bg-gradient-to-r from-primary via-primary to-accent text-black font-black py-4 rounded-xl transition-colors hover:brightness-105 mt-6 flex items-center justify-center gap-2.5 text-base"
                     >
                         <Search className="w-5 h-5" />
                         <span>Tìm Kiếm Ngay</span>

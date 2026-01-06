@@ -74,7 +74,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
     return (
         <div className="space-y-6">
             {/* Main Image Display */}
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-card/50 to-background/50 border border-border backdrop-blur-sm group">
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-card/50 to-background/50 border border-border group">
                 {/* Image Container */}
                 <div
                     className="relative w-full h-full cursor-pointer"
@@ -95,7 +95,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                 fill
                                 className="object-contain z-10 p-4"
                                 priority
-                                unoptimized
+                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 50vw"
                             />
                         </motion.div>
                     </AnimatePresence>
@@ -112,7 +112,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                 e.stopPropagation();
                                 prevImage();
                             }}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-opacity opacity-0 group-hover:opacity-100"
                         >
                             <ChevronLeft className="w-6 h-6" />
                         </button>
@@ -121,7 +121,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                 e.stopPropagation();
                                 nextImage();
                             }}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white p-3 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-opacity opacity-0 group-hover:opacity-100"
                         >
                             <ChevronRight className="w-6 h-6" />
                         </button>
@@ -129,14 +129,14 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                 )}
 
                 {/* Full Screen Indicator */}
-                <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full text-white/80 text-sm flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
+                <div className="absolute bottom-4 right-4 bg-black/50 px-4 py-2 rounded-full text-white/80 text-sm flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
                     <Maximize2 className="w-4 h-4" />
                     Xem toàn màn hình
                 </div>
 
                 {/* Image Counter Badge */}
                 {images.length > 1 && (
-                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white/90 text-xs font-medium z-20">
+                    <div className="absolute top-4 right-4 bg-black/50 px-3 py-1 rounded-full text-white/90 text-xs font-medium z-20">
                         {currentImageIndex + 1} / {images.length}
                     </div>
                 )}
@@ -207,7 +207,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                     )}
 
                                     {/* Tooltip */}
-                                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 backdrop-blur-sm rounded text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
+                                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 rounded text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
                                         {color.name}
                                     </div>
                                 </button>
@@ -228,7 +228,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                             className="fixed inset-0 z-[9999] bg-black flex flex-col"
                         >
                             {/* Header */}
-                            <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0 bg-black/50 backdrop-blur-md z-50">
+                            <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0 bg-black/50 z-50">
                                 <div>
                                     <h2 className="text-2xl font-bold text-white">{car.name}</h2>
                                     <p className="text-muted-foreground">
@@ -273,7 +273,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                                 e.stopPropagation();
                                                 prevImage();
                                             }}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all backdrop-blur-sm"
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
                                         >
                                             <ChevronLeft className="w-8 h-8" />
                                         </button>
@@ -282,7 +282,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                                 e.stopPropagation();
                                                 nextImage();
                                             }}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all backdrop-blur-sm"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
                                         >
                                             <ChevronRight className="w-8 h-8" />
                                         </button>
@@ -292,7 +292,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
 
                             {/* Bottom Thumbnails */}
                             {images.length > 1 && (
-                                <div className="p-6 border-t border-white/10 bg-black/50 backdrop-blur-md shrink-0 overflow-x-auto">
+                                <div className="p-6 border-t border-white/10 bg-black/50 shrink-0 overflow-x-auto">
                                     <div className="flex justify-center gap-4 min-w-max px-4">
                                         {images.map((img, idx) => (
                                             <button

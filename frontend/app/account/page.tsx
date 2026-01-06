@@ -41,7 +41,7 @@ export default function AccountPage() {
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Sidebar */}
                     <div className="lg:col-span-1">
-                        <div className="bg-card/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 space-y-2">
+                        <div className="bg-card/50 border border-white/5 rounded-2xl p-6 space-y-2">
                             <Link
                                 href="/account"
                                 className="block px-4 py-3 rounded-xl bg-primary/10 text-primary font-bold"

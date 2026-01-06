@@ -625,8 +625,13 @@ export interface ApiCarModelCarModel extends Struct.CollectionTypeSchema {
       Schema.Attribute.Unique;
     orders: Schema.Attribute.Relation<'oneToMany', 'api::order.order'>;
     price: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    promotions: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::promotion.promotion'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     range: Schema.Attribute.Integer & Schema.Attribute.Required;
+    reviews: Schema.Attribute.Relation<'oneToMany', 'api::review.review'>;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     sold: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     specifications: Schema.Attribute.JSON;
@@ -752,6 +757,107 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiNewsletterSubscriberNewsletterSubscriber
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'newsletter_subscribers';
+  info: {
+    displayName: 'Newsletter Subscriber';
+    pluralName: 'newsletter-subscribers';
+    singularName: 'newsletter-subscriber';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::newsletter-subscriber.newsletter-subscriber'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.String;
+    status: Schema.Attribute.Enumeration<['subscribed', 'unsubscribed']> &
+      Schema.Attribute.DefaultTo<'subscribed'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiNotificationNotification
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'notifications';
+  info: {
+    displayName: 'Notification';
+    pluralName: 'notifications';
+    singularName: 'notification';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Data: Schema.Attribute.JSON;
+    EmailSent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    EmailSentAt: Schema.Attribute.DateTime;
+    IsRead: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    Link: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notification.notification'
+    > &
+      Schema.Attribute.Private;
+    Message: Schema.Attribute.Text & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    RelatedOrder: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
+    RelatedService: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::service-booking.service-booking'
+    >;
+    RelatedTradeIn: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::trade-in.trade-in'
+    >;
+    Title: Schema.Attribute.String & Schema.Attribute.Required;
+    Type: Schema.Attribute.Enumeration<
+      [
+        'order-created',
+        'order-confirmed',
+        'order-shipped',
+        'order-delivered',
+        'order-cancelled',
+        'service-confirmed',
+        'service-reminder',
+        'service-completed',
+        'trade-in-appraised',
+        'trade-in-accepted',
+        'promotion',
+        'review-response',
+        'maintenance-reminder',
+        'general',
+      ]
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    User: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'
     >;
@@ -951,7 +1057,7 @@ export interface ApiPromotionPromotion extends Struct.CollectionTypeSchema {
   };
   attributes: {
     car_models: Schema.Attribute.Relation<
-      'oneToMany',
+      'manyToMany',
       'api::car-model.car-model'
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -975,6 +1081,145 @@ export interface ApiPromotionPromotion extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiReviewReview extends Struct.CollectionTypeSchema {
+  collectionName: 'reviews';
+  info: {
+    description: 'Customer reviews for products';
+    displayName: 'Review';
+    pluralName: 'reviews';
+    singularName: 'review';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    AdminResponse: Schema.Attribute.Text;
+    CarModel: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::car-model.car-model'
+    >;
+    Comment: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Customer: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    HelpfulCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    Images: Schema.Attribute.Media<'images', true>;
+    IsApproved: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    IsVerifiedPurchase: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::review.review'
+    > &
+      Schema.Attribute.Private;
+    Order: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
+    publishedAt: Schema.Attribute.DateTime;
+    Rating: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
+    Title: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiServiceBookingServiceBooking
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'service_bookings';
+  info: {
+    displayName: 'Service Booking';
+    pluralName: 'service-bookings';
+    singularName: 'service-booking';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ActualCost: Schema.Attribute.Decimal;
+    AppointmentDate: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    CompletedAt: Schema.Attribute.DateTime;
+    CompletionNotes: Schema.Attribute.Text;
+    ContactEmail: Schema.Attribute.Email & Schema.Attribute.Required;
+    ContactPhone: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Customer: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    CustomerFeedback: Schema.Attribute.Text;
+    EstimatedCost: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    IssueDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::service-booking.service-booking'
+    > &
+      Schema.Attribute.Private;
+    Order: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
+    PartsReplaced: Schema.Attribute.JSON;
+    PreferredShowroom: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::showroom.showroom'
+    >;
+    Priority: Schema.Attribute.Enumeration<
+      ['low', 'medium', 'high', 'urgent']
+    > &
+      Schema.Attribute.DefaultTo<'medium'>;
+    publishedAt: Schema.Attribute.DateTime;
+    Rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
+    ServiceImages: Schema.Attribute.Media<'images', true>;
+    ServiceType: Schema.Attribute.Enumeration<
+      [
+        'maintenance',
+        'repair',
+        'battery-replacement',
+        'inspection',
+        'warranty',
+        'emergency',
+      ]
+    > &
+      Schema.Attribute.Required;
+    Status: Schema.Attribute.Enumeration<
+      ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
+    TechnicianNotes: Schema.Attribute.Text;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    VehicleBrand: Schema.Attribute.String & Schema.Attribute.Required;
+    VehicleModel: Schema.Attribute.String & Schema.Attribute.Required;
+    VehiclePlateNumber: Schema.Attribute.String;
+    WarrantyApplied: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
   };
 }
 
@@ -1018,6 +1263,80 @@ export interface ApiShowroomShowroom extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     WorkingHours: Schema.Attribute.JSON & Schema.Attribute.Required;
+  };
+}
+
+export interface ApiTradeInTradeIn extends Struct.CollectionTypeSchema {
+  collectionName: 'trade_ins';
+  info: {
+    displayName: 'Trade-in';
+    pluralName: 'trade-ins';
+    singularName: 'trade-in';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    AdditionalNotes: Schema.Attribute.Text;
+    AppraisalNotes: Schema.Attribute.Text;
+    AppraisedValue: Schema.Attribute.Decimal;
+    BatteryHealth: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<80>;
+    Condition: Schema.Attribute.Enumeration<
+      ['excellent', 'good', 'fair', 'poor']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'good'>;
+    ContactEmail: Schema.Attribute.Email & Schema.Attribute.Required;
+    ContactPhone: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Customer: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    EstimatedValue: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    HasAccidents: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    HasModifications: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    InspectionDate: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::trade-in.trade-in'
+    > &
+      Schema.Attribute.Private;
+    Mileage: Schema.Attribute.Integer & Schema.Attribute.Required;
+    Order: Schema.Attribute.Relation<'oneToOne', 'api::order.order'>;
+    Photos: Schema.Attribute.Media<'images', true>;
+    PreferredContactMethod: Schema.Attribute.Enumeration<
+      ['phone', 'email', 'both']
+    > &
+      Schema.Attribute.DefaultTo<'phone'>;
+    publishedAt: Schema.Attribute.DateTime;
+    Status: Schema.Attribute.Enumeration<
+      ['pending', 'appraised', 'accepted', 'rejected', 'completed']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    VehicleBrand: Schema.Attribute.String & Schema.Attribute.Required;
+    VehicleModel: Schema.Attribute.String & Schema.Attribute.Required;
+    VehicleType: Schema.Attribute.Enumeration<
+      ['bicycle', 'motorcycle', 'scooter']
+    > &
+      Schema.Attribute.Required;
+    VehicleYear: Schema.Attribute.Integer & Schema.Attribute.Required;
   };
 }
 
@@ -1540,11 +1859,16 @@ declare module '@strapi/strapi' {
       'api::category.category': ApiCategoryCategory;
       'api::hero-slide.hero-slide': ApiHeroSlideHeroSlide;
       'api::lead.lead': ApiLeadLead;
+      'api::newsletter-subscriber.newsletter-subscriber': ApiNewsletterSubscriberNewsletterSubscriber;
+      'api::notification.notification': ApiNotificationNotification;
       'api::order.order': ApiOrderOrder;
       'api::payment-transaction.payment-transaction': ApiPaymentTransactionPaymentTransaction;
       'api::payment.payment': ApiPaymentPayment;
       'api::promotion.promotion': ApiPromotionPromotion;
+      'api::review.review': ApiReviewReview;
+      'api::service-booking.service-booking': ApiServiceBookingServiceBooking;
       'api::showroom.showroom': ApiShowroomShowroom;
+      'api::trade-in.trade-in': ApiTradeInTradeIn;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

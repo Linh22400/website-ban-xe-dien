@@ -190,9 +190,12 @@ function ProductForm() {
         // 1. Handle Thumbnail Upload
         let finalThumbnailId = thumbnailId;
         if (thumbnailFile) {
-            const uploadedId = await uploadFile(token, thumbnailFile);
-            if (uploadedId) {
-                finalThumbnailId = uploadedId;
+            // uploadFile trả về mảng file đã upload, lấy id file đầu tiên.
+            const uploadedFiles = await uploadFile(token, thumbnailFile);
+            const uploadedFileId = Array.isArray(uploadedFiles) ? uploadedFiles[0]?.id : undefined;
+
+            if (uploadedFileId) {
+                finalThumbnailId = uploadedFileId;
             } else {
                 alert("Lỗi khi tải ảnh đại diện lên!");
                 setLoading(false);
@@ -208,9 +211,10 @@ function ProductForm() {
                 // Upload new files if any
                 if (c.imageFiles && c.imageFiles.length > 0) {
                     for (const file of c.imageFiles) {
-                        const uploadedId = await uploadFile(token, file);
-                        if (uploadedId) {
-                            currentImageIds.push(uploadedId);
+                        const uploadedFiles = await uploadFile(token, file);
+                        const uploadedFileId = Array.isArray(uploadedFiles) ? uploadedFiles[0]?.id : undefined;
+                        if (uploadedFileId) {
+                            currentImageIds.push(uploadedFileId);
                         }
                     }
                 }

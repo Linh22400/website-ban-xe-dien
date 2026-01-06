@@ -1,0 +1,122 @@
+{
+  "kind": "collectionType",
+  "collectionName": "service_bookings",
+  "info": {
+    "singularName": "service-booking",
+    "pluralName": "service-bookings",
+    "displayName": "Service Booking"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "Order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order"
+    },
+    "ServiceType": {
+      "type": "enumeration",
+      "enum": [
+        "maintenance",
+        "repair",
+        "battery-replacement",
+        "inspection",
+        "warranty",
+        "emergency"
+      ],
+      "required": true
+    },
+    "AppointmentDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "VehicleBrand": {
+      "type": "string",
+      "required": true
+    },
+    "VehicleModel": {
+      "type": "string",
+      "required": true
+    },
+    "VehiclePlateNumber": {
+      "type": "string"
+    },
+    "IssueDescription": {
+      "type": "text",
+      "required": true
+    },
+    "Priority": {
+      "type": "enumeration",
+      "enum": ["low", "medium", "high", "urgent"],
+      "default": "medium"
+    },
+    "Status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "confirmed",
+        "in-progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "required": true
+    },
+    "ContactPhone": {
+      "type": "string",
+      "required": true
+    },
+    "ContactEmail": {
+      "type": "email",
+      "required": true
+    },
+    "PreferredShowroom": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::showroom.showroom"
+    },
+    "EstimatedCost": {
+      "type": "decimal",
+      "default": 0
+    },
+    "ActualCost": {
+      "type": "decimal"
+    },
+    "TechnicianNotes": {
+      "type": "text"
+    },
+    "CompletionNotes": {
+      "type": "text"
+    },
+    "Rating": {
+      "type": "integer",
+      "min": 1,
+      "max": 5
+    },
+    "CustomerFeedback": {
+      "type": "text"
+    },
+    "WarrantyApplied": {
+      "type": "boolean",
+      "default": false
+    },
+    "PartsReplaced": {
+      "type": "json"
+    },
+    "ServiceImages": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "CompletedAt": {
+      "type": "datetime"
+    }
+  }
+}

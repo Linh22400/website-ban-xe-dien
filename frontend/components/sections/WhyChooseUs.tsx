@@ -62,7 +62,8 @@ export default function WhyChooseUs() {
                             key={i}
                             className={`group p-8 bg-card/30 backdrop-blur-sm rounded-3xl border border-white/5 transition-all duration-500 hover:-translate-y-2 hover:bg-card/50 ${item.border}`}
                         >
-                            <div className={`w-16 h-16 ${item.bg} rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 ${item.color}`}>
+                            <div className={`w-16 h-16 ${item.bg} rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-3 ${item.color}`}
+                                style={{ willChange: 'transform' }}>
                                 {item.icon}
                             </div>
                             <h3 className={`text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary transition-colors`}>{item.title}</h3>

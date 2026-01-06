@@ -7,13 +7,14 @@ export const metadata = {
     description: "Cập nhật tin tức và xu hướng mới nhất về xe điện tại Việt Nam.",
 };
 
-export const dynamic = 'force-dynamic';
+// ISR: cache 60s để trang blog tải nhanh hơn nhưng vẫn cập nhật nội dung định kỳ.
+export const revalidate = 60;
 
 export default async function BlogPage() {
     const articles = await getArticles();
 
     return (
-        <main className="min-h-screen pt-24 pb-12 px-6 bg-background">
+        <main className="min-h-screen pb-12 px-6 bg-background">
             <div className="container mx-auto">
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
@@ -27,14 +28,15 @@ export default async function BlogPage() {
                 {articles.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {articles.map((post) => (
-                            <Link href={`/blog/${post.slug}`} key={post.id} className="group flex flex-col bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300">
+                            <Link href={`/blog/${post.slug}`} key={post.id} className="group flex flex-col bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors duration-300">
                                 <div className="aspect-[16/9] relative overflow-hidden bg-gray-900">
                                     {post.coverImage ? (
                                         <Image
                                             src={post.coverImage}
                                             alt={post.title}
                                             fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                                            className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-700">
@@ -42,7 +44,7 @@ export default async function BlogPage() {
                                         </div>
                                     )}
                                     {post.category && (
-                                        <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10">
+                                        <div className="absolute top-4 left-4 bg-black/70 px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10">
                                             {post.category.name}
                                         </div>
                                     )}

@@ -1,13 +1,27 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getShowrooms } from "@/lib/order-api";
 
 export const metadata = {
     title: "Về Chúng Tôi | Xe Điện Xanh",
     description: "Tìm hiểu về sứ mệnh và tầm nhìn của chúng tôi trong việc mang đến giải pháp giao thông xanh.",
 };
 
-export default function AboutPage() {
+export const revalidate = 300;
+
+export default async function AboutPage() {
+    const showrooms = await getShowrooms();
+    const topShowrooms = showrooms.slice(0, 3);
+
+    const mapsHref = (address: string, city: string, lat?: number, lng?: number) => {
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+        }
+        const q = encodeURIComponent([address, city].filter(Boolean).join(", "));
+        return `https://www.google.com/maps/search/?api=1&query=${q}`;
+    };
+
     return (
-        <main className="min-h-screen pt-24 pb-12 px-6 bg-background">
+        <main className="min-h-screen pb-12 px-6 bg-background">
             <div className="container mx-auto max-w-6xl">
                 {/* Hero Section */}
                 <div className="text-center mb-16">
@@ -85,6 +99,67 @@ export default function AboutPage() {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                {/* Showrooms */}
+                <div className="mb-20">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                        <div>
+                            <h2 className="text-3xl font-bold">Hệ Thống Showroom</h2>
+                            <p className="text-muted-foreground mt-2 max-w-2xl">
+                                Đến trực tiếp showroom để xem xe, lái thử và được tư vấn cấu hình phù hợp.
+                            </p>
+                        </div>
+                        <Link
+                            href="/showrooms"
+                            className="inline-flex items-center justify-center px-6 py-3 bg-card border border-border rounded-full text-foreground font-bold hover:border-primary transition-colors"
+                        >
+                            Xem tất cả showroom
+                        </Link>
+                    </div>
+
+                    {topShowrooms.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {topShowrooms.map((s) => (
+                                <div key={s.id} className="bg-card p-6 rounded-2xl border border-border">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div>
+                                            <div className="text-lg font-bold text-foreground">{s.Name}</div>
+                                            <div className="text-sm text-muted-foreground mt-1">
+                                                {s.Address}{s.City ? `, ${s.City}` : ""}
+                                            </div>
+                                        </div>
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20 whitespace-nowrap">
+                                            Showroom
+                                        </span>
+                                    </div>
+
+                                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                                        {s.Phone && (
+                                            <a
+                                                href={`tel:${s.Phone}`}
+                                                className="px-4 py-2 rounded-full bg-secondary text-foreground font-semibold border border-border hover:border-primary transition-colors"
+                                            >
+                                                Gọi: {s.Phone}
+                                            </a>
+                                        )}
+                                        <a
+                                            href={mapsHref(s.Address, s.City, s.Latitude, s.Longitude)}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="px-4 py-2 rounded-full bg-secondary text-foreground font-semibold border border-border hover:border-primary transition-colors"
+                                        >
+                                            Chỉ đường
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-card p-8 rounded-2xl border border-border text-muted-foreground">
+                            Chưa có dữ liệu showroom.
+                        </div>
+                    )}
                 </div>
 
                 {/* Team or Story */}

@@ -108,9 +108,12 @@ export default function AdminMarketingPage() {
         // Upload image if new
         let finalImageId = formImageId;
         if (formImageFile) {
-            const uploadedId = await uploadFile(token!, formImageFile);
-            if (uploadedId) {
-                finalImageId = uploadedId;
+            // uploadFile trả về danh sách file đã upload (Strapi trả array), ta lấy id của file đầu tiên.
+            const uploadedFiles = await uploadFile(token!, formImageFile);
+            const uploadedFileId = Array.isArray(uploadedFiles) ? uploadedFiles[0]?.id : undefined;
+
+            if (uploadedFileId) {
+                finalImageId = uploadedFileId;
             } else {
                 alert("Lỗi khi tải ảnh lên!");
                 setLoading(false);

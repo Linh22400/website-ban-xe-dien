@@ -112,6 +112,18 @@
       "type": "component",
       "component": "product-info.warranty-policy",
       "repeatable": false
+    },
+    "promotions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::promotion.promotion",
+      "mappedBy": "car_models"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "CarModel"
     }
   }
 }

@@ -11,7 +11,8 @@ import {
 } from "@/components/blog/BlogContentRenderers";
 import { BlogSidebarHeading } from "@/components/blog/BlogSidebarHeading";
 
-export const dynamic = 'force-dynamic';
+// ISR: cache 60s để tải nhanh nhưng vẫn cập nhật nội dung.
+export const revalidate = 60;
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -78,7 +79,7 @@ export default async function BlogDetailPage({ params }: PageProps) {
     }
 
     return (
-        <main className="min-h-screen pt-24 pb-20 bg-background">
+        <main className="min-h-screen pb-20 bg-background">
             {/* Hero Section */}
             <div className="relative h-[400px] w-full">
                 {article.coverImage ? (
@@ -86,7 +87,9 @@ export default async function BlogDetailPage({ params }: PageProps) {
                         src={article.coverImage}
                         alt={article.title}
                         fill
-                        className="object-cover"
+                        sizes="100vw"
+                        quality={90}
+                        className="object-cover object-center"
                         priority
                     />
                 ) : (

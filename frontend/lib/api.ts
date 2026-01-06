@@ -1,55 +1,60 @@
 import qs from "qs";
 
+export interface Warranty {
+    // Tùy schema Strapi, giữ linh hoạt để tránh gãy type khi backend đổi cấu trúc.
+    [key: string]: any;
+}
+
 export interface Car {
     id: string;
     documentId: string;
     slug: string;
     name: string;
-    brand: string;
     price: number;
+    brand: string;
+    type: 'bicycle' | 'motorcycle';
     range: number;
     topSpeed: number;
     acceleration: number;
     description: string;
     thumbnail: string;
-    thumbnailId?: number; // Added
+    thumbnailId?: number;
+    isFeatured: boolean;
     modelUrl?: string;
-    colors: { name: string; hex: string; images: string[]; imageIds?: number[] }[]; // Updated
-    type: 'bicycle' | 'motorcycle';
-    isFeatured?: boolean;
-    features?: { icon: string; title: string; desc: string; bg?: string }[];
-    specifications?: { label: string; value: string }[];
+    colors: { name: string; hex: string; images: string[]; imageIds?: number[] }[];
+    features: any[];
+    specifications: any[];
     technicalImage?: string;
     warranty?: Warranty;
-    stock?: number;
+    stock: number;
+    sold?: number;
 }
 
-export interface Warranty {
-    warrantyPeriod?: string;
-    batteryWarranty?: string;
-    motorWarranty?: string;
-    maintenance?: string;
-    returnPolicy?: string;
-    conditions?: any; // Rich text
-    exclusions?: any; // Rich text
-    process?: any; // Rich text
+export interface PaginationMeta {
+    page: number;
+    pageSize: number;
+    pageCount: number;
+    total: number;
+}
+
+export interface GetCarsResult {
+    cars: Car[];
+    pagination?: PaginationMeta;
 }
 
 export interface LeadData {
     name: string;
-    email: string;
     phone: string;
-    type: string;
-    model?: string;
+    email?: string;
     message?: string;
-    users_permissions_user?: number; // User ID for authenticated users
+    [key: string]: any;
 }
 
 export interface User {
     id: number;
     username: string;
     email: string;
-    blocked: boolean;
+    [key: string]: any;
 }
 
 export interface AuthResponse {
@@ -64,16 +69,63 @@ export interface RegisterData {
 }
 
 export interface LoginData {
-    identifier: string; // email or username
+    identifier: string;
     password: string;
 }
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+const DEBUG_LOG = process.env.NODE_ENV !== 'production';
+
+async function getApiErrorMessage(response: Response, fallbackMessage: string) {
+    try {
+        const data = await response.json();
+        const message =
+            data?.error?.message ||
+            data?.message ||
+            data?.error ||
+            fallbackMessage;
+        const retryAfterSec = Number(data?.error?.retryAfterSec);
+        if (Number.isFinite(retryAfterSec) && retryAfterSec > 0) {
+            return `${String(message)} (thử lại sau ${retryAfterSec}s)`;
+        }
+        return String(message);
+    } catch {
+        return fallbackMessage;
+    }
+}
+
+// Khi chạy `next build`, nếu Strapi không bật thì các fetch sẽ fail (ECONNREFUSED).
+// Đây là trường hợp “bình thường” trong CI/build, nên ta không in console.error để log sạch.
+const IS_NEXT_BUILD_PHASE = process.env.NEXT_PHASE === 'phase-production-build';
+
+function logFetchIssue(context: string, error: unknown) {
+    if (IS_NEXT_BUILD_PHASE) return;
+    console.error(context, error);
+}
+
+async function logNonOkResponse(context: string, response: Response) {
+    if (IS_NEXT_BUILD_PHASE) return;
+    try {
+        const text = await response.text();
+        console.error(context, text);
+    } catch (error) {
+        console.error(context, error);
+    }
+}
+
+// Ghi chú: Trong Next.js, fetch ở server có thể dùng ISR (revalidate) để tăng tốc và tốt cho SEO.
+// Còn fetch ở browser (client) thường nên dùng no-store để không bị cache sai theo người dùng.
+function getDefaultFetchOptions(revalidateSeconds: number = 60): RequestInit & { next?: { revalidate: number } } {
+    if (typeof window === 'undefined') {
+        return { next: { revalidate: revalidateSeconds } };
+    }
+    return { cache: 'no-store' };
+}
 
 // Fallback images for each product type
 const FALLBACK_IMAGES: Record<string, string> = {
     'bicycle': 'https://images.unsplash.com/photo-1571333250630-f0230c320b6d?auto=format&fit=crop&q=80&w=1000',
-    'motorcycle': 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=1000'
+    'motorcycle': 'https://images.unsplash.com/photo-1558981001-5864b3250a69?auto=format&fit=crop&q=80&w=1000',
 };
 
 // Transform Strapi response to our Car interface
@@ -103,9 +155,12 @@ function transformStrapiCar(strapiCar: any): Car {
             : `${STRAPI_URL}${techUrl}`;
     }
 
+    // Ưu tiên dùng id/documentId ổn định để tránh lỗi hydration và key bị thay đổi.
+    const stableId = strapiCar.id?.toString() || (strapiCar.documentId ? String(strapiCar.documentId) : (slug ? `slug:${slug}` : 'unknown'));
+
     return {
-        id: strapiCar.id?.toString() || strapiCar.documentId || String(Math.random()),
-        documentId: strapiCar.documentId || strapiCar.id?.toString() || '',
+        id: stableId,
+        documentId: strapiCar.documentId || strapiCar.id?.toString() || stableId,
         slug: slug,
         name: strapiCar.name || 'Unknown',
         brand: strapiCar.brand || 'Unknown',
@@ -117,7 +172,8 @@ function transformStrapiCar(strapiCar: any): Car {
         description: strapiCar.description || '',
         thumbnail: thumbnailUrl,
         thumbnailId: thumbnailId,
-        isFeatured: strapiCar.isFeatured || false,
+        // Hỗ trợ nhiều tên field để tránh lệch schema giữa Strapi (isFeatured vs featured).
+        isFeatured: Boolean(strapiCar.isFeatured ?? strapiCar.IsFeatured ?? strapiCar.featured ?? strapiCar.Featured ?? false),
         modelUrl: strapiCar.model3D?.url
             ? `${STRAPI_URL}${strapiCar.model3D.url}`
             : undefined,
@@ -151,7 +207,8 @@ function transformStrapiCar(strapiCar: any): Car {
         specifications: strapiCar.specifications || [],
         technicalImage: technicalImageUrl,
         warranty: strapiCar.warranty || undefined,
-        stock: strapiCar.stock || 0
+        stock: strapiCar.stock || 0,
+        sold: typeof strapiCar.sold === 'number' ? strapiCar.sold : (parseInt(strapiCar.sold) || 0)
     };
 }
 
@@ -211,14 +268,15 @@ export async function getArticles(): Promise<Article[]> {
         const data = await response.json();
         return data.data.map((item: any) => transformStrapiArticle(item));
     } catch (error) {
-        console.error("Error fetching articles:", error);
+        logFetchIssue("Error fetching articles:", error);
         return [];
     }
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
     try {
-        console.log("getArticleBySlug called with:", slug);
+        // Lưu ý: Slug của Article trong Strapi đang là field "Slug" (viết hoa).
+        // Dùng qs để build query rõ ràng + tránh lỗi encode.
         const query = qs.stringify({
             filters: {
                 Slug: {
@@ -250,29 +308,25 @@ export async function getArticleBySlug(slug: string): Promise<Article | undefine
                 },
             },
         }, {
-            encodeValuesOnly: false, // Ensure full encoding
+            // Encode giá trị để URL an toàn hơn (đặc biệt khi slug có ký tự đặc biệt).
+            encodeValuesOnly: true,
         });
 
         const url = `${STRAPI_URL}/api/articles?${query}`;
-        console.log("Fetching article with URL:", url);
-
-        const response = await fetch(url, { cache: 'no-store' });
-
-        console.log("Article fetch status:", response.status);
+        const response = await fetch(url, { ...getDefaultFetchOptions(60) });
 
         if (!response.ok) {
-            console.error("Article fetch failed:", await response.text());
+            await logNonOkResponse("Article fetch failed:", response);
             return undefined;
         }
 
         const data = await response.json();
-        console.log("Article data found:", data.data.length);
 
         if (data.data.length === 0) return undefined;
 
         return transformStrapiArticle(data.data[0]);
     } catch (error) {
-        console.error("Error fetching article:", error);
+        logFetchIssue("Error fetching article:", error);
         return undefined;
     }
 }
@@ -344,7 +398,7 @@ export async function getPromotions(): Promise<Promotion[]> {
             car_models: Array.isArray(item.car_models) ? item.car_models : (item.car_models?.data || [])
         }));
     } catch (error) {
-        console.error("Error fetching promotions:", error);
+        logFetchIssue("Error fetching promotions:", error);
         return [];
     }
 }
@@ -376,10 +430,16 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
 
 export async function getFeaturedCars(): Promise<Car[]> {
     try {
+        // Hỗ trợ cả 2 schema: isFeatured (thường) hoặc featured (một số content-type cũ).
+        const featuredFilter = [
+            'filters[$or][0][isFeatured][$eq]=true',
+            'filters[$or][1][featured][$eq]=true',
+        ].join('&');
+
         const response = await fetch(
-            `${STRAPI_URL}/api/car-models?filters[isFeatured][$eq]=true&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
+            `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
             {
-                next: { revalidate: 60 } // Revalidate every minute
+                ...getDefaultFetchOptions(60)
             }
         );
 
@@ -397,6 +457,7 @@ export async function getFeaturedCars(): Promise<Car[]> {
 export interface GetCarsParams {
     type?: string;
     brand?: string;
+    search?: string;
     minPrice?: number;
     maxPrice?: number;
     minRange?: number;
@@ -408,36 +469,46 @@ export interface GetCarsParams {
     pageSize?: number;
 }
 
-export async function getCars(params: GetCarsParams = {}): Promise<Car[]> {
+export async function getCarsWithMeta(params: GetCarsParams = {}): Promise<GetCarsResult> {
     try {
-        const { type, brand, minPrice, maxPrice, sort, page = 1, pageSize = 12 } = params;
+        const { type, brand, search, minPrice, maxPrice, sort, page = 1, pageSize = 12 } = params;
 
         // Build query parts
         const queryParts = [
             'populate[0]=thumbnail',
             'populate[1]=model3D',
             'populate[2]=color.images',
+            'populate[3]=technicalImage',
+            'populate[4]=warranty',
             `pagination[page]=${page}`,
             `pagination[pageSize]=${pageSize}`
         ];
 
         // Add filters
-        if (type) queryParts.push(`filters[type][$eq]=${type}`);
-        if (brand) queryParts.push(`filters[brand][$eq]=${brand}`);
-        if (minPrice) queryParts.push(`filters[price][$gte]=${minPrice}`);
-        if (maxPrice) queryParts.push(`filters[price][$lte]=${maxPrice}`);
+        if (type) queryParts.push(`filters[type][$eq]=${encodeURIComponent(type)}`);
+        if (brand) queryParts.push(`filters[brand][$eq]=${encodeURIComponent(brand)}`);
+
+        // Search by name/brand/slug (case-insensitive)
+        if (search && search.trim()) {
+            const q = encodeURIComponent(search.trim());
+            queryParts.push(`filters[$or][0][name][$containsi]=${q}`);
+            queryParts.push(`filters[$or][1][brand][$containsi]=${q}`);
+            queryParts.push(`filters[$or][2][slug][$containsi]=${q}`);
+        }
+        if (minPrice !== undefined) queryParts.push(`filters[price][$gte]=${minPrice}`);
+        if (maxPrice !== undefined) queryParts.push(`filters[price][$lte]=${maxPrice}`);
 
         // Add range filters
-        if (params.minRange) queryParts.push(`filters[range][$gte]=${params.minRange}`);
-        if (params.maxRange) queryParts.push(`filters[range][$lte]=${params.maxRange}`);
+        if (params.minRange !== undefined) queryParts.push(`filters[range][$gte]=${params.minRange}`);
+        if (params.maxRange !== undefined) queryParts.push(`filters[range][$lte]=${params.maxRange}`);
 
-        // Add speed filters
-        if (params.minSpeed) queryParts.push(`filters[topSpeed][$gte]=${params.minSpeed}`);
-        if (params.maxSpeed) queryParts.push(`filters[topSpeed][$lte]=${params.maxSpeed}`);
+        // Add speed filters (field trong Strapi đang là topSpeed)
+        if (params.minSpeed !== undefined) queryParts.push(`filters[topSpeed][$gte]=${params.minSpeed}`);
+        if (params.maxSpeed !== undefined) queryParts.push(`filters[topSpeed][$lte]=${params.maxSpeed}`);
 
         // Add sort
         if (sort) {
-            queryParts.push(`sort=${sort}`);
+            queryParts.push(`sort=${encodeURIComponent(sort)}`);
         } else {
             queryParts.push('sort=createdAt:desc'); // Default sort
         }
@@ -445,22 +516,38 @@ export async function getCars(params: GetCarsParams = {}): Promise<Car[]> {
         const queryString = queryParts.join('&');
         const url = `${STRAPI_URL}/api/car-models?${queryString}`;
 
-        console.log('Fetching cars with URL:', url);
-
         const response = await fetch(url, {
-            cache: 'no-store'
+            ...getDefaultFetchOptions(60)
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch cars');
+            await logNonOkResponse('Cars fetch failed:', response);
+            return { cars: [] };
         }
 
         const data = await response.json();
-        return data.data.map(transformStrapiCar);
+
+        const cars = Array.isArray(data?.data) ? data.data.map(transformStrapiCar) : [];
+        const pagination = data?.meta?.pagination;
+        const meta: PaginationMeta | undefined = pagination && typeof pagination === 'object'
+            ? {
+                page: typeof pagination.page === 'number' ? pagination.page : page,
+                pageSize: typeof pagination.pageSize === 'number' ? pagination.pageSize : pageSize,
+                pageCount: typeof pagination.pageCount === 'number' ? pagination.pageCount : 1,
+                total: typeof pagination.total === 'number' ? pagination.total : cars.length,
+            }
+            : undefined;
+
+        return { cars, pagination: meta };
     } catch (error) {
-        console.error('Error fetching cars:', error);
-        return [];
+        logFetchIssue('Error fetching cars:', error);
+        return { cars: [] };
     }
+}
+
+export async function getCars(params: GetCarsParams = {}): Promise<Car[]> {
+    const result = await getCarsWithMeta(params);
+    return result.cars;
 }
 
 export async function getProductsCount(): Promise<number> {
@@ -482,7 +569,7 @@ export async function getCarById(documentId: string): Promise<Car | undefined> {
         // Use filters instead of direct ID endpoint to avoid 404 if findOne permission is missing
         const response = await fetch(
             `${STRAPI_URL}/api/car-models/${documentId}?populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=warranty`,
-            { cache: 'no-store' }
+            { ...getDefaultFetchOptions(60) }
         );
 
         if (!response.ok) {
@@ -505,9 +592,10 @@ export async function getCarById(documentId: string): Promise<Car | undefined> {
 
 export async function getCarBySlug(slug: string): Promise<Car | undefined> {
     try {
+        const safeSlug = encodeURIComponent(slug);
         const response = await fetch(
-            `${STRAPI_URL}/api/car-models?filters[slug][$eq]=${slug}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
-            { cache: 'no-store' }
+            `${STRAPI_URL}/api/car-models?filters[slug][$eq]=${safeSlug}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
+            { ...getDefaultFetchOptions(60) }
         );
 
         if (!response.ok) {
@@ -531,7 +619,7 @@ export async function getRelatedCars(currentSlug: string, type: string, limit: n
     try {
         const response = await fetch(
             `${STRAPI_URL}/api/car-models?filters[slug][$ne]=${currentSlug}&filters[type][$eq]=${type}&pagination[limit]=${limit}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images`,
-            { cache: 'no-store' }
+            { ...getDefaultFetchOptions(60) }
         );
 
         if (!response.ok) {
@@ -555,7 +643,7 @@ export async function getCarsBySlugs(slugs: string[]): Promise<Car[]> {
 
         const response = await fetch(
             `${STRAPI_URL}/api/car-models?${slugFilters}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images`,
-            { cache: 'no-store' }
+            { ...getDefaultFetchOptions(60) }
         );
 
         if (!response.ok) {
@@ -583,16 +671,14 @@ export async function submitLead(leadData: LeadData): Promise<boolean> {
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Failed to submit lead. Status:', response.status);
-            console.error('Error response:', errorText);
-            throw new Error(`Failed to submit lead: ${response.status} - ${errorText}`);
+            const message = await getApiErrorMessage(response, 'Gửi yêu cầu thất bại. Vui lòng thử lại.');
+            throw new Error(message);
         }
 
         return true;
     } catch (error) {
         console.error('Error submitting lead:', error);
-        return false;
+        throw error;
     }
 }
 
@@ -868,7 +954,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
         // Fetch all accessories first to avoid filter field name mismatch (category vs Category)
         const url = `${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc`;
 
-        console.log("Fetching accessories from:", url);
+        if (DEBUG_LOG) console.log("Fetching accessories from:", url);
         const response = await fetch(url, {
             next: { revalidate: 60 }
         });
@@ -917,7 +1003,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
 
 export async function getAccessoryBySlug(slug: string): Promise<Accessory | undefined> {
     try {
-        console.log("getAccessoryBySlug called with:", slug);
+        if (DEBUG_LOG) console.log("getAccessoryBySlug called with:", slug);
 
         const query = qs.stringify({
             filters: {
@@ -931,7 +1017,7 @@ export async function getAccessoryBySlug(slug: string): Promise<Accessory | unde
         });
 
         const url = `${STRAPI_URL}/api/accessories?${query}`;
-        console.log("Fetching accessory from:", url);
+        if (DEBUG_LOG) console.log("Fetching accessory from:", url);
 
         const response = await fetch(url, { cache: 'no-store' });
 
@@ -941,7 +1027,7 @@ export async function getAccessoryBySlug(slug: string): Promise<Accessory | unde
         }
 
         const data = await response.json();
-        console.log("Accessory API response:", JSON.stringify(data.data?.[0], null, 2));
+        if (DEBUG_LOG) console.log("Accessory API response:", JSON.stringify(data.data?.[0], null, 2));
 
         if (!data.data || data.data.length === 0) {
             console.warn("No accessory found for slug:", slug);
@@ -1174,7 +1260,7 @@ export async function getHeroSlidesAdmin(token: string): Promise<any[]> {
         if (!response.ok) return [];
         const data = await response.json();
 
-        console.log("Hero Slides Raw Response:", JSON.stringify(data.data?.[0], null, 2));
+        if (DEBUG_LOG) console.log("Hero Slides Raw Response:", JSON.stringify(data.data?.[0], null, 2));
 
         return data.data.map((item: any) => {
             // Strapi v5 flat structure - fields are at root level

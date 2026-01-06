@@ -5,7 +5,7 @@ import { Car } from "./api";
 
 interface CompareContextType {
     selectedCars: Car[];
-    addCarToCompare: (car: Car) => void;
+    addCarToCompare: (car: Car) => boolean;
     removeCarFromCompare: (carId: string) => void;
     clearCompare: () => void;
     setCars: (cars: Car[]) => void;
@@ -36,12 +36,12 @@ export function CompareProvider({ children }: { children: ReactNode }) {
 
     const addCarToCompare = (car: Car) => {
         if (selectedCars.length >= 3) {
-            alert("Bạn chỉ có thể so sánh tối đa 3 xe cùng lúc.");
-            return;
+            return false;
         }
         if (!isInCompare(car.id)) {
             setSelectedCars([...selectedCars, car]);
         }
+        return true;
     };
 
     const removeCarFromCompare = (carId: string) => {

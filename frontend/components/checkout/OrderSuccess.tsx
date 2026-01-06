@@ -35,7 +35,7 @@ export default function OrderSuccess() {
                 </p>
             </div>
 
-            <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-2xl mx-auto text-left">
+            <div className="bg-card/30 border border-white/10 rounded-2xl p-8 max-w-2xl mx-auto text-left">
                 <SectionHeading className="mb-6 border-b border-white/10 pb-4">
                     Thông tin đơn hàng
                 </SectionHeading>
@@ -56,24 +56,10 @@ export default function OrderSuccess() {
                                     createdOrder.PaymentMethod === 'full_payment' ? 'Thanh toán đầy đủ' : 'Trả góp'}
                             </ThemeText>
                             <p className="text-sm text-primary font-bold">
-                                {(() => {
-                                    // Use cart total + VAT for consistency with checkout
-                                    const cartTotal = total;
-                                    const vat = cartTotal * 0.1;
-                                    const totalAmount = cartTotal + vat; // No shipping (FREE)
-
-                                    let depositAmount = 0;
-
-                                    if (createdOrder.PaymentMethod === 'deposit') {
-                                        depositAmount = 3000000; // Fixed deposit
-                                    } else if (createdOrder.PaymentMethod === 'full_payment') {
-                                        depositAmount = totalAmount; // Full payment
-                                    } else if (createdOrder.PaymentMethod === 'installment') {
-                                        depositAmount = totalAmount * 0.3; // 30% down payment
-                                    }
-
-                                    return formatCurrency(depositAmount);
-                                })()}
+                                {formatCurrency(createdOrder.DepositAmount ?? 0)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                Tổng thanh toán (đã gồm VAT): {formatCurrency(createdOrder.TotalAmount ?? (total + total * 0.1))}
                             </p>
                         </div>
                     </div>

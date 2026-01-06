@@ -38,8 +38,8 @@ export default function AdminLoginPage() {
     return (
         <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
             {/* Background Effects */}
-            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="w-full max-w-md relative z-10">
                 <div className="text-center mb-8 space-y-2">
@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
                     <p className="text-muted-foreground">Đăng nhập để quản lý hệ thống</p>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl">
                     <form onSubmit={handleLogin} className="space-y-6">
                         {error && (
                             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center font-medium animate-in fade-in slide-in-from-top-2">

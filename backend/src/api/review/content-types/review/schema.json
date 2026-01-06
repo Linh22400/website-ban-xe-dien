@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "reviews",
+  "info": {
+    "singularName": "review",
+    "pluralName": "reviews",
+    "displayName": "Review",
+    "description": "Customer reviews for products"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Rating": {
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "max": 5
+    },
+    "Title": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "Comment": {
+      "type": "text",
+      "required": true
+    },
+    "Images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "CarModel": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::car-model.car-model",
+      "inversedBy": "reviews"
+    },
+    "Customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "Order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order"
+    },
+    "IsVerifiedPurchase": {
+      "type": "boolean",
+      "default": false
+    },
+    "IsApproved": {
+      "type": "boolean",
+      "default": false
+    },
+    "AdminResponse": {
+      "type": "text"
+    },
+    "HelpfulCount": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -10,6 +10,7 @@ export default function TestDriveForm() {
     const [cars, setCars] = useState<Car[]>([]);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -40,6 +41,7 @@ export default function TestDriveForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage(null);
 
         const selectedCar = cars.find(c => c.slug === formData.carSlug);
 
@@ -50,19 +52,16 @@ Ngày mong muốn: ${formData.preferredDate}
 Giờ mong muốn: ${formData.preferredTime}
 Ghi chú: ${formData.notes || "Không có"}`;
 
-        const result = await submitLead({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            type: "test-drive",
-            model: selectedCar?.name || formData.carSlug,
-            message,
-            users_permissions_user: user?.id // Link to user if logged in
-        });
-
-        setLoading(false);
-
-        if (result) {
+        try {
+            await submitLead({
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                type: "test-drive",
+                model: selectedCar?.name || formData.carSlug,
+                message,
+                users_permissions_user: user?.id // Link to user if logged in
+            });
             setSuccess(true);
             setFormData({
                 name: user?.username || "",
@@ -77,8 +76,11 @@ Ghi chú: ${formData.notes || "Không có"}`;
 
             // Reset success message after 5 seconds
             setTimeout(() => setSuccess(false), 5000);
-        } else {
-            alert("Có lỗi xảy ra. Vui lòng thử lại sau.");
+        } catch (error) {
+            console.error('submitLead failed:', error);
+            setErrorMessage(error instanceof Error ? error.message : 'Có lỗi xảy ra. Vui lòng thử lại sau.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -286,6 +288,12 @@ Ghi chú: ${formData.notes || "Không có"}`;
             >
                 {loading ? "Đang Gửi..." : "Đăng Ký Lái Thử Ngay"}
             </button>
+
+            {errorMessage && (
+                <div className="text-sm text-red-500">
+                    {errorMessage}
+                </div>
+            )}
         </form>
     );
 }

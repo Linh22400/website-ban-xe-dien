@@ -203,6 +203,7 @@ export default function ProductFilter() {
                             <div className="space-y-2">
                                 {[
                                     { label: "Tất cả", value: "" },
+                                    { label: "TAILG", value: "TAILG" },
                                     { label: "VinFast", value: "VinFast" },
                                     { label: "Yadea", value: "Yadea" },
                                     { label: "Pega", value: "Pega" },

@@ -43,7 +43,11 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
         if (isSelected) {
             removeCarFromCompare(car.id);
         } else {
-            addCarToCompare(car);
+            const ok = addCarToCompare(car);
+            if (!ok) {
+                setShowToast("Bạn chỉ có thể so sánh tối đa 3 xe.");
+                setTimeout(() => setShowToast(null), 2000);
+            }
         }
     };
 
@@ -90,7 +94,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
         <div className="group block bg-white dark:bg-card rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-white/5 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
             {/* Toast Notification */}
             {showToast && (
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-primary text-black text-sm font-bold rounded-full shadow-lg animate-bounce">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-primary text-black text-sm font-bold rounded-full shadow-lg">
                     {showToast}
                 </div>
             )}
@@ -101,7 +105,8 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                     src={displayImage}
                     alt={car.name}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ willChange: 'transform' }}
                 />
 
                 {/* Overlay Gradient */}
@@ -110,12 +115,12 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
                     {car.type === 'motorcycle' && (
-                        <span className="px-3 py-1 bg-primary/90 text-black text-xs font-bold rounded-full backdrop-blur-sm">
+                        <span className="px-3 py-1 bg-primary/90 text-black text-xs font-bold rounded-full">
                             Xe Máy Điện
                         </span>
                     )}
                     {car.type === 'bicycle' && (
-                        <span className="px-3 py-1 bg-green-500/90 text-white text-xs font-bold rounded-full backdrop-blur-sm">
+                        <span className="px-3 py-1 bg-green-500/90 text-white text-xs font-bold rounded-full">
                             Xe Đạp Điện
                         </span>
                     )}
@@ -124,7 +129,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                 {/* Discount Badge */}
                 {discountPercent > 0 && (
                     <div className="absolute top-3 right-3">
-                        <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg animate-pulse">
+                        <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">
                             -{discountPercent}%
                         </span>
                     </div>
@@ -133,7 +138,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                 {/* Wishlist Button - Floating */}
                 <button
                     onClick={handleWishlistClick}
-                    className={`absolute top-3 right-3 ${discountPercent > 0 ? 'top-14' : 'top-3'} w-10 h-10 rounded-full flex items-center justify-center transition-all backdrop-blur-sm ${inWishlist
+                    className={`absolute top-3 right-3 ${discountPercent > 0 ? 'top-14' : 'top-3'} w-10 h-10 rounded-full flex items-center justify-center transition-colors ${inWishlist
                         ? 'bg-red-500 text-white hover:bg-red-600'
                         : 'bg-card/40 hover:bg-card/60 text-foreground border border-border shadow-lg'
                         }`}
@@ -184,7 +189,8 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         {/* Add to Cart Button */}
                         <button
                             onClick={handleAddToCart}
-                            className="w-9 h-9 rounded-full bg-primary hover:bg-accent text-black flex items-center justify-center transition-all hover:scale-110 shadow-lg"
+                            className="w-9 h-9 rounded-full bg-primary hover:bg-accent text-black flex items-center justify-center transition-transform hover:scale-105 shadow-lg"
+                            style={{ willChange: 'transform' }}
                             title="Thêm vào giỏ hàng"
                         >
                             <ShoppingCart className="w-4 h-4" />

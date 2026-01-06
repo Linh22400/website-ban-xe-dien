@@ -56,7 +56,7 @@ export default function ImageModal({
 
     return (
         <div
-            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95"
             onClick={onClose}
         >
             {/* Close Button */}
@@ -90,14 +90,14 @@ export default function ImageModal({
                         <>
                             <button
                                 onClick={prevImage}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
                                 aria-label="Ảnh trước"
                             >
                                 <ChevronLeft className="w-6 h-6 text-white" />
                             </button>
                             <button
                                 onClick={nextImage}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
                                 aria-label="Ảnh sau"
                             >
                                 <ChevronRight className="w-6 h-6 text-white" />
@@ -107,7 +107,7 @@ export default function ImageModal({
                 </div>
 
                 {/* Image Counter */}
-                <div className="mt-4 px-4 py-2 bg-white/10 rounded-full text-white backdrop-blur-sm">
+                <div className="mt-4 px-4 py-2 bg-white/10 rounded-full text-white">
                     {currentIndex + 1} / {images.length}
                 </div>
 

@@ -83,7 +83,7 @@ export default function FeaturedModels() {
                 <div className="text-center mt-12">
                     <Link
                         href="/cars"
-                        className="inline-block px-8 py-4 border border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-primary-foreground transition-all"
+                        className="inline-block px-8 py-4 border border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
                     >
                         Xem Tất Cả Sản Phẩm
                     </Link>

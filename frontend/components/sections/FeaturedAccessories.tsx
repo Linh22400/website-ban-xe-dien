@@ -134,7 +134,7 @@ export default function FeaturedAccessories() {
                             >
                                 {/* Toast Notification */}
                                 {showToast && (
-                                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-primary text-black text-sm font-bold rounded-full shadow-lg animate-bounce">
+                                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-primary text-black text-sm font-bold rounded-full shadow-lg">
                                         {toastMessage?.message}
                                     </div>
                                 )}
@@ -145,11 +145,12 @@ export default function FeaturedAccessories() {
                                         src={accessory.image}
                                         alt={accessory.name}
                                         fill
-                                        className="object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+                                        className="object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+                                        style={{ willChange: 'transform' }}
                                     />
 
                                     {/* Category Badge */}
-                                    <div className="absolute top-3 left-3 flex items-center gap-1 px-3 py-1 bg-primary/90 backdrop-blur-sm text-black text-xs font-semibold rounded-full">
+                                    <div className="absolute top-3 left-3 flex items-center gap-1 px-3 py-1 bg-primary/90 text-black text-xs font-semibold rounded-full">
                                         {getCategoryIcon(accessory.category)}
                                         <span>{getCategoryLabel(accessory.category)}</span>
                                     </div>
@@ -189,7 +190,8 @@ export default function FeaturedAccessories() {
                                         {/* Add to Cart Button */}
                                         <button
                                             onClick={(e) => handleAddToCart(accessory, e)}
-                                            className="w-10 h-10 rounded-full bg-primary hover:bg-accent text-black flex items-center justify-center transition-all hover:scale-110 shadow-lg"
+                                            className="w-10 h-10 rounded-full bg-primary hover:bg-accent text-black flex items-center justify-center transition-transform hover:scale-105 shadow-lg"
+                                            style={{ willChange: 'transform' }}
                                             title="Thêm vào giỏ hàng"
                                         >
                                             <ShoppingCart className="w-5 h-5" />

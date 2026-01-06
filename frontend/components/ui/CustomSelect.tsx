@@ -37,8 +37,9 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full backdrop-blur-sm border-2 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none transition-all duration-300 cursor-pointer shadow-lg flex items-center justify-between"
+                className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none transition-colors duration-300 cursor-pointer shadow-lg flex items-center justify-between"
                 style={{
+                    willChange: 'border-color',
                     backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                     borderColor: isDark ? 'rgba(107, 114, 128, 0.5)' : 'rgba(0, 0, 0, 0.15)',
                     color: isDark ? '#ffffff' : '#111827'
@@ -80,7 +81,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                 }}
             >
                 <div
-                    className="backdrop-blur-md border rounded-xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar"
+                    className="bg-card border rounded-xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar"
                     style={{
                         backgroundColor: isDark ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.85)',
                         borderColor: isDark ? 'rgba(107, 114, 128, 0.5)' : 'rgba(0, 0, 0, 0.2)',
@@ -96,7 +97,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                                 onChange(option.value);
                                 setIsOpen(false);
                             }}
-                            className={`w-full px-4 py-3 text-left text-sm font-medium transition-all duration-200`}
+                            className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200`}
                             style={{
                                 backgroundColor: value === option.value
                                     ? '#00e5ff'

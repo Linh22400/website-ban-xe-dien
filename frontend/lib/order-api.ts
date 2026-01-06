@@ -3,52 +3,43 @@ import qs from 'qs';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
-/**
- * Create a new order
- */
-export async function createOrder(orderData: OrderData): Promise<CreateOrderResponse | null> {
+async function getApiErrorMessage(response: Response, fallbackMessage: string) {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/orders`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ data: orderData }),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Failed to create order:', errorText);
-            throw new Error('Failed to create order');
+        const data = await response.json();
+        const message =
+            data?.error?.message ||
+            data?.message ||
+            data?.error ||
+            fallbackMessage;
+        const retryAfterSec = Number(data?.error?.retryAfterSec);
+        if (Number.isFinite(retryAfterSec) && retryAfterSec > 0) {
+            return `${String(message)} (thử lại sau ${retryAfterSec}s)`;
         }
-
-        const result: CreateOrderResponse = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Error creating order:', error);
-        return null;
+        return String(message);
+    } catch {
+        return fallbackMessage;
     }
 }
 
 /**
- * Get order by order code
+ * Create a new order
  */
-export async function getOrderByCode(orderCode: string): Promise<Order | null> {
-    try {
-        const response = await fetch(`${STRAPI_URL}/api/orders/code/${orderCode}`, {
-            cache: 'no-store',
-        });
+export async function createOrder(orderData: OrderData): Promise<CreateOrderResponse> {
+    const response = await fetch(`${STRAPI_URL}/api/orders`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: orderData }),
+    });
 
-        if (!response.ok) {
-            throw new Error('Order not found');
-        }
-
-        const result = await response.json();
-        return result.data;
-    } catch (error) {
-        console.error('Error fetching order:', error);
-        return null;
+    if (!response.ok) {
+        const message = await getApiErrorMessage(response, 'Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.');
+        throw new Error(message);
     }
+
+    const result: CreateOrderResponse = await response.json();
+    return result;
 }
 
 /**
@@ -181,12 +172,6 @@ export async function getOrderById(token: string, documentId: string): Promise<O
 
         const result = await response.json();
 
-        // Debug logging
-        console.log('=== ORDER DATA DEBUG ===');
-        console.log('Full result:', JSON.stringify(result, null, 2));
-        console.log('VehicleModel:', result.data?.VehicleModel);
-        console.log('========================');
-
         // Map snake_case to PascalCase for frontend compatibility
         const orderData = result.data;
         if (orderData && orderData.payment_transactions) {
@@ -307,7 +292,7 @@ export async function trackOrder(code: string, phone: string): Promise<Order | n
 /**
  * Send OTP
  */
-export async function sendOtp(phone: string): Promise<boolean> {
+export async function sendOtp(phone: string): Promise<void> {
     try {
         const response = await fetch(`${STRAPI_URL}/api/auth/otp/send`, {
             method: 'POST',
@@ -317,17 +302,20 @@ export async function sendOtp(phone: string): Promise<boolean> {
             body: JSON.stringify({ phone }),
         });
 
-        return response.ok;
+        if (!response.ok) {
+            const message = await getApiErrorMessage(response, 'Không thể gửi OTP. Vui lòng thử lại sau.');
+            throw new Error(message);
+        }
     } catch (error) {
         console.error('Error sending OTP:', error);
-        return false;
+        throw error;
     }
 }
 
 /**
  * Verify OTP
  */
-export async function verifyOtp(phone: string, otp: string): Promise<{ token: string; user: any } | null> {
+export async function verifyOtp(phone: string, otp: string): Promise<{ token: string; user: any }> {
     try {
         const response = await fetch(`${STRAPI_URL}/api/auth/otp/verify`, {
             method: 'POST',
@@ -338,7 +326,8 @@ export async function verifyOtp(phone: string, otp: string): Promise<{ token: st
         });
 
         if (!response.ok) {
-            throw new Error('Invalid OTP');
+            const message = await getApiErrorMessage(response, 'Mã OTP không hợp lệ.');
+            throw new Error(message);
         }
 
         const result = await response.json();
@@ -348,7 +337,7 @@ export async function verifyOtp(phone: string, otp: string): Promise<{ token: st
         };
     } catch (error) {
         console.error('Error verifying OTP:', error);
-        return null;
+        throw error;
     }
 }
 
@@ -356,31 +345,42 @@ export async function verifyOtp(phone: string, otp: string): Promise<{ token: st
  * Payment APIs
  */
 export async function createPayment(orderId: number) {
+    // Deprecated: orderId dễ bị đoán. Backend đã chuyển sang verify theo orderCode + phone.
+    // Giữ lại để tránh vỡ build nếu còn chỗ gọi cũ, nhưng chủ động báo lỗi rõ ràng.
+    throw new Error(
+        `createPayment(orderId) đã bị ngừng hỗ trợ. Hãy dùng createPaymentForOrder(orderCode, phone). (orderId=${orderId})`
+    );
+}
+
+export async function createPaymentForOrder(orderCode: string, phone: string) {
     const response = await fetch(`${STRAPI_URL}/api/payments/create`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ orderId }),
+        body: JSON.stringify({ orderCode, phone }),
     });
 
     if (!response.ok) throw new Error('Failed to create payment');
     return response.json();
 }
 
-export async function checkPaymentStatus(paymentId: number) {
-    const response = await fetch(`${STRAPI_URL}/api/payments/status/${paymentId}`);
+export async function checkPaymentStatus(paymentId: number, orderCode: string, phone: string) {
+    const url = new URL(`${STRAPI_URL}/api/payments/status/${paymentId}`);
+    url.searchParams.set('orderCode', orderCode);
+    url.searchParams.set('phone', phone);
+    const response = await fetch(url.toString());
     if (!response.ok) throw new Error('Failed to check status');
     return response.json();
 }
 
-export async function mockConfirmPayment(paymentId: number) {
+export async function mockConfirmPayment(paymentId: number, orderCode: string, phone: string) {
     const response = await fetch(`${STRAPI_URL}/api/payments/mock-confirm`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ paymentId }),
+        body: JSON.stringify({ paymentId, orderCode, phone }),
     });
 
     if (!response.ok) throw new Error('Failed to confirm payment');

@@ -78,24 +78,8 @@ export default function OrderItem({ order }: OrderItemProps) {
         galleryUrls.push('/placeholder-car.png');
     }
 
-    // Calculate deposit amount based on payment method (consistent with checkout)
-    // IMPORTANT: Backend TotalAmount includes old fees (registration, license plate)
-    // We need to recalculate using cart-based logic: Price + VAT only
-    const calculateDepositAmount = () => {
-        // Get vehicle base price  
-        const vehiclePrice = order.VehicleModel?.price || 0;
-        const vat = vehiclePrice * 0.1;
-        const correctTotal = vehiclePrice + vat; // No shipping (FREE), no registration fees
-
-        if (order.PaymentMethod === 'deposit') {
-            return 3000000; // Fixed deposit
-        } else if (order.PaymentMethod === 'full_payment') {
-            return correctTotal; // Corrected full payment (not backend TotalAmount!)
-        } else if (order.PaymentMethod === 'installment') {
-            return correctTotal * 0.3; // 30% down payment
-        }
-        return correctTotal;
-    };
+    // Ưu tiên dùng số liệu backend đã tính để hiển thị đúng thực tế.
+    const displayPaidAmount = Number(order.DepositAmount ?? 0);
 
     const paymentBadge = getPaymentMethodBadge();
 
@@ -133,7 +117,7 @@ export default function OrderItem({ order }: OrderItemProps) {
                             </div>
                             <div className="text-right">
                                 <p className="text-lg font-bold text-primary">
-                                    {formatCurrency(calculateDepositAmount())}
+                                    {formatCurrency(displayPaidAmount)}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
                                     {order.PaymentMethod === 'deposit' ? 'Đặt cọc' :

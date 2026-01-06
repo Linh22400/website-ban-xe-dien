@@ -60,7 +60,7 @@ export default function CartImageGallery({
                     {size === "small" && onImageClick && (
                         <button
                             onClick={onImageClick}
-                            className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 rounded-lg backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+                            className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 rounded-lg transition-opacity opacity-0 group-hover:opacity-100"
                             title="Xem ảnh lớn"
                         >
                             <Maximize2 className="w-4 h-4 text-white" />
@@ -72,14 +72,14 @@ export default function CartImageGallery({
                         <>
                             <button
                                 onClick={prevImage}
-                                className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+                                className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full transition-opacity opacity-0 group-hover:opacity-100"
                                 aria-label="Ảnh trước"
                             >
                                 <ChevronLeft className="w-4 h-4 text-white" />
                             </button>
                             <button
                                 onClick={nextImage}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/60 hover:bg-black/80 rounded-full transition-opacity opacity-0 group-hover:opacity-100"
                                 aria-label="Ảnh sau"
                             >
                                 <ChevronRight className="w-4 h-4 text-white" />
@@ -90,7 +90,7 @@ export default function CartImageGallery({
 
                 {/* Image Counter */}
                 {images.length > 1 && (
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/70 rounded-full text-xs text-white backdrop-blur-sm">
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/70 rounded-full text-xs text-white">
                         {currentIndex + 1} / {images.length}
                     </div>
                 )}

@@ -6,7 +6,10 @@ import ProductGallery from "./ProductGallery";
 import { ProductHeading, StatValue } from './ProductTextComponents';
 import { useCart } from "@/lib/cart-context";
 import { useRouter } from "next/navigation";
-import { ShoppingCart } from "lucide-react";
+import { BadgeCheck, Phone, ShoppingCart, Truck, CreditCard, FileText, Shield, Award, Users } from "lucide-react";
+import Breadcrumb from "./Breadcrumb";
+import SocialShare from "./SocialShare";
+import CustomerSupportContact from "./CustomerSupportContact";
 
 interface ProductHeroProps {
     car: Car;
@@ -17,10 +20,18 @@ interface ProductHeroProps {
 
 export default function ProductHero({ car, selectedColor, onColorChange, discountPercent = 0 }: ProductHeroProps) {
     const finalPrice = discountPercent > 0 ? car.price * (1 - discountPercent / 100) : car.price;
+    const inStock = Number.isFinite(car.stock) ? car.stock > 0 : true;
     const { addToCart } = useCart();
     const router = useRouter();
 
+    // Generate product URL for sharing
+    const baseUrl = typeof window !== 'undefined' 
+        ? window.location.origin 
+        : (process.env.NEXT_PUBLIC_SITE_URL || 'https://xedienviet.com');
+    const productUrl = `${baseUrl}/cars/${car.slug}`;
+
     const handleAddToCart = () => {
+        if (!inStock) return;
         // Get current color's images
         const currentColorImages = car.colors?.[selectedColor]?.images || [];
         const galleryImages = currentColorImages.length > 0
@@ -44,6 +55,7 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
     };
 
     const handleBuyNow = () => {
+        if (!inStock) return;
         // Add to cart then redirect to checkout
         const currentColorImages = car.colors?.[selectedColor]?.images || [];
         const galleryImages = currentColorImages.length > 0
@@ -69,12 +81,29 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
         <section className="relative min-h-[90vh] flex items-center pt-20 pb-12 overflow-hidden">
             {/* Background Elements */}
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background z-0" />
-            <div className="absolute top-0 right-0 w-2/3 h-full bg-primary/5 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/4" />
+            <div className="absolute top-0 right-0 w-2/3 h-full bg-primary/5 rounded-full translate-x-1/3 -translate-y-1/4" />
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="container mx-auto px-6 max-w-7xl relative z-10">
+                {/* Breadcrumb */}
+                <Breadcrumb
+                    items={[
+                        {
+                            label: car.type === 'bicycle' ? 'Xe Đạp Điện' : 'Xe Máy Điện',
+                            href: `/cars?type=${car.type}`
+                        },
+                        {
+                            label: car.brand,
+                            href: `/cars?brand=${car.brand}`
+                        },
+                        {
+                            label: car.name
+                        }
+                    ]}
+                />
+
+                <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-10 items-start">
                     {/* Left Content - Product Info */}
-                    <div className="space-y-8 order-2 lg:order-1">
+                    <div className="space-y-8 order-2 lg:order-1 min-w-0">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -88,11 +117,49 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                                 <span className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
                                     {car.brand}
                                 </span>
+                                <span
+                                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                                        inStock
+                                            ? 'bg-primary/10 border-primary/20 text-primary'
+                                            : 'bg-red-500/10 border-red-500/20 text-red-400'
+                                    }`}
+                                >
+                                    {inStock ? 'Còn hàng' : 'Hết hàng'}
+                                </span>
+                            </div>
+
+                            {/* Trust Signals Row */}
+                            <div className="flex flex-wrap items-center gap-4 py-3 px-4 rounded-xl bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
+                                {car.warranty && (
+                                    <div className="flex items-center gap-2">
+                                        <Shield className="w-4 h-4 text-primary" />
+                                        <span className="text-sm font-semibold text-foreground">
+                                            BH {String(typeof car.warranty === 'string' ? car.warranty : (car.warranty?.duration || '12 tháng'))}
+                                        </span>
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-2">
+                                    <Award className="w-4 h-4 text-primary" />
+                                    <span className="text-sm font-semibold text-foreground">
+                                        Chính hãng 100%
+                                    </span>
+                                </div>
+                                {Number.isFinite(car.sold) && (car.sold as number) > 0 && (
+                                    <div className="flex items-center gap-2">
+                                        <Users className="w-4 h-4 text-primary" />
+                                        <span className="text-sm font-semibold text-foreground">
+                                            Đã bán {car.sold}+ xe
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             <ProductHeading>
                                 {car.name}
                             </ProductHeading>
+
+                            {/* Social Share */}
+                            <SocialShare url={productUrl} title={car.name} />
 
                             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                                 {car.description}
@@ -127,11 +194,11 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.4 }}
-                            className="flex flex-col xl:flex-row items-start xl:items-center gap-6"
+                            className="space-y-5"
                         >
-                            <div className="flex-shrink-0">
+                            <div>
                                 {discountPercent > 0 && (
-                                    <div className="inline-block px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full mb-2 animate-pulse">
+                                    <div className="inline-block px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full mb-2">
                                         GIẢM {discountPercent}%
                                     </div>
                                 )}
@@ -144,33 +211,94 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                                         {car.price.toLocaleString('vi-VN')}₫
                                     </div>
                                 )}
+                                <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <BadgeCheck className="w-4 h-4 text-primary" />
+                                    <span>
+                                        {car.brand?.toLowerCase() === 'tailg'
+                                            ? 'Đại lý ủy quyền TAILG'
+                                            : 'Hỗ trợ đăng ký & bảo hành chính hãng'}
+                                    </span>
+                                </div>
+                                <div className="mt-2 text-xs text-muted-foreground max-w-xl">
+                                    Giá lẻ tham khảo; VAT/đăng ký tính theo quy định tại thời điểm giao xe. Đặt cọc linh hoạt, tư vấn trước khi thanh toán.
+                                </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto">
+                            <div className="flex flex-col sm:flex-row gap-3 max-w-md">
                                 <button
                                     onClick={handleAddToCart}
-                                    className="px-6 py-4 bg-transparent border-2 border-primary text-primary font-bold rounded-full hover:bg-primary/10 transition-all flex items-center justify-center gap-2 flex-1 sm:flex-none"
+                                    disabled={!inStock}
+                                    className={`px-5 py-3 bg-transparent border-2 font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-2 flex-1 sm:flex-none sm:min-w-[160px] ${
+                                        inStock
+                                            ? 'border-primary text-primary hover:bg-primary/10'
+                                            : 'border-white/10 text-muted-foreground cursor-not-allowed opacity-60'
+                                    }`}
                                 >
                                     <ShoppingCart className="w-5 h-5" />
-                                    <span>Thêm Vào Giỏ</span>
+                                    <span className="whitespace-nowrap">Thêm Vào Giỏ</span>
                                 </button>
 
                                 <button
                                     onClick={handleBuyNow}
-                                    className="px-8 py-4 bg-primary text-black font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-lg shadow-primary/20 flex-1 sm:flex-none text-center min-w-[160px]"
+                                    disabled={!inStock}
+                                    className={`px-6 py-3 font-bold rounded-full transition-all shadow-lg flex-1 sm:flex-none text-center sm:min-w-[140px] ${
+                                        inStock
+                                            ? 'bg-primary text-black hover:bg-white hover:scale-105 shadow-primary/20'
+                                            : 'bg-card/50 text-muted-foreground border border-white/10 cursor-not-allowed opacity-60 shadow-none'
+                                    }`}
                                 >
-                                    Mua Ngay
+                                    <span className="whitespace-nowrap">Mua Ngay</span>
                                 </button>
                             </div>
+
+                            {!inStock && (
+                                <button
+                                    onClick={() => router.push('/contact')}
+                                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                                >
+                                    <Phone className="w-4 h-4" />
+                                    Liên hệ để đặt trước / hỏi tồn kho
+                                </button>
+                            )}
+
+                            {/* Commerce info (shipping, installment, registration) */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl">
+                                <div className="flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-card/30">
+                                    <Truck className="w-5 h-5 text-primary mt-0.5" />
+                                    <div className="min-w-0">
+                                        <div className="text-sm font-semibold text-foreground">Giao hàng</div>
+                                        <div className="text-xs text-muted-foreground">2-5 ngày</div>
+                                        <div className="text-xs text-primary font-semibold mt-0.5">Miễn phí nội thành</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-card/30">
+                                    <CreditCard className="w-5 h-5 text-primary mt-0.5" />
+                                    <div className="min-w-0">
+                                        <div className="text-sm font-semibold text-foreground">Trả góp</div>
+                                        <div className="text-xs text-muted-foreground">0% lãi suất</div>
+                                        <div className="text-xs text-primary font-semibold mt-0.5">Duyệt nhanh 15 phút</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-card/30">
+                                    <FileText className="w-5 h-5 text-primary mt-0.5" />
+                                    <div className="min-w-0">
+                                        <div className="text-sm font-semibold text-foreground">Thủ tục</div>
+                                        <div className="text-xs text-muted-foreground">{car.type === 'motorcycle' ? 'Hỗ trợ đăng ký/ra biển số' : 'Tư vấn đăng ký theo quy định'}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Customer Support Contact */}
+                            <CustomerSupportContact />
                         </motion.div>
                     </div>
 
                     {/* Right Content - Gallery */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.7 }}
-                        className="order-1 lg:order-2"
+                        className="order-1 lg:order-2 w-full min-w-0"
                     >
                         <ProductGallery
                             car={car}

@@ -46,8 +46,9 @@
     },
     "car_models": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::car-model.car-model"
+      "relation": "manyToMany",
+      "target": "api::car-model.car-model",
+      "inversedBy": "promotions"
     }
   }
 }

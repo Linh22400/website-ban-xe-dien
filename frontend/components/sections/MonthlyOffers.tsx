@@ -101,13 +101,13 @@ export default function MonthlyOffers() {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link
                                 href={promotion.link}
-                                className="px-8 py-4 bg-primary text-black font-bold rounded-full hover:bg-white transition-all shadow-lg hover:shadow-primary/50 text-center"
+                                className="px-8 py-4 bg-primary text-black font-bold rounded-full hover:bg-white transition-colors shadow-lg hover:shadow-primary/50 text-center"
                             >
                                 Xem Chi Tiết
                             </Link>
                             <Link
                                 href="/contact"
-                                className="px-8 py-4 border border-border text-foreground font-bold rounded-full hover:bg-muted transition-all text-center"
+                                className="px-8 py-4 border border-border text-foreground font-bold rounded-full hover:bg-muted transition-colors text-center"
                             >
                                 Liên Hệ Tư Vấn
                             </Link>
@@ -121,7 +121,8 @@ export default function MonthlyOffers() {
                                 src={promotion.image}
                                 alt={promotion.title}
                                 fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                style={{ willChange: 'transform' }}
                                 sizes="(max-width: 768px) 100vw, 50vw"
                                 quality={100}
                                 unoptimized
@@ -134,19 +135,19 @@ export default function MonthlyOffers() {
                                     <div>
                                         <div className="text-sm text-gray-300 mb-1">Thời gian còn lại</div>
                                         <div className="flex gap-2 text-center">
-                                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[40px]">
+                                            <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.days).padStart(2, '0')}</div>
                                                 <div className="text-[10px] text-gray-400">Ngày</div>
                                             </div>
-                                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[40px]">
+                                            <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.hours).padStart(2, '0')}</div>
                                                 <div className="text-[10px] text-gray-400">Giờ</div>
                                             </div>
-                                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[40px]">
+                                            <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.minutes).padStart(2, '0')}</div>
                                                 <div className="text-[10px] text-gray-400">Phút</div>
                                             </div>
-                                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-2 min-w-[40px]">
+                                            <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.seconds).padStart(2, '0')}</div>
                                                 <div className="text-[10px] text-gray-400">Giây</div>
                                             </div>

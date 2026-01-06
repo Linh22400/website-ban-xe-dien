@@ -2,6 +2,7 @@ import { getAccessories } from "@/lib/api";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
+import { ThemeText } from "@/components/common/ThemeText";
 
 export const dynamic = 'force-dynamic';
 

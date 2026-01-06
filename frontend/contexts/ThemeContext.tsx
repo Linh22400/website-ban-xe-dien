@@ -8,18 +8,22 @@ interface ThemeContextType {
     theme: Theme;
     setTheme: (theme: Theme) => void;
     resolvedTheme: 'light' | 'dark';
+    mounted: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>('light'); // Default to light
-    const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light'); // Default to light
+    const [theme, setThemeState] = useState<Theme>('system'); // Default to system to avoid flash
+    const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+    const [mounted, setMounted] = useState(false);
+    const debug = process.env.NODE_ENV !== 'production';
 
     // Initialize theme from localStorage
     useEffect(() => {
+        setMounted(true);
         const stored = localStorage.getItem('theme') as Theme;
-        console.log('💾 Stored theme:', stored);
+        if (debug) console.log('Stored theme:', stored);
         if (stored && ['light', 'dark', 'system'].includes(stored)) {
             setThemeState(stored);
         }
@@ -28,7 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Apply theme changes
     useEffect(() => {
         const root = document.documentElement;
-        console.log('🎨 Current theme state:', theme);
+        if (debug) console.log('Current theme state:', theme);
 
         let effectiveTheme: 'light' | 'dark';
 
@@ -36,18 +40,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             // Detect system preference
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             effectiveTheme = systemPrefersDark ? 'dark' : 'light';
-            console.log('🖥️ System preference:', effectiveTheme);
+            if (debug) console.log('System preference:', effectiveTheme);
         } else {
             effectiveTheme = theme;
         }
 
-        console.log('✅ Applying theme:', effectiveTheme);
+        if (debug) console.log('Applying theme:', effectiveTheme);
 
         // Apply theme class
         root.classList.remove('light', 'dark');
         root.classList.add(effectiveTheme);
 
-        console.log('📋 HTML classes:', root.className);
+        if (debug) console.log('HTML classes:', root.className);
 
         setResolvedTheme(effectiveTheme);
 
@@ -59,7 +63,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
                 root.classList.remove('light', 'dark');
                 root.classList.add(newTheme);
                 setResolvedTheme(newTheme);
-                console.log('🔄 System theme changed to:', newTheme);
+                if (debug) console.log('System theme changed to:', newTheme);
             }
         };
 
@@ -73,7 +77,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+        <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme, mounted }}>
             {children}
         </ThemeContext.Provider>
     );

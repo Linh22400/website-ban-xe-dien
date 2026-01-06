@@ -10,6 +10,9 @@ import { ThemeDiv, ThemeLink, ThemeText } from "@/components/common/ThemeText";
 
 export default function CartPage() {
     const { items, removeFromCart, updateQuantity, clearCart, total, itemCount } = useCart();
+    // Flow hiện tại (backend) chỉ hỗ trợ 1 xe mỗi đơn.
+    // Nếu localStorage cũ có >1 item, cần chặn checkout để tránh tạo đơn sai.
+    const isCheckoutAllowed = items.length === 1 && (items[0]?.quantity ?? 0) === 1;
     const [modalState, setModalState] = useState<{ isOpen: boolean; images: string[]; index: number; name: string }>({
         isOpen: false,
         images: [],
@@ -57,6 +60,14 @@ export default function CartPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Cart Items */}
                         <div className="lg:col-span-2 space-y-4">
+                            {!isCheckoutAllowed && (
+                                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-yellow-200">
+                                    <p className="font-semibold mb-1">Giỏ hàng hiện có nhiều hơn 1 xe</p>
+                                    <p className="text-sm text-yellow-100/80">
+                                        Hiện tại mỗi đơn đặt cọc/mua xe chỉ hỗ trợ 1 xe. Vui lòng xóa bớt để còn 1 xe trước khi thanh toán.
+                                    </p>
+                                </div>
+                            )}
                             {items.map((item) => (
                                 <div
                                     key={`${item.id}-${item.colorName || 'default'}`}
@@ -143,8 +154,10 @@ export default function CartPage() {
                                                         {item.quantity}
                                                     </ThemeText>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.colorName)}
-                                                        className="p-2 hover:bg-white/10 transition-colors"
+                                                        onClick={() => updateQuantity(item.id, 1, item.colorName)}
+                                                        className="p-2 opacity-50 cursor-not-allowed"
+                                                        aria-disabled="true"
+                                                        title="Mỗi đơn hiện chỉ hỗ trợ 1 xe"
                                                     >
                                                         <Plus className="w-4 h-4" style={{ color: 'currentColor' }} />
                                                     </button>
@@ -199,12 +212,23 @@ export default function CartPage() {
                                     </ThemeDiv>
                                 </div>
 
-                                <Link
-                                    href="/checkout"
-                                    className="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all mb-4"
-                                >
-                                    Tiến Hành Thanh Toán
-                                </Link>
+                                {isCheckoutAllowed ? (
+                                    <Link
+                                        href="/checkout"
+                                        className="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all mb-4"
+                                    >
+                                        Tiến Hành Thanh Toán
+                                    </Link>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        disabled
+                                        className="block w-full text-center px-6 py-3 bg-white/10 text-muted-foreground font-bold rounded-full mb-4 cursor-not-allowed"
+                                        title="Vui lòng chỉ giữ 1 xe trong giỏ để thanh toán"
+                                    >
+                                        Tiến Hành Thanh Toán
+                                    </button>
+                                )}
 
                                 <ThemeLink
                                     href="/cars"

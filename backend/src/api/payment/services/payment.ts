@@ -22,13 +22,14 @@ export default factories.createCoreService('api::payment.payment', ({ strapi }) 
 
         // Create a mock QR URL (for now, just a text string or a dummy URL)
         // In frontend we will render this string into a QR code
-        const qrContent = `MOCK_PAYMENT:${order.OrderCode}:${order.TotalAmount}`;
+        const payAmount = Number((order as any).DepositAmount ?? (order as any).TotalAmount ?? 0);
+        const qrContent = `MOCK_PAYMENT:${order.OrderCode}:${payAmount}`;
 
         // Create payment record
         const payment = await strapi.entityService.create('api::payment.payment', {
             data: {
                 order: order.id,
-                amount: order.TotalAmount,
+                amount: payAmount,
                 status: 'PENDING',
                 method: 'QR_CODE',
                 provider: 'mock',

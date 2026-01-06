@@ -127,7 +127,7 @@ export default function TailgProductGrid() {
                                 className={`
                                     px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2
                                     ${activeTab === tab.id
-                                        ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg shadow-yellow-500/30 scale-105'
+                                        ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg shadow-yellow-500/30'
                                         : 'hover:bg-white/10'
                                     }
                                 `}

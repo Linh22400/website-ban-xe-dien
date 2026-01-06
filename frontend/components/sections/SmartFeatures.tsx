@@ -53,8 +53,8 @@ export default function SmartFeatures() {
         <section className="py-24 px-6 bg-background relative overflow-hidden">
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px]" />
+                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
+                <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl" />
             </div>
 
             <div className="container mx-auto relative z-10">
@@ -82,7 +82,8 @@ export default function SmartFeatures() {
                                     src={feature.image}
                                     alt={feature.title}
                                     fill
-                                    className="object-cover opacity-40 transition-transform duration-700 group-hover:scale-110"
+                                    className="object-cover opacity-40 transition-transform duration-500 group-hover:scale-105"
+                                    style={{ willChange: 'transform' }}
                                 />
                                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} mix-blend-overlay opacity-50`} />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />

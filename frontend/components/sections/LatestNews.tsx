@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Clock, ChevronRight } from 'lucide-react';
 import { getArticles, Article } from '@/lib/api';
+import Image from 'next/image';
 
 export default function LatestNews() {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -31,21 +32,22 @@ export default function LatestNews() {
     }
 
     return (
-        <section className="py-20 bg-zinc-50 border-t border-zinc-200">
+        <section className="py-20 bg-background border-t border-border">
             <div className="container mx-auto px-4">
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div className="max-w-2xl">
                         <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Cập Nhật Mới Nhất</span>
-                        <h2 className="text-3xl md:text-4xl font-black text-zinc-900 uppercase leading-tight">
+                        <h2 className="text-3xl md:text-4xl font-black text-foreground uppercase leading-tight">
                             Tin Tức & <span className="text-primary">Sự Kiện</span>
                         </h2>
                         <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
                     </div>
 
                     <Link
-                        href="/tin-tuc"
-                        className="group flex items-center gap-2 text-zinc-600 font-bold hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-primary"
+                        // Route tin tức của project đang là /blog (không phải /tin-tuc)
+                        href="/blog"
+                        className="group flex items-center gap-2 text-muted-foreground font-bold hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-primary"
                     >
                         Xem tất cả tin tức
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -58,33 +60,35 @@ export default function LatestNews() {
                         // Loading Skeletons
                         [1, 2, 3].map((i) => (
                             <div key={i} className="animate-pulse">
-                                <div className="bg-zinc-200 aspect-[4/3] rounded-2xl mb-4"></div>
-                                <div className="h-4 bg-zinc-200 w-1/3 mb-3 rounded"></div>
-                                <div className="h-6 bg-zinc-200 w-3/4 mb-3 rounded"></div>
-                                <div className="h-20 bg-zinc-200 w-full rounded"></div>
+                                <div className="bg-muted aspect-[4/3] rounded-2xl mb-4"></div>
+                                <div className="h-4 bg-muted w-1/3 mb-3 rounded"></div>
+                                <div className="h-6 bg-muted w-3/4 mb-3 rounded"></div>
+                                <div className="h-20 bg-muted w-full rounded"></div>
                             </div>
                         ))
                     ) : (
                         articles.map((article) => (
                             <Link
-                                href={`/tin-tuc/${article.slug}`}
+                                // Route chi tiết bài viết: /blog/[slug]
+                                href={`/blog/${article.slug}`}
                                 key={article.id}
-                                className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-zinc-100 ring-1 ring-zinc-900/5 hover:-translate-y-1"
+                                className="group flex flex-col h-full bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-border ring-1 ring-black/5 dark:ring-white/10 hover:-translate-y-1"
                             >
                                 {/* Image Container */}
                                 <div className="relative aspect-[4/3] overflow-hidden">
-                                    <div className="absolute inset-0 bg-zinc-200 animate-pulse"></div>
-                                    <img
+                                    <div className="absolute inset-0 bg-muted animate-pulse"></div>
+                                    <Image
                                         src={article.coverImage}
                                         alt={article.title}
-                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        loading="lazy"
+                                        fill
+                                        sizes="(min-width: 768px) 33vw, 100vw"
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                                     {/* Category Badge */}
                                     {article.category && (
-                                        <span className="absolute top-4 left-4 bg-white/90 backdrop-blur text-zinc-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                                        <span className="absolute top-4 left-4 bg-background/90 text-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
                                             {article.category.name}
                                         </span>
                                     )}
@@ -93,7 +97,7 @@ export default function LatestNews() {
                                 {/* Content */}
                                 <div className="flex flex-col flex-grow p-6">
                                     {/* Meta Info */}
-                                    <div className="flex items-center gap-4 text-xs text-zinc-500 mb-3 font-medium">
+                                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3 font-medium">
                                         {article.publishedDate && (
                                             <div className="flex items-center gap-1.5">
                                                 <Calendar className="w-3.5 h-3.5 text-primary" />
@@ -108,11 +112,11 @@ export default function LatestNews() {
                                         )}
                                     </div>
 
-                                    <h3 className="text-xl font-bold text-zinc-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                                    <h3 className="text-xl font-bold text-card-foreground mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                                         {article.title}
                                     </h3>
 
-                                    <p className="text-zinc-500 text-sm line-clamp-3 mb-6 flex-grow">
+                                    <p className="text-muted-foreground text-sm line-clamp-3 mb-6 flex-grow">
                                         {article.excerpt}
                                     </p>
 

@@ -12,21 +12,24 @@ export default function ComparisonSearch() {
     const [searchTerm, setSearchTerm] = useState("");
     const [results, setResults] = useState<Car[]>([]);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     // Debounce search
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (searchTerm.length > 1) {
                 setLoading(true);
-                // Note: Ideally API should support search by name. 
-                // For now we fetch all and filter client side or assume API update later.
-                // Using existing getCars but it doesn't have name search yet.
-                // Let's just fetch a page and filter for demo or implement name search in API.
-                // Assuming we update API later, for now let's just fetch recent cars.
-                const cars = await getCars({ pageSize: 100 });
-                const filtered = cars.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()));
-                setResults(filtered.slice(0, 5));
-                setLoading(false);
+                try {
+                    const cars = await getCars({ pageSize: 100 });
+                    const filtered = cars.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                    setResults(filtered.slice(0, 5));
+                } catch {
+                    setResults([]);
+                    setErrorMessage("Không thể tải danh sách xe. Vui lòng thử lại.");
+                    setTimeout(() => setErrorMessage(null), 2500);
+                } finally {
+                    setLoading(false);
+                }
             } else {
                 setResults([]);
             }
@@ -43,7 +46,8 @@ export default function ComparisonSearch() {
         }
 
         if (currentSlugs.length >= 3) {
-            alert("Chỉ có thể so sánh tối đa 3 xe.");
+            setErrorMessage("Chỉ có thể so sánh tối đa 3 xe.");
+            setTimeout(() => setErrorMessage(null), 2500);
             return;
         }
 
@@ -59,10 +63,10 @@ export default function ComparisonSearch() {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-6 py-3 bg-card border border-white/10 rounded-full text-white hover:border-primary transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-card border border-white/10 rounded-full text-foreground hover:border-primary transition-colors"
             >
                 <span className="text-xl">➕</span>
-                <span className="font-bold text-gray-500">Thêm Xe So Sánh</span>
+                <span className="font-bold text-foreground">Thêm Xe So Sánh</span>
             </button>
 
             {isOpen && (
@@ -70,13 +74,18 @@ export default function ComparisonSearch() {
                     <input
                         type="text"
                         placeholder="Tìm tên xe..."
-                        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary mb-4"
+                        className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary mb-4"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         autoFocus
                     />
 
                     <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                        {errorMessage && (
+                            <div className="text-sm text-red-500 px-2">
+                                {errorMessage}
+                            </div>
+                        )}
                         {loading ? (
                             <div className="text-center text-muted-foreground py-4">Đang tìm...</div>
                         ) : results.length > 0 ? (
@@ -87,7 +96,7 @@ export default function ComparisonSearch() {
                                     className="w-full flex items-center gap-3 p-2 hover:bg-white/5 rounded-xl transition-colors text-left"
                                 >
                                     <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-900 shrink-0">
-                                        <Image src={car.thumbnail} alt={car.name} fill className="object-cover" />
+                                        <Image src={car.thumbnail} alt={car.name} fill sizes="48px" className="object-cover object-center" />
                                     </div>
                                     <div>
                                         <div className="font-bold text-white text-sm">{car.name}</div>

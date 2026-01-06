@@ -1,6 +1,8 @@
 'use client';
 
 import Link from "next/link";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Youtube, Send, ArrowRight, Sparkles } from "lucide-react";
 import { PageHeading, ThemeText, ThemeInput, useTheme } from "@/components/common/ThemeText";
 
@@ -8,8 +10,12 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
     const isDark = useTheme();
 
+    const [newsletterEmail, setNewsletterEmail] = useState("");
+    const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "success" | "error">("idle");
+    const [newsletterHp, setNewsletterHp] = useState("");
+
     // Helper component for theme-aware cards
-    const ThemeCard = ({ children, className = "", hover = false }: { children: React.ReactNode; className?: string; hover?: boolean }) => (
+    const ThemeCard = ({ children, className = "", hover = false }: { children: ReactNode; className?: string; hover?: boolean }) => (
         <div className={`${isDark ? 'bg-white/5' : 'bg-gray-100/80'
             } ${hover ? (isDark ? 'hover:bg-white/10' : 'hover:bg-gray-200/80') : ''} ${className}`}>
             {children}
@@ -19,8 +25,8 @@ export default function Footer() {
     return (
         <footer className="bg-gradient-to-b from-card via-card to-secondary border-t border-white/10">
             {/* Main Footer Content - Enhanced Design */}
-            <div className="container mx-auto px-6 py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+            <div className="container mx-auto px-6 py-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     {/* Column 1: Brand & Newsletter - Enhanced */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Brand with gradient */}
@@ -41,11 +47,54 @@ export default function Footer() {
                                     Nhận tin khuyến mãi
                                 </ThemeText>
                             </div>
-                            <form className="relative group">
+                            <form
+                                className="relative group"
+                                onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    const email = newsletterEmail.trim();
+                                    if (!email || !email.includes("@")) {
+                                        setNewsletterStatus("error");
+                                        return;
+                                    }
+
+                                    try {
+                                        const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}/api/newsletter/subscribe`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ email, source: 'footer', website: newsletterHp }),
+                                        });
+
+                                        if (!res.ok) {
+                                            setNewsletterStatus("error");
+                                            return;
+                                        }
+
+                                        setNewsletterStatus("success");
+                                        setNewsletterEmail("");
+                                    } catch {
+                                        setNewsletterStatus("error");
+                                    }
+                                }}
+                            >
+                                {/* Honeypot chống bot (ẩn với người dùng) */}
+                                <input
+                                    type="text"
+                                    tabIndex={-1}
+                                    autoComplete="off"
+                                    value={newsletterHp}
+                                    onChange={(e) => setNewsletterHp(e.target.value)}
+                                    className="hidden"
+                                    aria-hidden="true"
+                                />
                                 <ThemeInput
                                     type="email"
                                     placeholder="Nhập email của bạn..."
-                                    className="w-full px-4 py-3 pr-12 text-sm border-2 rounded-xl focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500"
+                                    value={newsletterEmail}
+                                    onChange={(e) => {
+                                        setNewsletterEmail(e.target.value);
+                                        if (newsletterStatus !== "idle") setNewsletterStatus("idle");
+                                    }}
+                                    className="w-full px-4 py-3 pr-12 text-sm border-2 rounded-xl focus:outline-none focus:border-primary/50 transition-colors placeholder:text-gray-500"
                                     style={{
                                         backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                                         borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
@@ -53,11 +102,19 @@ export default function Footer() {
                                 />
                                 <button
                                     type="submit"
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-r from-primary to-accent text-black rounded-lg hover:shadow-lg hover:shadow-primary/30 hover:scale-105 transition-all"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-r from-primary to-accent text-black rounded-lg hover:shadow-lg hover:shadow-primary/30 hover:scale-105 transition-transform duration-300"
+                                    style={{ willChange: 'transform' }}
                                 >
                                     <Send className="w-4 h-4" />
                                 </button>
                             </form>
+
+                            {newsletterStatus === "success" && (
+                                <p className="mt-2 text-xs text-primary">Cảm ơn bạn! Chúng tôi sẽ gửi tin khi có ưu đãi.</p>
+                            )}
+                            {newsletterStatus === "error" && (
+                                <p className="mt-2 text-xs text-red-500">Email chưa hợp lệ. Vui lòng kiểm tra lại.</p>
+                            )}
                         </div>
 
                         {/* Social Links - Enhanced */}
@@ -76,8 +133,9 @@ export default function Footer() {
                                         href={href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`w-10 h-10 border-2 rounded-xl flex items-center justify-center text-muted-foreground transition-all transform hover:scale-110 hover:shadow-lg ${color}`}
+                                        className={`w-10 h-10 border-2 rounded-xl flex items-center justify-center text-muted-foreground transition-transform duration-300 transform hover:scale-105 hover:shadow-lg ${color}`}
                                         style={{
+                                            willChange: 'transform',
                                             backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                                             borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
                                         }}
@@ -108,7 +166,7 @@ export default function Footer() {
                                 <li key={href}>
                                     <Link
                                         href={href}
-                                        className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-all"
+                                        className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300"
                                     >
                                         <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
                                         <span className="group-hover:translate-x-1 transition-transform">{label}</span>
@@ -192,7 +250,7 @@ export default function Footer() {
                             ].map(({ icon: Icon, label, value, href, color }) => (
                                 <div
                                     key={label}
-                                    className="group flex items-start gap-3 p-3 rounded-xl border hover:border-primary/30 transition-all"
+                                    className="group flex items-start gap-3 p-3 rounded-xl border hover:border-primary/30 transition-colors duration-300"
                                     style={{
                                         backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                                         borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'
@@ -235,9 +293,9 @@ export default function Footer() {
                 </div>
 
                 {/* Partners & Payment - Premium Design */}
-                <div className="border-t border-white/10 pt-10 space-y-6">
+                <div className="border-t border-white/10 pt-6 space-y-4">
                     {/* Payment & Shipping - Side by Side */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="text-center">
                             <div className="flex items-center justify-center gap-2 mb-4">
                                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
@@ -250,8 +308,9 @@ export default function Footer() {
                                 {['VISA', 'MasterCard', 'MoMo', 'ZaloPay', 'Ngân Hàng', 'Tiền Mặt'].map((method) => (
                                     <span
                                         key={method}
-                                        className="px-4 py-2 border hover:border-primary/50 rounded-lg text-xs font-bold text-foreground hover:scale-105 hover:shadow-lg transition-all cursor-default"
+                                        className="px-4 py-2 border hover:border-primary/50 rounded-lg text-xs font-bold text-foreground hover:scale-105 hover:shadow-lg transition-transform duration-300 cursor-default"
                                         style={{
+                                            willChange: 'transform',
                                             backgroundImage: isDark
                                                 ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1))'
                                                 : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.06))',
@@ -264,7 +323,7 @@ export default function Footer() {
                             </div>
                         </div>
                         <div className="text-center">
-                            <div className="flex items-center justify-center gap-2 mb-4">
+                            <div className="flex items-center justify-center gap-2 mb-2">
                                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-accent to-transparent"></div>
                                 <ThemeText className="text-xs font-bold uppercase tracking-wider">
                                     Vận chuyển
@@ -275,8 +334,9 @@ export default function Footer() {
                                 {['Giao Hàng Nhanh', 'Grab Express', 'GHTK', 'Viettel Post'].map((shipping) => (
                                     <span
                                         key={shipping}
-                                        className="px-4 py-2 border hover:border-accent/50 rounded-lg text-xs font-bold text-foreground hover:scale-105 hover:shadow-lg transition-all cursor-default"
+                                        className="px-4 py-2 border hover:border-accent/50 rounded-lg text-xs font-bold text-foreground hover:scale-105 hover:shadow-lg transition-transform duration-300 cursor-default"
                                         style={{
+                                            willChange: 'transform',
                                             backgroundImage: isDark
                                                 ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1))'
                                                 : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.06))',
@@ -291,49 +351,48 @@ export default function Footer() {
                     </div>
 
                     {/* Brand Partners - Premium Showcase */}
-                    <div className="text-center pt-6 border-t border-white/5">
-                        <div className="flex items-center justify-center gap-3 mb-6">
+                    <div className="text-center pt-4 border-t border-white/5">
+                        <div className="flex items-center justify-center gap-3 mb-3">
                             <div className="w-16 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
                             <div>
                                 <ThemeText className="text-xs font-black uppercase tracking-wider mb-1">
-                                    Thương hiệu chính hãng
+                                    Đại lý ủy quyền chính thức
                                 </ThemeText>
-                                <p className="text-[10px] text-muted-foreground">Đại lý ủy quyền chính thức</p>
+                                <p className="text-[10px] text-muted-foreground">Xe điện TAILG chính hãng</p>
                             </div>
                             <div className="w-16 h-px bg-gradient-to-r from-transparent via-accent to-transparent"></div>
                         </div>
                         <div className="flex flex-wrap justify-center gap-3">
-                            {['VinFast', 'Yadea', 'Giant', 'Pega', 'Dibao', 'Dat Bike'].map((brand) => (
-                                <div
-                                    key={brand}
-                                    className="group relative px-6 py-3 border hover:border-primary/50 rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-xl cursor-default"
-                                    style={{
-                                        backgroundImage: isDark
-                                            ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))'
-                                            : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.03))',
-                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                                    }}
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    <span className="relative text-sm font-black text-foreground tracking-wide">
-                                        {brand}
-                                    </span>
-                                </div>
-                            ))}
+                            {/* TAILG - Thương hiệu ủy quyền chính */}
+                            <div
+                                className="group relative px-8 py-3 border-2 border-primary/50 rounded-xl overflow-hidden transition-colors duration-300 hover:scale-105 cursor-default"
+                                style={{
+                                    willChange: 'transform',
+                                    backgroundImage: isDark
+                                        ? 'linear-gradient(to bottom right, rgba(0, 229, 255, 0.1), rgba(0, 229, 255, 0.2), rgba(0, 229, 255, 0.1))'
+                                        : 'linear-gradient(to bottom right, rgba(0, 229, 255, 0.05), rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.05))',
+                                    borderColor: '#00e5ff'
+                                }}
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <span className="relative text-base font-black text-primary tracking-wide">
+                                    TAILG
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Bottom Bar - Premium */}
-            <div className="border-t border-white/10 bg-gradient-to-r from-secondary via-card to-secondary backdrop-blur-sm">
-                <div className="container mx-auto px-6 py-5">
+            <div className="border-t border-white/10 bg-gradient-to-r from-secondary via-card to-secondary">
+                <div className="container mx-auto px-6 py-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-3">
                         <ThemeText className="text-xs opacity-80">
                             © {currentYear} Xe Điện Xanh. Bảo lưu mọi quyền.
                         </ThemeText>
                         <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                             <span className="text-xs font-semibold text-green-600 dark:text-green-400">
                                 Giao dịch an toàn & bảo mật
                             </span>

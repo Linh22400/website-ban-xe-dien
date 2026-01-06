@@ -117,9 +117,12 @@ function ShowroomForm() {
         let finalImageIds = [...existingImageIds];
         if (imageFiles.length > 0) {
             for (const file of imageFiles) {
-                const uploadedId = await uploadFile(token!, file);
-                if (uploadedId) {
-                    finalImageIds.push(uploadedId);
+                // uploadFile trả về mảng file đã upload, lấy id file đầu tiên.
+                const uploadedFiles = await uploadFile(token!, file);
+                const uploadedFileId = Array.isArray(uploadedFiles) ? uploadedFiles[0]?.id : undefined;
+
+                if (uploadedFileId) {
+                    finalImageIds.push(uploadedFileId);
                 } else {
                     alert("Lỗi khi tải ảnh lên! Vui lòng thử lại.");
                     setLoading(false);

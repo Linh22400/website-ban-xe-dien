@@ -84,8 +84,8 @@ export default function ProductViewer({ images, productName, thumbnail }: Produc
 
             {/* Ambient Light Effect */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/20 blur-[100px] rounded-full" />
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent/10 blur-[80px] rounded-full" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/20 blur-3xl rounded-full" />
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent/10 blur-2xl rounded-full" />
             </div>
         </div>
     );

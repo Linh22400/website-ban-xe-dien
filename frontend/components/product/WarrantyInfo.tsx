@@ -18,27 +18,34 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
             icon: Shield,
             label: "Bảo hành tổng thể",
             value: warranty.warrantyPeriod,
-            color: "text-blue-400"
+            colorKey: "blue" as const
         },
         {
             icon: Battery,
             label: "Bảo hành pin",
             value: warranty.batteryWarranty,
-            color: "text-green-400"
+            colorKey: "green" as const
         },
         {
             icon: Wrench,
             label: "Bảo hành động cơ",
             value: warranty.motorWarranty,
-            color: "text-purple-400"
+            colorKey: "purple" as const
         },
         {
             icon: RefreshCw,
             label: "Bảo dưỡng miễn phí",
             value: warranty.maintenance,
-            color: "text-cyan-400"
+            colorKey: "cyan" as const
         }
     ].filter(item => item.value);
+
+    const colorStyles: Record<string, { icon: string; boxBg: string; boxBorder: string }> = {
+        blue: { icon: 'text-blue-400', boxBg: 'bg-blue-500/10', boxBorder: 'border-blue-500/20' },
+        green: { icon: 'text-green-400', boxBg: 'bg-green-500/10', boxBorder: 'border-green-500/20' },
+        purple: { icon: 'text-purple-400', boxBg: 'bg-purple-500/10', boxBorder: 'border-purple-500/20' },
+        cyan: { icon: 'text-cyan-400', boxBg: 'bg-cyan-500/10', boxBorder: 'border-cyan-500/20' },
+    };
 
     return (
         <section className="py-20 bg-gradient-to-b from-background to-secondary/20">
@@ -89,9 +96,12 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                     key={index}
                                     className="bg-card/30 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/10"
                                 >
+                                    {(() => {
+                                        const style = colorStyles[item.colorKey] || colorStyles.blue;
+                                        return (
                                     <div className="flex items-start gap-4">
-                                        <div className={`p-3 rounded-xl bg-gradient-to-br from-${item.color.split('-')[1]}-500/10 to-${item.color.split('-')[1]}-600/5 border border-${item.color.split('-')[1]}-500/20`}>
-                                            <item.icon className={`w-6 h-6 ${item.color}`} />
+                                        <div className={`p-3 rounded-xl border ${style.boxBg} ${style.boxBorder}`}>
+                                            <item.icon className={`w-6 h-6 ${style.icon}`} />
                                         </div>
                                         <div className="flex-1">
                                             <h3 className="text-sm font-medium text-muted-foreground mb-2">
@@ -102,6 +112,8 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                             </p>
                                         </div>
                                     </div>
+                                        );
+                                    })()}
                                 </div>
                             ))}
 

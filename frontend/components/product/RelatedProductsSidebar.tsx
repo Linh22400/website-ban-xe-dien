@@ -58,7 +58,7 @@ export default function RelatedProductsSidebar({
 
     if (loading) {
         return (
-            <aside className="hidden lg:block sticky top-24 w-28 h-[calc(100vh-120px)] flex-shrink-0 z-30">
+            <aside className="hidden lg:block sticky top-24 w-36 h-[calc(100vh-120px)] flex-shrink-0 z-30">
                 <div className="flex items-center justify-center h-full bg-card/10 rounded-2xl border border-white/5">
                     <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
@@ -71,7 +71,13 @@ export default function RelatedProductsSidebar({
     }
 
     return (
-        <aside className="hidden lg:block sticky top-24 w-28 h-[calc(100vh-120px)] flex-shrink-0 z-30">
+        <aside className="hidden lg:block sticky top-24 w-36 h-[calc(100vh-120px)] flex-shrink-0 z-30">
+            {/* Heading */}
+            <div className="mb-4 text-center">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Sản phẩm khác</p>
+                <div className="w-8 h-0.5 bg-primary/50 mx-auto mt-1.5"></div>
+            </div>
+
             <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent pr-2 pb-32">
                 {/* Vertical Product List */}
                 <div className="space-y-6">
@@ -83,13 +89,14 @@ export default function RelatedProductsSidebar({
                             title={product.name}
                         >
                             {/* Thumbnail Container */}
-                            <div className="relative w-20 h-20 mx-auto rounded-lg overflow-hidden bg-card/30 border border-white/10 group-hover:border-primary/50 transition-all">
+                            <div className="relative w-28 h-28 mx-auto rounded-lg overflow-hidden bg-card/30 border border-white/10 group-hover:border-primary/50 transition-all">
                                 <Image
                                     src={product.thumbnail}
                                     alt={product.name}
                                     fill
-                                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                                    sizes="80px"
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                    style={{ willChange: 'transform' }}
+                                    sizes="112px"
                                 />
                             </div>
 

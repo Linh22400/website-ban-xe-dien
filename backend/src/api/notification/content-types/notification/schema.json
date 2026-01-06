@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notifications",
+  "info": {
+    "singularName": "notification",
+    "pluralName": "notifications",
+    "displayName": "Notification"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "User": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "order-created",
+        "order-confirmed",
+        "order-shipped",
+        "order-delivered",
+        "order-cancelled",
+        "service-confirmed",
+        "service-reminder",
+        "service-completed",
+        "trade-in-appraised",
+        "trade-in-accepted",
+        "promotion",
+        "review-response",
+        "maintenance-reminder",
+        "general"
+      ],
+      "required": true
+    },
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Message": {
+      "type": "text",
+      "required": true
+    },
+    "IsRead": {
+      "type": "boolean",
+      "default": false
+    },
+    "Link": {
+      "type": "string"
+    },
+    "RelatedOrder": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order"
+    },
+    "RelatedService": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::service-booking.service-booking"
+    },
+    "RelatedTradeIn": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::trade-in.trade-in"
+    },
+    "EmailSent": {
+      "type": "boolean",
+      "default": false
+    },
+    "EmailSentAt": {
+      "type": "datetime"
+    },
+    "Data": {
+      "type": "json"
+    }
+  }
+}

@@ -56,16 +56,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const addToCart = (item: Omit<CartItem, "quantity">) => {
         setItems((prev) => {
-            // Check both product ID AND color name to identify unique items
+            // Lưu ý thực tế: quy trình đặt cọc/mua xe thường áp dụng cho 1 xe mỗi đơn.
+            // Backend hiện cũng chỉ hỗ trợ 1 VehicleModel / order.
+
+            // Nếu đã có đúng xe + đúng màu trong giỏ thì giữ nguyên (xe không mua theo "số lượng").
             const existing = prev.find((i) => i.id === item.id && i.colorName === item.colorName);
             if (existing) {
-                return prev.map((i) =>
-                    i.id === item.id && i.colorName === item.colorName
-                        ? { ...i, quantity: i.quantity + 1 }
-                        : i
-                );
+                return prev;
             }
-            return [...prev, { ...item, quantity: 1 }];
+
+            // Nếu giỏ đã có xe khác, hỏi người dùng có muốn thay thế không.
+            if (prev.length > 0) {
+                const ok = typeof window !== 'undefined'
+                    ? window.confirm('Giỏ hàng hiện chỉ hỗ trợ đặt/mua 1 xe mỗi đơn. Bạn có muốn thay thế xe đang có trong giỏ bằng xe mới không?')
+                    : true;
+
+                if (!ok) {
+                    return prev;
+                }
+
+                return [{ ...item, quantity: 1 }];
+            }
+
+            return [{ ...item, quantity: 1 }];
         });
     };
 
@@ -81,9 +94,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
     const updateQuantity = (id: string | number, quantity: number, colorName?: string) => {
+        // Xe không mua theo số lượng trong một đơn ở flow hiện tại.
+        // Giữ quantity = 1, nếu người dùng muốn bỏ thì dùng nút xóa.
         if (quantity <= 0) {
             removeFromCart(id, colorName);
             return;
+        }
+        if (quantity > 1) {
+            quantity = 1;
         }
         setItems((prev) =>
             prev.map((i) => {

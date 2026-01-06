@@ -6,11 +6,12 @@ import ProductHero from "../product/ProductHero";
 import FeatureHighlights from "../product/FeatureHighlights";
 import TechSpecs from "../product/TechSpecs";
 import StickyActionBar from "../product/StickyActionBar";
-import CostCalculator from "../product/CostCalculator";
 import WarrantyInfo from "../product/WarrantyInfo";
 import ProductFAQ from "../product/ProductFAQ";
 import RelatedProductsSidebar from "../product/RelatedProductsSidebar";
 import { SectionHeading } from '../product/ProductTextComponents';
+import ReviewList from "../product/ReviewList";
+import ReviewForm from "../product/ReviewForm";
 
 interface CarConfiguratorProps {
     car: Car;
@@ -58,13 +59,14 @@ export default function CarConfigurator({ car, discountPercent = 0 }: CarConfigu
                         {/* 3.75. FAQ Section */}
                         <ProductFAQ />
 
-                        {/* 4. Cost Calculator */}
+                        {/* 3.8. Reviews & Ratings */}
                         <section className="py-20 bg-background">
-                            <SectionHeading className="mb-12 text-center">
-                                Dự Toán Chi Phí
+                            <SectionHeading className="mb-8 text-center">
+                                Đánh Giá Từ Khách Hàng
                             </SectionHeading>
-                            <div className="max-w-4xl mx-auto">
-                                <CostCalculator />
+                            <div className="space-y-6">
+                                <ReviewForm carModelId={car.id} onSubmitSuccess={() => window.location.reload()} />
+                                <ReviewList carModelId={car.id} />
                             </div>
                         </section>
                     </div>

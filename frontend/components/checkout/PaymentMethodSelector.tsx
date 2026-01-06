@@ -65,7 +65,7 @@ export default function PaymentMethodSelector() {
                         <ul className="space-y-2">
                             <li className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Check className="w-4 h-4 text-primary" />
-                                <span>Ưu đãi giảm 5% (đã áp dụng)</span>
+                                <span>Ưu đãi theo chương trình hiện hành (nếu có)</span>
                             </li>
                             <li className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Check className="w-4 h-4 text-primary" />

@@ -121,11 +121,13 @@ export interface CreateOrderResponse {
         pricing: {
             basePrice: number;
             discount: number;
+            vat?: number;
             registrationFee: number;
             licensePlateFee: number;
             totalAmount: number;
             depositAmount: number;
             remainingAmount: number;
+            discountPercent?: number;
         };
     };
 }

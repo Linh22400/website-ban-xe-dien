@@ -59,7 +59,7 @@ export default function Pagination({ currentPage, totalPages, searchParams }: Pa
             {currentPage > 1 ? (
                 <Link
                     href={buildPageUrl(currentPage - 1)}
-                    className="flex items-center gap-1 px-4 py-2 border border-white/10 rounded-lg hover:bg-white hover:text-black transition-all text-sm font-medium"
+                    className="flex items-center gap-1 px-4 py-2 border border-white/10 rounded-lg hover:bg-white hover:text-black transition-colors text-sm font-medium"
                 >
                     <ChevronLeft className="w-4 h-4" />
                     <span className="hidden sm:inline">Trước</span>
@@ -107,7 +107,7 @@ export default function Pagination({ currentPage, totalPages, searchParams }: Pa
             {currentPage < totalPages ? (
                 <Link
                     href={buildPageUrl(currentPage + 1)}
-                    className="flex items-center gap-1 px-4 py-2 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-all text-sm"
+                    className="flex items-center gap-1 px-4 py-2 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
                     <span className="hidden sm:inline">Sau</span>
                     <ChevronRight className="w-4 h-4" />

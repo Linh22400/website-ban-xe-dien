@@ -13,32 +13,30 @@ export default function ContactPage() {
     });
 
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus("submitting");
+        setErrorMessage(null);
 
         try {
             const { submitLead } = await import("@/lib/api");
-            const success = await submitLead(formData);
-
-            if (success) {
-                setStatus("success");
-                // Reset form
-                setFormData({
-                    name: "",
-                    email: "",
-                    phone: "",
-                    type: "test-drive",
-                    model: "xe-dap-dien-giant",
-                    message: "",
-                });
-            } else {
-                setStatus("error");
-            }
+            await submitLead(formData);
+            setStatus("success");
+            // Reset form
+            setFormData({
+                name: "",
+                email: "",
+                phone: "",
+                type: "test-drive",
+                model: "xe-dap-dien-giant",
+                message: "",
+            });
         } catch (error) {
             console.error("Submit error:", error);
             setStatus("error");
+            setErrorMessage(error instanceof Error ? error.message : "Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline.");
         }
     };
 
@@ -77,7 +75,7 @@ export default function ContactPage() {
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Có Lỗi Xảy Ra!</h3>
                         <p className="text-muted-foreground">
-                            Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline.
+                            {errorMessage || "Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline."}
                         </p>
                         <button
                             onClick={() => setStatus("idle")}

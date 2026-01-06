@@ -62,7 +62,7 @@ export const ViewButton = ({ href, children }: { href: string; children: ReactNo
     return (
         <a
             href={href}
-            className="px-4 py-3 border-2 border-white/10 font-semibold rounded-full hover:border-primary hover:text-primary transition-all"
+            className="px-4 py-3 border-2 border-white/10 font-semibold rounded-full hover:border-primary hover:text-primary transition-colors"
             style={{ color: isDark ? '#ffffff' : '#111827' }}
         >
             {children}

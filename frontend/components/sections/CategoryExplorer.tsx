@@ -26,10 +26,10 @@ export default function CategoryExplorer() {
 
     // Color presets - predefined gradients that work with Tailwind
     const COLOR_PRESETS: Record<string, string> = {
-        'blue-cyan': 'bg-gradient-to-r from-blue-800 to-cyan-0',
+        'blue-cyan': 'bg-gradient-to-r from-blue-700 to-cyan-500',
         'green-emerald': 'bg-gradient-to-r from-green-600 to-emerald-400',
-        'green-light': 'bg-gradient-to-r from-green-500 to-green-0',
-        'purple-pink': 'bg-gradient-to-r from-purple-800 to-pink-0',
+        'green-light': 'bg-gradient-to-r from-green-500 to-green-400',
+        'purple-pink': 'bg-gradient-to-r from-purple-700 to-pink-500',
         'violet-indigo': 'bg-gradient-to-r from-violet-600 to-indigo-600',
         'orange-yellow': 'bg-gradient-to-r from-orange-500 to-yellow-400',
         'red-orange': 'bg-gradient-to-r from-red-600 to-orange-500',
@@ -99,7 +99,7 @@ export default function CategoryExplorer() {
             <div className="container mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                        <h2 className="text-3xl md:text-4xl font-bold  mb-2">
                             Khám Phá Danh Mục
                         </h2>
                         <p className="text-gray-400">
@@ -139,7 +139,8 @@ export default function CategoryExplorer() {
                                     src={cat.image}
                                     alt={cat.title}
                                     fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    style={{ willChange: 'transform' }}
                                 />
 
                                 {/* Gradient Overlay - Theme aware */}

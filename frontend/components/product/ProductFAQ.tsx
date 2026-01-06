@@ -61,7 +61,7 @@ export default function ProductFAQ() {
                         {faqs.map((faq, index) => (
                             <div
                                 key={index}
-                                className="bg-card/30 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:border-primary/30 transition-all"
+                                className="bg-card/30 border border-white/10 rounded-xl overflow-hidden hover:border-primary/30 transition-colors"
                             >
                                 <button
                                     onClick={() => toggleFAQ(index)}
@@ -95,7 +95,7 @@ export default function ProductFAQ() {
                         </p>
                         <a
                             href="/contact"
-                            className="inline-block px-8 py-3 bg-primary text-black font-bold rounded-full hover:bg-white transition-all shadow-lg hover:shadow-primary/50"
+                            className="inline-block px-8 py-3 bg-primary text-black font-bold rounded-full hover:bg-white transition-colors shadow-lg hover:shadow-primary/50"
                         >
                             Liên Hệ Tư Vấn
                         </a>

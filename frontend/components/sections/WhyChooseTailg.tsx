@@ -88,27 +88,16 @@ export default function WhyChooseTailg() {
                     {reasons.map((reason, index) => (
                         <div
                             key={index}
-                            className="group relative p-6 rounded-2xl backdrop-blur-xl border transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden"
+                            className="relative p-6 rounded-2xl border overflow-hidden shadow-sm"
                             style={{
                                 backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                                 borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
                             }}
                         >
-                            {/* Hover gradient overlay */}
-                            <div
-                                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                                style={{
-                                    background: `linear-gradient(135deg, ${isDark
-                                            ? 'rgba(255, 215, 0, 0.1)'
-                                            : 'rgba(255, 215, 0, 0.05)'
-                                        }, transparent)`
-                                }}
-                            />
-
-                            <div className="relative z-10">
+                            <div>
                                 {/* Icon */}
                                 <div
-                                    className={`w-14 h-14 rounded-xl mb-4 flex items-center justify-center bg-gradient-to-br ${reason.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                                    className={`w-14 h-14 rounded-xl mb-4 flex items-center justify-center bg-gradient-to-br ${reason.color} shadow-sm`}
                                 >
                                     <reason.icon className="w-7 h-7 text-white" />
                                 </div>
@@ -125,7 +114,7 @@ export default function WhyChooseTailg() {
 
                             {/* Bottom accent line */}
                             <div
-                                className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${reason.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}
+                                className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${reason.color}`}
                             />
                         </div>
                     ))}

@@ -1,20 +1,24 @@
 'use client';
 
 import { useCheckout } from '@/contexts/CheckoutContext';
+import { useCart } from '@/lib/cart-context';
 import { formatCurrency } from '@/lib/utils';
 
 export default function OrderSummary() {
-    const { selectedVehicle, selectedColor, selectedBattery, paymentMethod, installmentMonths, discountPercent } = useCheckout();
+    const { paymentMethod, installmentMonths } = useCheckout();
+    const { items, total } = useCart();
 
-    if (!selectedVehicle) return null;
+    const item = items[0];
+    if (!item) return null;
 
-    const basePrice = selectedVehicle.price || 0;
-    const discountAmount = discountPercent > 0 ? basePrice * (discountPercent / 100) : 0;
-    const priceAfterDiscount = basePrice - discountAmount;
-    // Registration fee calculated on original price (legal requirement)
-    const registrationFee = basePrice * 0.1;
-    const licensePlateFee = 1500000;
-    const totalAmount = priceAfterDiscount + registrationFee + licensePlateFee;
+    // Giá hiển thị theo thực tế checkout hiện tại:
+    // - Nếu có khuyến mãi: item.price là giá sau KM, item.originalPrice là giá trước KM
+    // - Online chỉ thu (giá sau KM) + VAT 10%
+    const basePrice = Number(item.originalPrice ?? item.price ?? total ?? 0);
+    const priceAfterDiscount = Number(item.price ?? total ?? 0);
+    const discountAmount = Math.max(0, basePrice - priceAfterDiscount);
+    const vat = Math.round(priceAfterDiscount * 0.1);
+    const totalAmount = priceAfterDiscount + vat;
 
     let depositAmount = 0;
     let remainingAmount = 0;
@@ -32,66 +36,50 @@ export default function OrderSummary() {
 
     return (
         <div className="sticky top-24">
-            <div className="bg-card/30 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="bg-card/30 border border-border rounded-2xl p-6">
                 {/* Header */}
-                <h3 className="text-xl font-bold text-white mb-6">Tóm tắt đơn hàng</h3>
+                <h3 className="text-xl font-bold text-foreground mb-6">Tóm tắt đơn hàng</h3>
 
                 {/* Product Info */}
-                <div className="mb-6 pb-6 border-b border-white/10">
-                    {selectedVehicle.thumbnail && (
-                        <div className="relative h-32 mb-4 rounded-xl overflow-hidden bg-white/5">
+                <div className="mb-6 pb-6 border-b border-border">
+                    {item.image && (
+                        <div className="relative h-32 mb-4 rounded-xl overflow-hidden bg-muted/20">
                             <img
-                                src={(() => {
-                                    // Try to find image for selected color
-                                    const colorData = selectedColor
-                                        ? selectedVehicle.colors?.find((c: any) => c.name === selectedColor)
-                                        : null;
-
-                                    // Use first image from gallery if available, otherwise fallback to thumbnail
-                                    const colorImage = colorData?.images?.[0] || colorData?.image; // Handle both new and legacy structure
-                                    const imageUrl = colorImage || selectedVehicle.thumbnail;
-
-                                    return imageUrl?.startsWith('http')
-                                        ? imageUrl
-                                        : `${process.env.NEXT_PUBLIC_STRAPI_URL}${imageUrl}`;
-                                })()}
-                                alt={selectedVehicle.name}
+                                src={(item.gallery?.[0] || item.image || '/placeholder-car.png')}
+                                alt={item.name}
                                 className="w-full h-full object-contain"
                             />
                         </div>
                     )}
-                    <h4 className="font-bold text-white mb-2">{selectedVehicle.name}</h4>
+                    <h4 className="font-bold text-foreground mb-2">{item.name}</h4>
                     <div className="space-y-1 text-sm text-muted-foreground">
-                        {selectedColor && <p>Màu: <span className="text-white">{selectedColor}</span></p>}
-                        {selectedBattery && <p>Pin: <span className="text-white">{selectedBattery}</span></p>}
+                        {item.colorName && item.colorName !== 'Mặc định' && (
+                            <p>Màu: <span className="text-foreground">{item.colorName}</span></p>
+                        )}
                     </div>
                 </div>
 
                 {/* Pricing Breakdown */}
-                <div className="space-y-3 mb-6 pb-6 border-b border-white/10">
+                <div className="space-y-3 mb-6 pb-6 border-b border-border">
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Giá xe:</span>
-                        <span className="text-white">{formatCurrency(basePrice)}</span>
+                        <span className="text-foreground">{formatCurrency(basePrice)}</span>
                     </div>
-                    {discountPercent > 0 && (
+                    {discountAmount > 0 && (
                         <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Giảm giá ({discountPercent}%):</span>
+                            <span className="text-muted-foreground">Khuyến mãi:</span>
                             <span className="text-red-500">-{formatCurrency(discountAmount)}</span>
                         </div>
                     )}
                     <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Phí trước bạ (10%):</span>
-                        <span className="text-white">{formatCurrency(registrationFee)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Phí biển số:</span>
-                        <span className="text-white">{formatCurrency(licensePlateFee)}</span>
+                        <span className="text-muted-foreground">VAT (10%):</span>
+                        <span className="text-foreground">{formatCurrency(vat)}</span>
                     </div>
                 </div>
 
                 {/* Total */}
-                <div className="flex justify-between items-center mb-6 pb-6 border-b border-white/10">
-                    <span className="font-bold text-white">Tổng cộng:</span>
+                <div className="flex justify-between items-center mb-6 pb-6 border-b border-border">
+                    <span className="font-bold text-foreground">Tổng cộng:</span>
                     <span className="text-2xl font-bold text-primary">{formatCurrency(totalAmount)}</span>
                 </div>
 
@@ -104,18 +92,18 @@ export default function OrderSummary() {
                                 {paymentMethod === 'full_payment' && 'Thanh toán đầy đủ:'}
                                 {paymentMethod === 'installment' && 'Trả trước (30%):'}
                             </span>
-                            <span className="text-white font-semibold">{formatCurrency(depositAmount)}</span>
+                            <span className="text-foreground font-semibold">{formatCurrency(depositAmount)}</span>
                         </div>
                         {remainingAmount > 0 && (
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Còn lại:</span>
-                                <span className="text-white">{formatCurrency(remainingAmount)}</span>
+                                <span className="text-foreground">{formatCurrency(remainingAmount)}</span>
                             </div>
                         )}
                         {paymentMethod === 'installment' && installmentMonths > 0 && (
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Trả góp:</span>
-                                <span className="text-white">{installmentMonths} tháng</span>
+                                <span className="text-foreground">{installmentMonths} tháng</span>
                             </div>
                         )}
                     </div>
@@ -125,15 +113,15 @@ export default function OrderSummary() {
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span className="text-primary">🛡️</span>
-                        <span>{selectedVehicle.warranty?.warrantyPeriod || 'Bảo hành 3 năm'}</span>
+                        <span>Bảo hành theo chính sách hãng</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span className="text-primary">🔧</span>
-                        <span>{selectedVehicle.warranty?.maintenance || 'Bảo dưỡng miễn phí 2 năm'}</span>
+                        <span>Bảo dưỡng theo lịch hãng</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span className="text-primary">🔋</span>
-                        <span>{selectedVehicle.warranty?.batteryWarranty || 'Bảo hành pin 5 năm'}</span>
+                        <span>Bảo hành pin theo chính sách</span>
                     </div>
                 </div>
             </div>

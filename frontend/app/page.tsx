@@ -4,10 +4,10 @@ import HeroSlider from "@/components/hero/HeroSlider";
 import QuickFinder from "@/components/hero/QuickFinder";
 import CategoryExplorer from "@/components/sections/CategoryExplorer";
 import TailgProductGrid from "@/components/sections/TailgProductGrid";
+import WhyChooseTailg from "@/components/sections/WhyChooseTailg";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import ElectricMotorcycles from "@/components/sections/ElectricMotorcycles";
 import ElectricBicycles from "@/components/sections/ElectricBicycles";
-import WhyChooseTailg from "@/components/sections/WhyChooseTailg";
 import FeaturedAccessories from "@/components/sections/FeaturedAccessories";
 import LatestNews from "@/components/sections/LatestNews";
 import LiveChatWidget from "@/components/ui/LiveChatWidget";
@@ -15,7 +15,7 @@ import LiveChatWidget from "@/components/ui/LiveChatWidget";
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Hero Banner with integrated promotion slides - Full screen under transparent navbar */}
+      {/* Hero Banner (ưu tiên TAILG + khuyến mãi) */}
       <HeroSlider />
 
       <div className="relative z-10 pb-12 pt-8">
@@ -34,10 +34,9 @@ export default function Home() {
       <WhyChooseTailg />
       {/* ========== TAILG ZONE END ========== */}
 
+      {/* ========== STANDARD E-COMMERCE BLOCKS (MULTI-BRAND FRIENDLY) ========== */}
       <FeaturedProducts />
-
       <ElectricMotorcycles />
-
       <ElectricBicycles />
 
       <FeaturedAccessories />

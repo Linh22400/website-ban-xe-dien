@@ -12,8 +12,8 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]" />
 
                 {/* Gradient Orbs */}
-                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl" />
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
@@ -37,7 +37,7 @@ export default function Hero() {
                         { icon: "💳", title: "Trả Góp 0%", desc: "Thủ tục đơn giản" },
                         { icon: "🔧", title: "Bảo Dưỡng Tận Nơi", desc: "Đội ngũ chuyên nghiệp" },
                     ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-card/30 border border-border backdrop-blur-sm hover:bg-card/50 transition-colors">
+                        <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-card/30 border border-border hover:bg-card/50 transition-colors">
                             <div className="text-3xl">{item.icon}</div>
                             <div>
                                 <div className="font-bold text-foreground text-sm md:text-base">{item.title}</div>

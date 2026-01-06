@@ -23,6 +23,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // metadataBase giúp Next resolve OG/Twitter image URL chính xác khi dùng đường dẫn tương đối.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
     template: "%s | Xe Điện Xanh",
     default: "Xe Điện Xanh | Xe Đạp & Xe Máy Điện Cao Cấp Chính Hãng",
@@ -33,7 +35,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    url: "https://website-xe-dien.vercel.app",
+    // Dùng biến môi trường để tránh hardcode URL khi deploy.
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://website-xe-dien.vercel.app",
     siteName: "Xe Điện Xanh",
     title: "Xe Điện Xanh | Công Nghệ Tương Lai",
     description: "Khám phá các dòng xe điện cao cấp với công nghệ pin vượt trội và thiết kế thời thượng.",
@@ -63,7 +66,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // Website tiếng Việt
+    <html lang="vi">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -74,7 +78,9 @@ export default function RootLayout({
                 <CompareProvider>
                   <JsonLd />
                   <Navbar />
-                  {children}
+                  <main className="pt-[72px] md:pt-[96px]">
+                    {children}
+                  </main>
                   <CompareFloatingBar />
                   <Footer />
                 </CompareProvider>

@@ -20,7 +20,7 @@ export default function CompareFloatingBar() {
     return (
         <div className="fixed bottom-0 left-0 right-0 z-50 p-4 animate-in slide-in-from-bottom duration-300">
             <div className="container mx-auto max-w-4xl">
-                <div className="bg-card/90 backdrop-blur-md border border-primary/20 rounded-2xl shadow-2xl p-4 flex items-center justify-between gap-4">
+                <div className="bg-card/90 border border-primary/20 rounded-2xl shadow-2xl p-4 flex items-center justify-between gap-4">
 
                     <div className="flex items-center gap-4 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
                         <div className="text-sm font-bold text-white whitespace-nowrap hidden sm:block">
@@ -40,7 +40,8 @@ export default function CompareFloatingBar() {
                                         src={car.thumbnail}
                                         alt={car.name}
                                         fill
-                                        className="object-cover"
+                                        sizes="64px"
+                                        className="object-cover object-center"
                                     />
                                 </div>
                             </div>

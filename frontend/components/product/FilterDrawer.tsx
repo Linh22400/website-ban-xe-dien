@@ -40,7 +40,7 @@ export default function FilterDrawer({ isOpen, onClose, activeFilterCount }: Fil
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+                className="fixed inset-0 bg-black/60 z-40 transition-opacity duration-300"
                 onClick={onClose}
                 aria-hidden="true"
             />
@@ -51,7 +51,7 @@ export default function FilterDrawer({ isOpen, onClose, activeFilterCount }: Fil
                     }`}
             >
                 {/* Header */}
-                <div className="sticky top-0 bg-background/95 backdrop-blur-lg border-b border-white/10 p-4 flex items-center justify-between z-10">
+                <div className="sticky top-0 bg-background/95 border-b border-white/10 p-4 flex items-center justify-between z-10">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         Bộ Lọc
                         {activeFilterCount > 0 && (
@@ -75,7 +75,7 @@ export default function FilterDrawer({ isOpen, onClose, activeFilterCount }: Fil
                 </div>
 
                 {/* Bottom Action Bar */}
-                <div className="sticky bottom-0 bg-background/95 backdrop-blur-lg border-t border-white/10 p-4">
+                <div className="sticky bottom-0 bg-background/95 border-t border-white/10 p-4">
                     <button
                         onClick={onClose}
                         className="w-full px-6 py-3 bg-primary text-black font-bold rounded-full hover:bg-primary/90 transition-all"

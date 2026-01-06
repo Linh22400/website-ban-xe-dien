@@ -32,7 +32,7 @@ export default function OrderList({ orders, isLoading }: OrderListProps) {
                     Bạn chưa thực hiện đơn hàng nào. Hãy khám phá các mẫu xe của chúng tôi nhé!
                 </p>
                 <Link
-                    href="/products"
+                    href="/cars"
                     className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-primary text-black font-bold hover:bg-primary-dark transition-all"
                 >
                     Xem sản phẩm

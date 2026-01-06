@@ -5,7 +5,7 @@ import { Sun, Moon, Monitor } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ThemeToggle() {
-    const { theme, setTheme, resolvedTheme } = useTheme();
+    const { theme, setTheme, resolvedTheme, mounted } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
 
     const themes = [
@@ -17,18 +17,29 @@ export default function ThemeToggle() {
     const currentTheme = themes.find(t => t.value === theme) || themes[2];
     const CurrentIcon = currentTheme.icon;
 
+    // Prevent hydration mismatch
+    if (!mounted) {
+        return (
+            <div className="relative">
+                <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                    <Monitor className="w-5 h-5" />
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="relative">
             {/* Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2.5 rounded-full bg-card border border-border hover:border-primary/50 transition-all duration-300 group"
+                className="relative p-2.5 rounded-full bg-card border border-border hover:border-primary/50 transition-colors duration-300 group"
                 aria-label="Toggle theme"
             >
                 <CurrentIcon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
 
                 {/* Glow effect on hover */}
-                <div className="absolute inset-0 rounded-full bg-primary/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
+                {/* Removed blur glow for performance */}
             </button>
 
             {/* Dropdown Menu */}

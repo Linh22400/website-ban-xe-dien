@@ -107,7 +107,7 @@ export const SectionRenderer = ({ data }: { data: any }) => {
         <div className="my-12">
             {data.title && (
                 <h2
-                    className="text-2xl md:text-3xl font-bold mb-6"
+                    className=" font-bold mb-6"
                     style={{ color: isDark ? '#ffffff' : '#111827' }}
                 >
                     {data.title}
@@ -136,7 +136,8 @@ export const GalleryRenderer = ({ data }: { data: any }) => {
                             src={finalUrl}
                             alt={img.attributes?.alternativeText || img.alternativeText || `Gallery Image ${index + 1}`}
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            style={{ willChange: 'transform' }}
                         />
                     </div>
                 );

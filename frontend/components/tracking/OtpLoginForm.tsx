@@ -46,14 +46,10 @@ export default function OtpLoginForm() {
         setIsLoading(true);
 
         try {
-            const success = await sendOtp(phone);
-            if (success) {
-                setStep('otp');
-            } else {
-                setError('Không thể gửi OTP. Vui lòng kiểm tra lại số điện thoại.');
-            }
-        } catch (err) {
-            setError('Có lỗi xảy ra. Vui lòng thử lại.');
+            await sendOtp(phone);
+            setStep('otp');
+        } catch (err: any) {
+            setError(err?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
@@ -66,16 +62,12 @@ export default function OtpLoginForm() {
 
         try {
             const result = await verifyOtp(phone, otp);
-            if (result) {
-                localStorage.setItem('authToken', result.token);
-                localStorage.setItem('user', JSON.stringify(result.user));
-                setUser(result.user);
-                await fetchOrders(result.token);
-            } else {
-                setError('Mã OTP không chính xác.');
-            }
-        } catch (err) {
-            setError('Có lỗi xảy ra. Vui lòng thử lại.');
+            localStorage.setItem('authToken', result.token);
+            localStorage.setItem('user', JSON.stringify(result.user));
+            setUser(result.user);
+            await fetchOrders(result.token);
+        } catch (err: any) {
+            setError(err?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
         } finally {
             setIsLoading(false);
         }
@@ -120,7 +112,7 @@ export default function OtpLoginForm() {
     }
 
     return (
-        <div className="bg-card/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm max-w-xl mx-auto">
+        <div className="bg-card/80 border border-white/10 rounded-2xl p-8 max-w-xl mx-auto">
             <SectionHeading className="mb-6 text-center">
                 {step === 'phone' ? 'Đăng nhập bằng SĐT' : 'Nhập mã xác thực'}
             </SectionHeading>
@@ -153,7 +145,7 @@ export default function OtpLoginForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-all hover:shadow-glow flex items-center justify-center gap-2"
+                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-colors hover:shadow-glow flex items-center justify-center gap-2"
                     >
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                         Gửi mã OTP
@@ -176,7 +168,7 @@ export default function OtpLoginForm() {
 
                     <div>
                         <label className="block text-sm font-medium text-muted-foreground mb-1">
-                            Mã OTP (Nhập 123456)
+                            Mã OTP (6 chữ số)
                         </label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -201,7 +193,7 @@ export default function OtpLoginForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-all hover:shadow-glow flex items-center justify-center gap-2"
+                        className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary-dark transition-colors hover:shadow-glow flex items-center justify-center gap-2"
                     >
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Xác thực & Đăng nhập'}
                     </button>

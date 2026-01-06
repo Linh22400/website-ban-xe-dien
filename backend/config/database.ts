@@ -25,23 +25,23 @@ export default ({ env }) => {
     postgres: {
       connection: {
         connectionString: env('DATABASE_URL'),
-        host: env('DATABASE_HOST', 'localhost'),
-        port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
         ssl: env.bool('DATABASE_SSL', false) && {
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
+          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', false),
         },
-        schema: env('DATABASE_SCHEMA', 'public'),
+        // Force IPv4
+        options: '-c client_encoding=UTF8',
       },
       pool: { 
         min: env.int('DATABASE_POOL_MIN', 2), 
         max: env.int('DATABASE_POOL_MAX', 10),
-        acquireTimeoutMillis: 30000,
+        acquireTimeoutMillis: 60000,
+        createTimeoutMillis: 60000,
+        destroyTimeoutMillis: 5000,
         idleTimeoutMillis: 30000,
+        reapIntervalMillis: 1000,
+        createRetryIntervalMillis: 100,
       },
-      acquireConnectionTimeout: 30000,
+      debug: false,
     },
     sqlite: {
       connection: {

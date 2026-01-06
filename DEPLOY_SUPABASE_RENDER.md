@@ -20,12 +20,19 @@
 3. Chờ 2-3 phút
 
 ### 1.2. Lấy Connection String
-1. Settings → Database → Connection string → URI
+1. Settings → Database → Connection string → **"Transaction"** mode
 2. Copy chuỗi dạng:
    ```
-   postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/postgres
+   postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
    ```
 3. Thay `[YOUR-PASSWORD]` bằng password đã tạo
+
+⚠️ **QUAN TRỌNG**: Phải dùng **Transaction mode** (port 6543), KHÔNG dùng Session mode (port 5432) vì Render có giới hạn connections.
+
+**Hoặc thêm pooling vào URL thông thường:**
+```
+postgresql://postgres:[password]@db.xxxxx.supabase.co:5432/postgres?pgbouncer=true&connection_limit=1
+```
 
 ### 1.3. Test Local với Supabase
 ```bash
@@ -36,7 +43,7 @@ cp .env .env.local
 
 # Sửa .env.local:
 DATABASE_CLIENT=postgres
-DATABASE_URL=postgresql://postgres:your-password@db.xxxxx.supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres.xxxxx:your-password@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
 DATABASE_SSL=true
 DATABASE_SSL_REJECT_UNAUTHORIZED=false
 
@@ -95,9 +102,11 @@ ENCRYPTION_KEY=//DkBePHbfO0hWFYza+9rQ==
 JWT_SECRET=8fuUTvOyOrM7qaCrqwgr5A==
 
 DATABASE_CLIENT=postgres
-DATABASE_URL=postgresql://postgres:YOUR-PASSWORD@db.xxxxx.supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres.xxxxx:YOUR-PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
 DATABASE_SSL=true
 DATABASE_SSL_REJECT_UNAUTHORIZED=false
+DATABASE_POOL_MIN=2
+DATABASE_POOL_MAX=5
 
 CLOUDINARY_NAME=divcyhzdk
 CLOUDINARY_KEY=727885263212775
@@ -107,7 +116,8 @@ CLIENT_URL=https://your-frontend-domain.vercel.app
 ```
 
 ⚠️ **QUAN TRỌNG**: 
-- Thay `DATABASE_URL` bằng chuỗi Supabase của bạn
+- Thay `DATABASE_URL` bằng **Transaction pooling URL** từ Supabase (port 6543)
+- KHÔNG dùng direct connection (port 5432) trên production
 - Thay `CLIENT_URL` bằng domain frontend của bạn
 
 ### 2.4. Deploy
@@ -161,14 +171,23 @@ vercel --prod
 
 ## 🔧 Troubleshooting
 
-### Lỗi: "Connection timeout"
-- Check DATABASE_SSL=true
-- Check DATABASE_SSL_REJECT_UNAUTHORIZED=false
-- Check Supabase password đúng
+### Lỗi: "Connection timeout" hoặc "ENETUNREACH"
+- ✅ **PHẢI dùng Transaction pooling URL** (port 6543), không dùng port 5432
+- ✅ Vào Supabase → Settings → Database → Connection string → **Transaction mode**
+- ✅ Check DATABASE_SSL=true
+- ✅ Check DATABASE_SSL_REJECT_UNAUTHORIZED=false
+- ✅ Set DATABASE_POOL_MAX=5 (giảm xuống nếu vẫn lỗi)
+
+**Lấy đúng URL:**
+```
+Settings → Database → Connection string → Chọn "Transaction" (port 6543)
+```
 
 ### Lỗi: "Too many connections"
 - Supabase free tier giới hạn connections
-- Giảm DATABASE_POOL_MAX xuống 5
+- Đảm bảo dùng Transaction pooling mode
+- Giảm DATABASE_POOL_MAX=2
+- Thêm `?pgbouncer=true` vào connection string
 
 ### Lỗi: "Module not found"
 - Check `cd backend` trong build command

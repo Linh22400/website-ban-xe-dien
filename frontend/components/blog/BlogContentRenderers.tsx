@@ -107,7 +107,7 @@ export const SectionRenderer = ({ data }: { data: any }) => {
         <div className="my-12">
             {data.title && (
                 <h2
-                    className=" font-bold mb-6"
+                    className="text-2xl md:text-3xl font-bold mb-6"
                     style={{ color: isDark ? '#ffffff' : '#111827' }}
                 >
                     {data.title}

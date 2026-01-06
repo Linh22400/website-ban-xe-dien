@@ -99,7 +99,7 @@ export default function CategoryExplorer() {
             <div className="container mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold  mb-2">
+                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                             Khám Phá Danh Mục
                         </h2>
                         <p className="text-gray-400">

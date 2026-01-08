@@ -652,6 +652,290 @@ Với những ưu điểm vượt trội về tiết kiệm, môi trường, cô
 
 ---
 
+## 🌐 API ENDPOINTS - CHO FRONTEND
+
+### ⚙️ Cấu Hình Permissions (BẮT BUỘC)
+
+**Bước 1:** Vào Strapi Admin → Settings → Roles → Public
+
+**Bước 2:** Cho phép các actions sau:
+
+#### Car-model:
+- ✅ find
+- ✅ findOne
+
+#### Category:
+- ✅ find
+- ✅ findOne
+
+#### Showroom:
+- ✅ find
+- ✅ findOne
+
+#### Promotion:
+- ✅ find
+- ✅ findOne
+
+#### Accessory:
+- ✅ find
+- ✅ findOne
+
+#### Article:
+- ✅ find
+- ✅ findOne
+
+#### Article-category:
+- ✅ find
+- ✅ findOne
+
+**Bước 3:** Click **Save** ở góc trên bên phải
+
+---
+
+### 📡 API URLs - Để Frontend Sử Dụng
+
+#### Base URL:
+```
+http://localhost:1337/api
+```
+
+#### Car Models:
+```bash
+# Lấy tất cả xe
+GET http://localhost:1337/api/car-models?populate=*
+
+# Lấy 1 xe theo ID
+GET http://localhost:1337/api/car-models/1?populate=*
+
+# Lấy xe theo slug
+GET http://localhost:1337/api/car-models?filters[slug][$eq]=tailg-m3-pro&populate=*
+
+# Lấy xe featured
+GET http://localhost:1337/api/car-models?filters[isFeatured][$eq]=true&populate=*
+
+# Lọc theo type
+GET http://localhost:1337/api/car-models?filters[type][$eq]=motorcycle&populate=*
+
+# Sắp xếp theo giá
+GET http://localhost:1337/api/car-models?sort=price:asc&populate=*
+
+# Phân trang
+GET http://localhost:1337/api/car-models?pagination[page]=1&pagination[pageSize]=10&populate=*
+```
+
+#### Categories:
+```bash
+# Lấy tất cả categories
+GET http://localhost:1337/api/categories?populate=*
+
+# Lấy 1 category
+GET http://localhost:1337/api/categories/1?populate=*
+```
+
+#### Showrooms:
+```bash
+# Lấy tất cả showrooms
+GET http://localhost:1337/api/showrooms?populate=*
+
+# Lấy showroom theo city
+GET http://localhost:1337/api/showrooms?filters[City][$eq]=Hà Nội&populate=*
+```
+
+#### Promotions:
+```bash
+# Lấy promotions đang active
+GET http://localhost:1337/api/promotions?filters[isActive][$eq]=true&populate=*
+
+# Lấy tất cả promotions
+GET http://localhost:1337/api/promotions?populate=*
+```
+
+#### Accessories:
+```bash
+# Lấy tất cả accessories
+GET http://localhost:1337/api/accessories?populate=*
+
+# Lọc theo category
+GET http://localhost:1337/api/accessories?filters[Category][$eq]=helmet&populate=*
+
+# Lấy featured accessories
+GET http://localhost:1337/api/accessories?filters[Is_Featured][$eq]=true&populate=*
+```
+
+#### Articles:
+```bash
+# Lấy tất cả articles
+GET http://localhost:1337/api/articles?populate=*
+
+# Lấy featured articles
+GET http://localhost:1337/api/articles?filters[Featured][$eq]=true&populate=*
+
+# Lấy theo category
+GET http://localhost:1337/api/articles?populate=category&filters[category][slug][$eq]=tin-tuc
+```
+
+#### Article Categories:
+```bash
+# Lấy tất cả article categories
+GET http://localhost:1337/api/article-categories?populate=*
+```
+
+---
+
+### 🧪 Test API Bằng PowerShell
+
+```powershell
+# Test lấy tất cả xe
+Invoke-RestMethod -Uri "http://localhost:1337/api/car-models?populate=*" -Method Get | ConvertTo-Json -Depth 10
+
+# Test lấy 1 xe
+Invoke-RestMethod -Uri "http://localhost:1337/api/car-models/1?populate=*" -Method Get | ConvertTo-Json -Depth 10
+
+# Test lấy showrooms
+Invoke-RestMethod -Uri "http://localhost:1337/api/showrooms?populate=*" -Method Get | ConvertTo-Json -Depth 10
+```
+
+---
+
+### 📝 Cấu Hình Frontend (.env.local)
+
+Tạo file `frontend/.env.local`:
+
+```env
+# Strapi API URL
+NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+NEXT_PUBLIC_API_URL=http://localhost:1337/api
+
+# Optional: Strapi API Token (nếu cần authenticated requests)
+# STRAPI_API_TOKEN=your_token_here
+```
+
+---
+
+### 💻 Code Mẫu Cho Frontend
+
+#### Fetch Car Models:
+```typescript
+// lib/api.ts hoặc tương tự
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api';
+
+export async function getCarModels() {
+  const res = await fetch(`${API_URL}/car-models?populate=*`);
+  if (!res.ok) throw new Error('Failed to fetch car models');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function getCarModel(slug: string) {
+  const res = await fetch(`${API_URL}/car-models?filters[slug][$eq]=${slug}&populate=*`);
+  if (!res.ok) throw new Error('Failed to fetch car model');
+  const data = await res.json();
+  return data.data[0];
+}
+```
+
+#### Fetch Showrooms:
+```typescript
+export async function getShowrooms() {
+  const res = await fetch(`${API_URL}/showrooms?populate=*`);
+  if (!res.ok) throw new Error('Failed to fetch showrooms');
+  const data = await res.json();
+  return data.data;
+}
+```
+
+#### Fetch Promotions:
+```typescript
+export async function getActivePromotions() {
+  const res = await fetch(`${API_URL}/promotions?filters[isActive][$eq]=true&populate=*`);
+  if (!res.ok) throw new Error('Failed to fetch promotions');
+  const data = await res.json();
+  return data.data;
+}
+```
+
+---
+
+### 🔧 Kiểm Tra CORS (Nếu Gặp Lỗi)
+
+Nếu frontend báo lỗi CORS, kiểm tra file `backend/config/middlewares.ts`:
+
+```typescript
+export default [
+  'strapi::logger',
+  'strapi::errors',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'dl.airtable.com'],
+          'media-src': ["'self'", 'data:', 'blob:'],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
+  {
+    name: 'strapi::cors',
+    config: {
+      enabled: true,
+      origin: ['http://localhost:3000', 'http://localhost:3001'], // Thêm port frontend
+      credentials: true,
+    },
+  },
+  'strapi::poweredBy',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];
+```
+
+Sau khi sửa, restart Strapi:
+```powershell
+# Trong terminal backend
+Ctrl+C
+npm run develop
+```
+
+---
+
+### ✅ Checklist Để Frontend Hoạt Động
+
+- [ ] Strapi đang chạy tại http://localhost:1337
+- [ ] Đã cấu hình Permissions cho Public role (Settings > Roles > Public)
+- [ ] Đã enable find & findOne cho tất cả collections
+- [ ] Đã test API bằng PowerShell hoặc browser
+- [ ] Đã tạo file `.env.local` trong frontend với `NEXT_PUBLIC_API_URL`
+- [ ] Đã cấu hình CORS trong `backend/config/middlewares.ts`
+- [ ] Đã publish tất cả content (không để draft)
+- [ ] Frontend có thể fetch được data
+
+---
+
+### 🐛 Troubleshooting
+
+**Lỗi 403 Forbidden:**
+→ Chưa cấu hình permissions cho Public role
+
+**Lỗi 404 Not Found:**
+→ URL sai hoặc content chưa được publish
+
+**Lỗi CORS:**
+→ Thêm origin của frontend vào `middlewares.ts`
+
+**Data trả về null:**
+→ Content chưa publish hoặc chưa có data
+
+**Image không hiển thị:**
+→ URL image cần dùng: `${STRAPI_URL}${image.url}`
+
+---
+
 ## 📸 HƯỚNG DẪN UPLOAD HÌNH ẢNH
 
 ### Bước 1: Chuẩn Bị Hình

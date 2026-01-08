@@ -132,7 +132,7 @@ export default function CategoryExplorer() {
                             <Link
                                 key={cat.id}
                                 href={cat.link}
-                                className={`group relative h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-xl ${cat.colSpan}`}
+                                className="group relative h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-xl"
                             >
                                 {/* Background Image */}
                                 <Image

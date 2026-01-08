@@ -239,15 +239,21 @@ export default function Navbar() {
                 <div className="flex items-center justify-between py-4">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform">
-                            <Zap className="w-6 h-6 text-black" />
+                        <div className="relative w-12 h-12 transform group-hover:scale-105 transition-transform">
+                            <Image
+                                src="/logo(Ducduy).jpg"
+                                alt="Đức Duy Logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
                         </div>
                         <div className="hidden sm:block">
-                            <div className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-                                XE ĐIỆN XANH
+                            <div className="text-xl font-black text-[#0D5E3A] dark:text-[#10B981]">
+                                XE ĐIỆN ĐỨC DUY
                             </div>
-                            <div className="text-[10px] -mt-1 text-muted-foreground">
-                                Chính Hãng - Uy Tín
+                            <div className="text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold">
+                                Chính Hãng TAILG - Uy Tín
                             </div>
                         </div>
                     </Link>

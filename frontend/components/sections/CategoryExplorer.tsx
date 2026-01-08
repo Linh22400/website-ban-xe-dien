@@ -24,15 +24,25 @@ export default function CategoryExplorer() {
         fetchData();
     }, []);
 
-    // Color presets - predefined gradients that work with Tailwind
+    // Color presets - matching product tag colors
     const COLOR_PRESETS: Record<string, string> = {
-        'blue-cyan': 'bg-gradient-to-r from-blue-700 to-cyan-500',
-        'green-emerald': 'bg-gradient-to-r from-green-600 to-emerald-400',
-        'green-light': 'bg-gradient-to-r from-green-500 to-green-400',
-        'purple-pink': 'bg-gradient-to-r from-purple-700 to-pink-500',
-        'violet-indigo': 'bg-gradient-to-r from-violet-600 to-indigo-600',
+        // Motorcycle - Green (TAILG)
+        'motorcycle': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
+        'blue-cyan': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
+        'green-emerald': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
+        
+        // Bicycle - Red (Đức Duy)
+        'bicycle': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
+        'green-light': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
+        'red-orange': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
+        
+        // Accessories - Blue
+        'accessories': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
+        'purple-pink': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
+        'violet-indigo': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
+        
+        // Fallbacks
         'orange-yellow': 'bg-gradient-to-r from-orange-500 to-yellow-400',
-        'red-orange': 'bg-gradient-to-r from-red-600 to-orange-500',
         'pink-rose': 'bg-gradient-to-r from-pink-500 to-rose-400',
         'teal-cyan': 'bg-gradient-to-r from-teal-500 to-cyan-400',
         'indigo-purple': 'bg-gradient-to-r from-indigo-600 to-purple-600',
@@ -41,8 +51,47 @@ export default function CategoryExplorer() {
         'sky-blue': 'bg-gradient-to-r from-sky-500 to-blue-600',
     };
 
+    // Helper to get hover color class based on category
+    const getHoverColorClass = (title?: string, subtitle?: string) => {
+        const titleText = `${title || ''} ${subtitle || ''}`.toLowerCase();
+        
+        if (titleText.includes('máy điện') || titleText.includes('motorcycle')) {
+            return 'group-hover:text-emerald-400';
+        }
+        if (titleText.includes('đạp điện') || titleText.includes('bicycle')) {
+            return 'group-hover:text-rose-400';
+        }
+        if (titleText.includes('phụ kiện') || titleText.includes('accessories') || titleText.includes('accessory')) {
+            return 'group-hover:text-cyan-400';
+        }
+        
+        return 'group-hover:text-primary'; // fallback
+    };
+
     // Helper to parse color format and return appropriate styling
-    const getColorStyle = (colorString: string | undefined) => {
+    const getColorStyle = (colorString: string | undefined, categoryTitle?: string, categorySubtitle?: string) => {
+        // Auto-detect category type from title or subtitle first
+        const titleText = `${categoryTitle || ''} ${categorySubtitle || ''}`.toLowerCase();
+        
+        if (titleText.includes('máy điện') || titleText.includes('motorcycle')) {
+            return {
+                className: COLOR_PRESETS['motorcycle'],
+                style: {}
+            };
+        }
+        if (titleText.includes('đạp điện') || titleText.includes('bicycle')) {
+            return {
+                className: COLOR_PRESETS['bicycle'],
+                style: {}
+            };
+        }
+        if (titleText.includes('phụ kiện') || titleText.includes('accessories') || titleText.includes('accessory')) {
+            return {
+                className: COLOR_PRESETS['accessories'],
+                style: {}
+            };
+        }
+        
         if (!colorString) {
             return {
                 className: COLOR_PRESETS['blue-cyan'],
@@ -127,7 +176,8 @@ export default function CategoryExplorer() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {categories.map((cat) => {
-                        const colorStyle = getColorStyle(cat.color);
+                        const colorStyle = getColorStyle(cat.color, cat.title, cat.subtitle);
+                        const hoverColorClass = getHoverColorClass(cat.title, cat.subtitle);
                         return (
                             <Link
                                 key={cat.id}
@@ -155,7 +205,7 @@ export default function CategoryExplorer() {
                                         >
                                             {cat.subtitle}
                                         </span>
-                                        <h3 className="text-foreground dark:text-white text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                                        <h3 className={`text-foreground dark:text-white text-2xl font-bold mb-2 transition-colors ${hoverColorClass}`}>
                                             {cat.title}
                                         </h3>
                                         <div className="flex items-center gap-2 text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">

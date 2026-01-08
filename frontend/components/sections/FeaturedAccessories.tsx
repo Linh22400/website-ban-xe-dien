@@ -150,7 +150,7 @@ export default function FeaturedAccessories() {
                                     />
 
                                     {/* Category Badge */}
-                                    <div className="absolute top-3 left-3 flex items-center gap-1 px-3 py-1 bg-primary/90 text-black text-xs font-semibold rounded-full">
+                                    <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white text-xs font-bold rounded-full shadow-lg shadow-blue-500/50 border border-white/20 backdrop-blur-sm">
                                         {getCategoryIcon(accessory.category)}
                                         <span>{getCategoryLabel(accessory.category)}</span>
                                     </div>
@@ -171,8 +171,9 @@ export default function FeaturedAccessories() {
                                 {/* Info */}
                                 <div className="p-6">
                                     <Link href={`/accessories/${accessory.slug}`}>
-                                        <h3 className="font-bold text-gray-900 dark:text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                                        <h3 className="font-bold text-cyan-500 dark:text-cyan-400 mb-2 line-clamp-2 transition-all duration-300 group-hover:scale-105 group-hover:tracking-wide relative inline-block">
                                             {accessory.name}
+                                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
                                         </h3>
                                     </Link>
 
@@ -183,14 +184,14 @@ export default function FeaturedAccessories() {
                                     )}
 
                                     <div className="flex items-center justify-between">
-                                        <div className="text-xl font-bold text-primary">
+                                        <div className="text-xl font-bold text-cyan-500 dark:text-cyan-400">
                                             {formatPrice(accessory.price)}
                                         </div>
 
                                         {/* Add to Cart Button */}
                                         <button
                                             onClick={(e) => handleAddToCart(accessory, e)}
-                                            className="w-10 h-10 rounded-full bg-primary hover:bg-accent text-black flex items-center justify-center transition-transform hover:scale-105 shadow-lg"
+                                            className="w-10 h-10 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white flex items-center justify-center transition-transform hover:scale-105 shadow-lg shadow-cyan-500/50"
                                             style={{ willChange: 'transform' }}
                                             title="Thêm vào giỏ hàng"
                                         >

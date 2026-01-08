@@ -53,7 +53,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                     e.currentTarget.style.borderColor = isDark ? 'rgba(107, 114, 128, 0.5)' : 'rgba(0, 0, 0, 0.15)';
                 }}
                 onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#00e5ff';
+                    e.currentTarget.style.borderColor = '#10B981';
                     e.currentTarget.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)';
                 }}
                 onBlur={(e) => {
@@ -100,10 +100,10 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                             className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200`}
                             style={{
                                 backgroundColor: value === option.value
-                                    ? '#00e5ff'
+                                    ? '#10B981'
                                     : (isDark ? 'transparent' : 'transparent'),
                                 color: value === option.value
-                                    ? '#000000'
+                                    ? '#ffffff'
                                     : (isDark ? '#ffffff' : '#111827')
                             }}
                             onMouseEnter={(e) => {

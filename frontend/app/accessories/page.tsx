@@ -74,8 +74,14 @@ export default async function AccessoriesPage({ searchParams }: PageProps) {
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
+                                    {/* Category Badge */}
+                                    <div className="absolute top-3 left-3 px-3 py-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white text-xs font-bold rounded-full shadow-lg shadow-blue-500/50 border border-white/20 backdrop-blur-sm">
+                                        {item.category === 'battery' ? 'Pin' :
+                                            item.category === 'helmet' ? 'Mũ bảo hiểm' :
+                                            item.category === 'charger' ? 'Bộ sạc' : 'Phụ kiện'}
+                                    </div>
                                     {item.isFeatured && (
-                                        <div className="absolute top-3 left-3 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">
+                                        <div className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20">
                                             Hot
                                         </div>
                                     )}
@@ -83,18 +89,19 @@ export default async function AccessoriesPage({ searchParams }: PageProps) {
 
                                 {/* Content */}
                                 <div className="p-5">
-                                    <div className="text-xs text-primary font-bold mb-2 uppercase tracking-wider">
+                                    <div className="text-xs font-bold mb-2 uppercase tracking-wider inline-block px-3 py-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white rounded-full shadow-lg shadow-blue-500/50 border border-white/20">
                                         {item.category === 'battery' ? 'Pin & Sạc' :
                                             item.category === 'helmet' ? 'Mũ Bảo Hiểm' : 'Phụ Kiện'}
                                     </div>
-                                    <h3 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.5rem]">
+                                    <h3 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.5rem] text-cyan-500 dark:text-cyan-400 transition-all duration-300 group-hover:scale-105 group-hover:tracking-wide relative inline-block">
                                         <ThemeText>{item.name}</ThemeText>
+                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 transition-all duration-300 group-hover:w-full"></span>
                                     </h3>
                                     <div className="flex items-center justify-between mt-4">
-                                        <div className="text-xl font-bold text-gray-900 dark:text-white">
+                                        <div className="text-xl font-bold text-cyan-500 dark:text-cyan-400">
                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                                         </div>
-                                        <button className="w-10 h-10 rounded-full bg-primary text-black flex items-center justify-center hover:bg-white transition-colors shadow-lg shadow-primary/20">
+                                        <button className="w-10 h-10 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white flex items-center justify-center transition-colors shadow-lg shadow-cyan-500/50">
                                             <ShoppingCart className="w-5 h-5" />
                                         </button>
                                     </div>

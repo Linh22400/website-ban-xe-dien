@@ -115,12 +115,12 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
                     {car.type === 'motorcycle' && (
-                        <span className="px-3 py-1 bg-primary/90 text-black text-xs font-bold rounded-full">
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/50 border border-white/20 backdrop-blur-sm">
                             Xe Máy Điện
                         </span>
                     )}
                     {car.type === 'bicycle' && (
-                        <span className="px-3 py-1 bg-green-500/90 text-white text-xs font-bold rounded-full">
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20 backdrop-blur-sm">
                             Xe Đạp Điện
                         </span>
                     )}
@@ -152,8 +152,17 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
             <div className="p-5">
                 <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">{car.brand}</div>
                 <Link href={`/cars/${car.slug}`}>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                    <h3 className={`text-xl font-bold mb-2 transition-all duration-300 line-clamp-1 relative inline-block ${
+                        car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' : 
+                        car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' : 
+                        'text-primary'
+                    } group-hover:scale-105 group-hover:tracking-wide`}>
                         {car.name}
+                        <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
+                            car.type === 'motorcycle' ? 'bg-emerald-500' :
+                            car.type === 'bicycle' ? 'bg-rose-500' :
+                            'bg-primary'
+                        }`}></span>
                     </h3>
                 </Link>
 
@@ -168,14 +177,23 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                             maxDisplay={5}
                         />
                         <p className="text-xs text-muted-foreground mt-1.5">
-                            Màu: <span className="text-primary font-medium">{selectedColor?.name}</span>
+                            Màu: <span className={`font-medium ${
+                                car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
+                                car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                                'text-primary'
+                            }`}>{selectedColor?.name}</span>
                         </p>
                     </div>
                 )}
 
                 <div className="flex items-end justify-between mt-4">
                     <div>
-                        <div className={`text-lg font-bold ${discountPercent > 0 ? 'text-red-500' : 'text-primary'}`}>
+                        <div className={`text-lg font-bold ${
+                            discountPercent > 0 ? 'text-red-500' :
+                            car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
+                            car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                            'text-primary'
+                        }`}>
                             {formatPrice(finalPrice)}
                         </div>
                         {discountPercent > 0 && (
@@ -189,7 +207,11 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         {/* Add to Cart Button */}
                         <button
                             onClick={handleAddToCart}
-                            className="w-9 h-9 rounded-full bg-primary hover:bg-accent text-black flex items-center justify-center transition-transform hover:scale-105 shadow-lg"
+                            className={`w-9 h-9 rounded-full text-white flex items-center justify-center transition-transform hover:scale-105 shadow-lg ${
+                                car.type === 'motorcycle' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/50' :
+                                car.type === 'bicycle' ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/50' :
+                                'bg-primary hover:bg-accent shadow-primary/50'
+                            }`}
                             style={{ willChange: 'transform' }}
                             title="Thêm vào giỏ hàng"
                         >
@@ -200,7 +222,9 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         <button
                             onClick={handleCompareClick}
                             className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${isSelected
-                                ? 'bg-primary text-black hover:bg-red-500 hover:text-white'
+                                ? (car.type === 'motorcycle' ? 'bg-emerald-500 text-white hover:bg-red-500' :
+                                   car.type === 'bicycle' ? 'bg-rose-500 text-white hover:bg-red-500' :
+                                   'bg-primary text-black hover:bg-red-500 hover:text-white')
                                 : 'bg-white/10 hover:bg-white hover:text-black'
                                 }`}
                             title={isSelected ? "Bỏ so sánh" : "Thêm vào so sánh"}
@@ -213,7 +237,11 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         {/* View Details Button */}
                         <Link
                             href={`/cars/${car.slug}`}
-                            className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors"
+                            className={`w-9 h-9 rounded-full bg-white/10 flex items-center justify-center transition-colors ${
+                                car.type === 'motorcycle' ? 'group-hover:bg-emerald-500 group-hover:text-white' :
+                                car.type === 'bicycle' ? 'group-hover:bg-rose-500 group-hover:text-white' :
+                                'group-hover:bg-primary group-hover:text-black'
+                            }`}
                             title="Xem chi tiết"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

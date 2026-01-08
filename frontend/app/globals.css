@@ -1,53 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Theme (Default) */
-  --background: #faf8f5;
-  /* Warm cream for eye comfort */
-  --foreground: #0a0a0a;
+  /* Light Theme - Bright & Friendly */
+  --background: #ffffff;
+  /* Pure white for maximum brightness */
+  --foreground: #1a1a1a;
 
-  --primary: #00b8d4;
-  /* Darker Cyan for better contrast */
-  --primary-foreground: #000000;
+  --primary: #10B981;
+  /* Bright emerald green - Light & Fresh */
+  --primary-foreground: #ffffff;
 
-  --secondary: #f5f5f5;
-  --secondary-foreground: #0a0a0a;
+  --secondary: #f8fafc;
+  /* Very light blue-gray */
+  --secondary-foreground: #1e293b;
 
-  --accent: #6200ea;
-  /* Darker Purple for contrast */
+  --accent: #F87171;
+  /* Bright coral red - Softer & Vibrant */
   --accent-foreground: #ffffff;
 
-  --muted: #e0e0e0;
-  --muted-foreground: #666666;
+  --muted: #f1f5f9;
+  /* Light slate */
+  --muted-foreground: #64748b;
 
-  --card: #f0f4f8;
-  /* Soft blue-gray */
-  --card-foreground: #0a0a0a;
+  --card: #ffffff;
+  /* Pure white cards */
+  --card-foreground: #1a1a1a;
 
-  --border: #d0d7de;
+  --border: #e2e8f0;
+  /* Light slate border */
 }
 
 .dark {
-  /* Dark Theme (Cyberpunk) */
-  --background: #050505;
-  --foreground: #ededed;
+  /* Dark Theme - Modern Electric */
+  --background: #0a0a0a;
+  /* Deep black */
+  --foreground: #fafafa;
 
-  --primary: #00f0ff;
-  /* Cyberpunk Cyan */
+  --primary: #10B981;
+  /* Bright emerald green - Modern & Electric */
   --primary-foreground: #000000;
 
-  --secondary: #1a1a1a;
+  --secondary: #1c1c1c;
   --secondary-foreground: #ffffff;
 
-  --accent: #7000ff;
-  /* Electric Purple */
+  --accent: #EF4444;
+  /* Bright red - High contrast accent */
   --accent-foreground: #ffffff;
 
   --muted: #262626;
   --muted-foreground: #a3a3a3;
 
-  --card: #0a0a0a;
-  --card-foreground: #ededed;
+  --card: #141414;
+  /* Slightly lighter than background */
+  --card-foreground: #fafafa;
 
   --border: #262626;
 }
@@ -207,7 +212,8 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.5);
+  background: rgba(16, 185, 129, 0.5);
+  /* TAILG green on hover */
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Zap, Battery, Gauge, Tag, Sparkles, TrendingUp, GraduationCap, Wallet } from "lucide-react";
+import { Search, Zap, Battery, Gauge, Tag, Sparkles, TrendingUp, GraduationCap, Wallet, Banknote } from "lucide-react";
 import CustomSelect from "../ui/CustomSelect";
 import { useTheme, ThemeText } from "@/components/common/ThemeText";
 import { getCars } from "@/lib/api";
@@ -19,8 +19,8 @@ export default function QuickFinder() {
     // Options data
     const typeOptions = [
         { value: "", label: "Tất cả loại" },
-        { value: "bicycle", label: "🚲 Xe Đạp Điện" },
-        { value: "motorcycle", label: "🏍️ Xe Máy Điện" },
+        { value: "bicycle", label: "Xe Đạp Điện" },
+        { value: "motorcycle", label: "Xe Máy Điện" },
     ];
 
     const [availableBrands, setAvailableBrands] = useState<string[]>([]);
@@ -81,9 +81,9 @@ export default function QuickFinder() {
 
     const priceOptions = [
         { value: "", label: "Tất cả mức giá" },
-        { value: "low", label: "💵 Dưới 10 triệu" },
-        { value: "mid", label: "💰 10 - 20 triệu" },
-        { value: "high", label: "💎 Trên 20 triệu" },
+        { value: "low", label: "Dưới 10 triệu" },
+        { value: "mid", label: "10 - 20 triệu" },
+        { value: "high", label: "Trên 20 triệu" },
     ];
 
     const rangeOptions = [
@@ -260,7 +260,6 @@ export default function QuickFinder() {
                                 value={type}
                                 onChange={setType}
                                 options={typeOptions}
-                                icon={<Zap className="w-3.5 h-3.5 text-primary" />}
                             />
                         </div>
 
@@ -273,7 +272,6 @@ export default function QuickFinder() {
                                 value={brand}
                                 onChange={setBrand}
                                 options={brandOptions}
-                                icon={<Tag className="w-3.5 h-3.5 text-primary" />}
                             />
                         </div>
                     </div>
@@ -281,7 +279,8 @@ export default function QuickFinder() {
                     {/* Row 2: Price (Full width) */}
                     <div className="space-y-2">
                         <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide" style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>
-                            💰 Mức Giá
+                            <Banknote className="w-3.5 h-3.5 text-primary" />
+                            Mức Giá
                         </label>
                         <CustomSelect
                             value={price}
@@ -301,7 +300,6 @@ export default function QuickFinder() {
                                 value={range}
                                 onChange={setRange}
                                 options={rangeOptions}
-                                icon={<Battery className="w-3.5 h-3.5 text-primary" />}
                             />
                         </div>
 
@@ -314,7 +312,6 @@ export default function QuickFinder() {
                                 value={speed}
                                 onChange={setSpeed}
                                 options={speedOptions}
-                                icon={<Gauge className="w-3.5 h-3.5 text-primary" />}
                             />
                         </div>
                     </div>

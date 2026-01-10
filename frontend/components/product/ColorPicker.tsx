@@ -20,8 +20,10 @@ export default function ColorPicker({
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     const dotSize = size === 'small' ? 'w-7 h-7' : 'w-9 h-9';
-    const displayColors = colors.slice(0, maxDisplay);
-    const remainingCount = colors.length - maxDisplay;
+    // Filter out any undefined/null colors before slicing
+    const validColors = (colors || []).filter(c => c && c.name);
+    const displayColors = validColors.slice(0, maxDisplay);
+    const remainingCount = validColors.length - maxDisplay;
 
     return (
         <div className="flex items-center gap-3 flex-wrap">

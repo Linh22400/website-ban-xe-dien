@@ -179,7 +179,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                         </div>
 
                         <div className="flex flex-wrap gap-3">
-                            {car.colors.map((color, index) => {
+                            {(car.colors || []).filter(c => c && c.name).map((color, index) => {
                                 const hexColor = color?.hex || '#cccccc'; // Default color if hex is missing
                                 return (
                                 <button

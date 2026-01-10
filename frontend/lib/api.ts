@@ -178,7 +178,9 @@ function transformStrapiCar(strapiCar: any): Car {
             ? `${STRAPI_URL}${strapiCar.model3D.url}`
             : undefined,
         colors: Array.isArray(strapiCar.color)
-            ? strapiCar.color.map((c: any) => {
+            ? strapiCar.color
+                .filter((c: any) => c && c.name) // Filter out null/undefined colors
+                .map((c: any) => {
                 // Handle multiple images
                 let images: string[] = [];
                 let imageIds: number[] = [];

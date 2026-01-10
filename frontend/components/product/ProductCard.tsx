@@ -26,8 +26,11 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
     const isSelected = isInCompare(car.id);
     const inWishlist = isInWishlist(car.id);
 
+    // Filter valid colors
+    const validColors = (car.colors || []).filter(c => c && c.name);
+
     // Get selected color data
-    const selectedColor = car.colors?.[selectedColorIndex] || car.colors?.[0];
+    const selectedColor = validColors?.[selectedColorIndex] || validColors?.[0];
     const displayImage = selectedColor?.images?.[0] || car.thumbnail;
 
 
@@ -167,10 +170,10 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                 </Link>
 
                 {/* Color Picker */}
-                {car.colors && car.colors.length > 1 && (
+                {validColors && validColors.length > 1 && (
                     <div className="mb-3">
                         <ColorPicker
-                            colors={car.colors}
+                            colors={validColors}
                             selectedIndex={selectedColorIndex}
                             onSelectColor={setSelectedColorIndex}
                             size="small"

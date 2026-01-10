@@ -21,9 +21,10 @@ interface CarConfiguratorProps {
 export default function CarConfigurator({ car, discountPercent = 0 }: CarConfiguratorProps) {
     const [selectedColor, setSelectedColor] = useState(0);
 
-    const selectedColorName = car.colors && car.colors[selectedColor]
-        ? car.colors[selectedColor].name
-        : 'Mặc định';
+    // Filter valid colors and ensure safe access
+    const validColors = (car.colors || []).filter(c => c && c.name);
+    const safeColorIndex = Math.min(selectedColor, Math.max(0, validColors.length - 1));
+    const selectedColorName = validColors[safeColorIndex]?.name || 'Mặc định';
 
     return (
         <div className="min-h-screen bg-background" id="configurator">

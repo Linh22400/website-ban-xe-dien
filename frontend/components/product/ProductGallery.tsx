@@ -40,11 +40,12 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
 
     // Get images for the current color
     const getCurrentColorImages = () => {
-        if (car.colors && car.colors[selectedColor]) {
-            const color = car.colors[selectedColor];
-            if (color.images && color.images.length > 0) {
-                return color.images;
-            }
+        const validColors = (car.colors || []).filter(c => c && c.name);
+        const safeIndex = Math.min(selectedColor, Math.max(0, validColors.length - 1));
+        const color = validColors[safeIndex];
+        
+        if (color?.images && color.images.length > 0) {
+            return color.images;
         }
         return [car.thumbnail];
     };
@@ -91,7 +92,11 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                         >
                             <Image
                                 src={currentImage}
-                                alt={`${car.name} - ${car.colors[selectedColor]?.name || 'Default'} - View ${currentImageIndex + 1}`}
+                                alt={`${car.name} - ${(() => {
+                                    const validColors = (car.colors || []).filter(c => c && c.name);
+                                    const safeIndex = Math.min(selectedColor, Math.max(0, validColors.length - 1));
+                                    return validColors[safeIndex]?.name || 'Default';
+                                })()} - View ${currentImageIndex + 1}`}
                                 fill
                                 className="object-contain z-10 p-4"
                                 priority
@@ -174,7 +179,11 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                         <div className="flex items-center justify-between">
                             <h3 className="text-sm font-medium text-muted-foreground">Màu Sắc</h3>
                             <span className="text-sm font-bold text-white">
-                                {car.colors[selectedColor]?.name || 'Chọn màu'}
+                                {(() => {
+                                    const validColors = (car.colors || []).filter(c => c && c.name);
+                                    const safeIndex = Math.min(selectedColor, Math.max(0, validColors.length - 1));
+                                    return validColors[safeIndex]?.name || 'Chọn màu';
+                                })()}
                             </span>
                         </div>
 
@@ -234,7 +243,11 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                 <div>
                                     <h2 className="text-2xl font-bold text-white">{car.name}</h2>
                                     <p className="text-muted-foreground">
-                                        {car.colors[selectedColor]?.name} • Ảnh {currentImageIndex + 1}/{images.length}
+                                        {(() => {
+                                            const validColors = (car.colors || []).filter(c => c && c.name);
+                                            const safeIndex = Math.min(selectedColor, Math.max(0, validColors.length - 1));
+                                            return validColors[safeIndex]?.name || 'Mặc định';
+                                        })()} • Ảnh {currentImageIndex + 1}/{images.length}
                                     </p>
                                 </div>
                                 <button

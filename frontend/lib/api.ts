@@ -1,4 +1,5 @@
 import qs from "qs";
+import { apiCache } from './cache';
 
 export interface Warranty {
     // Tùy schema Strapi, giữ linh hoạt để tránh gãy type khi backend đổi cấu trúc.
@@ -114,12 +115,52 @@ async function logNonOkResponse(context: string, response: Response) {
 }
 
 // Ghi chú: Trong Next.js, fetch ở server có thể dùng ISR (revalidate) để tăng tốc và tốt cho SEO.
-// Còn fetch ở browser (client) thường nên dùng no-store để không bị cache sai theo người dùng.
+// Browser-side fetch cũng nên cache với stale-while-revalidate để tăng tốc UX.
 function getDefaultFetchOptions(revalidateSeconds: number = 60): RequestInit & { next?: { revalidate: number } } {
     if (typeof window === 'undefined') {
+        // Server-side: Dùng Next.js ISR
         return { next: { revalidate: revalidateSeconds } };
     }
-    return { cache: 'no-store' };
+    // Browser-side: Cache với max-age để tăng tốc
+    return { 
+        cache: 'force-cache',
+        next: { revalidate: revalidateSeconds }
+    };
+}
+
+/**
+ * Cached fetch wrapper for client-side API calls
+ * Automatically caches responses in memory to prevent redundant requests
+ */
+async function cachedFetch<T>(
+    url: string, 
+    options: RequestInit = {},
+    ttlSeconds: number = 60
+): Promise<T | null> {
+    // Check cache first (client-side only)
+    if (typeof window !== 'undefined') {
+        const cached = apiCache.get<T>(url);
+        if (cached) {
+            return cached;
+        }
+    }
+
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        
+        // Cache the result (client-side only)
+        if (typeof window !== 'undefined') {
+            apiCache.set(url, data, ttlSeconds);
+        }
+
+        return data as T;
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return null;
+    }
 }
 
 // Fallback images for each product type
@@ -407,13 +448,11 @@ export async function getPromotions(): Promise<Promotion[]> {
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc`, {
-            next: { revalidate: 60 }
-        });
+        const url = `${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc`;
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(60), 60);
+        
+        if (!data || !data.data) return [];
 
-        if (!response.ok) return [];
-
-        const data = await response.json();
         return data.data.map((item: any) => ({
             id: item.id,
             title: item.title || '',
@@ -438,16 +477,11 @@ export async function getFeaturedCars(): Promise<Car[]> {
             'filters[$or][1][featured][$eq]=true',
         ].join('&');
 
-        const response = await fetch(
-            `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
-            {
-                ...getDefaultFetchOptions(60)
-            }
-        );
+        const url = `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`;
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(60), 60);
+        
+        if (!data || !data.data) return [];
 
-        if (!response.ok) return [];
-
-        const data = await response.json();
         return data.data.map(transformStrapiCar);
     } catch (error) {
         console.error("Error fetching featured cars:", error);

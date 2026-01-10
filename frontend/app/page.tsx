@@ -1,5 +1,3 @@
-"use client";
-
 import dynamic from "next/dynamic";
 import HeroSlider from "@/components/hero/HeroSlider";
 import QuickFinder from "@/components/hero/QuickFinder";
@@ -11,16 +9,9 @@ import ElectricMotorcycles from "@/components/sections/ElectricMotorcycles";
 import ElectricBicycles from "@/components/sections/ElectricBicycles";
 import LiveChatWidget from "@/components/ui/LiveChatWidget";
 
-// Lazy load below-the-fold sections for faster initial page load
-const FeaturedAccessories = dynamic(() => import("@/components/sections/FeaturedAccessories"), {
-  ssr: false,
-  loading: () => <div className="h-[400px] animate-pulse bg-muted/20" />
-});
-
-const LatestNews = dynamic(() => import("@/components/sections/LatestNews"), {
-  ssr: false,
-  loading: () => <div className="h-[500px] animate-pulse bg-muted/20" />
-});
+// Lazy load below-the-fold sections (SSR enabled for SEO)
+const FeaturedAccessories = dynamic(() => import("@/components/sections/FeaturedAccessories"));
+const LatestNews = dynamic(() => import("@/components/sections/LatestNews"));
 
 export default function Home() {
   return (

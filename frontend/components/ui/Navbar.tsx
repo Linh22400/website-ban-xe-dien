@@ -123,9 +123,9 @@ export default function Navbar() {
                 // If less than 4, add some category links
                 if (accessoryItems.length < 4) {
                     const categories = [
-                        { href: '/accessories?category=battery', label: 'Pin & S\u1ea1c', desc: 'Pin lithium ch\u00ednh h\u00e3ng', image: '/images/placeholder-accessory.jpg', price: 'T\u1eeb 1.200.000\u20ab' },
-                        { href: '/accessories?category=helmet', label: 'M\u0169 B\u1ea3o Hi\u1ec3m', desc: 'Ch\u1ea5t l\u01b0\u1ee3ng cao', image: '/images/placeholder-accessory.jpg', price: 'T\u1eeb 350.000\u20ab' },
-                        { href: '/accessories?category=other', label: 'Ph\u1ee5 ki\u1ec7n kh\u00e1c', desc: 'Ph\u1ee5 ki\u1ec7n \u0111a d\u1ea1ng', image: '/images/placeholder-accessory.jpg', price: 'Li\u00ean h\u1ec7' }
+                        { href: '/accessories?category=battery', label: 'Pin & S\u1ea1c', desc: 'Pin lithium ch\u00ednh h\u00e3ng', image: 'https://images.unsplash.com/photo-1609069768451-aa3e54d48f1e?auto=format&fit=crop&q=80&w=400', price: 'T\u1eeb 1.200.000\u20ab' },
+                        { href: '/accessories?category=helmet', label: 'M\u0169 B\u1ea3o Hi\u1ec3m', desc: 'Ch\u1ea5t l\u01b0\u1ee3ng cao', image: 'https://images.unsplash.com/photo-1609069768451-aa3e54d48f1e?auto=format&fit=crop&q=80&w=400', price: 'T\u1eeb 350.000\u20ab' },
+                        { href: '/accessories?category=other', label: 'Ph\u1ee5 ki\u1ec7n kh\u00e1c', desc: 'Ph\u1ee5 ki\u1ec7n \u0111a d\u1ea1ng', image: 'https://images.unsplash.com/photo-1609069768451-aa3e54d48f1e?auto=format&fit=crop&q=80&w=400', price: 'Li\u00ean h\u1ec7' }
                     ];
                     
                     categories.slice(0, 4 - accessoryItems.length).forEach(cat => {
@@ -222,7 +222,7 @@ export default function Navbar() {
                             href="/promotions"
                             className="text-muted-foreground hover:text-primary transition-colors"
                         >
-                            Khuyến Mãi Hot 🔥
+                            Khuyến Mãi Hot
                         </Link>
                     </div>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
@@ -397,7 +397,7 @@ export default function Navbar() {
                                 href="/accessories"
                                 className="flex items-center gap-1 text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2"
                             >
-                                Phụ Kiện
+                                    Phụ Kiện
                                 <ChevronDown className="w-4 h-4" />
                             </Link>
                             <div className="absolute top-full left-0 pt-2 w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
@@ -687,7 +687,7 @@ export default function Navbar() {
                                 onClick={() => setIsOpen(false)}
                                 className="text-muted-foreground hover:text-primary transition-colors"
                             >
-                                Khuyến Mãi
+                                Khuyến Mãi Hot
                             </Link>
                             <Link
                                 href="/blog"
@@ -766,3 +766,4 @@ export default function Navbar() {
         </nav>
     );
 }
+

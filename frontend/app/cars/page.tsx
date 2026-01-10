@@ -4,7 +4,7 @@ import { getCarsWithMeta, getPromotions } from "@/lib/api";
 export const revalidate = 60;
 
 interface CarsPageProps {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 function getFirst(value: string | string[] | undefined): string | undefined {

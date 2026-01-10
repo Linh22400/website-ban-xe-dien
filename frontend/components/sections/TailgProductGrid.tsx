@@ -6,13 +6,15 @@ import { ArrowRight, TrendingUp, Sparkles, Clock } from 'lucide-react';
 import { useTheme, ThemeText } from '@/components/common/ThemeText';
 import { TailgOfficialBadge } from '@/components/ui/TailgBadge';
 import ProductCard from '@/components/product/ProductCard';
-import { getCars, type Car } from '@/lib/api';
+import { getCars, getPromotions, type Car } from '@/lib/api';
 
 export default function TailgProductGrid() {
     const isDark = useTheme();
     const [activeTab, setActiveTab] = useState<'new' | 'bestseller' | 'promo'>('new');
     const [products, setProducts] = useState<Car[]>([]);
     const [loading, setLoading] = useState(true);
+    const [promotedCarIds, setPromotedCarIds] = useState<Set<string>>(new Set());
+    const [discountMap, setDiscountMap] = useState<Record<string, number>>({});
 
     const tabs = [
         { id: 'new' as const, label: 'Mới Nhất', icon: Sparkles },
@@ -30,7 +32,7 @@ export default function TailgProductGrid() {
             // Fetch TAILG products based on active tab
             const params: any = {
                 brand: 'TAILG',
-                pageSize: 8
+                pageSize: activeTab === 'promo' ? 50 : 8 // Get more for promo filtering
             };
 
             if (activeTab === 'new') {
@@ -38,10 +40,40 @@ export default function TailgProductGrid() {
             } else if (activeTab === 'bestseller') {
                 params.sort = 'sold:desc';
             }
-            // Note: promo tab would need discount field in Strapi schema
 
             const data = await getCars(params);
-            setProducts(data || []);
+            
+            // Fetch promotions and build discount map
+            const promotions = await getPromotions();
+            const promoCarIds = new Set<string>();
+            const discounts: Record<string, number> = {};
+            
+            promotions.forEach(promo => {
+                if (promo.isActive && promo.car_models && promo.discountPercent) {
+                    promo.car_models.forEach((car: any) => {
+                        const carId = car.id?.toString() || car.documentId;
+                        if (carId) {
+                            promoCarIds.add(carId);
+                            // Use highest discount if multiple promotions
+                            const currentDiscount = discounts[carId] || 0;
+                            discounts[carId] = Math.max(currentDiscount, promo.discountPercent || 0);
+                        }
+                    });
+                }
+            });
+            
+            setPromotedCarIds(promoCarIds);
+            setDiscountMap(discounts);
+            
+            // For promo tab, filter only cars with active promotions
+            if (activeTab === 'promo') {
+                const filteredData = data.filter(car => 
+                    promoCarIds.has(car.id.toString()) || promoCarIds.has(car.documentId || '')
+                );
+                setProducts(filteredData.slice(0, 8));
+            } else {
+                setProducts(data || []);
+            }
         } catch (error) {
             console.error('Error fetching TAILG products:', error);
             setProducts([]);
@@ -159,9 +191,16 @@ export default function TailgProductGrid() {
                     </div>
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {products.map((car) => (
-                            <ProductCard key={car.id} car={car} />
-                        ))}
+                        {products.map((car) => {
+                            const discount = discountMap[car.id.toString()] || discountMap[car.documentId || ''] || 0;
+                            return (
+                                <ProductCard 
+                                    key={car.id} 
+                                    car={car} 
+                                    discountPercent={discount}
+                                />
+                            );
+                        })}
                     </div>
                 ) : (
                     <div className="text-center py-12">

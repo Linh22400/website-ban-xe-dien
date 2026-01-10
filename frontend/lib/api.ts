@@ -1003,7 +1003,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
 
             const imageUrl = imageData?.url
                 ? (imageData.url.startsWith('http') ? imageData.url : `${STRAPI_URL}${imageData.url}`)
-                : 'https://images.unsplash.com/photo-1620802051782-48f874814d0a?auto=format&fit=crop&q=80&w=800';
+                : 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800';
 
             return {
                 id: id,
@@ -1070,7 +1070,7 @@ export async function getAccessoryBySlug(slug: string): Promise<Accessory | unde
 
         const imageUrl = imageData?.url
             ? (imageData.url.startsWith('http') ? imageData.url : `${STRAPI_URL}${imageData.url}`)
-            : 'https://images.unsplash.com/photo-1620802051782-48f874814d0a?auto=format&fit=crop&q=80&w=800';
+            : 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800';
 
         return {
             id: item.id,

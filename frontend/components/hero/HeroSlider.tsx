@@ -33,7 +33,7 @@ const STATIC_SLIDES = [
         title: "Đăng Ký Lái Thử",
         subtitle: "Trải Nghiệm Thực Tế",
         desc: "Đăng ký lái thử để chọn đúng xe TAILG phù hợp chiều cao, lộ trình và nhu cầu sử dụng.",
-        image: "https://images.unsplash.com/photo-1620802051782-48f874814d0a?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=1200",
         color: "from-orange-500 to-red-600",
         link: "/lai-thu",
         order: 3

@@ -179,7 +179,9 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                         </div>
 
                         <div className="flex flex-wrap gap-3">
-                            {car.colors.map((color, index) => (
+                            {car.colors.map((color, index) => {
+                                const hexColor = color?.hex || '#cccccc'; // Default color if hex is missing
+                                return (
                                 <button
                                     key={index}
                                     onClick={() => handleColorChange(index)}
@@ -194,7 +196,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                             ? 'border-primary shadow-lg shadow-primary/50'
                                             : 'border-border hover:border-primary/50'
                                             }`}
-                                        style={{ backgroundColor: color.hex }}
+                                        style={{ backgroundColor: hexColor }}
                                     />
 
                                     {/* Selected Indicator */}
@@ -211,7 +213,7 @@ export default function ProductGallery({ car, selectedColor: externalSelectedCol
                                         {color.name}
                                     </div>
                                 </button>
-                            ))}
+                            )})}
                         </div>
                     </div>
                 )}

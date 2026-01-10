@@ -29,7 +29,7 @@ export default function WhyChooseTailg() {
             icon: Headphones,
             title: 'Hỗ Trợ 24/7',
             description: 'Đội ngũ tư vấn chuyên nghiệp, hỗ trợ khách hàng mọi lúc mọi nơi',
-            color: 'from-purple-400 to-purple-600'
+            color: 'from-emerald-400 to-emerald-600'
         },
         {
             icon: TrendingUp,

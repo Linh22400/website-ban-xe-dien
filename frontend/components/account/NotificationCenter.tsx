@@ -119,7 +119,7 @@ export default function NotificationCenter() {
 
   const getNotificationColor = (type: string) => {
     if (type.includes('order')) return 'text-blue-600 bg-blue-100';
-    if (type.includes('service')) return 'text-purple-600 bg-purple-100';
+    if (type.includes('service')) return 'text-emerald-600 bg-emerald-100';
     if (type.includes('trade-in')) return 'text-green-600 bg-green-100';
     if (type.includes('reminder')) return 'text-orange-600 bg-orange-100';
     return 'text-gray-600 bg-gray-100';

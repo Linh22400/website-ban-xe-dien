@@ -28,7 +28,7 @@ export default function AdminMarketingPage() {
     const [formSubtitle, setFormSubtitle] = useState("");
     const [formDesc, setFormDesc] = useState("");
     const [formLink, setFormLink] = useState("");
-    const [formColor, setFormColor] = useState("from-blue-600 to-cyan-500");
+    const [formColor, setFormColor] = useState("from-emerald-600 to-green-500");
     const [formOrder, setFormOrder] = useState("");
     const [formImageFile, setFormImageFile] = useState<File | null>(null);
     const [formImagePreview, setFormImagePreview] = useState("");
@@ -67,7 +67,7 @@ export default function AdminMarketingPage() {
         setFormSubtitle("");
         setFormDesc("");
         setFormLink("");
-        setFormColor("from-blue-600 to-cyan-500");
+        setFormColor("from-emerald-600 to-green-500");
         setFormOrder("");
         setFormImageFile(null);
         setFormImagePreview("");
@@ -84,7 +84,7 @@ export default function AdminMarketingPage() {
         setFormSubtitle(slide.subtitle || "");
         setFormDesc(slide.desc || "");
         setFormLink(slide.link || "");
-        setFormColor(slide.color || "from-blue-600 to-cyan-500");
+        setFormColor(slide.color || "from-emerald-600 to-green-500");
         setFormOrder(slide.order?.toString() || "");
 
         if (slide.image?.url) {
@@ -281,10 +281,10 @@ export default function AdminMarketingPage() {
                                 onChange={(e) => setFormColor(e.target.value)}
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
                             >
-                                <option value="from-blue-600 to-cyan-500">Xanh Dương</option>
-                                <option value="from-purple-600 to-pink-500">Tím - Hồng</option>
+                                <option value="from-emerald-600 to-green-500">Xanh Lá (TAILG)</option>
+                                <option value="from-rose-600 to-red-500">Hồng - Đỏ (Dưc Duy)</option>
+                                <option value="from-blue-600 to-cyan-500">Xanh Dương (Phụ kiện)</option>
                                 <option value="from-orange-600 to-red-500">Cam - Đỏ</option>
-                                <option value="from-green-600 to-teal-500">Xanh Lá</option>
                                 <option value="from-gray-800 to-gray-600">Xám Đen</option>
                             </select>
                         </div>
@@ -329,7 +329,7 @@ export default function AdminMarketingPage() {
                                             <ImageIcon className="w-12 h-12 text-muted-foreground" />
                                         </div>
                                     )}
-                                    <div className={`absolute inset-0 bg-gradient-to-r ${slide.color || 'from-blue-600 to-cyan-500'} opacity-20`}></div>
+                                    <div className={`absolute inset-0 bg-gradient-to-r ${slide.color || 'from-emerald-600 to-green-500'} opacity-20`}></div>
                                 </div>
                                 <div className="p-4 space-y-3">
                                     <div>

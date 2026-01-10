@@ -219,7 +219,7 @@ export default function QuickFinder() {
                         </button>
                         <button
                             onClick={() => applyQuickTag("student")}
-                            className="group/tag bg-gradient-to-br from-blue-500/10 to-cyan-500/10 hover:from-blue-500/20 hover:to-cyan-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl p-4 transition-all"
+                            className="group/tag bg-gradient-to-br from-emerald-500/10 to-green-500/10 hover:from-emerald-500/20 hover:to-green-500/20 border border-emerald-500/30 hover:border-emerald-500/50 rounded-xl p-4 transition-all"
                         >
                             <GraduationCap className="w-5 h-5 text-blue-400 mb-2 mx-auto" />
                             <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Học Sinh</p>

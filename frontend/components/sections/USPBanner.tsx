@@ -8,7 +8,7 @@ const uspItems = [
         icon: Shield,
         title: "Bảo hành 2 năm",
         description: "Toàn diện & chính hãng",
-        color: "from-blue-500 to-cyan-500",
+        color: "from-emerald-500 to-green-500",
     },
     {
         icon: Truck,
@@ -20,7 +20,7 @@ const uspItems = [
         icon: CreditCard,
         title: "Trả góp 0%",
         description: "Lãi suất 6 tháng đầu",
-        color: "from-purple-500 to-pink-500",
+        color: "from-rose-500 to-pink-500",
     },
     {
         icon: RefreshCw,

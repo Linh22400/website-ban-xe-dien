@@ -117,7 +117,7 @@ export default function EnvironmentalImpact({ dailyKm, years }: EnvironmentalImp
             <p className="text-sm text-gray-600">Năng lượng sạch</p>
           </div>
           <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <p className="text-2xl font-bold text-purple-600">
+            <p className="text-2xl font-bold text-rose-600">
               {((fuelSaved * 25000) / 1000000).toFixed(1)}M
             </p>
             <p className="text-sm text-gray-600">VNĐ tiết kiệm nhiên liệu</p>

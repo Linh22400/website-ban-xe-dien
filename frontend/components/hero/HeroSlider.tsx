@@ -24,7 +24,7 @@ const STATIC_SLIDES = [
         subtitle: "Nhiều Dòng Xe",
         desc: "Chọn theo loại xe, tầm hoạt động, tốc độ và mức giá phù hợp. Xem ngay danh sách TAILG.",
         image: "https://images.unsplash.com/photo-1571333250630-f0230c320b6d?auto=format&fit=crop&q=80&w=1200",
-        color: "from-purple-500 to-pink-600",
+        color: "from-emerald-500 to-green-600",
         link: "/cars?brand=TAILG",
         order: 2
     },

@@ -15,7 +15,7 @@ export default function SmartFeatures() {
             icon: "⚡",
             image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000",
             colSpan: "lg:col-span-2",
-            bgGradient: "from-blue-600/20 to-purple-600/20"
+            bgGradient: "from-emerald-600/20 to-green-600/20"
         },
         {
             id: 2,
@@ -45,7 +45,7 @@ export default function SmartFeatures() {
             icon: "💧",
             image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&q=80&w=1000",
             colSpan: "lg:col-span-2",
-            bgGradient: "from-cyan-600/20 to-blue-600/20"
+            bgGradient: "from-blue-600/20 to-sky-600/20"
         }
     ];
 

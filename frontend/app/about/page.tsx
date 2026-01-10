@@ -9,7 +9,21 @@ export const metadata = {
 export const revalidate = 300;
 
 export default async function AboutPage() {
-    const showrooms = await getShowrooms();
+    // Fallback data nếu fetch timeout hoặc failed (cho build process)
+    let showrooms: any[] = [];
+    try {
+        // Timeout after 10s để tránh build hang
+        showrooms = await Promise.race([
+            getShowrooms(),
+            new Promise<never>((_, reject) => 
+                setTimeout(() => reject(new Error('Fetch timeout')), 10000)
+            )
+        ]);
+    } catch (error) {
+        console.warn('Showrooms fetch failed during build, using empty fallback');
+        showrooms = [];
+    }
+    
     const topShowrooms = showrooms.slice(0, 3);
 
     const mapsHref = (address: string, city: string, lat?: number, lng?: number) => {

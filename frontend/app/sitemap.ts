@@ -17,10 +17,21 @@ async function fetchAllSlugs(endpoint: string, slugKeys: string[]): Promise<stri
         // Nếu Strapi không chạy (ví dụ build CI), sitemap vẫn phải build được.
         let json: any;
         try {
-            const res = await fetch(url, { next: { revalidate } });
+            // Thêm timeout 10s để tránh build hang
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            
+            const res = await fetch(url, { 
+                next: { revalidate },
+                signal: controller.signal 
+            });
+            clearTimeout(timeoutId);
+            
             if (!res.ok) break;
             json = await res.json();
         } catch {
+            // Timeout hoặc network error: break khỏi loop
+            console.warn(`Fetch timeout for ${endpoint}, returning partial slugs`);
             break;
         }
 

@@ -2,7 +2,8 @@
 
 import { Warranty } from "@/lib/api";
 import { Shield, Battery, Wrench, RefreshCw, FileCheck, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import DOMPurify from 'isomorphic-dompurify';
 
 interface WarrantyInfoProps {
     warranty?: Warranty;
@@ -10,6 +11,26 @@ interface WarrantyInfoProps {
 
 export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
     const [activeTab, setActiveTab] = useState<'overview' | 'details'>('overview');
+
+    // Sanitize HTML content để chống XSS attacks
+    const sanitizedContent = useMemo(() => {
+        if (!warranty) return null;
+        
+        return {
+            conditions: warranty.conditions ? DOMPurify.sanitize(warranty.conditions, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h3', 'h4'],
+                ALLOWED_ATTR: ['class']
+            }) : '',
+            exclusions: warranty.exclusions ? DOMPurify.sanitize(warranty.exclusions, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h3', 'h4'],
+                ALLOWED_ATTR: ['class']
+            }) : '',
+            process: warranty.process ? DOMPurify.sanitize(warranty.process, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h3', 'h4'],
+                ALLOWED_ATTR: ['class']
+            }) : ''
+        };
+    }, [warranty]);
 
     if (!warranty) return null;
 
@@ -149,7 +170,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                     </div>
                                     <div
                                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
-                                        dangerouslySetInnerHTML={{ __html: warranty.conditions }}
+                                        dangerouslySetInnerHTML={{ __html: sanitizedContent?.conditions || '' }}
                                     />
                                 </div>
                             )}
@@ -165,7 +186,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                     </div>
                                     <div
                                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
-                                        dangerouslySetInnerHTML={{ __html: warranty.exclusions }}
+                                        dangerouslySetInnerHTML={{ __html: sanitizedContent?.exclusions || '' }}
                                     />
                                 </div>
                             )}
@@ -181,7 +202,7 @@ export default function WarrantyInfo({ warranty }: WarrantyInfoProps) {
                                     </div>
                                     <div
                                         className="text-muted-foreground leading-relaxed prose prose-invert max-w-none"
-                                        dangerouslySetInnerHTML={{ __html: warranty.process }}
+                                        dangerouslySetInnerHTML={{ __html: sanitizedContent?.process || '' }}
                                     />
                                 </div>
                             )}

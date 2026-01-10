@@ -28,7 +28,8 @@ export default function ColorPicker({
             {displayColors.map((color, index) => {
                 const isSelected = selectedIndex === index;
                 const isHovered = hoveredIndex === index;
-                const isWhite = color.hex.toLowerCase() === '#ffffff' || color.hex.toLowerCase() === '#fff';
+                const hexColor = color?.hex || '#cccccc'; // Default gray if hex is missing
+                const isWhite = hexColor.toLowerCase() === '#ffffff' || hexColor.toLowerCase() === '#fff';
 
                 return (
                     <div key={index} className="relative group">
@@ -43,9 +44,9 @@ export default function ColorPicker({
                             className={`${dotSize} rounded-full transition-all duration-200 relative ${isSelected ? 'scale-125' : 'hover:scale-110'
                                 }`}
                             style={{
-                                backgroundColor: color.hex,
+                                backgroundColor: hexColor,
                                 boxShadow: isSelected
-                                    ? `0 0 0 3px white, 0 0 0 5px ${isWhite ? '#00b8d4' : color.hex}, 0 4px 12px rgba(0,0,0,0.3)`
+                                    ? `0 0 0 3px white, 0 0 0 5px ${isWhite ? '#00b8d4' : hexColor}, 0 4px 12px rgba(0,0,0,0.3)`
                                     : isWhite
                                         ? '0 0 0 2px #d0d7de, 0 2px 6px rgba(0,0,0,0.15)'
                                         : '0 0 0 2px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.2)'

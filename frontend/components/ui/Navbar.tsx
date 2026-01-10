@@ -113,7 +113,7 @@ export default function Navbar() {
                     return {
                         href: `/accessories#${acc.slug}`,
                         label: acc.name,
-                        image: acc.image || '/images/placeholder-accessory.jpg',
+                        image: acc.image || 'https://via.placeholder.com/300x200?text=Accessory',
                         price: acc.price > 0 ? `${acc.price.toLocaleString('vi-VN')}\u20ab` : 'Li\u00ean h\u1ec7',
                         desc: categoryLabels[acc.category] || acc.category,
                         badge: acc.isFeatured ? 'HOT' : undefined
@@ -413,7 +413,7 @@ export default function Navbar() {
                                                 {/* Image */}
                                                 <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
                                                     <Image
-                                                        src={item.image || '/images/placeholder-accessory.jpg'}
+                                                        src={item.image || 'https://via.placeholder.com/300x200?text=Accessory'}
                                                         alt={item.label}
                                                         fill
                                                         className="object-cover group-hover/item:scale-110 transition-transform duration-300"

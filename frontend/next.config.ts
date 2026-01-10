@@ -71,7 +71,6 @@ const nextConfig: NextConfig = {
         port: '1337',
       },
     ],
-    unoptimized: process.env.NODE_ENV === 'development', // Unoptimized for local dev only
   },
 };
 

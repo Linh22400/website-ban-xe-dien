@@ -10,8 +10,10 @@ interface FeatureHighlightsProps {
 
 export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
     // Helper to map string icon names to components
-    const getIcon = (name: string) => {
+    const getIcon = (name?: string) => {
         const props = { className: "w-8 h-8" };
+        if (!name) return <Zap {...props} className="w-8 h-8 text-primary" />;
+        
         switch (name.toLowerCase()) {
             case 'battery': return <Battery {...props} className="w-8 h-8 text-primary" />;
             case 'zap': return <Zap {...props} className="w-8 h-8 text-yellow-500" />;
@@ -62,7 +64,9 @@ export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
         }
     ];
 
-    const features = (car.features && car.features.length > 0) ? car.features : defaultFeatures;
+    // Filter out invalid features before using
+    const validCarFeatures = (car.features || []).filter(f => f && f.title && f.desc);
+    const features = (validCarFeatures.length > 0) ? validCarFeatures : defaultFeatures;
 
     return (
         <section className="py-20 bg-background relative overflow-hidden">

@@ -96,7 +96,7 @@ export default function AdminSidebar() {
                 </div>
                 <div>
                     <h1 className="font-bold text-lg text-white leading-none">Admin</h1>
-                    <span className="text-xs text-muted-foreground">XE ĐIỆN XANH</span>
+                    <span className="text-xs text-muted-foreground">XE ĐIỆN ĐỨC DUY</span>
                 </div>
             </div>
 

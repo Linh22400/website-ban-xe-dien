@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Youtube, Send, ArrowRight, Sparkles } from "lucide-react";
@@ -29,11 +30,21 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     {/* Column 1: Brand & Newsletter - Enhanced */}
                     <div className="lg:col-span-1 space-y-6">
-                        {/* Brand with gradient */}
+                        {/* Brand with logo */}
                         <div>
-                            <h3 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary mb-3 tracking-tight">
-                                XE ĐIỆN XANH
-                            </h3>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/10 backdrop-blur-sm">
+                                    <Image
+                                        src="/logo(Ducduy).jpg"
+                                        alt="Xe Điện Đức Duy Logo"
+                                        fill
+                                        className="object-contain p-1"
+                                    />
+                                </div>
+                                <h3 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary tracking-tight">
+                                    Xe Điện Đức Duy
+                                </h3>
+                            </div>
                             <ThemeText className="text-sm leading-relaxed opacity-90">
                                 Cung cấp xe điện chính hãng từ các thương hiệu hàng đầu. Chất lượng - Uy tín - Giá tốt.
                             </ThemeText>
@@ -224,27 +235,28 @@ export default function Footer() {
                                 {
                                     icon: Phone,
                                     label: "Hotline",
-                                    value: "1900 XXXX",
-                                    href: "tel:1900xxxx",
+                                    value: "094 342 4787",
+                                    href: "tel:+84943424787",
                                     color: "text-green-500"
                                 },
                                 {
                                     icon: Mail,
                                     label: "Email",
-                                    value: "support@xedienviet.com",
-                                    href: "mailto:support@xedienviet.com",
+                                    value: "camauducduy@gmail.com",
+                                    href: "mailto:camauducduy@gmail.com",
                                     color: "text-blue-500"
                                 },
                                 {
                                     icon: MapPin,
-                                    label: "Địa Chỉ",
-                                    value: "123 Đường ABC, Q1, TP.HCM",
+                                    label: "Showroom 1 - Cà Mau",
+                                    value: "118 Nguyễn Tất Thành, Phường 8, Cà Mau",
+                                    href: "https://www.google.com/maps?q=9.17,105.15",
                                     color: "text-red-500"
                                 },
                                 {
                                     icon: Clock,
                                     label: "Giờ Làm Việc",
-                                    value: "T2-CN: 8:00 - 18:00",
+                                    value: "T2-CN: 8:00 - 20:00",
                                     color: "text-orange-500"
                                 }
                             ].map(({ icon: Icon, label, value, href, color }) => (
@@ -288,6 +300,40 @@ export default function Footer() {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* Showroom 2 - Additional Info */}
+                        <div className="mt-4 pt-4 border-t border-white/5">
+                            <div className="flex items-start gap-3 p-3 rounded-xl border"
+                                style={{
+                                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                                    borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'
+                                }}
+                            >
+                                <div
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-purple-500"
+                                    style={{
+                                        backgroundImage: isDark
+                                            ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))'
+                                            : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.04))'
+                                    }}
+                                >
+                                    <MapPin className="w-4 h-4" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                                        Showroom 2 - Cà Mau
+                                    </div>
+                                    <a 
+                                        href="https://www.google.com/maps?q=9.19,105.14" 
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium text-foreground hover:text-primary transition-colors break-words"
+                                    >
+                                        276B Ngô Quyền, Phường 1, Cà Mau
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -389,7 +435,7 @@ export default function Footer() {
                 <div className="container mx-auto px-6 py-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-3">
                         <ThemeText className="text-xs opacity-80">
-                            © {currentYear} Xe Điện Xanh. Bảo lưu mọi quyền.
+                            © {currentYear} Xe Điện Đức Duy. Bảo lưu mọi quyền.
                         </ThemeText>
                         <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full">
                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>

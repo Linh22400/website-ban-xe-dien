@@ -26,32 +26,32 @@ export const metadata: Metadata = {
   // metadataBase giúp Next resolve OG/Twitter image URL chính xác khi dùng đường dẫn tương đối.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    template: "%s | Xe Điện Xanh",
-    default: "Xe Điện Xanh | Xe Đạp & Xe Máy Điện Cao Cấp Chính Hãng",
+    template: "%s | Xe Điện Đức Duy",
+    default: "Xe Điện Đức Duy | Xe Đạp & Xe Máy Điện Cao Cấp Chính Hãng",
   },
   description: "Showroom xe điện 3D tương tác đầu tiên. Phân phối chính hãng xe máy điện, xe đạp điện TAILG. Trải nghiệm mua sắm hiện đại, bảo hành uy tín.",
-  keywords: ["xe điện", "xe máy điện", "xe đạp điện", "TAILG", "xe điện xanh", "mua xe điện"],
-  authors: [{ name: "Xe Điện Xanh Team" }],
+  keywords: ["xe điện", "xe máy điện", "xe đạp điện", "TAILG", "xe điện đức duy", "mua xe điện"],
+  authors: [{ name: "Xe Điện Đức Duy Team" }],
   openGraph: {
     type: "website",
     locale: "vi_VN",
     // Dùng biến môi trường để tránh hardcode URL khi deploy.
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://website-xe-dien.vercel.app",
-    siteName: "Xe Điện Xanh",
-    title: "Xe Điện Xanh | Công Nghệ Tương Lai",
+    siteName: "Xe Điện Đức Duy",
+    title: "Xe Điện Đức Duy | Công Nghệ Tương Lai",
     description: "Khám phá các dòng xe điện cao cấp với công nghệ pin vượt trội và thiết kế thời thượng.",
     images: [
       {
         url: "/og-image.jpg", // Ensure this file exists or use a remote URL
         width: 1200,
         height: 630,
-        alt: "Xe Điện Xanh Showroom",
+        alt: "Xe Điện Đức Duy Showroom",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Xe Điện Xanh",
+    title: "Xe Điện Đức Duy",
     description: "Trải nghiệm mua sắm xe điện 3D đẳng cấp.",
     images: ["/og-image.jpg"],
   },

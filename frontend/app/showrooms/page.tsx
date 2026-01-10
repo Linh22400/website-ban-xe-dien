@@ -2,8 +2,8 @@ import Link from "next/link";
 import { getShowrooms } from "@/lib/order-api";
 
 export const metadata = {
-    title: "Hệ Thống Showroom | Xe Điện Xanh",
-    description: "Danh sách showroom và chi nhánh để xem xe, lái thử và tư vấn trực tiếp.",
+    title: "Hệ Thống Showroom | Xe Điện Đức Duy",
+    description: "Danh sách showroom và chi nhánh tại Cà Mau để xem xe, lái thử và tư vấn trực tiếp.",
 };
 
 export const revalidate = 300;

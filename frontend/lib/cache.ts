@@ -11,8 +11,15 @@ interface CacheEntry<T> {
 
 class APICache {
   private cache: Map<string, CacheEntry<any>> = new Map();
+  private readonly MAX_ENTRIES = 100; // Prevent memory leak
 
   set<T>(key: string, data: T, ttlSeconds: number = 60): void {
+    // Auto-cleanup if cache grows too large
+    if (this.cache.size >= this.MAX_ENTRIES) {
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey) this.cache.delete(firstKey);
+    }
+
     this.cache.set(key, {
       data,
       timestamp: Date.now(),

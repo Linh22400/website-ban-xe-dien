@@ -302,13 +302,11 @@ export interface Article {
 
 export async function getArticles(): Promise<Article[]> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/articles?populate[0]=Cover_image&populate[1]=category&sort=createdAt:desc`, {
-            next: { revalidate: 60 }
-        });
+        const url = `${STRAPI_URL}/api/articles?populate[0]=Cover_image&populate[1]=category&sort=createdAt:desc`;
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
+        
+        if (!data || !data.data) return [];
 
-        if (!response.ok) return [];
-
-        const data = await response.json();
         return data.data.map((item: any) => transformStrapiArticle(item));
     } catch (error) {
         logFetchIssue("Error fetching articles:", error);
@@ -418,13 +416,11 @@ function transformStrapiArticle(item: any): Article {
 
 export async function getPromotions(): Promise<Promotion[]> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate[0]=image&populate[1]=car_models&sort=createdAt:desc`, {
-            next: { revalidate: 60 }
-        });
+        const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate[0]=image&populate[1]=car_models&sort=createdAt:desc`;
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
+        
+        if (!data || !data.data) return [];
 
-        if (!response.ok) return [];
-
-        const data = await response.json();
         return data.data.map((item: any) => ({
             id: item.id,
             title: item.title || '',
@@ -449,7 +445,7 @@ export async function getPromotions(): Promise<Promotion[]> {
 export async function getHeroSlides(): Promise<HeroSlide[]> {
     try {
         const url = `${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc`;
-        const data = await cachedFetch<any>(url, getDefaultFetchOptions(60), 60);
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
         
         if (!data || !data.data) return [];
 
@@ -478,7 +474,7 @@ export async function getFeaturedCars(): Promise<Car[]> {
         ].join('&');
 
         const url = `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`;
-        const data = await cachedFetch<any>(url, getDefaultFetchOptions(60), 60);
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
         
         if (!data || !data.data) return [];
 
@@ -991,13 +987,9 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
         const url = `${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc`;
 
         if (DEBUG_LOG) console.log("Fetching accessories from:", url);
-        const response = await fetch(url, {
-            next: { revalidate: 60 }
-        });
-
-        if (!response.ok) return [];
-
-        const data = await response.json();
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
+        
+        if (!data || !data.data) return [];
 
 
         const allAccessories = data.data.map((item: any) => {

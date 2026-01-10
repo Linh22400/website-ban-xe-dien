@@ -6,24 +6,25 @@ export default function JsonLd() {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "MotorcycleDealer",
-        "name": "Xe Điện Xanh",
-        "image": "https://website-xe-dien.vercel.app/logo.png", // Placeholder or actual URL
-        "description": "Nhà phân phối xe đạp điện, xe máy điện cao cấp chính hãng TAILG và các thương hiệu uy tín hàng đầu.",
+        "name": "Xe Điện Đức Duy",
+        "image": "https://xedienducduy.id.vn/logo(Ducduy).jpg",
+        "description": "Nhà phân phối xe đạp điện, xe máy điện cao cấp chính hãng TAILG và các thương hiệu uy tín hàng đầu tại Cà Mau.",
         "address": {
             "@type": "PostalAddress",
-            "streetAddress": "Số 1 Đại lộ Thăng Long",
-            "addressLocality": "Hà Nội",
-            "addressRegion": "HN",
-            "postalCode": "100000",
+            "streetAddress": "118 Nguyễn Tất Thành, Phường 8",
+            "addressLocality": "Cà Mau",
+            "addressRegion": "Cà Mau",
+            "postalCode": "970000",
             "addressCountry": "VN"
         },
         "geo": {
             "@type": "GeoCoordinates",
-            "latitude": "21.000000", // Update with real coordinates if available
-            "longitude": "105.800000"
+            "latitude": "9.17",
+            "longitude": "105.15"
         },
-        "url": "https://website-xe-dien.vercel.app",
-        "telephone": "+84988888888",
+        "url": "https://xedienducduy.id.vn",
+        "telephone": "+84943424787",
+        "email": "camauducduy@gmail.com",
         "priceRange": "$$",
         "openingHoursSpecification": [
             {
@@ -38,8 +39,16 @@ export default function JsonLd() {
                     "Sunday"
                 ],
                 "opens": "08:00",
-                "closes": "21:00"
+                "closes": "20:00"
             }
+        ],
+        "areaServed": {
+            "@type": "City",
+            "name": "Cà Mau"
+        },
+        "sameAs": [
+            "https://facebook.com/xedienducduy",
+            "https://instagram.com/xedienducduy"
         ]
     };
 

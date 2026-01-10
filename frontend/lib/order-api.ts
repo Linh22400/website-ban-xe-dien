@@ -30,6 +30,7 @@ export async function createOrder(orderData: OrderData): Promise<CreateOrderResp
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ data: orderData }),
     });
 

@@ -30,7 +30,7 @@ export default function OrderSuccess() {
                 </div>
                 <SubHeading className="mb-2">Đặt hàng thành công!</SubHeading>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                    Cảm ơn bạn đã tin tưởng và lựa chọn Xe Điện Xanh.
+                    Cảm ơn bạn đã tin tưởng và lựa chọn Xe Điện Đức Duy.
                     Mã đơn hàng của bạn là <span className="text-primary font-bold">#{createdOrder.OrderCode}</span>
                 </p>
             </div>

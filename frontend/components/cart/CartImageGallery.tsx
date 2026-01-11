@@ -17,25 +17,38 @@ export default function CartImageGallery({
     size = "small",
     onImageClick
 }: CartImageGalleryProps) {
+    // Ensure images is an array and filter out empty/invalid URLs
+    const safeImages = Array.isArray(images) ? images : [];
+    const validImages = safeImages.filter(img => 
+        img && 
+        typeof img === 'string' && 
+        img.trim() !== '' && 
+        img !== 'undefined' &&
+        !img.includes('undefined')
+    );
+    
+    // Use placeholder if no valid images
+    const imageList = validImages.length > 0 ? validImages : ['/placeholder.png'];
+    
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const mainSize = size === "small" ? "w-32 h-32" : "w-64 h-64 md:w-80 md:h-80";
     const thumbSize = size === "small" ? "w-12 h-12" : "w-16 h-16";
 
     const nextImage = () => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
+        setCurrentIndex((prev) => (prev + 1) % imageList.length);
     };
 
     const prevImage = () => {
-        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+        setCurrentIndex((prev) => (prev - 1 + imageList.length) % imageList.length);
     };
 
     // If only one image, show simple display
-    if (images.length <= 1) {
+    if (imageList.length <= 1) {
         return (
             <div className={`relative ${mainSize} bg-white/5 rounded-xl overflow-hidden flex-shrink-0`}>
                 <Image
-                    src={images[0] || "/placeholder.png"}
+                    src={imageList[0]}
                     alt={productName}
                     fill
                     className="object-contain p-2"
@@ -50,7 +63,7 @@ export default function CartImageGallery({
             <div className="relative group">
                 <div className={`relative ${mainSize} bg-white/5 rounded-xl overflow-hidden`}>
                     <Image
-                        src={images[currentIndex]}
+                        src={imageList[currentIndex]}
                         alt={`${productName} - Ảnh ${currentIndex + 1}`}
                         fill
                         className="object-contain p-2"
@@ -68,7 +81,7 @@ export default function CartImageGallery({
                     )}
 
                     {/* Navigation Arrows (only if multiple images) */}
-                    {images.length > 1 && (
+                    {imageList.length > 1 && (
                         <>
                             <button
                                 onClick={prevImage}
@@ -89,17 +102,17 @@ export default function CartImageGallery({
                 </div>
 
                 {/* Image Counter */}
-                {images.length > 1 && (
+                {imageList.length > 1 && (
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/70 rounded-full text-xs text-white">
-                        {currentIndex + 1} / {images.length}
+                        {currentIndex + 1} / {imageList.length}
                     </div>
                 )}
             </div>
 
             {/* Thumbnail Strip */}
-            {images.length > 1 && (
+            {imageList.length > 1 && (
                 <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
-                    {images.slice(0, size === "small" ? 4 : 6).map((img, idx) => (
+                    {imageList.slice(0, size === "small" ? 4 : 6).map((img, idx) => (
                         <button
                             key={idx}
                             onClick={() => setCurrentIndex(idx)}
@@ -118,9 +131,9 @@ export default function CartImageGallery({
                     ))}
 
                     {/* More indicator */}
-                    {images.length > (size === "small" ? 4 : 6) && (
+                    {imageList.length > (size === "small" ? 4 : 6) && (
                         <div className={`${thumbSize} flex-shrink-0 rounded-lg border-2 border-white/10 bg-white/5 flex items-center justify-center text-xs text-white font-bold`}>
-                            +{images.length - (size === "small" ? 4 : 6)}
+                            +{imageList.length - (size === "small" ? 4 : 6)}
                         </div>
                     )}
                 </div>

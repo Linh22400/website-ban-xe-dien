@@ -64,16 +64,29 @@ export default function OrderItem({ order }: OrderItemProps) {
 
     // Get all images from selected color for gallery
     const colorImages = selectedColorData?.images || (selectedColorData?.image ? [selectedColorData.image] : []);
-    const galleryUrls = colorImages.map((img: any) =>
-        img.url ? `${strapiUrl}${img.url}` : ''
-    ).filter(Boolean);
+    
+    // Helper function to build proper image URL
+    const buildImageUrl = (url: string | undefined): string => {
+        if (!url) return '';
+        // If URL already starts with http:// or https://, use it directly
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            return url;
+        }
+        // Otherwise, prepend Strapi URL
+        return `${strapiUrl}${url}`;
+    };
+    
+    const galleryUrls = colorImages
+        .map((img: any) => buildImageUrl(img?.url))
+        .filter((url: string) => url && url.trim() !== '');
 
     // Fallback to thumbnail if no color images
     if (galleryUrls.length === 0 && order.VehicleModel?.thumbnail?.url) {
-        galleryUrls.push(`${strapiUrl}${order.VehicleModel.thumbnail.url}`);
+        const thumbnailUrl = buildImageUrl(order.VehicleModel.thumbnail.url);
+        if (thumbnailUrl) galleryUrls.push(thumbnailUrl);
     }
 
-    // Final fallback
+    // Final fallback - always ensure we have at least one valid image
     if (galleryUrls.length === 0) {
         galleryUrls.push('/placeholder-car.png');
     }

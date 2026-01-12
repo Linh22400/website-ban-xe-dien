@@ -77,7 +77,9 @@ export default function VietQRPayment({ orderId, amount, onPaymentConfirmed }: V
       const formData = new FormData();
       formData.append('files', file);
 
-      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'}/api/upload`, {
+      const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+
+      const uploadResponse = await fetch(`${STRAPI_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -90,7 +92,7 @@ export default function VietQRPayment({ orderId, amount, onPaymentConfirmed }: V
       const imageUrl = uploadData[0].url;
 
       // Update order with payment proof
-      const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'}/api/orders?filters[OrderCode][$eq]=${orderId}`, {
+      const updateResponse = await fetch(`${STRAPI_URL}/api/orders?filters[OrderCode][$eq]=${orderId}`, {
         method: 'GET',
       });
 
@@ -98,7 +100,7 @@ export default function VietQRPayment({ orderId, amount, onPaymentConfirmed }: V
       const order = orderData.data[0];
 
       if (order) {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337'}/api/orders/${order.id}`, {
+        await fetch(`${STRAPI_URL}/api/orders/${order.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

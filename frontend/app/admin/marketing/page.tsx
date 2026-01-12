@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getHeroSlidesAdmin, createHeroSlide, updateHeroSlide, deleteHeroSlide, uploadFile } from "@/lib/api";
+import SmartBannerLinkInput from "@/components/admin/SmartBannerLinkInput";
 
 export default function AdminMarketingPage() {
     const { token } = useAuth();
@@ -250,16 +251,11 @@ export default function AdminMarketingPage() {
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">
-                                Link <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="/products hoặc URL đầy đủ"
+                        {/* Smart Link Input */}
+                        <div className="md:col-span-2">
+                            <SmartBannerLinkInput
                                 value={formLink}
-                                onChange={(e) => setFormLink(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                onChange={setFormLink}
                             />
                         </div>
 

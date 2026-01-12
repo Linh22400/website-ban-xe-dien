@@ -145,7 +145,7 @@ export default function TradeInForm() {
         });
 
         const uploadResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
+          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`,
           {
             method: 'POST',
             headers: {
@@ -165,7 +165,7 @@ export default function TradeInForm() {
 
       // Submit trade-in request
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/trade-ins`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trade-ins`,
         {
           method: 'POST',
           headers: {

@@ -5,6 +5,8 @@ import { useAuth } from '@/lib/auth-context';
 import { Bell, Check, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+
 interface Notification {
   id: number;
   attributes: {
@@ -42,7 +44,7 @@ export default function NotificationBell() {
     if (!token) return;
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/user/unread-count`,
+        `${STRAPI_URL}/api/notifications/user/unread-count`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await response.json();
@@ -57,7 +59,7 @@ export default function NotificationBell() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/user/my-notifications?pageSize=10`,
+        `${STRAPI_URL}/api/notifications/user/my-notifications?pageSize=10`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await response.json();
@@ -73,7 +75,7 @@ export default function NotificationBell() {
     if (!token) return;
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${id}/read`,
+        `${STRAPI_URL}/api/notifications/${id}/read`,
         {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
@@ -90,7 +92,7 @@ export default function NotificationBell() {
     if (!token) return;
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/user/mark-all-read`,
+        `${STRAPI_URL}/api/notifications/user/mark-all-read`,
         {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
@@ -107,7 +109,7 @@ export default function NotificationBell() {
     if (!token) return;
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${id}`,
+        `${STRAPI_URL}/api/notifications/${id}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }

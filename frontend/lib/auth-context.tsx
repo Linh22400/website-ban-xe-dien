@@ -15,6 +15,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to set cookie
+function setCookie(name: string, value: string, days: number = 7) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+}
+
+// Helper function to delete cookie
+function deleteCookie(name: string) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
@@ -28,9 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (userData) {
                     setUser(userData);
                     setToken(storedToken);
+                    // Sync to cookie for middleware
+                    setCookie('auth_token', storedToken);
                 } else {
                     // Token invalid, clear it
                     localStorage.removeItem('auth_token');
+                    deleteCookie('auth_token');
                 }
                 setLoading(false);
             });
@@ -45,7 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (authData) {
                 setUser(authData.user);
                 setToken(authData.jwt);
+                // Save to both localStorage and cookie
                 localStorage.setItem('auth_token', authData.jwt);
+                setCookie('auth_token', authData.jwt);
                 return true;
             }
             return false;
@@ -61,7 +78,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (authData) {
                 setUser(authData.user);
                 setToken(authData.jwt);
+                // Save to both localStorage and cookie
                 localStorage.setItem('auth_token', authData.jwt);
+                setCookie('auth_token', authData.jwt);
                 return true;
             }
             return false;
@@ -74,7 +93,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = () => {
         setUser(null);
         setToken(null);
+        // Clear both localStorage and cookie
         localStorage.removeItem('auth_token');
+        deleteCookie('auth_token');
     };
 
     return (

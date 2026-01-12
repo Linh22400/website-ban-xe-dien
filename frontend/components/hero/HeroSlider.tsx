@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getHeroSlides, getPromotions, HeroSlide, Promotion } from "@/lib/api";
+import { resolveBannerLink } from "@/lib/banner-link-resolver";
 import { ArrowRight, ChevronLeft, ChevronRight, Zap, Clock } from "lucide-react";
 import CountdownTimer from "@/components/ui/CountdownTimer";
+import { useTheme } from "@/components/common/ThemeText";
 
 const STATIC_SLIDES = [
     {
@@ -43,6 +45,7 @@ const STATIC_SLIDES = [
 type SlideType = (HeroSlide | Promotion) & { slideType: 'hero' | 'promotion' };
 
 export default function HeroSlider() {
+    const isDark = useTheme();
     const [slides, setSlides] = useState<SlideType[]>([]);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -128,15 +131,29 @@ export default function HeroSlider() {
                     style={{ willChange: 'opacity' }}
                 >
                     {/* Click target (no text overlay) */}
-                    {slide.link && (
-                        <Link
-                            href={slide.link}
-                            className="absolute inset-0 z-20"
-                            aria-label={slide.title ? `Xem chi tiết: ${slide.title}` : 'Xem chi tiết'}
-                        >
-                            <span className="sr-only">Xem chi tiết</span>
-                        </Link>
-                    )}
+                    {slide.link && (() => {
+                        // Parse link if it's JSON string (smart banner format)
+                        let finalLink = slide.link;
+                        try {
+                            const parsed = JSON.parse(slide.link);
+                            if (parsed.type && parsed.target) {
+                                finalLink = resolveBannerLink(parsed);
+                            }
+                        } catch {
+                            // Not JSON, use as-is
+                            finalLink = slide.link;
+                        }
+                        
+                        return (
+                            <Link
+                                href={finalLink}
+                                className="absolute inset-0 z-20"
+                                aria-label={slide.title ? `Xem chi tiết: ${slide.title}` : 'Xem chi tiết'}
+                            >
+                                <span className="sr-only">Xem chi tiết</span>
+                            </Link>
+                        );
+                    })()}
 
                     {/* Background Image (clean, realistic) */}
                     <Image

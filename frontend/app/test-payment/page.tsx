@@ -44,7 +44,7 @@ export default function TestPaymentPage() {
     console.log('Amount:', amount);
     console.log('Success:', success);
     
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://website-ban-xe-dien.onrender.com';
+    const backendUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://website-ban-xe-dien.onrender.com';
     const accessKey = 'F8BBA842ECF85';
     const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
     

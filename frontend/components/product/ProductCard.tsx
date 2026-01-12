@@ -10,6 +10,7 @@ import { useWishlist } from "@/lib/wishlist-context";
 import { Heart, ShoppingCart } from "lucide-react";
 import ColorPicker from "./ColorPicker";
 import ProductBadge from "@/components/common/ProductBadge";
+import { getProductBadge } from "@/lib/product-badge";
 
 interface ProductCardProps {
     car: Car;
@@ -33,6 +34,13 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
     // Get selected color data
     const selectedColor = validColors?.[selectedColorIndex] || validColors?.[0];
     const displayImage = selectedColor?.images?.[0] || car.thumbnail;
+
+    // Check if product has any badge to display
+    const hasBadge = getProductBadge({
+        ...car,
+        discount: discountPercent,
+        originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
+    }) !== null;
 
 
 
@@ -142,12 +150,12 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                     />
                 </div>
 
-                {/* Wishlist Button - Floating */}
+                {/* Wishlist Button - Dynamic position based on badge presence */}
                 <button
                     onClick={handleWishlistClick}
-                    className={`absolute top-14 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${inWishlist
-                        ? 'bg-red-500 text-white hover:bg-red-600'
-                        : 'bg-card/40 hover:bg-card/60 text-foreground border border-border shadow-lg'
+                    className={`absolute ${hasBadge ? 'top-14' : 'top-3'} right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${inWishlist
+                        ? 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30'
+                        : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-sm'
                         }`}
                     title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                 >

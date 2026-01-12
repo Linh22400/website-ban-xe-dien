@@ -4,21 +4,17 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Check for auth token in cookies or localStorage (via header)
+  // Skip middleware for admin-login page
+  if (pathname === '/admin-login') {
+    return NextResponse.next();
+  }
+  
+  // Check for auth token in cookies
   const authToken = request.cookies.get('auth_token')?.value;
   
   // Admin routes protection
   if (pathname.startsWith('/admin')) {
-    // Admin login page is public
-    if (pathname === '/admin-login') {
-      // If already authenticated, redirect to admin dashboard
-      if (authToken) {
-        return NextResponse.redirect(new URL('/admin', request.url));
-      }
-      return NextResponse.next();
-    }
-    
-    // All other admin routes require authentication
+    // All admin routes require authentication
     if (!authToken) {
       const loginUrl = new URL('/admin-login', request.url);
       loginUrl.searchParams.set('redirect', pathname);
@@ -42,7 +38,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/admin/:path*',
+    '/admin/((?!-login).*)', // Match /admin/* but exclude /admin-login
     '/account/:path*',
   ],
 };

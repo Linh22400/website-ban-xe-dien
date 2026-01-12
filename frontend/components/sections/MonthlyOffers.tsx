@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getPromotions, Promotion } from "@/lib/api";
+import { useTheme } from "@/components/common/ThemeText";
 
 export default function MonthlyOffers() {
+    const isDark = useTheme();
     const [promotion, setPromotion] = useState<Promotion | null>(null);
     const [loading, setLoading] = useState(true);
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -87,7 +89,7 @@ export default function MonthlyOffers() {
                     {/* Text Content */}
                     <div className="md:w-1/2 space-y-6">
                         {promotion.discountTag && (
-                            <div className="inline-block px-4 py-2 bg-red-500 text-white font-bold rounded-full">
+                            <div className="inline-block px-4 py-2 bg-red-500 font-bold rounded-full" style={{ color: '#ffffff' }}>
                                 {promotion.discountTag}
                             </div>
                         )}
@@ -133,23 +135,23 @@ export default function MonthlyOffers() {
                             {promotion.expiryDate && (
                                 <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
                                     <div>
-                                        <div className="text-sm text-gray-300 mb-1">Thời gian còn lại</div>
+                                        <div className="text-sm mb-1" style={{ color: isDark ? '#d1d5db' : '#374151' }}>Thời gian còn lại</div>
                                         <div className="flex gap-2 text-center">
                                             <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.days).padStart(2, '0')}</div>
-                                                <div className="text-[10px] text-gray-400">Ngày</div>
+                                                <div className="text-[10px]" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Ngày</div>
                                             </div>
                                             <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.hours).padStart(2, '0')}</div>
-                                                <div className="text-[10px] text-gray-400">Giờ</div>
+                                                <div className="text-[10px]" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Giờ</div>
                                             </div>
                                             <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.minutes).padStart(2, '0')}</div>
-                                                <div className="text-[10px] text-gray-400">Phút</div>
+                                                <div className="text-[10px]" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Phút</div>
                                             </div>
                                             <div className="bg-white/10 rounded-lg p-2 min-w-[40px]">
                                                 <div className="text-xl font-bold text-foreground">{String(timeLeft.seconds).padStart(2, '0')}</div>
-                                                <div className="text-[10px] text-gray-400">Giây</div>
+                                                <div className="text-[10px]" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>Giây</div>
                                             </div>
                                         </div>
                                     </div>

@@ -37,7 +37,7 @@ export default function NotificationCenter() {
     try {
       const unreadParam = filter === 'unread' ? '&unreadOnly=true' : '';
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/user/my-notifications?page=${page}&pageSize=20${unreadParam}`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/notifications/user/my-notifications?page=${page}&pageSize=20${unreadParam}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await response.json();
@@ -54,7 +54,7 @@ export default function NotificationCenter() {
     if (!token) return;
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${id}/read`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/notifications/${id}/read`,
         {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
@@ -70,7 +70,7 @@ export default function NotificationCenter() {
     if (!token) return;
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/user/mark-all-read`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/notifications/user/mark-all-read`,
         {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
@@ -86,7 +86,7 @@ export default function NotificationCenter() {
     if (!token) return;
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${id}`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/notifications/${id}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }

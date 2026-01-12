@@ -33,7 +33,7 @@ export default function ServiceBookingList() {
   const fetchBookings = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/service-bookings/user/my-bookings`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/service-bookings/user/my-bookings`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await response.json();

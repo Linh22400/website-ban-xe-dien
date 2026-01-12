@@ -68,7 +68,7 @@ export default function PromotionsPage() {
                             </div>
 
                             <div className="p-6">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary transition-colors">
+                                <h2 className="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                                     {promo.title}
                                 </h2>
                                 <p className="text-muted-foreground mb-6">
@@ -101,7 +101,7 @@ export default function PromotionsPage() {
 
                 {/* Terms */}
                 <div className="mt-16 p-8 bg-secondary rounded-2xl border border-border">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Điều Khoản & Điều Kiện</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-4">Điều Khoản & Điều Kiện</h3>
                     <ul className="space-y-2 text-muted-foreground text-sm">
                         <li>• Mỗi khách hàng chỉ được sử dụng 1 mã khuyến mãi cho mỗi đơn hàng</li>
                         <li>• Không áp dụng đồng thời với các chương trình khuyến mãi khác</li>

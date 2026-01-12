@@ -4,15 +4,12 @@ import { getCars, getPromotions, Car } from '@/lib/api';
 import ProductCard from '@/components/product/ProductCard';
 import { Clock, Tag, Percent } from 'lucide-react';
 
-interface PromotionPageProps {
-  params: { slug: string };
-}
-
-export async function generateMetadata({ params }: PromotionPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
   const promotions = await getPromotions();
   const promotion = promotions.find(p => 
-    p.link.includes(params.slug) || 
-    p.title.toLowerCase().replace(/\s+/g, '-').includes(params.slug)
+    p.link.includes(slug) || 
+    p.title.toLowerCase().replace(/\s+/g, '-').includes(slug)
   );
 
   if (!promotion) {
@@ -27,11 +24,12 @@ export async function generateMetadata({ params }: PromotionPageProps): Promise<
   };
 }
 
-export default async function PromotionPage({ params }: PromotionPageProps) {
+export default async function PromotionPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const promotions = await getPromotions();
   const promotion = promotions.find(p => 
-    p.link.includes(params.slug) || 
-    p.title.toLowerCase().replace(/\s+/g, '-').includes(params.slug)
+    p.link.includes(slug) || 
+    p.title.toLowerCase().replace(/\s+/g, '-').includes(slug)
   );
 
   if (!promotion) {
@@ -90,7 +88,7 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
                 )}
               </div>
 
-              <h1 className="text-4xl font-bold text-white mb-4">{promotion.title}</h1>
+              <h1 className="text-4xl font-bold text-foreground mb-4">{promotion.title}</h1>
               
               {promotion.description && (
                 <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
@@ -103,8 +101,8 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
                 <div className="flex items-center gap-3 p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl">
                   <Clock className="w-5 h-5 text-orange-400" />
                   <div>
-                    <div className="text-sm text-orange-300 font-semibold">Thời gian còn lại</div>
-                    <div className="text-orange-100">
+                    <div className="text-sm font-semibold" style={{ color: '#fb923c' }}>Thời gian còn lại</div>
+                    <div className="font-medium" style={{ color: '#fdba74' }}>
                       Đến {expiryDate.toLocaleDateString('vi-VN', {
                         day: '2-digit',
                         month: '2-digit',
@@ -122,7 +120,7 @@ export default async function PromotionPage({ params }: PromotionPageProps) {
 
         {/* Products with Promotion */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-6">
             {promotionProducts.length > 0
               ? `Sản phẩm áp dụng (${promotionProducts.length})`
               : 'Sản phẩm áp dụng'}

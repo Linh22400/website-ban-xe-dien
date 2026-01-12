@@ -34,7 +34,7 @@ export default function ServiceBookingForm() {
 
   const fetchShowrooms = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/showrooms`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/showrooms`);
       const data = await response.json();
       setShowrooms(data.data || []);
     } catch (error) {
@@ -45,7 +45,7 @@ export default function ServiceBookingForm() {
   const fetchAvailableSlots = async (date: string, showroomId: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/service-bookings/available-slots?date=${date}&showroomId=${showroomId}`
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/service-bookings/available-slots?date=${date}&showroomId=${showroomId}`
       );
       const data = await response.json();
       setAvailableSlots(data.data.availableSlots || []);
@@ -73,7 +73,7 @@ export default function ServiceBookingForm() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/service-bookings`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/service-bookings`,
         {
           method: 'POST',
           headers: {

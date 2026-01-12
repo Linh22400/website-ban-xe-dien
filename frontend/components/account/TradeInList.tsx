@@ -46,7 +46,7 @@ export default function TradeInList() {
   const fetchTradeIns = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/trade-ins/user/my-requests`,
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trade-ins/user/my-requests`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -129,7 +129,7 @@ export default function TradeInList() {
                   {firstPhoto && (
                     <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${firstPhoto.attributes.url}`}
+                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${firstPhoto.attributes.url}`}
                         alt="Vehicle"
                         fill
                         className="object-cover"
@@ -208,7 +208,7 @@ export default function TradeInList() {
                   {photos.slice(1, 5).map((photo) => (
                     <div key={photo.id} className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${photo.attributes.url}`}
+                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${photo.attributes.url}`}
                         alt="Vehicle"
                         fill
                         className="object-cover"

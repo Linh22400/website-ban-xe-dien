@@ -1,18 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function TestPaymentPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [bookmarkletCode, setBookmarkletCode] = useState('');
   
-  // Get order info from URL params or default
   const orderId = searchParams.get('orderId') || 'DH432079672';
   const amount = searchParams.get('amount') || '20350000';
 
-  // HMAC SHA256 using Web Crypto API
+  useEffect(() => {
+    const code = `javascript:(function(){var btn=document.createElement('button');btn.innerHTML='✅ XÁC NHẬN THANH TOÁN (TEST)';btn.style.cssText='position:fixed;top:20px;right:20px;z-index:99999;background:linear-gradient(135deg,#10b981,#059669);color:white;font-size:18px;font-weight:bold;padding:20px 30px;border:none;border-radius:12px;cursor:pointer;box-shadow:0 10px 30px rgba(16,185,129,0.4);animation:pulse 2s infinite;';btn.onclick=function(){var url=window.location.href;var params=new URLSearchParams(url.split('?')[1]);var orderId=params.get('orderId')||'${orderId}';var amount=params.get('amount')||'${amount}';window.location.href='https://www.xedienducduy.id.vn/test-payment?orderId='+orderId+'&amount='+amount+'&auto=success';};document.body.appendChild(btn);var style=document.createElement('style');style.innerHTML='@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}';document.head.appendChild(style);})();`;
+    setBookmarkletCode(code);
+  }, [orderId, amount]);
+
   const hmacSHA256 = async (message: string, secret: string): Promise<string> => {
     const encoder = new TextEncoder();
     const keyData = encoder.encode(secret);
@@ -43,18 +47,16 @@ export default function TestPaymentPage() {
     const orderInfo = `Thanh toan don hang ${orderId}`;
     const orderType = 'momo_wallet';
     const transId = Date.now().toString();
-    const resultCode = success ? '0' : '1004'; // 0 = success, 1004 = failed
+    const resultCode = success ? '0' : '1004';
     const message = success ? 'Successful.' : 'Transaction failed.';
     const payType = 'qr';
     const responseTime = Date.now().toString();
     const extraData = '';
 
-    // Generate signature (same as MoMo does)
     const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&message=${message}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&partnerCode=${partnerCode}&payType=${payType}&requestId=${requestId}&responseTime=${responseTime}&resultCode=${resultCode}&transId=${transId}`;
     
     const signature = await hmacSHA256(rawSignature, secretKey);
 
-    // Build return URL with all params (simulate MoMo redirect)
     const params = new URLSearchParams({
       partnerCode,
       orderId,
@@ -71,9 +73,17 @@ export default function TestPaymentPage() {
       signature,
     });
 
-    // Redirect to backend return endpoint (simulating MoMo callback)
     window.location.href = `${backendUrl}/api/payment/momo/return?${params.toString()}`;
   };
+
+  useEffect(() => {
+    const auto = searchParams.get('auto');
+    if (auto === 'success') {
+      simulatePayment(true);
+    } else if (auto === 'failed') {
+      simulatePayment(false);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center p-4">
@@ -102,6 +112,37 @@ export default function TestPaymentPage() {
             <span className="font-semibold text-gray-800">
               {parseInt(amount).toLocaleString('vi-VN')}đ
             </span>
+          </div>
+        </div>
+
+        <div className="mb-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+          <div className="flex items-start space-x-3">
+            <div className="bg-blue-500 text-white p-2 rounded-lg flex-shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-gray-800 mb-2">🚀 Cách sử dụng nhanh:</h3>
+              <ol className="text-sm text-gray-700 space-y-1 mb-3">
+                <li><strong>Bước 1:</strong> Kéo nút màu xanh bên dưới vào thanh Bookmarks</li>
+                <li><strong>Bước 2:</strong> Khi ở trang MoMo, click bookmark đó</li>
+                <li><strong>Bước 3:</strong> Nút xác nhận sẽ xuất hiện góc phải màn hình!</li>
+              </ol>
+              <a
+                href={bookmarkletCode}
+                className="inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg cursor-move"
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert('Kéo nút này vào thanh Bookmarks (không click)!\n\nCách làm:\n1. Hiển thị thanh Bookmarks: Ctrl+Shift+B (Chrome)\n2. Kéo nút này lên thanh Bookmarks\n3. Vào trang MoMo và click bookmark');
+                }}
+              >
+                ⚡ XÁC NHẬN MoMo NHANH
+              </a>
+              <p className="text-xs text-gray-600 mt-2">
+                💡 Kéo nút này lên thanh Bookmarks để sử dụng
+              </p>
+            </div>
           </div>
         </div>
 

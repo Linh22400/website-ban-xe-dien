@@ -39,6 +39,11 @@ export default function TestPaymentPage() {
   const simulatePayment = async (success: boolean) => {
     setLoading(true);
     
+    console.log('=== SIMULATE PAYMENT START ===');
+    console.log('OrderId:', orderId);
+    console.log('Amount:', amount);
+    console.log('Success:', success);
+    
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://website-ban-xe-dien.onrender.com';
     const accessKey = 'F8BBA842ECF85';
     const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
@@ -74,11 +79,20 @@ export default function TestPaymentPage() {
       signature,
     });
 
-    window.location.href = `${backendUrl}/api/payment/momo/return?${params.toString()}`;
+    const finalUrl = `${backendUrl}/api/payment/momo/return?${params.toString()}`;
+    console.log('=== REDIRECT URL ===');
+    console.log(finalUrl);
+    
+    window.location.href = finalUrl;
   };
 
   useEffect(() => {
     const auto = searchParams.get('auto');
+    console.log('=== USEEFFECT TRIGGER ===');
+    console.log('Auto:', auto);
+    console.log('OrderId:', orderId);
+    console.log('Amount:', amount);
+    
     if (auto === 'success') {
       simulatePayment(true);
     } else if (auto === 'failed') {

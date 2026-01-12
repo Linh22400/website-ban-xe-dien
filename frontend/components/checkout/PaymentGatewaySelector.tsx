@@ -3,7 +3,7 @@
 import { useCheckout } from '@/contexts/CheckoutContext';
 import { useCart } from '@/lib/cart-context';
 import { useState } from 'react';
-import { CreditCard, Smartphone, Building2, Check, Loader2, Banknote, MapPin } from 'lucide-react';
+import { CreditCard, Smartphone, Building2, Check, Loader2, Banknote, MapPin, QrCode } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { createOrder } from '@/lib/order-api';
 import { SubHeading, SectionHeading } from '@/components/common/ThemeText';
@@ -12,6 +12,7 @@ import { createMoMoPayment } from '@/lib/momo';
 
 import PaymentModal from './PaymentModal';
 import BankTransferForm from './BankTransferForm';
+import VietQRPayment from './VietQRPayment';
 
 export default function PaymentGatewaySelector() {
     const {
@@ -29,12 +30,14 @@ export default function PaymentGatewaySelector() {
     const isProduction = process.env.NODE_ENV === 'production';
 
     // MoMo and VNPay are now fully integrated and work on both local and production
-    const [selectedGateway, setSelectedGateway] = useState('momo');
+    // But temporarily hidden - waiting for merchant account approval
+    const [selectedGateway, setSelectedGateway] = useState('vietqr');
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [createdOrderRef, setCreatedOrderRef] = useState<{ orderCode: string; phone: string; amount: number } | null>(null);
     const [showBankTransferForm, setShowBankTransferForm] = useState(false);
+    const [showVietQR, setShowVietQR] = useState(false);
     const [orderForBankTransfer, setOrderForBankTransfer] = useState<{ orderId: string; amount: number } | null>(null);
 
     // Calculate totals from cart
@@ -112,6 +115,17 @@ export default function PaymentGatewaySelector() {
                     }
                 }
 
+                // Handle VietQR - Show QR code
+                if (selectedGateway === 'vietqr') {
+                    setOrderForBankTransfer({
+                        orderId: result.data.OrderCode,
+                        amount: finalAmount,
+                    });
+                    setShowVietQR(true);
+                    setIsProcessing(false);
+                    return;
+                }
+
                 // Handle Bank Transfer - Show upload form
                 if (selectedGateway === 'bank_transfer') {
                     setOrderForBankTransfer({
@@ -163,6 +177,31 @@ export default function PaymentGatewaySelector() {
         }, 1500);
     };
 
+    // Show VietQR payment if triggered
+    if (showVietQR && orderForBankTransfer) {
+        return (
+            <div className="space-y-8">
+                <div className="text-center mb-6">
+                    <SubHeading className="mb-2">Quét mã QR để thanh toán</SubHeading>
+                    <p className="text-muted-foreground">
+                        Quét mã QR bằng app Banking, MoMo hoặc ZaloPay
+                    </p>
+                </div>
+                <VietQRPayment
+                    orderId={orderForBankTransfer.orderId}
+                    amount={orderForBankTransfer.amount}
+                    onPaymentConfirmed={handleBankTransferSuccess}
+                />
+                <button
+                    onClick={() => setShowVietQR(false)}
+                    className="w-full px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-semibold transition-colors"
+                >
+                    ← Quay lại chọn phương thức khác
+                </button>
+            </div>
+        );
+    }
+
     // Show bank transfer form if triggered
     if (showBankTransferForm && orderForBankTransfer) {
         return (
@@ -200,7 +239,8 @@ export default function PaymentGatewaySelector() {
                 </div>
 
                 <div className="space-y-4">
-                    {/* MoMo - Available on both local and production */}
+                    {/* MoMo - TEMPORARILY HIDDEN - Requires merchant registration */}
+                    {false && (
                     <div
                         onClick={() => setSelectedGateway('momo')}
                         className={`
@@ -224,6 +264,7 @@ export default function PaymentGatewaySelector() {
                             </div>
                         )}
                     </div>
+                    )}
 
                     {/* COD - Cash on Delivery */}
                     <div
@@ -255,7 +296,38 @@ export default function PaymentGatewaySelector() {
                         )}
                     </div>
 
-                    {/* VNPay - Now integrated with real payment */}
+                    {/* VietQR - Bank QR Code (FREE, NO REGISTRATION) */}
+                    <div
+                        onClick={() => setSelectedGateway('vietqr')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'vietqr'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shrink-0">
+                            <QrCode className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                                <SectionHeading>Chuyển khoản QR</SectionHeading>
+                                <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">
+                                    MIỄN PHÍ
+                                </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">Quét mã QR bằng app Banking/MoMo/ZaloPay</p>
+                        </div>
+                        {selectedGateway === 'vietqr' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* VNPay - TEMPORARILY HIDDEN - Requires merchant registration */}
+                    {false && (
                     <div
                         onClick={() => setSelectedGateway('vnpay')}
                         className={`
@@ -279,6 +351,7 @@ export default function PaymentGatewaySelector() {
                             </div>
                         )}
                     </div>
+                    )}
 
                     {/* Bank Transfer */}
                     <div

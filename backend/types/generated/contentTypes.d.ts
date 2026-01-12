@@ -910,8 +910,16 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       ['full_payment', 'deposit', 'installment']
     > &
       Schema.Attribute.Required;
+    PaymentProof: Schema.Attribute.String;
     PaymentStatus: Schema.Attribute.Enumeration<
-      ['pending', 'partial', 'completed', 'failed', 'refunded']
+      [
+        'pending',
+        'pending_verification',
+        'partial',
+        'completed',
+        'failed',
+        'refunded',
+      ]
     > &
       Schema.Attribute.DefaultTo<'pending'>;
     PreferredGateway: Schema.Attribute.String;

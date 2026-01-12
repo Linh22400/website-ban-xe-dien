@@ -57,11 +57,15 @@
       "default": "pending",
       "enum": [
         "pending",
+        "pending_verification",
         "partial",
         "completed",
         "failed",
         "refunded"
       ]
+    },
+    "PaymentProof": {
+      "type": "string"
     },
     "BasePrice": {
       "type": "decimal",

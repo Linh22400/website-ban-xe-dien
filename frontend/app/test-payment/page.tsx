@@ -13,7 +13,8 @@ export default function TestPaymentPage() {
   const amount = searchParams.get('amount') || '20350000';
 
   useEffect(() => {
-    const code = `javascript:(function(){var btn=document.createElement('button');btn.innerHTML='✅ XÁC NHẬN THANH TOÁN (TEST)';btn.style.cssText='position:fixed;top:20px;right:20px;z-index:99999;background:linear-gradient(135deg,#10b981,#059669);color:white;font-size:18px;font-weight:bold;padding:20px 30px;border:none;border-radius:12px;cursor:pointer;box-shadow:0 10px 30px rgba(16,185,129,0.4);animation:pulse 2s infinite;';btn.onclick=function(){var url=window.location.href;var params=new URLSearchParams(url.split('?')[1]);var orderId=params.get('orderId')||'${orderId}';var amount=params.get('amount')||'${amount}';window.location.href='https://www.xedienducduy.id.vn/test-payment?orderId='+orderId+'&amount='+amount+'&auto=success';};document.body.appendChild(btn);var style=document.createElement('style');style.innerHTML='@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}';document.head.appendChild(style);})();`;
+    // Simpler bookmarklet that just redirects
+    const code = `javascript:(function(){var u=window.location.href;var p=new URLSearchParams(u.split('?')[1]);var o=p.get('orderId')||'${orderId}';var a=p.get('amount')||'${amount}';if(confirm('Xác nhận thanh toán đơn hàng '+o+'?')){window.location.href='https://www.xedienducduy.id.vn/test-payment?orderId='+o+'&amount='+a+'&auto=success';}})();`;
     setBookmarkletCode(code);
   }, [orderId, amount]);
 
@@ -123,24 +124,59 @@ export default function TestPaymentPage() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-gray-800 mb-2">🚀 Cách sử dụng nhanh:</h3>
+              <h3 className="font-bold text-gray-800 mb-2">🚀 Cách 1: Dùng Bookmarklet</h3>
               <ol className="text-sm text-gray-700 space-y-1 mb-3">
-                <li><strong>Bước 1:</strong> Kéo nút màu xanh bên dưới vào thanh Bookmarks</li>
-                <li><strong>Bước 2:</strong> Khi ở trang MoMo, click bookmark đó</li>
-                <li><strong>Bước 3:</strong> Nút xác nhận sẽ xuất hiện góc phải màn hình!</li>
+                <li><strong>Bước 1:</strong> Nhấn Ctrl+D (hoặc kéo nút bên dưới vào thanh Bookmarks)</li>
+                <li><strong>Bước 2:</strong> Khi ở trang MoMo, click bookmark</li>
+                <li><strong>Bước 3:</strong> Confirm → Tự động quay về!</li>
               </ol>
-              <a
-                href={bookmarkletCode}
-                className="inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg cursor-move"
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert('Kéo nút này vào thanh Bookmarks (không click)!\n\nCách làm:\n1. Hiển thị thanh Bookmarks: Ctrl+Shift+B (Chrome)\n2. Kéo nút này lên thanh Bookmarks\n3. Vào trang MoMo và click bookmark');
+              <div className="flex gap-2">
+                <a
+                  href={bookmarkletCode}
+                  className="inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg cursor-move text-sm"
+                >
+                  ⚡ Xác Nhận MoMo
+                </a>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(bookmarkletCode);
+                    alert('Đã copy! Tạo bookmark mới và paste vào URL.');
+                  }}
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold"
+                >
+                  📋 Copy Code
+                </button>
+              </div>
+        {/* SIMPLE METHOD: Direct test links */}
+        <div className="mb-6 p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+          <h3 className="font-bold text-gray-800 mb-3">✅ Cách 2: Test Trực Tiếp (Đơn Giản Nhất)</h3>
+          <p className="text-sm text-gray-600 mb-3">
+            Copy link bên dưới, mở tab mới và paste vào:
+          </p>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={`https://www.xedienducduy.id.vn/test-payment?orderId=${orderId}&amount=${amount}&auto=success`}
+                className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs"
+              />
+              <button
+                onClick={() => {
+                  const url = `https://www.xedienducduy.id.vn/test-payment?orderId=${orderId}&amount=${amount}&auto=success`;
+                  navigator.clipboard.writeText(url);
+                  alert('Đã copy link! Mở tab mới và paste vào.');
                 }}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-semibold"
               >
-                ⚡ XÁC NHẬN MoMo NHANH
-              </a>
+                📋 Copy
+              </button>
+            </div>
+          </div>
+        </div>
+
               <p className="text-xs text-gray-600 mt-2">
-                💡 Kéo nút này lên thanh Bookmarks để sử dụng
+                💡 Hoặc tạo bookmark mới, paste code vào URL
               </p>
             </div>
           </div>

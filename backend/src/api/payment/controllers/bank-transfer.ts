@@ -23,7 +23,16 @@ export default {
    */
   async uploadProof(ctx) {
     try {
-      const { orderId, amount, transferDate, bankName, accountNumber, transferNote } = ctx.request.body;
+      // Parse multipart form data
+      const { data, files } = ctx.request.body;
+      
+      // Get form fields - Strapi parses them into 'data' object for multipart
+      const orderId = data?.orderId || ctx.request.body.orderId;
+      const amount = data?.amount || ctx.request.body.amount;
+      const transferDate = data?.transferDate || ctx.request.body.transferDate;
+      const bankName = data?.bankName || ctx.request.body.bankName;
+      const accountNumber = data?.accountNumber || ctx.request.body.accountNumber;
+      const transferNote = data?.transferNote || ctx.request.body.transferNote;
 
       // Validate required fields
       if (!orderId || !amount) {
@@ -39,23 +48,34 @@ export default {
         return ctx.notFound('Order not found');
       }
 
-      // Get uploaded file (if using Strapi upload plugin)
-      const files = ctx.request.files;
+      // Get uploaded file
       let uploadedFileId = null;
+      let uploadedFileUrl = null;
 
-      if (files && files.proofImage) {
-        // Upload to Strapi media library
-        const uploadService = strapi.plugin('upload').service('upload');
-        const uploadedFiles = await uploadService.upload({
-          data: {
-            refId: order.id,
-            ref: 'api::order.order',
-            field: 'PaymentProof',
-          },
-          files: files.proofImage,
-        });
-        
-        uploadedFileId = uploadedFiles[0]?.id;
+      // Check both ctx.request.files and files from body
+      const proofImageFile = ctx.request.files?.proofImage || files?.proofImage;
+
+      if (proofImageFile) {
+        try {
+          // Upload to Strapi media library
+          const uploadService = strapi.plugin('upload').service('upload');
+          const uploadedFiles = await uploadService.upload({
+            data: {
+              refId: order.id,
+              ref: 'api::order.order',
+              field: 'PaymentProof',
+            },
+            files: proofImageFile,
+          });
+          
+          if (uploadedFiles && uploadedFiles.length > 0) {
+            uploadedFileId = uploadedFiles[0].id;
+            uploadedFileUrl = uploadedFiles[0].url;
+          }
+        } catch (uploadError) {
+          console.error('File upload error:', uploadError);
+          return ctx.badRequest('Failed to upload image file');
+        }
       }
 
       // Update order với thông tin chuyển khoản
@@ -72,6 +92,7 @@ export default {
             transferNote: transferNote || '',
             uploadedAt: new Date().toISOString(),
             fileId: uploadedFileId,
+            fileUrl: uploadedFileUrl,
           },
         },
       });
@@ -82,6 +103,7 @@ export default {
         data: {
           orderId: updatedOrder.OrderCode,
           status: 'pending_verification',
+          proofImageUrl: uploadedFileUrl,
         },
       });
     } catch (error) {

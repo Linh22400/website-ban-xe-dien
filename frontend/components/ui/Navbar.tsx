@@ -7,9 +7,11 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
-import { getCars, getAccessories, type Car, type Accessory } from "@/lib/api";
+import { getCars, getAccessories, getPromotions, type Car, type Accessory } from "@/lib/api";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import NotificationBell from "@/components/common/NotificationBell";
+import ProductBadge from "@/components/common/ProductBadge";
+import SmartSearchBar from "@/components/ui/SmartSearchBar";
 import {
     ShoppingCart,
     Heart,
@@ -28,15 +30,16 @@ interface NavbarItem {
     label: string;
     image?: string;
     price?: string;
-    badge?: string;
+    originalPrice?: string;
+    discount?: number;
     desc?: string;
     isViewAll?: boolean;
+    product?: any; // Store full product data for dynamic badge calculation
 }
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [showSearch, setShowSearch] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [showSmartSearch, setShowSmartSearch] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const [showMobileProducts, setShowMobileProducts] = useState(false);
@@ -54,28 +57,85 @@ export default function Navbar() {
     const { itemCount: cartCount } = useCart();
     const { itemCount: wishlistCount } = useWishlist();
 
+    // Global keyboard shortcut for search (Ctrl+K)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                setShowSmartSearch(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     // Fetch products data
     useEffect(() => {
         const fetchNavbarData = async () => {
             try {
                 setIsLoading(true);
                 
-                // Fetch motorcycles, bicycles, and accessories in parallel
-                const [motorcyclesData, bicyclesData, accessoriesData] = await Promise.all([
-                    getCars({ type: 'motorcycle', pageSize: 4, sort: 'isFeatured:desc,createdAt:desc' }),
-                    getCars({ type: 'bicycle', pageSize: 4, sort: 'isFeatured:desc,createdAt:desc' }),
-                    getAccessories()
+                // Fetch motorcycles, bicycles, accessories and promotions in parallel
+                // Fetch ALL products to ensure we have enough for sorting and display
+                const [motorcyclesData, bicyclesData, accessoriesData, promotionsData] = await Promise.all([
+                    getCars({ type: 'motorcycle', pageSize: 100 }), // Fetch all to ensure enough products
+                    getCars({ type: 'bicycle', pageSize: 100 }), // Fetch all to ensure enough products
+                    getAccessories(),
+                    getPromotions()
                 ]);
 
+                // Helper function to calculate discount for a car
+                const getCarDiscount = (carId: string, carDocumentId: string) => {
+                    let discount = 0;
+                    promotionsData.forEach((promo) => {
+                        if (promo.isActive && promo.discountPercent && promo.car_models) {
+                            promo.car_models.forEach((promoCar: any) => {
+                                if (String(promoCar.id) === String(carId) || (promoCar.documentId && promoCar.documentId === carDocumentId)) {
+                                    discount = Math.max(discount, promo.discountPercent || 0);
+                                }
+                            });
+                        }
+                    });
+                    return discount;
+                };
+
+                // Sort function: Prioritize HOT (isFeatured) + high sales, then by sales count
+                // This will sort ALL products and take top 4, including non-HOT products if needed
+                const sortProducts = (products: Car[]) => {
+                    return products.sort((a, b) => {
+                        const aIsFeatured = a.isFeatured ? 1 : 0;
+                        const bIsFeatured = b.isFeatured ? 1 : 0;
+                        const aSales = a.sold || 0;
+                        const bSales = b.sold || 0;
+
+                        // Priority 1: Featured products come first
+                        if (aIsFeatured !== bIsFeatured) {
+                            return bIsFeatured - aIsFeatured;
+                        }
+
+                        // Priority 2: Within same featured status, sort by sales count (high to low)
+                        return bSales - aSales;
+                    }).slice(0, 4); // Take top 4 after sorting - will include both HOT and regular products
+                };
+
                 // Transform motorcycles data
-                const motorcycleItems: NavbarItem[] = motorcyclesData.map((car) => ({
-                    href: `/cars/${car.slug}`,
-                    label: car.name,
-                    image: car.thumbnail || '/images/placeholder-product.jpg',
-                    price: `${car.price.toLocaleString('vi-VN')}\u20ab`,
-                    badge: car.isFeatured ? 'HOT' : undefined,
-                    desc: `${car.range}km - ${car.topSpeed}km/h`
-                }));
+                const sortedMotorcycles = sortProducts(motorcyclesData);
+                const motorcycleItems: NavbarItem[] = sortedMotorcycles.map((car) => {
+                    const discount = getCarDiscount(car.id, car.documentId);
+                    const finalPrice = discount > 0 ? car.price * (1 - discount / 100) : car.price;
+                    return {
+                        href: `/cars/${car.slug}`,
+                        label: car.name,
+                        image: car.thumbnail || '/images/placeholder-product.jpg',
+                        price: `${Math.round(finalPrice).toLocaleString('vi-VN')}\u20ab`,
+                        originalPrice: discount > 0 ? `${car.price.toLocaleString('vi-VN')}\u20ab` : undefined,
+                        discount: discount > 0 ? Math.round(discount) : undefined,
+                        desc: `${car.range}km - ${car.topSpeed}km/h`,
+                        // Store full product data with discount for dynamic badge
+                        product: { ...car, discount: discount > 0 ? discount : undefined }
+                    };
+                });
                 motorcycleItems.push({ 
                     href: '/cars?type=motorcycle', 
                     label: 'Xem t\u1ea5t c\u1ea3 xe m\u00e1y \u0111i\u1ec7n', 
@@ -83,14 +143,22 @@ export default function Navbar() {
                 });
 
                 // Transform bicycles data
-                const bicycleItems: NavbarItem[] = bicyclesData.map((car) => ({
-                    href: `/cars/${car.slug}`,
-                    label: car.name,
-                    image: car.thumbnail || '/images/placeholder-product.jpg',
-                    price: `${car.price.toLocaleString('vi-VN')}\u20ab`,
-                    badge: car.isFeatured ? 'HOT' : undefined,
-                    desc: `${car.range}km - ${car.topSpeed}km/h`
-                }));
+                const sortedBicycles = sortProducts(bicyclesData);
+                const bicycleItems: NavbarItem[] = sortedBicycles.map((car) => {
+                    const discount = getCarDiscount(car.id, car.documentId);
+                    const finalPrice = discount > 0 ? car.price * (1 - discount / 100) : car.price;
+                    return {
+                        href: `/cars/${car.slug}`,
+                        label: car.name,
+                        image: car.thumbnail || '/images/placeholder-product.jpg',
+                        price: `${Math.round(finalPrice).toLocaleString('vi-VN')}\u20ab`,
+                        originalPrice: discount > 0 ? `${car.price.toLocaleString('vi-VN')}\u20ab` : undefined,
+                        discount: discount > 0 ? Math.round(discount) : undefined,
+                        desc: `${car.range}km - ${car.topSpeed}km/h`,
+                        // Store full product data with discount for dynamic badge
+                        product: { ...car, discount: discount > 0 ? discount : undefined }
+                    };
+                });
                 bicycleItems.push({ 
                     href: '/cars?type=bicycle', 
                     label: 'Xem t\u1ea5t c\u1ea3 xe \u0111\u1ea1p \u0111i\u1ec7n', 
@@ -116,7 +184,7 @@ export default function Navbar() {
                         image: acc.image || 'https://via.placeholder.com/300x200?text=Accessory',
                         price: acc.price > 0 ? `${acc.price.toLocaleString('vi-VN')}\u20ab` : 'Li\u00ean h\u1ec7',
                         desc: categoryLabels[acc.category] || acc.category,
-                        badge: acc.isFeatured ? 'HOT' : undefined
+                        product: acc
                     };
                 });
                 
@@ -187,19 +255,21 @@ export default function Navbar() {
     // Hide Navbar on Admin pages
     if (pathname?.startsWith('/admin')) return null;
 
-    const submitSearch = () => {
-        const q = searchQuery.trim();
-        if (!q) return;
-        setShowSearch(false);
-        setIsOpen(false);
-        router.push(`/cars?search=${encodeURIComponent(q)}`);
-    };
-
     return (
-        <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 bg-background/95 border-b border-white/10 shadow-lg ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
-            style={{ willChange: 'transform' }}
-        >
+        <>
+            {/* Smart Search Bar Modal */}
+            <SmartSearchBar 
+                isOpen={showSmartSearch} 
+                onClose={() => setShowSmartSearch(false)}
+                isNavbarVisible={isVisible}
+                isNavbarScrolled={isScrolled}
+                autoFocus
+            />
+
+            <nav
+                className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 bg-background/95 border-b border-white/10 shadow-lg ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+                style={{ willChange: 'transform' }}
+            >
             <div className="container mx-auto px-4">
                 {/* Top Bar - Hotline & Quick Links */}
                 <div className={`hidden md:flex items-center justify-between py-2 border-b border-white/5 transition-all duration-300 ${isScrolled ? "opacity-0 h-0 py-0 overflow-hidden" : "opacity-100"
@@ -276,29 +346,27 @@ export default function Navbar() {
                                 Xe Máy Điện
                                 <ChevronDown className="w-4 h-4" />
                             </Link>
-                            <div className="absolute top-full left-0 pt-2 w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                            <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
                                 <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                                     {/* Grid Products */}
-                                    <div className="grid grid-cols-2 gap-1 p-2">
+                                    <div className="grid grid-cols-2 gap-2 p-3">
                                         {motorcycles.filter(item => !item.isViewAll).map((item) => (
                                             <Link
                                                 key={item.href}
                                                 href={item.href}
-                                                className="group/item flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
+                                                className="group/item flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
                                             >
                                                 {/* Image */}
-                                                <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
+                                                <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
                                                     <Image
                                                         src={item.image || '/images/placeholder-product.jpg'}
                                                         alt={item.label}
                                                         fill
                                                         className="object-cover group-hover/item:scale-110 transition-transform duration-300"
                                                     />
-                                                    {item.badge && (
-                                                        <div className={`absolute top-1 left-1 px-2 py-0.5 rounded text-[10px] font-bold ${
-                                                            item.badge === 'HOT' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'
-                                                        }`}>
-                                                            {item.badge}
+                                                    {item.product && (
+                                                        <div className="absolute top-1 right-1">
+                                                            <ProductBadge product={item.product} size="sm" />
                                                         </div>
                                                     )}
                                                 </div>
@@ -310,8 +378,18 @@ export default function Navbar() {
                                                     <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
                                                         {item.desc}
                                                     </p>
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                    <div className="flex flex-col gap-1">
+                                                        {item.originalPrice && item.discount ? (
+                                                            <>
+                                                                <span className="text-xs text-muted-foreground line-through">{item.originalPrice}</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                                    <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded">-{Math.round(item.discount)}%</span>
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </Link>
@@ -338,29 +416,27 @@ export default function Navbar() {
                                 Xe Đạp Điện
                                 <ChevronDown className="w-4 h-4" />
                             </Link>
-                            <div className="absolute top-full left-0 pt-2 w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                            <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
                                 <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                                     {/* Grid Products */}
-                                    <div className="grid grid-cols-2 gap-1 p-2">
+                                    <div className="grid grid-cols-2 gap-2 p-3">
                                         {bicycles.filter(item => !item.isViewAll).map((item) => (
                                             <Link
                                                 key={item.href}
                                                 href={item.href}
-                                                className="group/item flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
+                                                className="group/item flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
                                             >
                                                 {/* Image */}
-                                                <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
+                                                <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
                                                     <Image
                                                         src={item.image || '/images/placeholder-product.jpg'}
                                                         alt={item.label}
                                                         fill
                                                         className="object-cover group-hover/item:scale-110 transition-transform duration-300"
                                                     />
-                                                    {item.badge && (
-                                                        <div className={`absolute top-1 left-1 px-2 py-0.5 rounded text-[10px] font-bold ${
-                                                            item.badge === 'HOT' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'
-                                                        }`}>
-                                                            {item.badge}
+                                                    {item.product && (
+                                                        <div className="absolute top-1 right-1">
+                                                            <ProductBadge product={item.product} size="sm" />
                                                         </div>
                                                     )}
                                                 </div>
@@ -372,8 +448,18 @@ export default function Navbar() {
                                                     <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
                                                         {item.desc}
                                                     </p>
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                    <div className="flex flex-col gap-1">
+                                                        {item.originalPrice && item.discount ? (
+                                                            <>
+                                                                <span className="text-xs text-muted-foreground line-through">{item.originalPrice}</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                                    <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded">-{Math.round(item.discount)}%</span>
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </Link>
@@ -418,11 +504,9 @@ export default function Navbar() {
                                                         fill
                                                         className="object-cover group-hover/item:scale-110 transition-transform duration-300"
                                                     />
-                                                    {item.badge && (
-                                                        <div className={`absolute top-1 left-1 px-2 py-0.5 rounded text-[10px] font-bold ${
-                                                            item.badge === 'HOT' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'
-                                                        }`}>
-                                                            {item.badge}
+                                                    {item.product && (
+                                                        <div className="absolute top-1 left-1">
+                                                            <ProductBadge product={item.product} size="sm" />
                                                         </div>
                                                     )}
                                                 </div>
@@ -469,10 +553,22 @@ export default function Navbar() {
 
                     {/* Right Side Actions */}
                     <div className="flex items-center gap-4">
-                        {/* Search Toggle */}
+                        {/* Smart Search Toggle - Desktop */}
                         <button
-                            onClick={() => setShowSearch(!showSearch)}
-                            className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                            onClick={() => setShowSmartSearch(true)}
+                            className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg transition-all hover:border-primary w-[280px]"
+                            aria-label="Tìm kiếm"
+                        >
+                            <Search className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm text-gray-400 flex-1 text-left">
+                                Tìm xe điện, phụ kiện...
+                            </span>
+                        </button>
+                        
+                        {/* Mobile Search Icon */}
+                        <button
+                            onClick={() => setShowSmartSearch(true)}
+                            className="md:hidden p-2 text-muted-foreground hover:text-primary transition-colors"
                             aria-label="Search"
                         >
                             <Search className="w-5 h-5" />
@@ -566,28 +662,6 @@ export default function Navbar() {
                         >
                             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
-                    </div>
-                </div>
-
-                {/* Search Bar Dropdown */}
-                <div className={`overflow-hidden transition-all duration-300 ${showSearch ? "max-h-24 py-4 border-t border-white/5" : "max-h-0"
-                    }`}>
-                    <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm xe điện, phụ kiện..."
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-                            autoFocus={showSearch}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    submitSearch();
-                                }
-                            }}
-                        />
                     </div>
                 </div>
 
@@ -764,6 +838,6 @@ export default function Navbar() {
                 )}
             </div>
         </nav>
+        </>
     );
 }
-

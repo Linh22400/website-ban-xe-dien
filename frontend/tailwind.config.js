@@ -27,7 +27,11 @@ module.exports = {
         },
     ],
     theme: {
-        extend: {},
+        extend: {
+            zIndex: {
+                '45': '45',
+            }
+        },
     },
     plugins: [
         require('@tailwindcss/typography'),

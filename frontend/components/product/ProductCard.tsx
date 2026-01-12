@@ -9,6 +9,7 @@ import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { Heart, ShoppingCart } from "lucide-react";
 import ColorPicker from "./ColorPicker";
+import ProductBadge from "@/components/common/ProductBadge";
 
 interface ProductCardProps {
     car: Car;
@@ -115,7 +116,7 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Badges */}
+                {/* Badges - Top Left: Type */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
                     {car.type === 'motorcycle' && (
                         <span className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/50 border border-white/20 backdrop-blur-sm">
@@ -129,19 +130,22 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                     )}
                 </div>
 
-                {/* Discount Badge */}
-                {discountPercent > 0 && (
-                    <div className="absolute top-3 right-3">
-                        <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">
-                            -{discountPercent}%
-                        </span>
-                    </div>
-                )}
+                {/* Dynamic Product Badge - Top Right */}
+                <div className="absolute top-3 right-3">
+                    <ProductBadge 
+                        product={{
+                            ...car,
+                            discount: discountPercent,
+                            originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
+                        }} 
+                        size="md" 
+                    />
+                </div>
 
                 {/* Wishlist Button - Floating */}
                 <button
                     onClick={handleWishlistClick}
-                    className={`absolute top-3 right-3 ${discountPercent > 0 ? 'top-14' : 'top-3'} w-10 h-10 rounded-full flex items-center justify-center transition-colors ${inWishlist
+                    className={`absolute top-14 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${inWishlist
                         ? 'bg-red-500 text-white hover:bg-red-600'
                         : 'bg-card/40 hover:bg-card/60 text-foreground border border-border shadow-lg'
                         }`}

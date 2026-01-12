@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getCars, Car } from "@/lib/api";
 import Image from "next/image";
+import ProductBadge from "@/components/common/ProductBadge";
 
 export default function ComparisonSearch() {
     const router = useRouter();
@@ -97,6 +98,9 @@ export default function ComparisonSearch() {
                                 >
                                     <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-900 shrink-0">
                                         <Image src={car.thumbnail} alt={car.name} fill sizes="48px" className="object-cover object-center" />
+                                        <div className="absolute top-0.5 left-0.5">
+                                            <ProductBadge product={car} size="sm" />
+                                        </div>
                                     </div>
                                     <div>
                                         <div className="font-bold text-white text-sm">{car.name}</div>

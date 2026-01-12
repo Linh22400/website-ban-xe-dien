@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingCart, Trash2, ArrowLeft } from "lucide-react";
 import { WishlistHeading, ProductName, ViewButton } from "@/components/wishlist/WishlistComponents";
+import ProductBadge from "@/components/common/ProductBadge";
 
 export default function WishlistPage() {
     const { items, removeFromWishlist, clearWishlist } = useWishlist();
@@ -82,6 +83,10 @@ export default function WishlistPage() {
                                         fill
                                         className="object-cover"
                                     />
+                                    {/* Dynamic Badge */}
+                                    <div className="absolute top-3 left-3">
+                                        <ProductBadge product={item} size="sm" />
+                                    </div>
                                     <button
                                         onClick={() => removeFromWishlist(item.id)}
                                         className="absolute top-4 right-4 p-2 bg-red-500/90 hover:bg-red-500 rounded-full transition-colors"

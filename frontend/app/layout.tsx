@@ -78,7 +78,7 @@ export default function RootLayout({
                 <CompareProvider>
                   <JsonLd />
                   <Navbar />
-                  <main className="pt-[72px] md:pt-[96px]">
+                  <main className="pt-[120px] md:pt-[120px]">
                     {children}
                   </main>
                   <CompareFloatingBar />

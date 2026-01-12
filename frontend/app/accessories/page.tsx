@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { ThemeText } from "@/components/common/ThemeText";
+import ProductBadge from "@/components/common/ProductBadge";
 
 export const dynamic = 'force-dynamic';
 
@@ -74,17 +75,10 @@ export default async function AccessoriesPage({ searchParams }: PageProps) {
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
-                                    {/* Category Badge */}
-                                    <div className="absolute top-3 left-3 px-3 py-1.5 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white text-xs font-bold rounded-full shadow-lg shadow-blue-500/50 border border-white/20 backdrop-blur-sm">
-                                        {item.category === 'battery' ? 'Pin' :
-                                            item.category === 'helmet' ? 'Mũ bảo hiểm' :
-                                            item.category === 'charger' ? 'Bộ sạc' : 'Phụ kiện'}
+                                    {/* Dynamic Badge */}
+                                    <div className="absolute top-3 right-3">
+                                        <ProductBadge product={item} size="sm" />
                                     </div>
-                                    {item.isFeatured && (
-                                        <div className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20">
-                                            Hot
-                                        </div>
-                                    )}
                                 </div>
 
                                 {/* Content */}

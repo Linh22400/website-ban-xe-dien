@@ -28,9 +28,8 @@ export default function PaymentGatewaySelector() {
 
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // Hiện tại backend mới hỗ trợ flow mock/verify; chưa tích hợp MoMo/VNPay thật.
-    // Để tránh người dùng production chọn nhầm rồi lỗi, chỉ bật chuyển khoản ở production.
-    const [selectedGateway, setSelectedGateway] = useState(isProduction ? 'bank_transfer' : 'momo');
+    // MoMo and VNPay are now fully integrated and work on both local and production
+    const [selectedGateway, setSelectedGateway] = useState('momo');
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -201,32 +200,30 @@ export default function PaymentGatewaySelector() {
                 </div>
 
                 <div className="space-y-4">
-                    {/* MoMo */}
-                    {!isProduction && (
-                        <div
-                            onClick={() => setSelectedGateway('momo')}
-                            className={`
-                                relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
-                                ${selectedGateway === 'momo'
-                                    ? 'border-primary bg-primary/10'
-                                    : 'border-white/10 hover:border-white/30 bg-white/5'
-                                }
-                            `}
-                        >
-                            <div className="w-12 h-12 bg-[#A50064] rounded-lg flex items-center justify-center shrink-0">
-                                <Smartphone className="w-6 h-6 text-white" />
-                            </div>
-                            <div className="flex-1">
-                                <SectionHeading>Ví MoMo</SectionHeading>
-                                <p className="text-sm text-muted-foreground">Thanh toán qua ứng dụng MoMo</p>
-                            </div>
-                            {selectedGateway === 'momo' && (
-                                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                                    <Check className="w-4 h-4 text-black" />
-                                </div>
-                            )}
+                    {/* MoMo - Available on both local and production */}
+                    <div
+                        onClick={() => setSelectedGateway('momo')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'momo'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-[#A50064] rounded-lg flex items-center justify-center shrink-0">
+                            <Smartphone className="w-6 h-6 text-white" />
                         </div>
-                    )}
+                        <div className="flex-1">
+                            <SectionHeading>Ví MoMo</SectionHeading>
+                            <p className="text-sm text-muted-foreground">Thanh toán qua ứng dụng MoMo</p>
+                        </div>
+                        {selectedGateway === 'momo' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
 
                     {/* COD - Cash on Delivery */}
                     <div

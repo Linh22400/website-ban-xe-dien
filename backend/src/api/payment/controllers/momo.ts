@@ -33,10 +33,13 @@ export default {
       const accessKey = process.env.MOMO_ACCESS_KEY;
       const secretKey = process.env.MOMO_SECRET_KEY;
       const endpoint = process.env.MOMO_ENDPOINT || 'https://test-payment.momo.vn';
-      const redirectUrl = process.env.MOMO_RETURN_URL;
-      const ipnUrl = process.env.MOMO_IPN_URL;
+      
+      // Auto-generate return and IPN URLs based on BACKEND_URL or auto-detect from request
+      const backendUrl = process.env.BACKEND_URL || `${ctx.request.protocol}://${ctx.request.host}`;
+      const redirectUrl = `${backendUrl}/api/payment/momo/return`;
+      const ipnUrl = `${backendUrl}/api/payment/momo/ipn`;
 
-      if (!partnerCode || !accessKey || !secretKey || !redirectUrl || !ipnUrl) {
+      if (!partnerCode || !accessKey || !secretKey) {
         return ctx.internalServerError('MoMo configuration is missing');
       }
 

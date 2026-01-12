@@ -73,9 +73,12 @@ export default {
       const vnpUrl = process.env.VNPAY_URL || 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
       const vnpTmnCode = process.env.VNPAY_TMN_CODE;
       const vnpHashSecret = process.env.VNPAY_HASH_SECRET;
-      const returnUrl = process.env.VNPAY_RETURN_URL;
+      
+      // Auto-generate return URL based on BACKEND_URL or auto-detect from request
+      const backendUrl = process.env.BACKEND_URL || `${ctx.request.protocol}://${ctx.request.host}`;
+      const returnUrl = `${backendUrl}/api/payment/vnpay/return`;
 
-      if (!vnpTmnCode || !vnpHashSecret || !returnUrl) {
+      if (!vnpTmnCode || !vnpHashSecret) {
         return ctx.internalServerError('VNPay configuration is missing');
       }
 

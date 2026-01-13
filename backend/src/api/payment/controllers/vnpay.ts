@@ -71,12 +71,20 @@ export default {
 
       // Get VNPay config from environment
       const vnpUrl = process.env.VNPAY_URL || 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-      const vnpTmnCode = process.env.VNPAY_TMN_CODE;
-      const vnpHashSecret = process.env.VNPAY_HASH_SECRET;
+      const vnpTmnCode = process.env.VNPAY_TMN_CODE?.trim();
+      const vnpHashSecret = process.env.VNPAY_HASH_SECRET?.trim();
       
-      // Auto-generate return URL based on BACKEND_URL or auto-detect from request
-      const backendUrl = process.env.BACKEND_URL || `${ctx.request.protocol}://${ctx.request.host}`;
-      const returnUrl = `${backendUrl}/api/payment/vnpay/return`;
+      // Auto-detect frontend URL from request origin or environment
+      // Priority: 1) Request Origin 2) FRONTEND_URL env 3) localhost
+      const origin = ctx.request.headers.origin || ctx.request.headers.referer?.split('/').slice(0, 3).join('/');
+      const frontendUrl = origin || process.env.FRONTEND_URL || 'http://localhost:3000';
+      const returnUrl = `${frontendUrl}/checkout/vnpay-return`;
+      
+      // Log detected environment for debugging
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Detected Frontend URL:', frontendUrl);
+        console.log('Request Origin:', origin);
+      }
 
       if (!vnpTmnCode || !vnpHashSecret) {
         return ctx.internalServerError('VNPay configuration is missing');
@@ -86,6 +94,12 @@ export default {
       const date = new Date();
       const createDate = formatDate(date);
       const txnRef = `${orderCode}_${date.getTime()}`; // Unique transaction ref
+
+      // Get client IP address (handle proxies)
+      const ipAddr = ctx.request.headers['x-forwarded-for']?.split(',')[0]?.trim() 
+        || ctx.request.headers['x-real-ip'] 
+        || ctx.request.socket.remoteAddress 
+        || '127.0.0.1';
 
       let vnpParams: VNPayParams = {
         vnp_Version: '2.1.0',
@@ -98,7 +112,7 @@ export default {
         vnp_OrderType: 'other', // 'other' for general purpose
         vnp_Amount: amount * 100, // VNPay uses smallest currency unit (100 = 1 VND)
         vnp_ReturnUrl: returnUrl,
-        vnp_IpAddr: ctx.request.ip || '127.0.0.1',
+        vnp_IpAddr: ipAddr,
         vnp_CreateDate: createDate,
       };
 
@@ -107,26 +121,58 @@ export default {
         vnpParams.vnp_BankCode = bankCode;
       }
 
-      // Sort parameters and create secure hash
+      // CRITICAL VNPay 2.1.0: Sort params alphabetically
       vnpParams = sortObject(vnpParams);
       
-      // CRITICAL: Signature MUST use RAW unencoded string
-      const sortedKeys = Object.keys(vnpParams).sort();
-      const signData = sortedKeys
-        .map(key => `${key}=${vnpParams[key]}`)
-        .join('&');
+      // Build hash data string - VNPay spec: NO encoding, use raw values
+      const signDataArr: string[] = [];
+      for (const key in vnpParams) {
+        const value = vnpParams[key];
+        if (value !== null && value !== undefined && value !== '') {
+          // Use raw value, NO encodeURIComponent
+          signDataArr.push(`${key}=${value}`);
+        }
+      }
+      const signData = signDataArr.join('&');
+      
+      // Create HMAC SHA512 signature
       const hmac = crypto.createHmac('sha512', vnpHashSecret);
       const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+      
+      // Add signature to params AFTER signing
+      vnpParams.vnp_SecureHash = signed;
       vnpParams.vnp_SecureHash = signed;
       
-      // Create payment URL with encoding
+      // Create final payment URL (with URL encoding for special characters)
       const paymentUrl = vnpUrl + '?' + stringify(vnpParams);
       
-      // Debug log
+      // Debug log (only in development)
       if (process.env.NODE_ENV !== 'production') {
-        console.log('SignData (raw):', signData);
-        console.log('Signature:', signed);
-        console.log('VNPay Payment URL:', paymentUrl);
+        console.log('=== VNPay Payment Debug (v2.1.0) ===');
+        console.log('TMN Code:', vnpTmnCode);
+        console.log('Hash Secret:', vnpHashSecret);
+        console.log('Hash Secret Length:', vnpHashSecret.length);
+        console.log('---');
+        console.log('IP Address:', ipAddr);
+        console.log('Return URL:', returnUrl);
+        console.log('vnp_Version:', vnpParams.vnp_Version);
+        console.log('---');
+        console.log('SignData (RAW, no encoding):', signData);
+        console.log('Signature (HMAC-SHA512):', signed);
+        console.log('---');
+        console.log('⚠️  IMPORTANT: Verify your credentials at https://sandbox.vnpayment.vn/');
+        console.log('   TMN Code and Hash Secret must be from the SAME merchant account');
+        console.log('---');
+        console.log('Payment URL (with encoding):', paymentUrl);
+        console.log('================================');
+        console.log('');
+        console.log('🔧 Test Signature Online:');
+        console.log('1. Go to: https://emn178.github.io/online-tools/sha512.html');
+        console.log('2. Select: HMAC');
+        console.log('3. Input Key:', vnpHashSecret);
+        console.log('4. Input Text:', signData);
+        console.log('5. Compare result with:', signed);
+        console.log('');
       }
 
       // Note: Transaction ref will be stored in PaymentTransaction.TransactionId
@@ -161,15 +207,20 @@ export default {
       delete vnpParams['vnp_SecureHash'];
       delete vnpParams['vnp_SecureHashType'];
 
-      // Sort and verify signature
+      // Sort parameters for verification
       vnpParams = sortObject(vnpParams);
-      const vnpHashSecret = process.env.VNPAY_HASH_SECRET;
+      const vnpHashSecret = process.env.VNPAY_HASH_SECRET?.trim();
       
-      // CRITICAL: Signature validation MUST use RAW unencoded string
-      const sortedKeys = Object.keys(vnpParams).sort();
-      const signData = sortedKeys
-        .map(key => `${key}=${vnpParams[key]}`)
-        .join('&');
+      // Build hash data string - use raw values, NO encoding
+      const signDataArr: string[] = [];
+      for (const key in vnpParams) {
+        const value = vnpParams[key];
+        if (value !== null && value !== undefined && value !== '') {
+          signDataArr.push(`${key}=${value}`);
+        }
+      }
+      const signData = signDataArr.join('&');
+      
       const hmac = crypto.createHmac('sha512', vnpHashSecret!);
       const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
@@ -275,13 +326,18 @@ export default {
       delete vnpParams['vnp_SecureHashType'];
 
       vnpParams = sortObject(vnpParams);
-      const vnpHashSecret = process.env.VNPAY_HASH_SECRET;
+      const vnpHashSecret = process.env.VNPAY_HASH_SECRET?.trim();
       
-      // CRITICAL: Signature validation MUST use RAW unencoded string
-      const sortedKeys = Object.keys(vnpParams).sort();
-      const signData = sortedKeys
-        .map(key => `${key}=${vnpParams[key]}`)
-        .join('&');
+      // Build hash data string for IPN - use raw values, NO encoding
+      const signDataArr: string[] = [];
+      for (const key in vnpParams) {
+        const value = vnpParams[key];
+        if (value !== null && value !== undefined && value !== '') {
+          signDataArr.push(`${key}=${value}`);
+        }
+      }
+      const signData = signDataArr.join('&');
+      
       const hmac = crypto.createHmac('sha512', vnpHashSecret!);
       const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 

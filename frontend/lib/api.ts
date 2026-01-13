@@ -74,7 +74,25 @@ export interface LoginData {
     password: string;
 }
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+// Auto-detect Strapi URL based on environment
+// Development: use local backend
+// Production: use production backend from env or auto-detect
+const getApiUrl = () => {
+  // If explicitly set, use it
+  if (process.env.NEXT_PUBLIC_STRAPI_URL) {
+    return process.env.NEXT_PUBLIC_STRAPI_URL;
+  }
+  
+  // In development (local), default to localhost
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:1337';
+  }
+  
+  // In production, use production backend
+  return 'https://website-ban-xe-dien.onrender.com';
+};
+
+const STRAPI_URL = getApiUrl();
 const DEBUG_LOG = process.env.NODE_ENV !== 'production';
 
 async function getApiErrorMessage(response: Response, fallbackMessage: string) {

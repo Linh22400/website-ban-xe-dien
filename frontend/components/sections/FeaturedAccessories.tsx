@@ -122,7 +122,7 @@ export default function FeaturedAccessories() {
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
                     {accessories.map((accessory) => {
                         const inWishlist = isInWishlist(accessory.id);
                         const showToast = toastMessage?.id === accessory.id;

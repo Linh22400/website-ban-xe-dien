@@ -326,8 +326,7 @@ export default function PaymentGatewaySelector() {
                         )}
                     </div>
 
-                    {/* VNPay - TEMPORARILY HIDDEN - Requires merchant registration */}
-                    {false && (
+                    {/* VNPay */}
                     <div
                         onClick={() => setSelectedGateway('vnpay')}
                         className={`
@@ -351,7 +350,6 @@ export default function PaymentGatewaySelector() {
                             </div>
                         )}
                     </div>
-                    )}
 
                     {/* Bank Transfer */}
                     <div

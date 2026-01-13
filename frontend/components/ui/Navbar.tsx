@@ -270,11 +270,11 @@ export default function Navbar() {
                 className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 bg-background/95 border-b border-white/10 shadow-lg ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
                 style={{ willChange: 'transform' }}
             >
-            <div className="container mx-auto px-4">
+            <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
                 {/* Top Bar - Hotline & Quick Links */}
-                <div className={`hidden md:flex items-center justify-between py-2 border-b border-white/5 transition-all duration-300 ${isScrolled ? "opacity-0 h-0 py-0 overflow-hidden" : "opacity-100"
+                <div className={`hidden lg:flex items-center justify-between py-2 border-b border-white/5 transition-all duration-300 ${isScrolled ? "opacity-0 h-0 py-0 overflow-hidden" : "opacity-100"
                     }`}>
-                    <div className="flex items-center gap-6 text-xs">
+                    <div className="flex items-center gap-3 xl:gap-6 text-xs">
                         <a
                             href="tel:1900xxxx"
                             className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
@@ -308,8 +308,8 @@ export default function Navbar() {
                 {/* Main Navbar */}
                 <div className="flex items-center justify-between py-4">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <div className="relative w-12 h-12 transform group-hover:scale-105 transition-transform">
+                    <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+                        <div className="relative w-10 h-10 sm:w-12 sm:h-12 transform group-hover:scale-105 transition-transform flex-shrink-0">
                             <Image
                                 src="/logo(Ducduy).jpg"
                                 alt="Đức Duy Logo"
@@ -318,21 +318,21 @@ export default function Navbar() {
                                 priority
                             />
                         </div>
-                        <div className="hidden sm:block">
-                            <div className="text-xl font-black text-[#0D5E3A] dark:text-[#10B981]">
+                        <div className="hidden sm:block flex-shrink-0">
+                            <div className="text-base sm:text-lg md:text-xl font-black text-[#0D5E3A] dark:text-[#10B981] whitespace-nowrap">
                                 XE ĐIỆN ĐỨC DUY
                             </div>
-                            <div className="text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold">
+                            <div className="text-[9px] sm:text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold whitespace-nowrap">
                                 Chính Hãng TAILG - Uy Tín
                             </div>
                         </div>
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden lg:flex items-center gap-8">
+                    <div className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8">
                         <Link
                             href="/"
-                            className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                            className="text-sm xl:text-base font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
                         >
                             Trang Chủ
                         </Link>
@@ -341,7 +341,7 @@ export default function Navbar() {
                         <div className="relative group">
                             <Link
                                 href="/cars?type=motorcycle"
-                                className="flex items-center gap-1 text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2"
+                                className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
                             >
                                 Xe Máy Điện
                                 <ChevronDown className="w-4 h-4" />
@@ -411,7 +411,7 @@ export default function Navbar() {
                         <div className="relative group">
                             <Link
                                 href="/cars?type=bicycle"
-                                className="flex items-center gap-1 text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2"
+                                className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
                             >
                                 Xe Đạp Điện
                                 <ChevronDown className="w-4 h-4" />
@@ -481,7 +481,7 @@ export default function Navbar() {
                         <div className="relative group">
                             <Link
                                 href="/accessories"
-                                className="flex items-center gap-1 text-sm font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2"
+                                className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
                             >
                                     Phụ Kiện
                                 <ChevronDown className="w-4 h-4" />
@@ -539,20 +539,20 @@ export default function Navbar() {
 
                         <Link
                             href="/compare"
-                            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+                            className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                         >
                             So Sánh
                         </Link>
                         <Link
                             href="/blog"
-                            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+                            className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                         >
                             Tin Tức
                         </Link>
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                         {/* Smart Search Toggle - Desktop */}
                         <button
                             onClick={() => setShowSmartSearch(true)}
@@ -641,13 +641,13 @@ export default function Navbar() {
                             <div className="hidden md:flex items-center gap-2">
                                 <Link
                                     href="/login"
-                                    className="px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+                                    className="px-3 xl:px-4 py-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                                 >
                                     Đăng Nhập
                                 </Link>
                                 <Link
                                     href="/register"
-                                    className="px-6 py-2 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-shadow text-sm"
+                                    className="px-4 xl:px-6 py-2 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-shadow text-sm xl:text-base whitespace-nowrap"
                                 >
                                     Đăng Ký
                                 </Link>

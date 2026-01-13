@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./responsive.css";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { AuthProvider } from "@/lib/auth-context";
@@ -28,6 +29,12 @@ export const metadata: Metadata = {
   title: {
     template: "%s | Xe Điện Đức Duy",
     default: "Xe Điện Đức Duy | Xe Đạp & Xe Máy Điện Cao Cấp Chính Hãng",
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
   },
   description: "Showroom xe điện 3D tương tác đầu tiên. Phân phối chính hãng xe máy điện, xe đạp điện TAILG. Trải nghiệm mua sắm hiện đại, bảo hành uy tín.",
   keywords: ["xe điện", "xe máy điện", "xe đạp điện", "TAILG", "xe điện đức duy", "mua xe điện"],
@@ -78,7 +85,7 @@ export default function RootLayout({
                 <CompareProvider>
                   <JsonLd />
                   <Navbar />
-                  <main className="pt-[120px] md:pt-[120px]">
+                  <main className="pt-[140px] sm:pt-[130px] md:pt-[120px] lg:pt-[110px] min-h-screen">
                     {children}
                   </main>
                   <CompareFloatingBar />

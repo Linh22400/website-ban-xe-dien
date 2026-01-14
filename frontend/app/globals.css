@@ -87,6 +87,9 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
   overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  /* Fix for absolute positioning contexts */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -95,6 +98,8 @@ body {
 /* Responsive base font size */
 html {
   font-size: 16px;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 @media (max-width: 640px) {
@@ -243,6 +248,7 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -252,6 +258,7 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
 /* Prevent text size adjustment on zoom */
 * {
   -webkit-text-size-adjust: 100%;

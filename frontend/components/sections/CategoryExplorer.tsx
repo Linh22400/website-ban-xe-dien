@@ -30,17 +30,17 @@ export default function CategoryExplorer() {
         'motorcycle': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
         'blue-cyan': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
         'green-emerald': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
-        
+
         // Bicycle - Red (Đức Duy)
         'bicycle': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
         'green-light': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
         'red-orange': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
-        
+
         // Accessories - Blue
         'accessories': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
         'purple-pink': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
         'violet-indigo': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
-        
+
         // Fallbacks
         'orange-yellow': 'bg-gradient-to-r from-orange-500 to-yellow-400',
         'pink-rose': 'bg-gradient-to-r from-pink-500 to-rose-400',
@@ -54,7 +54,7 @@ export default function CategoryExplorer() {
     // Helper to get hover color class based on category
     const getHoverColorClass = (title?: string, subtitle?: string) => {
         const titleText = `${title || ''} ${subtitle || ''}`.toLowerCase();
-        
+
         if (titleText.includes('máy điện') || titleText.includes('motorcycle')) {
             return 'group-hover:text-emerald-400';
         }
@@ -64,7 +64,7 @@ export default function CategoryExplorer() {
         if (titleText.includes('phụ kiện') || titleText.includes('accessories') || titleText.includes('accessory')) {
             return 'group-hover:text-cyan-400';
         }
-        
+
         return 'group-hover:text-primary'; // fallback
     };
 
@@ -72,7 +72,7 @@ export default function CategoryExplorer() {
     const getColorStyle = (colorString: string | undefined, categoryTitle?: string, categorySubtitle?: string) => {
         // Auto-detect category type from title or subtitle first
         const titleText = `${categoryTitle || ''} ${categorySubtitle || ''}`.toLowerCase();
-        
+
         if (titleText.includes('máy điện') || titleText.includes('motorcycle')) {
             return {
                 className: COLOR_PRESETS['motorcycle'],
@@ -91,7 +91,7 @@ export default function CategoryExplorer() {
                 style: {}
             };
         }
-        
+
         if (!colorString) {
             return {
                 className: COLOR_PRESETS['blue-cyan'],
@@ -174,7 +174,7 @@ export default function CategoryExplorer() {
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {categories.map((cat) => {
                         const colorStyle = getColorStyle(cat.color, cat.title, cat.subtitle);
                         const hoverColorClass = getHoverColorClass(cat.title, cat.subtitle);

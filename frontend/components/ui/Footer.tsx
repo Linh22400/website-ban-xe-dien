@@ -27,7 +27,7 @@ export default function Footer() {
         <footer className="bg-gradient-to-b from-card via-card to-secondary border-t border-white/10">
             {/* Main Footer Content - Enhanced Design */}
             <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     {/* Column 1: Brand & Newsletter - Enhanced */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Brand with logo */}
@@ -324,8 +324,8 @@ export default function Footer() {
                                     <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
                                         Showroom 2 - Cà Mau
                                     </div>
-                                    <a 
-                                        href="https://www.google.com/maps?q=9.19,105.14" 
+                                    <a
+                                        href="https://www.google.com/maps?q=9.19,105.14"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-sm font-medium text-foreground hover:text-primary transition-colors break-words"

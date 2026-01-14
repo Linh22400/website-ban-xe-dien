@@ -55,7 +55,7 @@ export default function LatestNews() {
                 </div>
 
                 {/* Articles Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8">
                     {loading ? (
                         // Loading Skeletons
                         [1, 2, 3].map((i) => (
@@ -81,48 +81,42 @@ export default function LatestNews() {
                                         src={article.coverImage}
                                         alt={article.title}
                                         fill
-                                        sizes="(min-width: 768px) 33vw, 100vw"
+                                        sizes="(min-width: 768px) 33vw, 50vw"
                                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                                    {/* Category Badge */}
+                                    {/* Category Badge - Condensed for Mobile */}
                                     {article.category && (
-                                        <span className="absolute top-4 left-4 bg-background/90 text-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                                        <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-background/90 text-foreground text-[10px] md:text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full uppercase tracking-wider shadow-lg">
                                             {article.category.name}
                                         </span>
                                     )}
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex flex-col flex-grow p-6">
+                                <div className="flex flex-col flex-grow p-3 md:p-6">
                                     {/* Meta Info */}
-                                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3 font-medium">
+                                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-[10px] md:text-xs text-muted-foreground mb-2 md:mb-3 font-medium">
                                         {article.publishedDate && (
-                                            <div className="flex items-center gap-1.5">
-                                                <Calendar className="w-3.5 h-3.5 text-primary" />
+                                            <div className="flex items-center gap-1">
+                                                <Calendar className="w-3 h-3 text-primary" />
                                                 {new Date(article.publishedDate).toLocaleDateString('vi-VN')}
-                                            </div>
-                                        )}
-                                        {article.readingTime && (
-                                            <div className="flex items-center gap-1.5">
-                                                <Clock className="w-3.5 h-3.5 text-primary" />
-                                                {article.readingTime} phút đọc
                                             </div>
                                         )}
                                     </div>
 
-                                    <h3 className="text-xl font-bold text-card-foreground mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                                    <h3 className="text-sm md:text-xl font-bold text-card-foreground mb-2 md:mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                                         {article.title}
                                     </h3>
 
-                                    <p className="text-muted-foreground text-sm line-clamp-3 mb-6 flex-grow">
+                                    <p className="text-muted-foreground text-sm line-clamp-2 mb-3 md:mb-6 flex-grow hidden md:block">
                                         {article.excerpt}
                                     </p>
 
-                                    <div className="flex items-center text-primary font-bold text-sm mt-auto">
+                                    <div className="flex items-center text-primary font-bold text-xs md:text-sm mt-auto">
                                         Đọc tiếp
-                                        <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                                        <ChevronRight className="w-3 h-3 md:w-4 md:h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
                             </Link>

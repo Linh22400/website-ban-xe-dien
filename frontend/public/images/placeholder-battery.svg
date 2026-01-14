@@ -1,0 +1,7 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#f3f4f6"/>
+  <rect x="125" y="75" width="150" height="150" rx="10" stroke="#3b82f6" stroke-width="8" fill="none"/>
+  <rect x="175" y="55" width="50" height="20" rx="5" fill="#3b82f6"/>
+  <path d="M185 150 L200 175 L215 150 M200 125 L200 175" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="50%" y="260" font-family="Arial, sans-serif" font-size="20" fill="#2563eb" text-anchor="middle" font-weight="bold">PIN & SẠC</text>
+</svg>

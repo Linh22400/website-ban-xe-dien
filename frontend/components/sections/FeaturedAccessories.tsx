@@ -7,6 +7,7 @@ import { getAccessories, Accessory } from "@/lib/api";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 import { ArrowRight, Battery, Wrench, Plug, ShieldAlert, Heart, ShoppingCart } from "lucide-react";
+import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
 
 export default function FeaturedAccessories() {
     const [accessories, setAccessories] = useState<Accessory[]>([]);
@@ -26,7 +27,10 @@ export default function FeaturedAccessories() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading || accessories.length === 0) return null;
+    // ...
+
+    if (loading) return <SectionGridSkeleton count={4} titleWidth="w-48" />;
+    if (accessories.length === 0) return null;
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -90,10 +94,10 @@ export default function FeaturedAccessories() {
     };
 
     return (
-        <section className="py-20 px-6 bg-background">
+        <section className="py-10 px-6 bg-background">
             <div className="container mx-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
                             Phụ Kiện & Pin

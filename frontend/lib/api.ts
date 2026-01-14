@@ -78,18 +78,18 @@ export interface LoginData {
 // Development: use local backend
 // Production: use production backend from env or auto-detect
 const getApiUrl = () => {
-  // If explicitly set, use it
-  if (process.env.NEXT_PUBLIC_STRAPI_URL) {
-    return process.env.NEXT_PUBLIC_STRAPI_URL;
-  }
-  
-  // In development (local), default to localhost
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:1337';
-  }
-  
-  // In production, use production backend
-  return 'https://website-ban-xe-dien.onrender.com';
+    // If explicitly set, use it
+    if (process.env.NEXT_PUBLIC_STRAPI_URL) {
+        return process.env.NEXT_PUBLIC_STRAPI_URL;
+    }
+
+    // In development (local), default to localhost
+    if (process.env.NODE_ENV === 'development') {
+        return 'http://localhost:1337';
+    }
+
+    // In production, use production backend
+    return 'https://website-ban-xe-dien.onrender.com';
 };
 
 const STRAPI_URL = getApiUrl();
@@ -140,7 +140,7 @@ function getDefaultFetchOptions(revalidateSeconds: number = 60): RequestInit & {
         return { next: { revalidate: revalidateSeconds } };
     }
     // Browser-side: Cache với max-age để tăng tốc
-    return { 
+    return {
         cache: 'force-cache',
         next: { revalidate: revalidateSeconds }
     };
@@ -151,7 +151,7 @@ function getDefaultFetchOptions(revalidateSeconds: number = 60): RequestInit & {
  * Automatically caches responses in memory to prevent redundant requests
  */
 async function cachedFetch<T>(
-    url: string, 
+    url: string,
     options: RequestInit = {},
     ttlSeconds: number = 60
 ): Promise<T | null> {
@@ -168,7 +168,7 @@ async function cachedFetch<T>(
         if (!response.ok) return null;
 
         const data = await response.json();
-        
+
         // Cache the result (client-side only)
         if (typeof window !== 'undefined') {
             apiCache.set(url, data, ttlSeconds);
@@ -183,8 +183,8 @@ async function cachedFetch<T>(
 
 // Fallback images for each product type
 const FALLBACK_IMAGES: Record<string, string> = {
-    'bicycle': 'https://images.unsplash.com/photo-1571333250630-f0230c320b6d?auto=format&fit=crop&q=80&w=1000',
-    'motorcycle': 'https://images.unsplash.com/photo-1558981001-5864b3250a69?auto=format&fit=crop&q=80&w=1000',
+    'bicycle': '/images/placeholder-bicycle.svg',
+    'motorcycle': '/images/placeholder-motorcycle.svg',
 };
 
 // Transform Strapi response to our Car interface
@@ -240,29 +240,29 @@ function transformStrapiCar(strapiCar: any): Car {
             ? strapiCar.color
                 .filter((c: any) => c && c.name) // Filter out null/undefined colors
                 .map((c: any) => {
-                // Handle multiple images
-                let images: string[] = [];
-                let imageIds: number[] = [];
+                    // Handle multiple images
+                    let images: string[] = [];
+                    let imageIds: number[] = [];
 
-                if (c.images && Array.isArray(c.images)) {
-                    images = c.images.map((img: any) =>
-                        img.url ? (img.url.startsWith('http') ? img.url : `${STRAPI_URL}${img.url}`) : ''
-                    ).filter(Boolean);
-                    imageIds = c.images.map((img: any) => img.id).filter(Boolean);
-                } else if (c.image?.url) {
-                    // Fallback for single image legacy data
-                    const imgUrl = c.image.url.startsWith('http') ? c.image.url : `${STRAPI_URL}${c.image.url}`;
-                    images = [imgUrl];
-                    if (c.image.id) imageIds = [c.image.id];
-                }
+                    if (c.images && Array.isArray(c.images)) {
+                        images = c.images.map((img: any) =>
+                            img.url ? (img.url.startsWith('http') ? img.url : `${STRAPI_URL}${img.url}`) : ''
+                        ).filter(Boolean);
+                        imageIds = c.images.map((img: any) => img.id).filter(Boolean);
+                    } else if (c.image?.url) {
+                        // Fallback for single image legacy data
+                        const imgUrl = c.image.url.startsWith('http') ? c.image.url : `${STRAPI_URL}${c.image.url}`;
+                        images = [imgUrl];
+                        if (c.image.id) imageIds = [c.image.id];
+                    }
 
-                return {
-                    name: c.name || 'Unknown',
-                    hex: c.hex || '#000000',
-                    images: images,
-                    imageIds: imageIds
-                };
-            })
+                    return {
+                        name: c.name || 'Unknown',
+                        hex: c.hex || '#000000',
+                        images: images,
+                        imageIds: imageIds
+                    };
+                })
             : [],
         features: strapiCar.features || [],
         specifications: strapiCar.specifications || [],
@@ -322,7 +322,7 @@ export async function getArticles(): Promise<Article[]> {
     try {
         const url = `${STRAPI_URL}/api/articles?populate[0]=Cover_image&populate[1]=category&sort=createdAt:desc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
-        
+
         if (!data || !data.data) return [];
 
         return data.data.map((item: any) => transformStrapiArticle(item));
@@ -436,7 +436,7 @@ export async function getPromotions(): Promise<Promotion[]> {
     try {
         const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate[0]=image&populate[1]=car_models&sort=createdAt:desc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
-        
+
         if (!data || !data.data) return [];
 
         return data.data.map((item: any) => ({
@@ -464,7 +464,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
     try {
         const url = `${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
-        
+
         if (!data || !data.data) return [];
 
         return data.data.map((item: any) => ({
@@ -493,7 +493,7 @@ export async function getFeaturedCars(): Promise<Car[]> {
 
         const url = `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
-        
+
         if (!data || !data.data) return [];
 
         return data.data.map(transformStrapiCar);
@@ -1006,7 +1006,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
 
         if (DEBUG_LOG) console.log("Fetching accessories from:", url);
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
-        
+
         if (!data || !data.data) return [];
 
 

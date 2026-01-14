@@ -15,7 +15,7 @@ export default function TailgExclusiveShowcase() {
     const featuredProducts = [
         {
             name: 'TAILG M3 Pro',
-            image: '/images/tailg-m3-pro.jpg', // Placeholder
+            image: '/images/placeholder-motorcycle.svg', // Placeholder
             price: '15.990.000đ',
             features: ['Chạy 80km', 'Tốc độ 50km/h', 'Sạc nhanh 4h']
         }

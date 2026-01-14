@@ -1,0 +1,7 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#f0fdf4"/>
+  <circle cx="400" cy="300" r="120" fill="#dcfce7"/>
+  <path d="M400 300m-50 0a50 50 0 1 0 100 0a50 50 0 1 0 -100 0" fill="none" stroke="#22c55e" stroke-width="8"/>
+  <text x="50%" y="450" font-family="Arial, sans-serif" font-size="24" fill="#166534" text-anchor="middle" font-weight="bold">XE ĐẠP ĐIỆN</text>
+  <text x="50%" y="480" font-family="Arial, sans-serif" font-size="16" fill="#15803d" text-anchor="middle">Hình ảnh đang cập nhật</text>
+</svg>

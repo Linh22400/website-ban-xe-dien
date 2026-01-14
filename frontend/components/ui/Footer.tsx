@@ -26,8 +26,8 @@ export default function Footer() {
     return (
         <footer className="bg-gradient-to-b from-card via-card to-secondary border-t border-white/10">
             {/* Main Footer Content - Enhanced Design */}
-            <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div className="container mx-auto px-6 py-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
                     {/* Column 1: Brand & Newsletter - Enhanced */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Brand with logo */}
@@ -222,15 +222,15 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Column 4: Contact - Premium Card */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-5">
-                            <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-                            <ThemeText className="font-black text-sm uppercase tracking-wider">
+                    {/* Column 4: Contact - Streamlined */}
+                    <div className="lg:col-span-1">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-1 h-5 bg-primary rounded-full"></div>
+                            <ThemeText className="font-bold text-sm uppercase tracking-wider">
                                 Liên Hệ
                             </ThemeText>
                         </div>
-                        <div className="space-y-4">
+                        <ul className="space-y-3">
                             {[
                                 {
                                     icon: Phone,
@@ -248,10 +248,17 @@ export default function Footer() {
                                 },
                                 {
                                     icon: MapPin,
-                                    label: "Showroom 1 - Cà Mau",
-                                    value: "118 Nguyễn Tất Thành, Phường 8, Cà Mau",
+                                    label: "Showroom 1",
+                                    value: "118 Nguyễn Tất Thành, P.8, Cà Mau",
                                     href: "https://www.google.com/maps?q=9.17,105.15",
                                     color: "text-red-500"
+                                },
+                                {
+                                    icon: MapPin,
+                                    label: "Showroom 2",
+                                    value: "276B Ngô Quyền, P.1, Cà Mau",
+                                    href: "https://www.google.com/maps?q=9.19,105.14",
+                                    color: "text-purple-500"
                                 },
                                 {
                                     icon: Clock,
@@ -259,171 +266,67 @@ export default function Footer() {
                                     value: "T2-CN: 8:00 - 20:00",
                                     color: "text-orange-500"
                                 }
-                            ].map(({ icon: Icon, label, value, href, color }) => (
-                                <div
-                                    key={label}
-                                    className="group flex items-start gap-3 p-3 rounded-xl border hover:border-primary/30 transition-colors duration-300"
-                                    style={{
-                                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)';
-                                    }}
-                                >
-                                    <div
-                                        className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${color}`}
-                                        style={{
-                                            backgroundImage: isDark
-                                                ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))'
-                                                : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.04))'
-                                        }}
-                                    >
+                            ].map(({ icon: Icon, value, href, color }) => (
+                                <li key={value} className="flex items-start gap-3">
+                                    <div className={`mt-0.5 ${color}`}>
                                         <Icon className="w-4 h-4" />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
-                                            {label}
-                                        </div>
+                                    <div className="flex-1 text-sm">
                                         {href ? (
-                                            <a href={href} className="text-sm font-medium text-foreground hover:text-primary transition-colors break-words">
+                                            <a href={href} className="text-muted-foreground hover:text-primary transition-colors">
                                                 {value}
                                             </a>
                                         ) : (
-                                            <ThemeText className="text-sm font-medium break-words">
+                                            <span className="text-muted-foreground">
                                                 {value}
-                                            </ThemeText>
+                                            </span>
                                         )}
                                     </div>
-                                </div>
+                                </li>
                             ))}
-                        </div>
-
-                        {/* Showroom 2 - Additional Info */}
-                        <div className="mt-4 pt-4 border-t border-white/5">
-                            <div className="flex items-start gap-3 p-3 rounded-xl border"
-                                style={{
-                                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                                    borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'
-                                }}
-                            >
-                                <div
-                                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-purple-500"
-                                    style={{
-                                        backgroundImage: isDark
-                                            ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))'
-                                            : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.04))'
-                                    }}
-                                >
-                                    <MapPin className="w-4 h-4" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
-                                        Showroom 2 - Cà Mau
-                                    </div>
-                                    <a
-                                        href="https://www.google.com/maps?q=9.19,105.14"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-sm font-medium text-foreground hover:text-primary transition-colors break-words"
-                                    >
-                                        276B Ngô Quyền, Phường 1, Cà Mau
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        </ul>
                     </div>
                 </div>
 
-                {/* Partners & Payment - Premium Design */}
-                <div className="border-t border-white/10 pt-6 space-y-4">
-                    {/* Payment & Shipping - Side by Side */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="text-center">
-                            <div className="flex items-center justify-center gap-2 mb-4">
-                                <div className="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
-                                <ThemeText className="text-xs font-bold uppercase tracking-wider">
-                                    Thanh toán
-                                </ThemeText>
-                                <div className="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
-                            </div>
-                            <div className="flex flex-wrap justify-center gap-2">
-                                {['VISA', 'MasterCard', 'MoMo', 'ZaloPay', 'Ngân Hàng', 'Tiền Mặt'].map((method) => (
-                                    <span
-                                        key={method}
-                                        className="px-4 py-2 border hover:border-primary/50 rounded-lg text-xs font-bold text-foreground hover:scale-105 hover:shadow-lg transition-transform duration-300 cursor-default"
-                                        style={{
-                                            willChange: 'transform',
-                                            backgroundImage: isDark
-                                                ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1))'
-                                                : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.06))',
-                                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                                        }}
-                                    >
+                {/* Partners & Payment - Compact & Professional */}
+                <div className="border-t border-white/10 pt-4 mt-0">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        {/* Payment Methods */}
+                        <div className="flex flex-col items-center md:items-start gap-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Chấp nhận thanh toán
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                                {['VISA', 'MasterCard', 'MoMo', 'ZaloPay', 'Tiền Mặt'].map((method) => (
+                                    <span key={method} className="text-[10px] font-medium border border-white/10 bg-white/5 px-2 py-1 rounded text-muted-foreground cursor-default">
                                         {method}
                                     </span>
                                 ))}
                             </div>
                         </div>
-                        <div className="text-center">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <div className="w-8 h-px bg-gradient-to-r from-transparent via-accent to-transparent"></div>
-                                <ThemeText className="text-xs font-bold uppercase tracking-wider">
-                                    Vận chuyển
-                                </ThemeText>
-                                <div className="w-8 h-px bg-gradient-to-r from-transparent via-accent to-transparent"></div>
-                            </div>
-                            <div className="flex flex-wrap justify-center gap-2">
-                                {['Giao Hàng Nhanh', 'Grab Express', 'GHTK', 'Viettel Post'].map((shipping) => (
-                                    <span
-                                        key={shipping}
-                                        className="px-4 py-2 border hover:border-accent/50 rounded-lg text-xs font-bold text-foreground hover:scale-105 hover:shadow-lg transition-transform duration-300 cursor-default"
-                                        style={{
-                                            willChange: 'transform',
-                                            backgroundImage: isDark
-                                                ? 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1))'
-                                                : 'linear-gradient(to bottom right, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.06))',
-                                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                                        }}
-                                    >
-                                        {shipping}
+
+                        {/* Shipping Partners */}
+                        <div className="flex flex-col items-center md:items-start gap-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Đối tác vận chuyển
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                                {['Grab', 'GHTK', 'Viettel Post', 'Ahamove'].map((method) => (
+                                    <span key={method} className="text-[10px] font-medium border border-white/10 bg-white/5 px-2 py-1 rounded text-muted-foreground cursor-default">
+                                        {method}
                                     </span>
                                 ))}
                             </div>
                         </div>
-                    </div>
 
-                    {/* Brand Partners - Premium Showcase */}
-                    <div className="text-center pt-4 border-t border-white/5">
-                        <div className="flex items-center justify-center gap-3 mb-3">
-                            <div className="w-16 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
-                            <div>
-                                <ThemeText className="text-xs font-black uppercase tracking-wider mb-1">
-                                    Đại lý ủy quyền chính thức
-                                </ThemeText>
-                                <p className="text-[10px] text-muted-foreground">Xe điện TAILG chính hãng</p>
-                            </div>
-                            <div className="w-16 h-px bg-gradient-to-r from-transparent via-accent to-transparent"></div>
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-3">
-                            {/* TAILG - Thương hiệu ủy quyền chính */}
-                            <div
-                                className="group relative px-8 py-3 border-2 border-primary/50 rounded-xl overflow-hidden transition-colors duration-300 hover:scale-105 cursor-default"
-                                style={{
-                                    willChange: 'transform',
-                                    backgroundImage: isDark
-                                        ? 'linear-gradient(to bottom right, rgba(0, 229, 255, 0.1), rgba(0, 229, 255, 0.2), rgba(0, 229, 255, 0.1))'
-                                        : 'linear-gradient(to bottom right, rgba(0, 229, 255, 0.05), rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.05))',
-                                    borderColor: '#00e5ff'
-                                }}
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <span className="relative text-base font-black text-primary tracking-wide">
-                                    TAILG
-                                </span>
+                        {/* Official Dealer - Compact */}
+                        <div className="flex flex-col items-center md:items-end gap-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Đại lý ủy quyền
+                            </span>
+                            <div className="flex items-center gap-2 border border-primary/30 bg-primary/5 px-3 py-1.5 rounded-lg">
+                                <span className="font-black text-sm text-primary tracking-widest">TAILG</span>
+                                <span className="text-[10px] text-primary/80">Official Store</span>
                             </div>
                         </div>
                     </div>

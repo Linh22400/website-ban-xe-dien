@@ -14,7 +14,7 @@ interface TailgProductGridClientProps {
     initialDiscountMap?: Record<string, number>;
 }
 
-export default function TailgProductGridClient({ 
+export default function TailgProductGridClient({
     initialProducts = [],
     initialPromotions = [],
     initialDiscountMap = {}
@@ -50,6 +50,10 @@ export default function TailgProductGridClient({
     }, [initialPromotions, promotedCarIds.size]);
 
     useEffect(() => {
+        // Only fetch if we don't have initial products or if tab changes from default
+        if (activeTab === 'new' && initialProducts.length > 0 && products === initialProducts) {
+            return;
+        }
         fetchTailgProducts();
     }, [activeTab]);
 
@@ -69,18 +73,18 @@ export default function TailgProductGridClient({
             }
 
             const data = await getCars(params);
-            
+
             // Fetch fresh promotions data (or use cached)
             let freshPromotions = promotions;
             if (promotions.length === 0) {
                 freshPromotions = await getPromotions();
                 setPromotions(freshPromotions);
             }
-            
+
             // Build discount map
             const promoCarIds = new Set<string>();
             const discounts: Record<string, number> = {};
-            
+
             freshPromotions.forEach(promo => {
                 if (promo.isActive && promo.car_models && promo.discountPercent) {
                     promo.car_models.forEach((car: any) => {
@@ -93,13 +97,13 @@ export default function TailgProductGridClient({
                     });
                 }
             });
-            
+
             setPromotedCarIds(promoCarIds);
             setDiscountMap(discounts);
-            
+
             // For promo tab, filter only cars with active promotions
             if (activeTab === 'promo') {
-                const filteredData = data.filter(car => 
+                const filteredData = data.filter(car =>
                     promoCarIds.has(car.id.toString()) || promoCarIds.has(car.documentId || '')
                 );
                 setProducts(filteredData.slice(0, 8));
@@ -115,7 +119,7 @@ export default function TailgProductGridClient({
     };
 
     return (
-        <section className="py-16 relative overflow-hidden">
+        <section className="py-8 relative overflow-hidden">
             {/* Background decoration */}
             <div
                 className="absolute inset-0 opacity-10"
@@ -128,7 +132,7 @@ export default function TailgProductGridClient({
 
             <div className="container mx-auto px-4 relative z-10">
                 {/* Section Header - Enhanced with Exclusive Dealer Badge */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-8">
                     {/* Badge Row */}
                     <div className="inline-flex items-center gap-3 mb-6">
                         <div className="h-px w-16 bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
@@ -223,13 +227,14 @@ export default function TailgProductGridClient({
                     </div>
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                        {products.map((car) => {
+                        {products.map((car, index) => {
                             const discount = discountMap[car.id.toString()] || discountMap[car.documentId || ''] || 0;
                             return (
-                                <ProductCard 
-                                    key={car.id} 
-                                    car={car} 
+                                <ProductCard
+                                    key={car.id}
+                                    car={car}
                                     discountPercent={discount}
+                                    priority={index < 4} // Eager load first 4 images (desktop row)
                                 />
                             );
                         })}

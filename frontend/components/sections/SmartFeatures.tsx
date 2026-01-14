@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { Battery, Zap, ShieldCheck, Smartphone } from "lucide-react";
+
 export default function SmartFeatures() {
     const [activeCard, setActiveCard] = useState<number | null>(null);
 
@@ -12,40 +14,40 @@ export default function SmartFeatures() {
             title: "Công Nghệ TTFAR",
             subtitle: "Vừa Đi Vừa Sạc",
             description: "Hệ thống thu hồi năng lượng khi phanh và xuống dốc, giúp gia tăng quãng đường di chuyển thêm 20%.",
-            icon: "⚡",
-            image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000",
+            icon: Battery,
+            image: "/images/feature-1.jpg",
             colSpan: "lg:col-span-2",
             bgGradient: "from-emerald-600/20 to-green-600/20"
         },
         {
             id: 2,
-            title: "Pin Graphene",
+            title: "Động Cơ Bosch Đức",
             subtitle: "Bền Bỉ Gấp 3 Lần",
-            description: "Công nghệ pin Graphene thế hệ mới, tuổi thọ lên đến 1300 lần sạc, chịu nhiệt tốt và an toàn tuyệt đối.",
-            icon: "🔋",
-            image: "https://images.unsplash.com/photo-1619641237386-2c1c6a635e55?auto=format&fit=crop&q=80&w=1000",
+            description: "Vận hành êm ái, tiết kiệm năng lượng, chống nước chuẩn IP67.",
+            icon: Zap,
+            image: "/images/feature-2.jpg",
             colSpan: "lg:col-span-1",
-            bgGradient: "from-green-600/20 to-emerald-600/20"
+            bgGradient: "from-blue-600/20 to-sky-600/20"
         },
         {
             id: 3,
-            title: "Kết Nối Thông Minh",
-            subtitle: "Một Chạm NFC & App",
-            description: "Mở khóa xe bằng thẻ NFC hoặc Smartphone. Định vị GPS thời gian thực và kiểm tra tình trạng xe qua App.",
-            icon: "📱",
-            image: "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?auto=format&fit=crop&q=80&w=1000",
+            title: "An Toàn Chủ Động",
+            subtitle: "Phanh ABS & LED",
+            description: "Phanh đĩa ABS, đèn LED ma trận, khung xe thép carbon siêu bền.",
+            icon: ShieldCheck,
+            image: "/images/feature-3.jpg",
             colSpan: "lg:col-span-1",
-            bgGradient: "from-orange-600/20 to-red-600/20"
+            bgGradient: "from-rose-600/20 to-red-600/20"
         },
         {
             id: 4,
-            title: "Kháng Nước IP67",
-            subtitle: "Lội Nước Thoải Mái",
-            description: "Động cơ và linh kiện điện tử được bảo vệ theo chuẩn IP67, vận hành ổn định dưới trời mưa và đường ngập.",
-            icon: "💧",
-            image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&q=80&w=1000",
+            title: "Kết Nối Thông Minh",
+            subtitle: "Một Chạm NFC & App",
+            description: "Định vị GPS, khóa chống trộm qua App, tự động chẩn đoán lỗi.",
+            icon: Smartphone,
+            image: "/images/feature-4.jpg",
             colSpan: "lg:col-span-2",
-            bgGradient: "from-blue-600/20 to-sky-600/20"
+            bgGradient: "from-violet-600/20 to-purple-600/20"
         }
     ];
 
@@ -93,7 +95,7 @@ export default function SmartFeatures() {
                             <div className="relative h-full p-8 flex flex-col justify-end min-h-[300px] lg:min-h-[400px]">
                                 <div className="mb-auto transform transition-all duration-500 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100">
                                     <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-3xl border border-white/20 mb-6">
-                                        {feature.icon}
+                                        <feature.icon className="w-8 h-8 text-white" />
                                     </div>
                                 </div>
 

@@ -10,17 +10,17 @@ interface ElectricMotorcyclesClientProps {
     initialDiscounts: Record<string, number>;
 }
 
-export default function ElectricMotorcyclesClient({ 
+export default function ElectricMotorcyclesClient({
     initialMotorcycles,
-    initialDiscounts 
+    initialDiscounts
 }: ElectricMotorcyclesClientProps) {
     if (initialMotorcycles.length === 0) return null;
 
     return (
-        <section className="py-20 px-6 bg-background">
+        <section className="py-10 px-6 bg-background">
             <div className="container mx-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-foreground">
                             Xe Máy Điện

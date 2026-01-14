@@ -10,17 +10,17 @@ interface FeaturedProductsClientProps {
     initialDiscounts: Record<string, number>;
 }
 
-export default function FeaturedProductsClient({ 
+export default function FeaturedProductsClient({
     initialCars,
-    initialDiscounts 
+    initialDiscounts
 }: FeaturedProductsClientProps) {
     if (initialCars.length === 0) return null;
 
     return (
-        <section className="py-20 px-6 bg-background">
+        <section className="py-10 px-6 bg-background">
             <div className="container mx-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
                             Sản Phẩm Nổi Bật

@@ -46,7 +46,7 @@ export default function WhyChooseTailg() {
     ];
 
     return (
-        <section className="py-20 relative overflow-hidden">
+        <section className="py-10 relative overflow-hidden">
             {/* Background decoration */}
             <div
                 className="absolute inset-0 opacity-20"

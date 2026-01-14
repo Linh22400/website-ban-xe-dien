@@ -12,46 +12,54 @@ import { useTheme } from "@/components/common/ThemeText";
 const STATIC_SLIDES = [
     {
         id: 1,
-        title: "TAILG Chính Hãng",
-        subtitle: "Đại Lý Ủy Quyền",
-        desc: "Ưu tiên xe TAILG chính hãng, bảo hành rõ ràng, hỗ trợ tư vấn chọn xe theo nhu cầu thực tế.",
-        image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=1200",
-        color: "from-primary to-blue-600",
+        title: "Tự Do Khám Phá",
+        subtitle: "Hành Trình Mới",
+        desc: "Khám phá thế giới với dòng xe điện TAILG thế hệ mới. Vận hành êm ái, thân thiện môi trường.",
+        image: "/images/hero-1.jpg",
         link: "/cars?brand=TAILG",
+        color: "from-emerald-600/90 to-teal-900/90",
         order: 1
     },
     {
         id: 2,
-        title: "Bộ Sưu Tập TAILG",
-        subtitle: "Nhiều Dòng Xe",
-        desc: "Chọn theo loại xe, tầm hoạt động, tốc độ và mức giá phù hợp. Xem ngay danh sách TAILG.",
-        image: "https://images.unsplash.com/photo-1571333250630-f0230c320b6d?auto=format&fit=crop&q=80&w=1200",
-        color: "from-emerald-500 to-green-600",
-        link: "/cars?brand=TAILG",
+        title: "Công Nghệ Đỉnh Cao",
+        subtitle: "Tiên Phong Xu Hướng",
+        desc: "Trải nghiệm công nghệ pin thông minh và động cơ hiệu suất cao. Sạc 1 lần, đi cả tuần.",
+        image: "/images/hero-2.jpg",
+        link: "/technology",
+        color: "from-blue-600/90 to-indigo-900/90",
         order: 2
     },
     {
         id: 3,
-        title: "Đăng Ký Lái Thử",
-        subtitle: "Trải Nghiệm Thực Tế",
-        desc: "Đăng ký lái thử để chọn đúng xe TAILG phù hợp chiều cao, lộ trình và nhu cầu sử dụng.",
-        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=1200",
-        color: "from-orange-500 to-red-600",
-        link: "/lai-thu",
+        title: "Ưu Đãi Đặc Biệt",
+        subtitle: "Mùa Hè Sôi Động",
+        desc: "Giảm ngay 2.000.000đ khi mua xe máy điện trong tháng này. Tặng kèm mũ bảo hiểm cao cấp.",
+        image: "/images/hero-3.jpg",
+        link: "/promotions",
+        color: "from-rose-600/90 to-red-900/90",
         order: 3
     }
 ];
 
 type SlideType = (HeroSlide | Promotion) & { slideType: 'hero' | 'promotion' };
 
-export default function HeroSlider() {
+interface HeroSliderProps {
+    initialSlides?: SlideType[];
+}
+
+export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
     const isDark = useTheme();
-    const [slides, setSlides] = useState<SlideType[]>([]);
+    const [slides, setSlides] = useState<SlideType[]>(initialSlides.length > 0 ? initialSlides : []);
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [loading, setLoading] = useState(true);
+    // Only load if no initial slides provided
+    const [loading, setLoading] = useState(initialSlides.length === 0);
     const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
+        // Only fetch if we didn't receive initial slides
+        if (initialSlides.length > 0) return;
+
         Promise.all([getHeroSlides(), getPromotions()])
             .then(([heroData, promoData]) => {
                 // Prioritize TAILG promotions
@@ -86,7 +94,7 @@ export default function HeroSlider() {
             })
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
-    }, []);
+    }, [initialSlides.length]);
 
     // Auto-advance timer (pauses on hover or manual navigation)
     useEffect(() => {
@@ -113,9 +121,11 @@ export default function HeroSlider() {
     };
 
     // Ensure all slides have slideType property
+    // If loading is true (fetching client side) or slides is empty, use STATIC_SLIDES
+    // But if we have initialSlides, use those.
     const displaySlides: SlideType[] = slides.length > 0
         ? slides
-        : STATIC_SLIDES.map(s => ({ ...s, slideType: 'hero' as const }));
+        : (loading ? STATIC_SLIDES.map(s => ({ ...s, slideType: 'hero' as const })) : STATIC_SLIDES.map(s => ({ ...s, slideType: 'hero' as const })));
 
     return (
         <div
@@ -143,7 +153,7 @@ export default function HeroSlider() {
                             // Not JSON, use as-is
                             finalLink = slide.link;
                         }
-                        
+
                         return (
                             <Link
                                 href={finalLink}
@@ -160,6 +170,8 @@ export default function HeroSlider() {
                         src={slide.image}
                         alt={slide.title || "Hero Banner"}
                         fill
+                        sizes="100vw"
+                        quality={90}
                         className={`${slide.link ? 'cursor-pointer' : ''} object-contain object-center bg-background`}
                         priority={index === 0}
                     />

@@ -1,0 +1,6 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#fff1f2"/>
+  <path d="M200 80 C150 80 110 120 110 170 L110 200 L290 200 L290 170 C290 120 250 80 200 80 Z" fill="none" stroke="#e11d48" stroke-width="8"/>
+  <rect x="180" y="200" width="40" height="20" fill="#e11d48"/>
+  <text x="50%" y="260" font-family="Arial, sans-serif" font-size="20" fill="#be123c" text-anchor="middle" font-weight="bold">MŨ BẢO HIỂM</text>
+</svg>

@@ -140,7 +140,7 @@ export default function Navbar() {
                     return {
                         href: `/cars/${car.slug}`,
                         label: car.name,
-                        image: car.thumbnail || '/images/placeholder-product.jpg',
+                        image: car.thumbnail || '/images/placeholder-motorcycle.svg',
                         price: `${Math.round(finalPrice).toLocaleString('vi-VN')}\u20ab`,
                         originalPrice: discount > 0 ? `${car.price.toLocaleString('vi-VN')}\u20ab` : undefined,
                         discount: discount > 0 ? Math.round(discount) : undefined,
@@ -163,7 +163,7 @@ export default function Navbar() {
                     return {
                         href: `/cars/${car.slug}`,
                         label: car.name,
-                        image: car.thumbnail || '/images/placeholder-product.jpg',
+                        image: car.thumbnail || '/images/placeholder-bicycle.svg',
                         price: `${Math.round(finalPrice).toLocaleString('vi-VN')}\u20ab`,
                         originalPrice: discount > 0 ? `${car.price.toLocaleString('vi-VN')}\u20ab` : undefined,
                         discount: discount > 0 ? Math.round(discount) : undefined,
@@ -194,7 +194,7 @@ export default function Navbar() {
                     return {
                         href: `/accessories#${acc.slug}`,
                         label: acc.name,
-                        image: acc.image || 'https://via.placeholder.com/300x200?text=Accessory',
+                        image: acc.image || '/images/placeholder.svg',
                         price: acc.price > 0 ? `${acc.price.toLocaleString('vi-VN')}\u20ab` : 'Li\u00ean h\u1ec7',
                         desc: categoryLabels[acc.category] || acc.category,
                         product: acc
@@ -204,9 +204,9 @@ export default function Navbar() {
                 // If less than 4, add some category links
                 if (accessoryItems.length < 4) {
                     const categories = [
-                        { href: '/accessories?category=battery', label: 'Pin & S\u1ea1c', desc: 'Pin lithium ch\u00ednh h\u00e3ng', image: 'https://images.unsplash.com/photo-1609069768451-aa3e54d48f1e?auto=format&fit=crop&q=80&w=400', price: 'T\u1eeb 1.200.000\u20ab' },
-                        { href: '/accessories?category=helmet', label: 'M\u0169 B\u1ea3o Hi\u1ec3m', desc: 'Ch\u1ea5t l\u01b0\u1ee3ng cao', image: 'https://images.unsplash.com/photo-1609069768451-aa3e54d48f1e?auto=format&fit=crop&q=80&w=400', price: 'T\u1eeb 350.000\u20ab' },
-                        { href: '/accessories?category=other', label: 'Ph\u1ee5 ki\u1ec7n kh\u00e1c', desc: 'Ph\u1ee5 ki\u1ec7n \u0111a d\u1ea1ng', image: 'https://images.unsplash.com/photo-1609069768451-aa3e54d48f1e?auto=format&fit=crop&q=80&w=400', price: 'Li\u00ean h\u1ec7' }
+                        { href: '/accessories?category=battery', label: 'Pin & Sạc', desc: 'Pin lithium chính hãng', image: '/images/placeholder-battery.svg', price: 'Từ 1.200.000₫' },
+                        { href: '/accessories?category=helmet', label: 'Mũ Bảo Hiểm', desc: 'Chất lượng cao', image: '/images/placeholder-helmet.svg', price: 'Từ 350.000₫' },
+                        { href: '/accessories?category=other', label: 'Phụ kiện khác', desc: 'Phụ kiện đa dạng', image: '/images/placeholder.svg', price: 'Liên hệ' }
                     ];
 
                     categories.slice(0, 4 - accessoryItems.length).forEach(cat => {
@@ -374,7 +374,7 @@ export default function Navbar() {
                                                     {/* Image */}
                                                     <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
                                                         <Image
-                                                            src={item.image || '/images/placeholder-product.jpg'}
+                                                            src={item.image || '/images/placeholder-motorcycle.svg'}
                                                             alt={item.label}
                                                             fill
                                                             className="object-cover group-hover/item:scale-110 transition-transform duration-300"
@@ -444,7 +444,7 @@ export default function Navbar() {
                                                     {/* Image */}
                                                     <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
                                                         <Image
-                                                            src={item.image || '/images/placeholder-product.jpg'}
+                                                            src={item.image || '/images/placeholder-bicycle.svg'}
                                                             alt={item.label}
                                                             fill
                                                             className="object-cover group-hover/item:scale-110 transition-transform duration-300"
@@ -514,7 +514,7 @@ export default function Navbar() {
                                                     {/* Image */}
                                                     <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
                                                         <Image
-                                                            src={item.image || 'https://via.placeholder.com/300x200?text=Accessory'}
+                                                            src={item.image || '/images/placeholder.svg'}
                                                             alt={item.label}
                                                             fill
                                                             className="object-cover group-hover/item:scale-110 transition-transform duration-300"
@@ -699,7 +699,7 @@ export default function Navbar() {
                                     >
                                         <div className="relative aspect-[4/3] w-full bg-white p-2">
                                             <Image
-                                                src={item.image || '/images/placeholder.png'}
+                                                src={item.image || '/images/placeholder-motorcycle.svg'}
                                                 alt={item.label}
                                                 fill
                                                 className="object-contain"
@@ -750,7 +750,7 @@ export default function Navbar() {
                                     >
                                         <div className="relative aspect-[4/3] w-full bg-white p-2">
                                             <Image
-                                                src={item.image || '/images/placeholder.png'}
+                                                src={item.image || '/images/placeholder-bicycle.svg'}
                                                 alt={item.label}
                                                 fill
                                                 className="object-contain"
@@ -801,7 +801,7 @@ export default function Navbar() {
                                     >
                                         <div className="relative aspect-square w-full bg-white p-2">
                                             <Image
-                                                src={item.image || '/images/placeholder.png'}
+                                                src={item.image || (item.label.toLowerCase().includes('pin') ? '/images/placeholder-battery.svg' : item.label.toLowerCase().includes('mũ') ? '/images/placeholder-helmet.svg' : '/images/placeholder.svg')}
                                                 alt={item.label}
                                                 fill
                                                 className="object-contain"

@@ -32,10 +32,10 @@ export default function LatestNews() {
     }
 
     return (
-        <section className="py-20 bg-background border-t border-border">
+        <section className="py-10 bg-background border-t border-border">
             <div className="container mx-auto px-4">
                 {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                     <div className="max-w-2xl">
                         <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Cập Nhật Mới Nhất</span>
                         <h2 className="text-3xl md:text-4xl font-black text-foreground uppercase leading-tight">

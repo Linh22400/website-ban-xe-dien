@@ -15,10 +15,10 @@ import { getProductBadge } from "@/lib/product-badge";
 interface ProductCardProps {
     car: Car;
     discountPercent?: number;
+    priority?: boolean;
 }
 
-
-export default function ProductCard({ car, discountPercent = 0 }: ProductCardProps) {
+export default function ProductCard({ car, discountPercent = 0, priority = false }: ProductCardProps) {
     const { addCarToCompare, isInCompare, removeCarFromCompare } = useCompare();
     const { addToCart } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
@@ -119,6 +119,9 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     style={{ willChange: 'transform' }}
+                    priority={priority}
+                    quality={85} // Optimal balance
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
 
                 {/* Overlay Gradient */}
@@ -140,13 +143,13 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
 
                 {/* Dynamic Product Badge - Top Right */}
                 <div className="absolute top-3 right-3">
-                    <ProductBadge 
+                    <ProductBadge
                         product={{
                             ...car,
                             discount: discountPercent,
                             originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
-                        }} 
-                        size="md" 
+                        }}
+                        size="md"
                     />
                 </div>
 
@@ -167,17 +170,15 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
             <div className="p-5">
                 <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">{car.brand}</div>
                 <Link href={`/cars/${car.slug}`}>
-                    <h3 className={`text-xl font-bold mb-2 transition-all duration-300 line-clamp-1 relative inline-block ${
-                        car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' : 
-                        car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' : 
-                        'text-primary'
-                    } group-hover:scale-105 group-hover:tracking-wide`}>
+                    <h3 className={`text-xl font-bold mb-2 transition-all duration-300 line-clamp-1 relative inline-block ${car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
+                        car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                            'text-primary'
+                        } group-hover:scale-105 group-hover:tracking-wide`}>
                         {car.name}
-                        <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
-                            car.type === 'motorcycle' ? 'bg-emerald-500' :
+                        <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${car.type === 'motorcycle' ? 'bg-emerald-500' :
                             car.type === 'bicycle' ? 'bg-rose-500' :
-                            'bg-primary'
-                        }`}></span>
+                                'bg-primary'
+                            }`}></span>
                     </h3>
                 </Link>
 
@@ -192,23 +193,21 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                             maxDisplay={5}
                         />
                         <p className="text-xs text-muted-foreground mt-1.5">
-                            Màu: <span className={`font-medium ${
-                                car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
+                            Màu: <span className={`font-medium ${car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
                                 car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
-                                'text-primary'
-                            }`}>{selectedColor?.name}</span>
+                                    'text-primary'
+                                }`}>{selectedColor?.name}</span>
                         </p>
                     </div>
                 )}
 
                 <div className="flex items-end justify-between mt-4">
                     <div>
-                        <div className={`text-lg font-bold ${
-                            discountPercent > 0 ? 'text-red-500' :
+                        <div className={`text-lg font-bold ${discountPercent > 0 ? 'text-red-500' :
                             car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
-                            car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
-                            'text-primary'
-                        }`}>
+                                car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                                    'text-primary'
+                            }`}>
                             {formatPrice(finalPrice)}
                         </div>
                         {discountPercent > 0 && (
@@ -222,11 +221,10 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         {/* Add to Cart Button */}
                         <button
                             onClick={handleAddToCart}
-                            className={`w-9 h-9 rounded-full text-white flex items-center justify-center transition-transform hover:scale-105 shadow-lg ${
-                                car.type === 'motorcycle' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/50' :
+                            className={`w-9 h-9 rounded-full text-white flex items-center justify-center transition-transform hover:scale-105 shadow-lg ${car.type === 'motorcycle' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/50' :
                                 car.type === 'bicycle' ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/50' :
-                                'bg-primary hover:bg-accent shadow-primary/50'
-                            }`}
+                                    'bg-primary hover:bg-accent shadow-primary/50'
+                                }`}
                             style={{ willChange: 'transform' }}
                             title="Thêm vào giỏ hàng"
                         >
@@ -238,8 +236,8 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                             onClick={handleCompareClick}
                             className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${isSelected
                                 ? (car.type === 'motorcycle' ? 'bg-emerald-500 text-white hover:bg-red-500' :
-                                   car.type === 'bicycle' ? 'bg-rose-500 text-white hover:bg-red-500' :
-                                   'bg-primary text-black hover:bg-red-500 hover:text-white')
+                                    car.type === 'bicycle' ? 'bg-rose-500 text-white hover:bg-red-500' :
+                                        'bg-primary text-black hover:bg-red-500 hover:text-white')
                                 : 'bg-white/10 hover:bg-white hover:text-black'
                                 }`}
                             title={isSelected ? "Bỏ so sánh" : "Thêm vào so sánh"}
@@ -252,11 +250,10 @@ export default function ProductCard({ car, discountPercent = 0 }: ProductCardPro
                         {/* View Details Button */}
                         <Link
                             href={`/cars/${car.slug}`}
-                            className={`w-9 h-9 rounded-full bg-white/10 flex items-center justify-center transition-colors ${
-                                car.type === 'motorcycle' ? 'group-hover:bg-emerald-500 group-hover:text-white' :
+                            className={`w-9 h-9 rounded-full bg-white/10 flex items-center justify-center transition-colors ${car.type === 'motorcycle' ? 'group-hover:bg-emerald-500 group-hover:text-white' :
                                 car.type === 'bicycle' ? 'group-hover:bg-rose-500 group-hover:text-white' :
-                                'group-hover:bg-primary group-hover:text-black'
-                            }`}
+                                    'group-hover:bg-primary group-hover:text-black'
+                                }`}
                             title="Xem chi tiết"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

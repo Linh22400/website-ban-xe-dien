@@ -1,22 +1,27 @@
+import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import HeroSlider from "@/components/hero/HeroSlider";
 import QuickFinder from "@/components/hero/QuickFinder";
 import CategoryExplorer from "@/components/sections/CategoryExplorer";
+import LazySection from "@/components/common/LazySection";
+import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
+
+// Static imports for Server Components (Async)
 import TailgProductGrid from "@/components/sections/TailgProductGrid";
 import WhyChooseTailg from "@/components/sections/WhyChooseTailg";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import ElectricMotorcycles from "@/components/sections/ElectricMotorcycles";
 import ElectricBicycles from "@/components/sections/ElectricBicycles";
-import LiveChatWidget from "@/components/ui/LiveChatWidget";
+import FeaturedAccessories from "@/components/sections/FeaturedAccessories";
+import LatestNews from "@/components/sections/LatestNews";
 
-// Lazy load below-the-fold sections (SSR enabled for SEO)
-const FeaturedAccessories = dynamic(() => import("@/components/sections/FeaturedAccessories"));
-const LatestNews = dynamic(() => import("@/components/sections/LatestNews"));
+// Dynamic import for Client Components ONLY
+const LiveChatWidget = dynamic(() => import("@/components/ui/LiveChatWidget"));
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Hero Banner (ưu tiên TAILG + khuyến mãi) */}
+      {/* Hero Banner - Client Load for faster TTFB */}
       <HeroSlider />
 
       <div className="relative z-10 pb-12 pt-8">
@@ -25,24 +30,50 @@ export default function Home() {
         </div>
       </div>
 
-      <CategoryExplorer />
+      <Suspense fallback={<div className="h-24 w-full bg-gray-100/5 dark:bg-gray-800/5 animate-pulse" />}>
+        <CategoryExplorer />
+      </Suspense>
+
+
 
       {/* ========== TAILG ZONE START ========== */}
-      {/* TAILG Product Grid - Enhanced with Exclusive Dealer branding */}
-      <TailgProductGrid />
+      {/* TailgProductGrid: Removed LazySection to fix LCP on reload. 
+          Suspense allows it to stream in parallel without blocking initial HTML. */}
+      <Suspense fallback={<SectionGridSkeleton count={8} titleWidth="w-96" />}>
+        <TailgProductGrid />
+      </Suspense>
 
-      {/* Why Choose TAILG - Trust building (moved up for better conversion) */}
-      <WhyChooseTailg />
+      <LazySection>
+        <WhyChooseTailg />
+      </LazySection>
       {/* ========== TAILG ZONE END ========== */}
 
-      {/* ========== STANDARD E-COMMERCE BLOCKS (MULTI-BRAND FRIENDLY) ========== */}
-      <FeaturedProducts />
-      <ElectricMotorcycles />
-      <ElectricBicycles />
+      {/* ========== STANDARD E-COMMERCE BLOCKS ========== */}
+      <LazySection className="min-h-[400px]">
+        <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-64" />}>
+          <FeaturedProducts />
+        </Suspense>
+      </LazySection>
 
-      <FeaturedAccessories />
+      <LazySection>
+        <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-48" />}>
+          <ElectricMotorcycles />
+        </Suspense>
+      </LazySection>
 
-      <LatestNews />
+      <LazySection>
+        <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-48" />}>
+          <ElectricBicycles />
+        </Suspense>
+      </LazySection>
+
+      <LazySection>
+        <FeaturedAccessories />
+      </LazySection>
+
+      <LazySection>
+        <LatestNews />
+      </LazySection>
 
       <LiveChatWidget />
     </main>

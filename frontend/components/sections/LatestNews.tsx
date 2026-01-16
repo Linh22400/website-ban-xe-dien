@@ -55,11 +55,11 @@ export default function LatestNews() {
                 </div>
 
                 {/* Articles Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8">
+                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-3 md:gap-8 pb-4 md:pb-0 scrollbar-hide">
                     {loading ? (
                         // Loading Skeletons
                         [1, 2, 3].map((i) => (
-                            <div key={i} className="animate-pulse">
+                            <div key={i} className="flex-shrink-0 w-[80vw] md:w-auto snap-center animate-pulse">
                                 <div className="bg-muted aspect-[4/3] rounded-2xl mb-4"></div>
                                 <div className="h-4 bg-muted w-1/3 mb-3 rounded"></div>
                                 <div className="h-6 bg-muted w-3/4 mb-3 rounded"></div>
@@ -72,7 +72,7 @@ export default function LatestNews() {
                                 // Route chi tiết bài viết: /blog/[slug]
                                 href={`/blog/${article.slug}`}
                                 key={article.id}
-                                className="group flex flex-col h-full bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-border ring-1 ring-black/5 dark:ring-white/10 hover:-translate-y-1"
+                                className="flex-shrink-0 w-[80vw] md:w-auto snap-center group flex flex-col h-full bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-border ring-1 ring-black/5 dark:ring-white/10 hover:-translate-y-1"
                             >
                                 {/* Image Container */}
                                 <div className="relative aspect-[4/3] overflow-hidden">

@@ -20,6 +20,13 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "stock": {
+      "type": "integer",
+      "default": 0
     }
   },
   "config": {}

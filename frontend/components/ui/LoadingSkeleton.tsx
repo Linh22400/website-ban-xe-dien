@@ -43,15 +43,38 @@ export default function LoadingSkeleton() {
                     <div className="w-64 h-10 rounded-lg bg-gray-200 dark:bg-zinc-800 animate-pulse" />
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     {[...Array(8)].map((_, i) => (
-                        <div key={i} className="aspect-[3/4] rounded-2xl bg-gray-100 dark:bg-zinc-800/60 animate-pulse flex flex-col p-4 space-y-3 border border-transparent dark:border-white/5">
-                            <div className="w-full aspect-square rounded-lg bg-white dark:bg-zinc-700/50" />
-                            <div className="w-3/4 h-4 rounded bg-gray-200 dark:bg-zinc-700" />
-                            <div className="w-1/2 h-4 rounded bg-gray-200 dark:bg-zinc-700" />
-                            <div className="mt-auto flex justify-between items-end pt-2">
-                                <div className="w-20 h-6 rounded bg-gray-200 dark:bg-zinc-700" />
-                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-zinc-700" />
+                        <div key={i} className="bg-white dark:bg-card rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-white/5 animate-pulse flex flex-col">
+                            {/* Image Skeleton */}
+                            <div className="w-full aspect-[4/3] bg-gray-200 dark:bg-zinc-800" />
+                            
+                            <div className="p-5 flex flex-col flex-1">
+                                {/* Brand */}
+                                <div className="h-3 w-20 bg-gray-100 dark:bg-zinc-800 rounded mb-2" />
+                                
+                                {/* Name */}
+                                <div className="h-6 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded mb-3" />
+                                
+                                {/* Color Picker Mock */}
+                                <div className="flex gap-2 mb-4">
+                                    {[...Array(4)].map((_, j) => (
+                                        <div key={j} className="w-4 h-4 rounded-full bg-gray-100 dark:bg-zinc-800" />
+                                    ))}
+                                </div>
+                                
+                                {/* Price and Actions */}
+                                <div className="mt-auto flex justify-between items-end pt-2">
+                                    <div className="space-y-1">
+                                        <div className="h-6 w-24 bg-gray-200 dark:bg-zinc-700 rounded" />
+                                        <div className="h-3 w-16 bg-gray-100 dark:bg-zinc-800 rounded" />
+                                    </div>
+                                    
+                                    <div className="flex gap-2">
+                                        <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-zinc-800" />
+                                        <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-zinc-800" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}

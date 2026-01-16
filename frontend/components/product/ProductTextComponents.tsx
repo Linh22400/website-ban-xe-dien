@@ -103,11 +103,11 @@ export const SpecValue = ({ children, className = "" }: { children: ReactNode; c
     }, []);
 
     return (
-        <span
-            className={`font-bold text-right ${className}`}
+        <div
+            className={`font-semibold ${className}`}
             style={{ color: isDark ? '#ffffff' : '#111827' }}
         >
             {children}
-        </span>
+        </div>
     );
 };

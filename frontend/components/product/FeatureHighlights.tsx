@@ -10,18 +10,18 @@ interface FeatureHighlightsProps {
 
 export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
     // Helper to map string icon names to components
-    const getIcon = (name?: string) => {
-        const props = { className: "w-8 h-8" };
-        if (!name) return <Zap {...props} className="w-8 h-8 text-primary" />;
+    const getIcon = (name?: string, className: string = "w-8 h-8") => {
+        const props = { className };
+        if (!name) return <Zap {...props} className={`${className} text-primary`} />;
         
         switch (name.toLowerCase()) {
-            case 'battery': return <Battery {...props} className="w-8 h-8 text-primary" />;
-            case 'zap': return <Zap {...props} className="w-8 h-8 text-yellow-500" />;
-            case 'shield': return <Shield {...props} className="w-8 h-8 text-green-500" />;
-            case 'smartphone': return <Smartphone {...props} className="w-8 h-8 text-purple-500" />;
-            case 'wind': return <Wind {...props} className="w-8 h-8 text-cyan-500" />;
-            case 'gauge': return <Gauge {...props} className="w-8 h-8 text-red-500" />;
-            default: return <Zap {...props} className="w-8 h-8 text-primary" />;
+            case 'battery': return <Battery {...props} className={`${className} text-primary`} />;
+            case 'zap': return <Zap {...props} className={`${className} text-yellow-500`} />;
+            case 'shield': return <Shield {...props} className={`${className} text-green-500`} />;
+            case 'smartphone': return <Smartphone {...props} className={`${className} text-purple-500`} />;
+            case 'wind': return <Wind {...props} className={`${className} text-cyan-500`} />;
+            case 'gauge': return <Gauge {...props} className={`${className} text-red-500`} />;
+            default: return <Zap {...props} className={`${className} text-primary`} />;
         }
     };
 
@@ -80,20 +80,20 @@ export default function FeatureHighlights({ car }: FeatureHighlightsProps) {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="p-8 rounded-3xl bg-card/30 border border-white/5 hover:border-primary/30 transition-all hover:-translate-y-1 group"
+                            className="p-3 md:p-8 rounded-2xl md:rounded-3xl bg-card/30 border border-white/5 hover:border-primary/30 transition-all hover:-translate-y-1 group"
                         >
-                            <div className={`w-16 h-16 rounded-2xl ${feature.bg || 'bg-primary/10'} flex items-center justify-center mb-6 group-hover:scale-105 transition-transform`}
+                            <div className={`w-10 h-10 md:w-16 md:h-16 rounded-xl md:rounded-2xl ${feature.bg || 'bg-primary/10'} flex items-center justify-center mb-3 md:mb-6 group-hover:scale-105 transition-transform`}
                                 style={{ willChange: 'transform' }}>
-                                {getIcon(feature.icon)}
+                                {getIcon(feature.icon, "w-5 h-5 md:w-8 md:h-8")}
                             </div>
-                            <FeatureTitle className="mb-3">
+                            <FeatureTitle className="mb-2 md:mb-3 text-sm md:text-xl">
                                 {feature.title}
                             </FeatureTitle>
-                            <p className="text-muted-foreground leading-relaxed">
+                            <p className="text-muted-foreground leading-relaxed text-xs md:text-base">
                                 {feature.desc}
                             </p>
                         </div>

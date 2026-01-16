@@ -99,6 +99,22 @@ export interface ProductColors extends Struct.ComponentSchema {
     hex: Schema.Attribute.String & Schema.Attribute.Required;
     images: Schema.Attribute.Media<'images', true>;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    price: Schema.Attribute.Decimal;
+    stock: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ProductOptions extends Struct.ComponentSchema {
+  collectionName: 'components_product_options';
+  info: {
+    description: 'Product configuration options like Battery, Version, etc.';
+    displayName: 'options';
+  };
+  attributes: {
+    group: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Battery'>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    priceAdjustment: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    stock: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -113,6 +129,7 @@ declare module '@strapi/strapi' {
       'product.article-text': ProductArticleText;
       'product.article-two-column': ProductArticleTwoColumn;
       'product.colors': ProductColors;
+      'product.options': ProductOptions;
     }
   }
 }

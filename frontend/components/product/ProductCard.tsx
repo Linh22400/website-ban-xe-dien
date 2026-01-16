@@ -35,11 +35,15 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
     const selectedColor = validColors?.[selectedColorIndex] || validColors?.[0];
     const displayImage = selectedColor?.images?.[0] || car.thumbnail;
 
+    // Price Logic - Use variant price if available
+    const originalPrice = selectedColor?.price || car.price;
+    const finalPrice = discountPercent > 0 ? originalPrice * (1 - discountPercent / 100) : originalPrice;
+
     // Check if product has any badge to display
     const hasBadge = getProductBadge({
         ...car,
         discount: discountPercent,
-        originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
+        originalPrice: discountPercent > 0 ? originalPrice / (1 - discountPercent / 100) : undefined
     }) !== null;
 
 
@@ -47,8 +51,6 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
-
-    const finalPrice = discountPercent > 0 ? car.price * (1 - discountPercent / 100) : car.price;
 
     const handleCompareClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -74,7 +76,7 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
             id: car.id,
             name: car.name,
             price: finalPrice,
-            originalPrice: discountPercent > 0 ? car.price : undefined,
+            originalPrice: discountPercent > 0 ? originalPrice : undefined,
             image: gallery[0],
             gallery: gallery,
             colorName: selectedColor?.name || "Mặc định",
@@ -212,7 +214,7 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
                         </div>
                         {discountPercent > 0 && (
                             <div className="text-xs text-gray-500 line-through">
-                                {formatPrice(car.price)}
+                                {formatPrice(originalPrice)}
                             </div>
                         )}
                     </div>

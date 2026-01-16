@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Car, getRelatedCars, getPromotions } from "@/lib/api";
 import ProductCard from "./ProductCard";
+import { SubHeading } from "@/components/common/ThemeText";
 
 interface RelatedProductsProps {
     currentSlug: string;
@@ -40,14 +41,15 @@ export default function RelatedProducts({ currentSlug, type }: RelatedProductsPr
 
     return (
         <div className="space-y-8">
-            <h2 className="text-2xl font-bold text-white">Sản Phẩm Tương Tự</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <SubHeading>Sản Phẩm Tương Tự</SubHeading>
+            <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 pb-4 md:pb-0 scrollbar-hide">
                 {relatedCars.map((car) => (
-                    <ProductCard
-                        key={car.id}
-                        car={car}
-                        discountPercent={discounts[car.id] || 0}
-                    />
+                    <div key={car.id} className="flex-shrink-0 w-[80vw] md:w-auto snap-center">
+                        <ProductCard
+                            car={car}
+                            discountPercent={discounts[car.id] || 0}
+                        />
+                    </div>
                 ))}
             </div>
         </div>

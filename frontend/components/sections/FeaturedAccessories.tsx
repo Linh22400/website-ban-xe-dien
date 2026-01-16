@@ -126,7 +126,7 @@ export default function FeaturedAccessories() {
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 pb-4 sm:pb-0 scrollbar-hide">
                     {accessories.map((accessory) => {
                         const inWishlist = isInWishlist(accessory.id);
                         const showToast = toastMessage?.id === accessory.id;
@@ -134,7 +134,7 @@ export default function FeaturedAccessories() {
                         return (
                             <div
                                 key={accessory.id}
-                                className="group bg-white dark:bg-card border-2 border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/10 relative"
+                                className="flex-shrink-0 w-[80vw] sm:w-auto snap-center group bg-white dark:bg-card border-2 border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl hover:shadow-primary/10 relative"
                             >
                                 {/* Toast Notification */}
                                 {showToast && (

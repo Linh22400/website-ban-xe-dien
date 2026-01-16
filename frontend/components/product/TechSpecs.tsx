@@ -66,14 +66,14 @@ export default function TechSpecs({ car }: TechSpecsProps) {
                         </div>
                     </div>
 
-                    <div className="grid gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
+                    <div className="grid grid-cols-2 md:grid-cols-1 gap-3 md:gap-px md:bg-white/10 md:rounded-2xl md:overflow-hidden md:border md:border-white/10">
                         {specs.map((spec, index) => (
                             <div
                                 key={index}
-                                className="grid grid-cols-2 p-5 bg-background/95 hover:bg-white/5 transition-colors"
+                                className="flex flex-col justify-center p-3 md:p-5 rounded-2xl md:rounded-none bg-card/30 md:bg-background/95 border border-white/5 md:border-none md:grid md:grid-cols-2 gap-1 sm:gap-0 hover:bg-white/5 transition-colors"
                             >
-                                <span className="text-muted-foreground font-medium">{spec.label}</span>
-                                <SpecValue>{spec.value}</SpecValue>
+                                <span className="text-muted-foreground font-medium text-xs md:text-base mb-1 md:mb-0">{spec.label}</span>
+                                <SpecValue className="text-sm md:text-base font-bold md:font-semibold">{spec.value}</SpecValue>
                             </div>
                         ))}
                     </div>

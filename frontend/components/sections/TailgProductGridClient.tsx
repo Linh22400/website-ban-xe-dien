@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, TrendingUp, Sparkles, Clock } from 'lucide-react';
+import { ArrowRight, TrendingUp, Sparkles, Clock, Shield, DollarSign, Headphones, Award } from 'lucide-react';
 import { useTheme, ThemeText } from '@/components/common/ThemeText';
 import { TailgOfficialBadge } from '@/components/ui/TailgBadge';
 import ProductCard from '@/components/product/ProductCard';
@@ -31,6 +31,45 @@ export default function TailgProductGridClient({
         { id: 'new' as const, label: 'Mới Nhất', icon: Sparkles },
         { id: 'bestseller' as const, label: 'Bán Chạy', icon: TrendingUp },
         { id: 'promo' as const, label: 'Khuyến Mãi', icon: Clock }
+    ];
+
+    const reasons = [
+        {
+            icon: Award,
+            title: 'Đại Lý Chính Hãng',
+            description: 'Sản phẩm 100% chính hãng',
+            color: 'from-yellow-400 to-yellow-600'
+        },
+        {
+            icon: DollarSign,
+            title: 'Giá Tốt Nhất',
+            description: 'Cam kết giá cạnh tranh nhất',
+            color: 'from-green-400 to-green-600'
+        },
+        {
+            icon: Shield,
+            title: 'Bảo Hành Ưu Đãi',
+            description: 'Chính sách bảo hành mở rộng',
+            color: 'from-blue-400 to-blue-600'
+        },
+        {
+            icon: Headphones,
+            title: 'Hỗ Trợ 24/7',
+            description: 'Tư vấn chuyên nghiệp mọi lúc',
+            color: 'from-emerald-400 to-emerald-600'
+        },
+        {
+            icon: TrendingUp,
+            title: 'Ưu Đãi Độc Quyền',
+            description: 'Quà tặng và khuyến mãi riêng',
+            color: 'from-pink-400 to-pink-600'
+        },
+        {
+            icon: Clock,
+            title: 'Giao Hàng Nhanh',
+            description: 'Vận chuyển toàn quốc 24-48h',
+            color: 'from-orange-400 to-orange-600'
+        }
     ];
 
     // Initialize promoted car IDs from initial data
@@ -214,11 +253,11 @@ export default function TailgProductGridClient({
 
                 {/* Products Grid */}
                 {loading ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                    <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide">
                         {[...Array(8)].map((_, i) => (
                             <div
                                 key={i}
-                                className="aspect-[3/4] rounded-2xl animate-pulse"
+                                className="flex-shrink-0 w-[70vw] sm:w-auto snap-center aspect-[3/4] rounded-2xl animate-pulse"
                                 style={{
                                     backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'
                                 }}
@@ -226,16 +265,17 @@ export default function TailgProductGridClient({
                         ))}
                     </div>
                 ) : products.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                    <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide">
                         {products.map((car, index) => {
                             const discount = discountMap[car.id.toString()] || discountMap[car.documentId || ''] || 0;
                             return (
-                                <ProductCard
-                                    key={car.id}
-                                    car={car}
-                                    discountPercent={discount}
-                                    priority={index < 4} // Eager load first 4 images (desktop row)
-                                />
+                                <div key={car.id} className="flex-shrink-0 w-[70vw] sm:w-auto snap-center">
+                                    <ProductCard
+                                        car={car}
+                                        discountPercent={discount}
+                                        priority={index < 4} // Eager load first 4 images (desktop row)
+                                    />
+                                </div>
                             );
                         })}
                     </div>
@@ -248,7 +288,7 @@ export default function TailgProductGridClient({
                 )}
 
                 {/* View All Button */}
-                <div className="text-center mt-12">
+                <div className="text-center mt-12 mb-12">
                     <Link
                         href="/cars?brand=TAILG"
                         className="inline-flex items-center gap-3 px-8 py-3 rounded-xl border-2 font-bold transition-all hover:scale-105 hover:shadow-lg group"
@@ -260,6 +300,26 @@ export default function TailgProductGridClient({
                         <span>Xem Tất Cả TAILG</span>
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
+                </div>
+
+                {/* Commitments Section (Integrated) */}
+                <div className="pt-8 border-t border-dashed"
+                    style={{ borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                        {reasons.map((reason, index) => (
+                            <div key={index} className="text-center group">
+                                <div className={`w-12 h-12 mx-auto rounded-xl mb-3 flex items-center justify-center bg-gradient-to-br ${reason.color} shadow-sm group-hover:scale-110 transition-transform`}>
+                                    <reason.icon className="w-6 h-6 text-white" />
+                                </div>
+                                <h3 className="font-bold text-sm mb-1" style={{ color: isDark ? '#ffffff' : '#111827' }}>
+                                    {reason.title}
+                                </h3>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {reason.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>

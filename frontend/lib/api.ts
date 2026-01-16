@@ -22,8 +22,21 @@ export interface Car {
     thumbnailId?: number;
     isFeatured: boolean;
     modelUrl?: string;
-    colors: { name: string; hex: string; images: string[]; imageIds?: number[] }[];
+    colors: {
+        name: string;
+        hex: string;
+        images: string[];
+        imageIds?: number[];
+        price?: number;
+        stock?: number;
+    }[];
     features: any[];
+    options?: {
+        name: string;
+        group: string;
+        priceAdjustment: number;
+        stock: number;
+    }[];
     specifications: any[];
     technicalImage?: string;
     warranty?: Warranty;
@@ -115,7 +128,7 @@ async function getApiErrorMessage(response: Response, fallbackMessage: string) {
 
 // Khi chạy `next build`, nếu Strapi không bật thì các fetch sẽ fail (ECONNREFUSED).
 // Đây là trường hợp “bình thường” trong CI/build, nên ta không in console.error để log sạch.
-const IS_NEXT_BUILD_PHASE = process.env.NEXT_PHASE === 'phase-production-build';
+const IS_NEXT_BUILD_PHASE = (typeof process !== 'undefined' && process.env?.NEXT_PHASE === 'phase-production-build');
 
 function logFetchIssue(context: string, error: unknown) {
     if (IS_NEXT_BUILD_PHASE) return;
@@ -236,8 +249,8 @@ function transformStrapiCar(strapiCar: any): Car {
         modelUrl: strapiCar.model3D?.url
             ? `${STRAPI_URL}${strapiCar.model3D.url}`
             : undefined,
-        colors: Array.isArray(strapiCar.color)
-            ? strapiCar.color
+        colors: Array.isArray(strapiCar.colors || strapiCar.color)
+            ? (strapiCar.colors || strapiCar.color)
                 .filter((c: any) => c && c.name) // Filter out null/undefined colors
                 .map((c: any) => {
                     // Handle multiple images
@@ -260,11 +273,19 @@ function transformStrapiCar(strapiCar: any): Car {
                         name: c.name || 'Unknown',
                         hex: c.hex || '#000000',
                         images: images,
-                        imageIds: imageIds
+                        imageIds: imageIds,
+                        price: typeof c.price === 'number' ? c.price : undefined,
+                        stock: typeof c.stock === 'number' ? c.stock : undefined
                     };
                 })
             : [],
         features: strapiCar.features || [],
+        options: Array.isArray(strapiCar.options) ? strapiCar.options.map((opt: any) => ({
+            name: opt.name,
+            group: opt.group || 'Other',
+            priceAdjustment: parseFloat(opt.priceAdjustment) || 0,
+            stock: opt.stock || 0
+        })) : [],
         specifications: strapiCar.specifications || [],
         technicalImage: technicalImageUrl,
         warranty: strapiCar.warranty || undefined,
@@ -491,7 +512,7 @@ export async function getFeaturedCars(): Promise<Car[]> {
             'filters[$or][1][featured][$eq]=true',
         ].join('&');
 
-        const url = `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`;
+        const url = `${STRAPI_URL}/api/car-models?${featuredFilter}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=technicalImage&populate[4]=warranty&populate[5]=options`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
 
         if (!data || !data.data) return [];
@@ -527,9 +548,10 @@ export async function getCarsWithMeta(params: GetCarsParams = {}): Promise<GetCa
         const queryParts = [
             'populate[0]=thumbnail',
             'populate[1]=model3D',
-            'populate[2]=color.images',
+            'populate[2]=colors.images',
             'populate[3]=technicalImage',
             'populate[4]=warranty',
+            'populate[5]=options',
             `pagination[page]=${page}`,
             `pagination[pageSize]=${pageSize}`
         ];
@@ -618,7 +640,7 @@ export async function getCarById(documentId: string): Promise<Car | undefined> {
     try {
         // Use filters instead of direct ID endpoint to avoid 404 if findOne permission is missing
         const response = await fetch(
-            `${STRAPI_URL}/api/car-models/${documentId}?populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=warranty`,
+            `${STRAPI_URL}/api/car-models/${documentId}?populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=warranty&populate[4]=options`,
             { ...getDefaultFetchOptions(60) }
         );
 
@@ -644,7 +666,7 @@ export async function getCarBySlug(slug: string): Promise<Car | undefined> {
     try {
         const safeSlug = encodeURIComponent(slug);
         const response = await fetch(
-            `${STRAPI_URL}/api/car-models?filters[slug][$eq]=${safeSlug}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images&populate[3]=technicalImage&populate[4]=warranty`,
+            `${STRAPI_URL}/api/car-models?filters[slug][$eq]=${safeSlug}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=technicalImage&populate[4]=warranty&populate[5]=options`,
             { ...getDefaultFetchOptions(60) }
         );
 
@@ -668,7 +690,7 @@ export async function getCarBySlug(slug: string): Promise<Car | undefined> {
 export async function getRelatedCars(currentSlug: string, type: string, limit: number = 3): Promise<Car[]> {
     try {
         const response = await fetch(
-            `${STRAPI_URL}/api/car-models?filters[slug][$ne]=${currentSlug}&filters[type][$eq]=${type}&pagination[limit]=${limit}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images`,
+            `${STRAPI_URL}/api/car-models?filters[slug][$ne]=${currentSlug}&filters[type][$eq]=${type}&pagination[limit]=${limit}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=options`,
             { ...getDefaultFetchOptions(60) }
         );
 
@@ -692,7 +714,7 @@ export async function getCarsBySlugs(slugs: string[]): Promise<Car[]> {
         const slugFilters = slugs.map((slug, index) => `filters[slug][$in][${index}]=${slug}`).join('&');
 
         const response = await fetch(
-            `${STRAPI_URL}/api/car-models?${slugFilters}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=color.images`,
+            `${STRAPI_URL}/api/car-models?${slugFilters}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=options`,
             { ...getDefaultFetchOptions(60) }
         );
 

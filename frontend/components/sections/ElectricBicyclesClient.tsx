@@ -49,15 +49,16 @@ export default function ElectricBicyclesClient({
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 pb-4 sm:pb-0 scrollbar-hide">
                     {initialBicycles.map((car) => {
                         const discountPercent = initialDiscounts[car.id] || initialDiscounts[car.documentId || ''] || 0;
                         return (
-                            <ProductCard
-                                key={car.id}
-                                car={car}
-                                discountPercent={discountPercent}
-                            />
+                            <div key={car.id} className="flex-shrink-0 w-[70vw] sm:w-auto snap-center">
+                                <ProductCard
+                                    car={car}
+                                    discountPercent={discountPercent}
+                                />
+                            </div>
                         );
                     })}
                 </div>

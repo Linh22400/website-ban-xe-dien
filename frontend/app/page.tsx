@@ -8,7 +8,6 @@ import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
 
 // Static imports for Server Components (Async)
 import TailgProductGrid from "@/components/sections/TailgProductGrid";
-import WhyChooseTailg from "@/components/sections/WhyChooseTailg";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import ElectricMotorcycles from "@/components/sections/ElectricMotorcycles";
 import ElectricBicycles from "@/components/sections/ElectricBicycles";
@@ -43,9 +42,6 @@ export default function Home() {
         <TailgProductGrid />
       </Suspense>
 
-      <LazySection>
-        <WhyChooseTailg />
-      </LazySection>
       {/* ========== TAILG ZONE END ========== */}
 
       {/* ========== STANDARD E-COMMERCE BLOCKS ========== */}

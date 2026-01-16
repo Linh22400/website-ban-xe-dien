@@ -8,10 +8,10 @@ import TechSpecs from "../product/TechSpecs";
 import StickyActionBar from "../product/StickyActionBar";
 import WarrantyInfo from "../product/WarrantyInfo";
 import ProductFAQ from "../product/ProductFAQ";
-import RelatedProductsSidebar from "../product/RelatedProductsSidebar";
 import { SectionHeading } from '../product/ProductTextComponents';
 import ReviewList from "../product/ReviewList";
 import ReviewForm from "../product/ReviewForm";
+import RelatedProductsSidebar from "../product/RelatedProductsSidebar";
 
 interface CarConfiguratorProps {
     car: Car;
@@ -38,13 +38,15 @@ export default function CarConfigurator({ car, discountPercent = 0 }: CarConfigu
 
             {/* 2-Column Layout: Sidebar + Main Content */}
             <div className="container mx-auto px-4">
-                <div className="flex gap-6 lg:gap-8">
-                    {/* Left Sidebar - Sticky */}
-                    <RelatedProductsSidebar
-                        currentProductId={car.id}
-                        brand={car.brand}
-                        type={car.type}
-                    />
+                <div className="flex gap-4 lg:gap-8">
+                    {/* Left Sidebar - Sticky (Desktop Only) */}
+                    <div className="hidden lg:block">
+                        <RelatedProductsSidebar
+                            currentProductId={car.id}
+                            brand={car.brand}
+                            type={car.type}
+                        />
+                    </div>
 
                     {/* Main Content Column */}
                     <div className="flex-1 min-w-0">
@@ -70,6 +72,16 @@ export default function CarConfigurator({ car, discountPercent = 0 }: CarConfigu
                                 <ReviewList carModelId={car.id} />
                             </div>
                         </section>
+
+                        {/* 4. Related Products (Mobile Only - Replaces Sidebar) */}
+                        <div className="pb-24 lg:hidden">
+                             <RelatedProductsSidebar
+                                 currentProductId={car.id}
+                                 brand={car.brand}
+                                 type={car.type}
+                                 mode="horizontal"
+                             />
+                        </div>
                     </div>
                 </div>
             </div>

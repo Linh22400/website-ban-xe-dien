@@ -10,6 +10,7 @@ import { BadgeCheck, Phone, ShoppingCart, Truck, CreditCard, FileText, Shield, A
 import Breadcrumb from "./Breadcrumb";
 import SocialShare from "./SocialShare";
 import CustomerSupportContact from "./CustomerSupportContact";
+import { useEffect, useMemo, useState } from "react";
 
 interface ProductHeroProps {
     car: Car;
@@ -19,8 +20,53 @@ interface ProductHeroProps {
 }
 
 export default function ProductHero({ car, selectedColor, onColorChange, discountPercent = 0 }: ProductHeroProps) {
-    const finalPrice = discountPercent > 0 ? car.price * (1 - discountPercent / 100) : car.price;
-    const inStock = Number.isFinite(car.stock) ? car.stock > 0 : true;
+    // 1. Determine Selected Variant
+    const selectedVariant = car.colors?.[selectedColor];
+
+    // 2. Options Logic
+    // Group options
+    const optionsByGroup = useMemo(() => {
+        if (!car.options || car.options.length === 0) return {};
+        const groups: Record<string, typeof car.options> = {};
+        car.options.forEach(opt => {
+            if (!groups[opt.group]) groups[opt.group] = [];
+            groups[opt.group].push(opt);
+        });
+        return groups;
+    }, [car.options]);
+
+    // Initialize selected options
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, any>>({});
+
+    useEffect(() => {
+        if (!car.options) return;
+        const initialSelection: Record<string, any> = {};
+        Object.keys(optionsByGroup).forEach(group => {
+            // Default to first option
+            if (optionsByGroup[group] && optionsByGroup[group].length > 0) {
+                initialSelection[group] = optionsByGroup[group][0];
+            }
+        });
+        setSelectedOptions(initialSelection);
+    }, [car.options, optionsByGroup]);
+
+    // 3. Price Logic
+    // If variant has specific price, use it; otherwise fallback to base car price.
+    const basePrice = selectedVariant?.price || car.price;
+    // Add options price adjustment
+    const optionsPrice = Object.values(selectedOptions).reduce((sum: number, opt: any) => sum + (opt?.priceAdjustment || 0), 0);
+    const originalPrice = basePrice + optionsPrice;
+    
+    const finalPrice = discountPercent > 0 ? originalPrice * (1 - discountPercent / 100) : originalPrice;
+
+    // 4. Stock Logic
+    // If variant has specific stock, use it; otherwise fallback to base car stock.
+    // Check if stock is a finite number.
+    const stockToCheck = (selectedVariant?.stock !== undefined && selectedVariant?.stock !== null) 
+        ? selectedVariant.stock 
+        : car.stock;
+    const inStock = Number.isFinite(stockToCheck) ? stockToCheck > 0 : true;
+
     const { addToCart } = useCart();
     const router = useRouter();
 
@@ -33,17 +79,24 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
     const handleAddToCart = () => {
         if (!inStock) return;
         // Get current color's images
-        const currentColorImages = car.colors?.[selectedColor]?.images || [];
+        const currentColorImages = selectedVariant?.images || [];
         const galleryImages = currentColorImages.length > 0
             ? currentColorImages
-            : (car.colors?.[selectedColor]?.images || [car.thumbnail]);
-        const colorName = car.colors?.[selectedColor]?.name || 'Mặc định';
+            : (selectedVariant?.images || [car.thumbnail]);
+        
+        let colorName = selectedVariant?.name || 'Mặc định';
+        
+        // Append options to colorName to make it unique in cart
+        const optionNames = Object.values(selectedOptions).map((opt: any) => opt.name).join(', ');
+        if (optionNames) {
+            colorName = `${colorName} (${optionNames})`;
+        }
 
         addToCart({
             id: car.id,
             name: car.name,
             price: finalPrice,
-            originalPrice: discountPercent > 0 ? car.price : undefined,
+            originalPrice: discountPercent > 0 ? originalPrice : undefined,
             image: galleryImages[0],
             gallery: galleryImages,
             colorName: colorName,
@@ -57,17 +110,24 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
     const handleBuyNow = () => {
         if (!inStock) return;
         // Add to cart then redirect to checkout
-        const currentColorImages = car.colors?.[selectedColor]?.images || [];
+        const currentColorImages = selectedVariant?.images || [];
         const galleryImages = currentColorImages.length > 0
             ? currentColorImages
-            : (car.colors?.[selectedColor]?.images || [car.thumbnail]);
-        const colorName = car.colors?.[selectedColor]?.name || 'Mặc định';
+            : (selectedVariant?.images || [car.thumbnail]);
+        
+        let colorName = selectedVariant?.name || 'Mặc định';
+
+        // Append options to colorName to make it unique in cart
+        const optionNames = Object.values(selectedOptions).map((opt: any) => opt.name).join(', ');
+        if (optionNames) {
+            colorName = `${colorName} (${optionNames})`;
+        }
 
         addToCart({
             id: car.id,
             name: car.name,
             price: finalPrice,
-            originalPrice: discountPercent > 0 ? car.price : undefined,
+            originalPrice: discountPercent > 0 ? originalPrice : undefined,
             image: galleryImages[0],
             gallery: galleryImages,
             colorName: colorName,
@@ -196,6 +256,40 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                             transition={{ duration: 0.5, delay: 0.4 }}
                             className="space-y-5"
                         >
+                             {/* Product Options */}
+                            {Object.keys(optionsByGroup).length > 0 && (
+                                <div className="space-y-4 pb-4">
+                                    {Object.entries(optionsByGroup).map(([group, options]) => (
+                                        <div key={group}>
+                                            <h3 className="text-sm font-semibold text-foreground mb-2">{group === 'Battery' ? 'Loại Ắc quy / Pin' : group === 'Version' ? 'Phiên bản' : group}</h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {options.map((opt: any) => {
+                                                    const isSelected = selectedOptions[group]?.name === opt.name;
+                                                    return (
+                                                        <button
+                                                            key={opt.name}
+                                                            onClick={() => setSelectedOptions(prev => ({ ...prev, [group]: opt }))}
+                                                            className={`px-3 py-2 rounded-lg text-sm border transition-all ${
+                                                                isSelected
+                                                                    ? 'bg-primary/20 border-primary text-primary font-medium'
+                                                                    : 'bg-card/30 border-white/10 text-muted-foreground hover:bg-card/50'
+                                                            }`}
+                                                        >
+                                                            {opt.name}
+                                                            {opt.priceAdjustment > 0 && (
+                                                                <span className="ml-1 text-xs opacity-80">
+                                                                    (+{opt.priceAdjustment.toLocaleString('vi-VN')}₫)
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <div>
                                 {discountPercent > 0 && (
                                     <div className="inline-block px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full mb-2">
@@ -208,7 +302,7 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                                 </div>
                                 {discountPercent > 0 && (
                                     <div className="text-lg text-gray-500 line-through mt-1">
-                                        {car.price.toLocaleString('vi-VN')}₫
+                                        {originalPrice.toLocaleString('vi-VN')}₫
                                     </div>
                                 )}
                                 <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">

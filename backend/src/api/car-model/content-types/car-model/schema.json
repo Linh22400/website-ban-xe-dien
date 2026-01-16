@@ -79,9 +79,14 @@
     "specifications": {
       "type": "json"
     },
-    "color": {
+    "colors": {
       "type": "component",
       "component": "product.colors",
+      "repeatable": true
+    },
+    "options": {
+      "type": "component",
+      "component": "product.options",
       "repeatable": true
     },
     "sold": {

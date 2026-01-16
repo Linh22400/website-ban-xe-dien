@@ -605,7 +605,7 @@ export interface ApiCarModelCarModel extends Struct.CollectionTypeSchema {
   attributes: {
     acceleration: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
     brand: Schema.Attribute.String & Schema.Attribute.Required;
-    color: Schema.Attribute.Component<'product.colors', true>;
+    colors: Schema.Attribute.Component<'product.colors', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -623,6 +623,7 @@ export interface ApiCarModelCarModel extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    options: Schema.Attribute.Component<'product.options', true>;
     orders: Schema.Attribute.Relation<'oneToMany', 'api::order.order'>;
     price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     promotions: Schema.Attribute.Relation<

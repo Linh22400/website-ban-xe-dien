@@ -154,7 +154,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-3 gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide">
                     {categories.map((cat) => {
                         const colorStyle = getColorStyle(cat.color, cat.title, cat.subtitle);
                         const hoverColorClass = getHoverColorClass(cat.title, cat.subtitle);
@@ -162,7 +162,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
                             <Link
                                 key={cat.id}
                                 href={cat.link}
-                                className="group relative h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-xl"
+                                className="group relative h-[400px] flex-shrink-0 w-[85vw] sm:w-auto snap-center rounded-3xl overflow-hidden border border-white/10 shadow-xl"
                             >
                                 {/* Background Image */}
                                 <Image

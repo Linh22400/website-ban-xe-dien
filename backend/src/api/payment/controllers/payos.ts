@@ -36,10 +36,13 @@ export default {
 
       const domain = process.env.FRONTEND_URL || 'http://localhost:3000';
       
+      // 25 characters max for description in PayOS
+      const safeDescription = (description || `Thanh toan don hang ${orderCode}`).slice(0, 25);
+
       const body = {
         orderCode: payosOrderCode,
         amount: Math.round(Number(amount)), // Ensure integer
-        description: description || `Thanh toan don hang ${orderCode}`,
+        description: safeDescription,
         cancelUrl: cancelUrl || `${domain}/checkout/payment-failed`,
         returnUrl: returnUrl || `${domain}/checkout/payos-return`,
         // Optional: Embed internal orderCode in items or custom data if supported, 
@@ -55,21 +58,26 @@ export default {
       });
 
       if (order) {
-        await strapi.entityService.create('api::payment-transaction.payment-transaction', {
-          data: {
-            TransactionId: String(payosOrderCode),
-            Order: order.id,
-            Gateway: 'payos' as any,
-            Amount: Number(amount),
-            Statuses: 'pending',
-            GatewayResponse: paymentLinkData,
-            Metadata: {
-                internalOrderCode: orderCode,
-                payosOrderCode: payosOrderCode
+        try {
+          await strapi.entityService.create('api::payment-transaction.payment-transaction', {
+            data: {
+              TransactionId: String(payosOrderCode),
+              Order: order.id,
+              Gateway: 'payos' as any,
+              Amount: Number(amount),
+              Statuses: 'pending',
+              GatewayResponse: paymentLinkData,
+              Metadata: {
+                  internalOrderCode: orderCode,
+                  payosOrderCode: payosOrderCode
+              },
+              publishedAt: new Date(),
             },
-            publishedAt: new Date(),
-          },
-        });
+          });
+        } catch (dbError) {
+          console.error('Failed to save transaction:', dbError);
+          // Continue execution to return checkoutUrl even if transaction save fails
+        }
       }
 
       return ctx.send({

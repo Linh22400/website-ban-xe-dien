@@ -8,6 +8,7 @@ import vnpay from './vnpay';
 import momo from './momo';
 import momoTest from './momo-test';
 import bankTransfer from './bank-transfer';
+import payos from './payos';
 
 export default {
   'custom-payment': customPayment,
@@ -15,4 +16,5 @@ export default {
   momo,
   'momo-test': momoTest,
   'bank-transfer': bankTransfer,
+  payos,
 };

@@ -9,6 +9,7 @@ import { createOrder } from '@/lib/order-api';
 import { SubHeading, SectionHeading } from '@/components/common/ThemeText';
 import { createVNPayPayment } from '@/lib/vnpay';
 import { createMoMoPayment } from '@/lib/momo';
+import { createPayOSPayment } from '@/lib/payos';
 
 import PaymentModal from './PaymentModal';
 import BankTransferForm from './BankTransferForm';
@@ -110,6 +111,25 @@ export default function PaymentGatewaySelector() {
                     } catch (error) {
                         console.error('MoMo payment creation failed:', error);
                         setErrorMessage('Không thể tạo thanh toán MoMo. Vui lòng thử lại.');
+                        setIsProcessing(false);
+                        return;
+                    }
+                }
+
+                // Handle PayOS - Redirect to PayOS checkout
+                if (selectedGateway === 'payos') {
+                    try {
+                        const payosData = await createPayOSPayment(
+                            result.data.OrderCode,
+                            finalAmount,
+                            `Thanh toan don hang ${result.data.OrderCode}`
+                        );
+                        // Redirect to PayOS payment page
+                        window.location.href = payosData.checkoutUrl;
+                        return;
+                    } catch (error) {
+                        console.error('PayOS payment creation failed:', error);
+                        setErrorMessage('Không thể tạo thanh toán PayOS. Vui lòng thử lại.');
                         setIsProcessing(false);
                         return;
                     }
@@ -320,6 +340,36 @@ export default function PaymentGatewaySelector() {
                             <p className="text-sm text-muted-foreground">Quét mã QR bằng app Banking/MoMo/ZaloPay</p>
                         </div>
                         {selectedGateway === 'vietqr' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* PayOS - Auto Confirmation */}
+                    <div
+                        onClick={() => setSelectedGateway('payos')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'payos'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-[#5D5FEF] rounded-lg flex items-center justify-center shrink-0">
+                            <CreditCard className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                                <SectionHeading>Thanh toán PayOS</SectionHeading>
+                                <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">
+                                    TỰ ĐỘNG
+                                </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">Thanh toán tự động qua QR/Thẻ ATM/Visa</p>
+                        </div>
+                        {selectedGateway === 'payos' && (
                             <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
                                 <Check className="w-4 h-4 text-black" />
                             </div>

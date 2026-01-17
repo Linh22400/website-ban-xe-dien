@@ -22,11 +22,28 @@ function PayOSReturnContent() {
 
         if (code === '00' || statusParam === 'PAID') {
             setStatus('success');
-            // Clear cart if needed, but usually handled by context on success page
-            // Redirect to success page after short delay
-            setTimeout(() => {
-                router.push(`/order/success?orderCode=${orderCode}`);
-            }, 3000);
+            // Resolve real order code from backend
+            const resolveOrderCode = async () => {
+                try {
+                    const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+                    const res = await fetch(`${apiUrl}/api/payment/payos/resolve/${orderCode}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.data && data.data.orderCode) {
+                            return data.data.orderCode;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to resolve order code', err);
+                }
+                return orderCode; // Fallback to numeric code
+            };
+
+            resolveOrderCode().then((finalCode) => {
+                 setTimeout(() => {
+                    router.push(`/order/success?orderCode=${finalCode}`);
+                }, 3000);
+            });
         } else {
             // Unknown status, maybe pending
              setStatus('failed');

@@ -164,5 +164,37 @@ export default {
             message: error.message
         });
     }
+  },
+
+  /**
+   * GET /api/payment/payos/resolve/:code
+   * Resolve PayOS order code (numeric) to internal OrderCode (DH...)
+   */
+  async resolveOrder(ctx) {
+    try {
+        const { code } = ctx.params;
+        
+        if (!code) {
+            return ctx.badRequest('Missing payos order code');
+        }
+
+        const transaction = await strapi.db.query('api::payment-transaction.payment-transaction').findOne({
+            where: { TransactionId: code },
+            populate: { Order: true }
+        });
+
+        if (!transaction || !transaction.Order) {
+            return ctx.notFound('Transaction or Order not found');
+        }
+
+        return ctx.send({
+            data: {
+                orderCode: transaction.Order.OrderCode
+            }
+        });
+    } catch (error) {
+        console.error('Resolve order error:', error);
+        return ctx.internalServerError('Failed to resolve order');
+    }
   }
 };

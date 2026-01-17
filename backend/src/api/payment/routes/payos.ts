@@ -20,5 +20,13 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/payment/payos/resolve/:code',
+      handler: 'payos.resolveOrder',
+      config: {
+        auth: false,
+      },
+    },
   ],
 };

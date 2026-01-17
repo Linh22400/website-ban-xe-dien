@@ -1,8 +1,12 @@
 import { Suspense } from 'react';
 import { CheckCircle, Package, Truck } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 function OrderSuccessContent() {
+  const searchParams = useSearchParams();
+  const orderCode = searchParams.get('orderCode') || searchParams.get('orderId');
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24">
       <div className="container max-w-2xl mx-auto px-4 py-12">
@@ -26,7 +30,13 @@ function OrderSuccessContent() {
             <div className="space-y-3 text-gray-300">
               <div className="flex items-center gap-3">
                 <Package className="w-5 h-5 text-primary" />
-                <span>Mã đơn hàng sẽ được gửi qua email và SMS</span>
+                <span>
+                    {orderCode ? (
+                        <>Mã đơn hàng: <span className="text-primary font-bold">{orderCode}</span></>
+                    ) : (
+                        'Mã đơn hàng sẽ được gửi qua email và SMS'
+                    )}
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <Truck className="w-5 h-5 text-primary" />
@@ -48,7 +58,7 @@ function OrderSuccessContent() {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/tracking"
+              href={orderCode ? `/tracking?code=${orderCode}` : "/tracking"}
               className="px-6 py-3 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors"
             >
               Theo dõi đơn hàng

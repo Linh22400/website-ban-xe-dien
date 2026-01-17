@@ -25,7 +25,7 @@ export default function PayOSReturnPage() {
             // Clear cart if needed, but usually handled by context on success page
             // Redirect to success page after short delay
             setTimeout(() => {
-                router.push(`/checkout/success?orderCode=${orderCode}`);
+                router.push(`/order/success?orderCode=${orderCode}`);
             }, 3000);
         } else {
             // Unknown status, maybe pending
@@ -52,7 +52,7 @@ export default function PayOSReturnPage() {
                         <h1 className="text-2xl font-bold mb-2 text-green-500">Thanh toán thành công!</h1>
                         <p className="text-muted-foreground mb-6">Cảm ơn bạn đã mua hàng. Đang chuyển hướng...</p>
                         <button 
-                            onClick={() => router.push('/checkout/success')}
+                            onClick={() => router.push('/order/success')}
                             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors"
                         >
                             Chi tiết đơn hàng

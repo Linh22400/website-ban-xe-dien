@@ -32,91 +32,99 @@ export default function LatestNews() {
     }
 
     return (
-        <section className="py-10 bg-background border-t border-border">
-            <div className="container mx-auto px-4">
-                {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-                    <div className="max-w-2xl">
-                        <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Cập Nhật Mới Nhất</span>
-                        <h2 className="text-3xl md:text-4xl font-black text-foreground uppercase leading-tight">
-                            Tin Tức & <span className="text-primary">Sự Kiện</span>
+        <section className="py-4 relative overflow-hidden bg-background">
+            {/* Decorative Elements */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-orange-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+            <div className="container mx-auto px-4 relative z-10">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row items-end justify-between mb-4 gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500/10 text-orange-500">
+                                <Calendar className="w-4 h-4" />
+                            </span>
+                            <span className="text-sm font-bold text-orange-500 uppercase tracking-wider">Thông Tin & Sự Kiện</span>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
+                            Tin Tức <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Mới Nhất</span>
                         </h2>
-                        <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
+                        <p className="mt-4 text-muted-foreground text-lg max-w-xl">
+                            Cập nhật những xu hướng mới nhất về xe điện, hướng dẫn sử dụng và các chương trình khuyến mãi hấp dẫn.
+                        </p>
                     </div>
 
                     <Link
-                        // Route tin tức của project đang là /blog (không phải /tin-tuc)
                         href="/blog"
-                        className="group flex items-center gap-2 text-muted-foreground font-bold hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-primary"
+                        className="group flex items-center gap-3 px-6 py-3 rounded-full border border-orange-500/20 hover:border-orange-500/50 bg-background/50 backdrop-blur-sm transition-all hover:bg-orange-500/5"
                     >
-                        Xem tất cả tin tức
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <span className="font-semibold text-sm">Xem tất cả tin tức</span>
+                        <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-all">
+                            <ArrowRight className="w-4 h-4" />
+                        </div>
                     </Link>
                 </div>
 
                 {/* Articles Grid */}
-                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-3 md:gap-8 pb-4 md:pb-0 scrollbar-hide">
+                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 md:gap-8 pb-8 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
                     {loading ? (
                         // Loading Skeletons
                         [1, 2, 3].map((i) => (
-                            <div key={i} className="flex-shrink-0 w-[80vw] md:w-auto snap-center animate-pulse">
-                                <div className="bg-muted aspect-[4/3] rounded-2xl mb-4"></div>
+                            <div key={i} className="flex-shrink-0 w-[85vw] md:w-auto snap-center animate-pulse">
+                                <div className="bg-muted aspect-[16/9] rounded-2xl mb-4"></div>
                                 <div className="h-4 bg-muted w-1/3 mb-3 rounded"></div>
                                 <div className="h-6 bg-muted w-3/4 mb-3 rounded"></div>
                                 <div className="h-20 bg-muted w-full rounded"></div>
                             </div>
                         ))
                     ) : (
-                        articles.map((article) => (
+                        articles.map((article, index) => (
                             <Link
-                                // Route chi tiết bài viết: /blog/[slug]
                                 href={`/blog/${article.slug}`}
                                 key={article.id}
-                                className="flex-shrink-0 w-[80vw] md:w-auto snap-center group flex flex-col h-full bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-border ring-1 ring-black/5 dark:ring-white/10 hover:-translate-y-1"
+                                className="flex-shrink-0 w-[85vw] md:w-auto snap-center group flex flex-col h-full bg-card rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 border border-border/50 hover:border-orange-500/30 hover:-translate-y-2"
+                                style={{
+                                    transitionDelay: `${index * 50}ms`
+                                }}
                             >
                                 {/* Image Container */}
-                                <div className="relative aspect-[4/3] overflow-hidden">
-                                    <div className="absolute inset-0 bg-muted animate-pulse"></div>
+                                <div className="relative aspect-[16/10] overflow-hidden">
                                     <Image
                                         src={article.coverImage}
                                         alt={article.title}
                                         fill
-                                        sizes="(min-width: 768px) 33vw, 50vw"
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        sizes="(min-width: 768px) 33vw, 85vw"
+                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
 
-                                    {/* Category Badge - Condensed for Mobile */}
+                                    {/* Category Badge */}
                                     {article.category && (
-                                        <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-background/90 text-foreground text-[10px] md:text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full uppercase tracking-wider shadow-lg">
+                                        <span className="absolute top-4 left-4 bg-white/90 dark:bg-black/80 backdrop-blur-md text-orange-600 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
                                             {article.category.name}
                                         </span>
                                     )}
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex flex-col flex-grow p-3 md:p-6">
-                                    {/* Meta Info */}
-                                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-[10px] md:text-xs text-muted-foreground mb-2 md:mb-3 font-medium">
-                                        {article.publishedDate && (
-                                            <div className="flex items-center gap-1">
-                                                <Calendar className="w-3 h-3 text-primary" />
-                                                {new Date(article.publishedDate).toLocaleDateString('vi-VN')}
-                                            </div>
-                                        )}
+                                <div className="flex flex-col flex-grow p-6 md:p-8 relative">
+                                    {/* Date */}
+                                    <div className="flex items-center gap-2 text-xs font-bold text-orange-500 mb-3 uppercase tracking-wide">
+                                        <Calendar className="w-3.5 h-3.5" />
+                                        {article.publishedDate ? new Date(article.publishedDate).toLocaleDateString('vi-VN') : 'Mới nhất'}
                                     </div>
 
-                                    <h3 className="text-sm md:text-xl font-bold text-card-foreground mb-2 md:mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2">
                                         {article.title}
                                     </h3>
 
-                                    <p className="text-muted-foreground text-sm line-clamp-2 mb-3 md:mb-6 flex-grow hidden md:block">
+                                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
                                         {article.excerpt}
                                     </p>
 
-                                    <div className="flex items-center text-primary font-bold text-xs md:text-sm mt-auto">
-                                        Đọc tiếp
-                                        <ChevronRight className="w-3 h-3 md:w-4 md:h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                                    <div className="flex items-center text-foreground font-bold text-sm mt-auto group/link">
+                                        <span className="border-b-2 border-orange-500/30 group-hover:border-orange-500 transition-all pb-0.5">Đọc tiếp bài viết</span>
+                                        <ChevronRight className="w-4 h-4 ml-1 text-orange-500 group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
                             </Link>

@@ -182,30 +182,45 @@ export default function QuickFinder() {
     };
 
     return (
-        <div
-            className="w-full border rounded-3xl relative"
-            style={{
-                backgroundColor: isDark ? 'rgba(0, 0, 0, 0.55)' : 'rgba(255, 255, 255, 0.85)',
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
-            }}
-        >
-            <div className="relative z-10 p-8">
-                {/* Header */}
-                <div className="mb-8 text-center">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-2xl mb-4 shadow-lg shadow-primary/20">
-                        <Search className="w-7 h-7 text-white" />
+        <div className="relative group">
+            {/* Ambient Glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 rounded-[2.5rem] blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+            
+            <div
+                className="w-full border rounded-[2rem] relative backdrop-blur-xl shadow-2xl overflow-hidden bg-card/95 border-border p-6 md:p-8"
+            >
+                {/* Decorative Top Line */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
+
+                <div className="relative z-10">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-6">
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full" />
+                                <div className="relative w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center shadow-lg shadow-primary/25">
+                                    <Search className="w-7 h-7 text-white" />
+                                </div>
+                            </div>
+                            <div className="text-center md:text-left">
+                                <ThemeText className="text-2xl md:text-3xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                                    Tìm Xe Nhanh
+                                </ThemeText>
+                                <p className="text-muted-foreground text-sm font-medium">
+                                    Tìm kiếm chiếc xe lý tưởng của bạn trong vài giây
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Quick Tags - Enhanced (Removed) */}
                     </div>
-                    <ThemeText className="text-3xl font-black mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                        Tìm Xe Nhanh
-                    </ThemeText>
-                    <p className="text-sm" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
+                    <p className="text-sm text-muted-foreground">
                         Chọn chiếc xe phù hợp với nhu cầu của bạn
                     </p>
-                </div>
 
-                {/* Quick Tags - Prominent */}
-                <div className="mb-8">
-                    <p className="text-xs font-semibold mb-3 flex items-center gap-1.5" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
+                    {/* Quick Tags - Prominent */}
+                    <div className="mb-10">
+                    <p className="text-xs font-semibold mb-3 flex items-center gap-1.5 text-muted-foreground">
                         <Sparkles className="w-3.5 h-3.5" />
                         GỢI Ý PHỔ BIẾN
                     </p>
@@ -215,44 +230,43 @@ export default function QuickFinder() {
                             className="group/tag bg-gradient-to-br from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 border border-orange-500/30 hover:border-orange-500/50 rounded-xl p-4 transition-all"
                         >
                             <TrendingUp className="w-5 h-5 text-orange-400 mb-2 mx-auto" />
-                            <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Bán Chạy</p>
+                            <p className="text-xs font-bold text-foreground">Bán Chạy</p>
                         </button>
                         <button
                             onClick={() => applyQuickTag("student")}
                             className="group/tag bg-gradient-to-br from-emerald-500/10 to-green-500/10 hover:from-emerald-500/20 hover:to-green-500/20 border border-emerald-500/30 hover:border-emerald-500/50 rounded-xl p-4 transition-all"
                         >
                             <GraduationCap className="w-5 h-5 text-blue-400 mb-2 mx-auto" />
-                            <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Học Sinh</p>
+                            <p className="text-xs font-bold text-foreground">Học Sinh</p>
                         </button>
                         <button
                             onClick={() => applyQuickTag("cheap")}
                             className="group/tag bg-gradient-to-br from-green-500/10 to-emerald-500/10 hover:from-green-500/20 hover:to-emerald-500/20 border border-green-500/30 hover:border-green-500/50 rounded-xl p-4 transition-all"
                         >
                             <Wallet className="w-5 h-5 text-green-400 mb-2 mx-auto" />
-                            <p className="text-xs font-bold" style={{ color: isDark ? '#ffffff' : '#111827' }}>Dưới 15tr</p>
+                            <p className="text-xs font-bold text-foreground">Dưới 15tr</p>
                         </button>
                     </div>
                 </div>
 
                 {/* Divider */}
-                <div className="relative mb-8">
+                <div className="relative mb-10">
                     <div className="absolute inset-0 flex items-center">
                         <div
-                            className="w-full border-t"
-                            style={{ borderColor: isDark ? 'rgb(31, 41, 55)' : 'rgb(209, 213, 219)' }}
+                            className="w-full border-t border-border"
                         />
                     </div>
                     <div className="relative flex justify-center text-xs">
-                        <span className="px-3 font-medium text-xs" style={{ color: isDark ? '#6b7280' : '#9ca3af' }}>HOẶC TÌM KIẾM CHI TIẾT</span>
+                        <span className="px-3 font-medium text-xs text-muted-foreground bg-card">HOẶC TÌM KIẾM CHI TIẾT</span>
                     </div>
                 </div>
 
                 {/* Search Form */}
-                <form onSubmit={handleSearch} className="space-y-5">
+                <form onSubmit={handleSearch} className="space-y-6">
                     {/* Row 1: Type & Brand */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide" style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>
+                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
                                 <Zap className="w-3.5 h-3.5 text-primary" />
                                 Loại Xe
                             </label>
@@ -264,7 +278,7 @@ export default function QuickFinder() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide" style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>
+                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
                                 <Tag className="w-3.5 h-3.5 text-primary" />
                                 Thương Hiệu
                             </label>
@@ -278,7 +292,7 @@ export default function QuickFinder() {
 
                     {/* Row 2: Price (Full width) */}
                     <div className="space-y-2">
-                        <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide" style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>
+                        <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
                             <Banknote className="w-3.5 h-3.5 text-primary" />
                             Mức Giá
                         </label>
@@ -292,7 +306,7 @@ export default function QuickFinder() {
                     {/* Row 3: Range & Speed */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide" style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>
+                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
                                 <Battery className="w-3.5 h-3.5 text-primary" />
                                 Quãng Đường
                             </label>
@@ -304,7 +318,7 @@ export default function QuickFinder() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide" style={{ color: isDark ? '#d1d5db' : '#4b5563' }}>
+                            <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
                                 <Gauge className="w-3.5 h-3.5 text-primary" />
                                 Tốc Độ
                             </label>
@@ -325,6 +339,7 @@ export default function QuickFinder() {
                         <span>Tìm Kiếm Ngay</span>
                     </button>
                 </form>
+                </div>
             </div>
         </div>
     );

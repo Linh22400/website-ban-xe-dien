@@ -123,74 +123,102 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
 
     if (categories.length === 0) return null;
 
+    // Bento Grid Logic: Determine span for each item based on total count
+    // 3 items: 1-1-1
+    // 4 items: 2-1-1 (first item spans 2 cols) or 1-1-1-1
+    // Let's stick to a clean grid but with distinct visual hierarchy
+    
     return (
-        <section className="w-full py-10 px-4 md:px-8 bg-background">
-            <div className="container mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+        <section className="w-full py-4 px-4 md:px-8 relative">
+             {/* Decorative Background Blur */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+
+            <div className="container mx-auto relative z-10">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-4 gap-4">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                            Khám Phá Danh Mục
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="w-8 h-1 bg-gradient-to-r from-primary to-transparent rounded-full" />
+                            <span className="text-primary font-bold uppercase tracking-wider text-xs">Danh Mục Sản Phẩm</span>
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">
+                            Khám Phá <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Bộ Sưu Tập</span>
                         </h2>
-                        <p className="text-gray-400">
-                            Tìm kiếm dòng xe phù hợp với phong cách của bạn
-                        </p>
                     </div>
                     <Link
                         href="/cars"
-                        className="flex items-center gap-2 font-medium transition-colors group"
-                        style={{
-                            color: '#00b8d4'
-                        }}
-                        onMouseEnter={(e) => {
-                            const isDark = document.documentElement.classList.contains('dark');
-                            e.currentTarget.style.color = isDark ? '#ffffff' : '#374151';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.color = '#00b8d4';
-                        }}
+                        className="group flex items-center gap-3 px-6 py-3 rounded-full border border-primary/20 hover:border-primary/50 bg-background/50 backdrop-blur-sm transition-all hover:bg-primary/5"
                     >
-                        Xem tất cả sản phẩm
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <span className="font-semibold text-sm">Xem tất cả</span>
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                            <ArrowRight className="w-4 h-4" />
+                        </div>
                     </Link>
                 </div>
 
-                <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-3 gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide">
-                    {categories.map((cat) => {
+                <div className="flex md:grid md:grid-cols-12 gap-4 md:gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory md:h-[500px] no-scrollbar">
+                    {categories.map((cat, index) => {
                         const colorStyle = getColorStyle(cat.color, cat.title, cat.subtitle);
-                        const hoverColorClass = getHoverColorClass(cat.title, cat.subtitle);
+                        
+                        // Layout Logic for up to 3-4 items
+                        // If 3 items: Item 0 (Motorcycle) takes 6 cols. Item 1 (Bicycle) takes 3. Item 2 (Acc) takes 3.
+                        // Or Item 0 (6 cols), Item 1 (6 cols) stacked?
+                        // Let's try: Item 0 (8 cols, full height), Item 1 & 2 (4 cols, half height stacked)
+                        
+                        let gridClass = "md:col-span-4"; // Default
+                        if (categories.length >= 3) {
+                            if (index === 0) gridClass = "md:col-span-6 md:row-span-2"; // Big Left
+                            else gridClass = "md:col-span-3 md:row-span-2"; // Tall Right
+                        }
+                        
+                        // Specialized layout for specific categories
+                        const isMain = cat.title.toLowerCase().includes('máy điện');
+                        const isSecondary = cat.title.toLowerCase().includes('đạp điện');
+                        
+                        if (isMain) gridClass = "md:col-span-6 md:row-span-2";
+                        else if (isSecondary) gridClass = "md:col-span-3 md:row-span-2";
+                        else gridClass = "md:col-span-3 md:row-span-2";
+
                         return (
                             <Link
                                 key={cat.id}
                                 href={cat.link}
-                                className="group relative h-[400px] flex-shrink-0 w-[85vw] sm:w-auto snap-center rounded-3xl overflow-hidden border border-white/10 shadow-xl"
+                                className={`
+                                    group relative overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl
+                                    ${gridClass} min-h-[300px] md:min-h-full
+                                    min-w-[85vw] md:min-w-0 snap-center shrink-0
+                                `}
                             >
-                                {/* Background Image */}
+                                {/* Background Image with Zoom Effect */}
                                 <Image
                                     src={cat.image}
                                     alt={cat.title}
                                     fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    style={{ willChange: 'transform' }}
+                                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                 />
 
-                                {/* Gradient Overlay - Theme aware */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent dark:from-black/90 dark:via-black/40 opacity-80 group-hover:opacity-90 transition-opacity" />
+                                {/* Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
 
-                                {/* Content */}
-                                <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                        <span
-                                            className={`inline-block px-3 py-1 rounded-full text-xs font-bold text-foreground dark:text-white mb-3 shadow-lg ${colorStyle.className}`}
-                                            style={colorStyle.style}
-                                        >
-                                            {cat.subtitle}
-                                        </span>
-                                        <h3 className={`text-foreground dark:text-white text-2xl font-bold mb-2 transition-colors ${hoverColorClass}`}>
+                                {/* Floating Content Box */}
+                                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                                    <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 transform translate-y-4 transition-all duration-500 group-hover:translate-y-0 group-hover:bg-white/10">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span
+                                                className={`inline-block px-3 py-1 rounded-lg text-xs font-bold text-white mb-2 ${colorStyle.className}`}
+                                                style={colorStyle.style}
+                                            >
+                                                {cat.subtitle}
+                                            </span>
+                                            <ArrowRight className="text-white w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                                        </div>
+                                        
+                                        <h3 className="text-white text-2xl md:text-3xl font-black leading-tight mb-2">
                                             {cat.title}
                                         </h3>
-                                        <div className="flex items-center gap-2 text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                                            Khám phá ngay <ArrowRight className="w-4 h-4" />
-                                        </div>
+                                        <p className="text-gray-300 text-sm line-clamp-2 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto transition-all duration-300 delay-100">
+                                            Khám phá các dòng {cat.title.toLowerCase()} mới nhất với công nghệ hiện đại.
+                                        </p>
                                     </div>
                                 </div>
                             </Link>

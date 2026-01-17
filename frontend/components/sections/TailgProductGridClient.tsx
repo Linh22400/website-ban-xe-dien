@@ -158,7 +158,7 @@ export default function TailgProductGridClient({
     };
 
     return (
-        <section className="py-8 relative overflow-hidden">
+        <section className="py-4 relative overflow-hidden">
             {/* Background decoration */}
             <div
                 className="absolute inset-0 opacity-10"
@@ -171,9 +171,9 @@ export default function TailgProductGridClient({
 
             <div className="container mx-auto px-4 relative z-10">
                 {/* Section Header - Enhanced with Exclusive Dealer Badge */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-4">
                     {/* Badge Row */}
-                    <div className="inline-flex items-center gap-3 mb-6">
+                    <div className="inline-flex items-center gap-3 mb-4">
                         <div className="h-px w-16 bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
                         <TailgOfficialBadge />
                         <div

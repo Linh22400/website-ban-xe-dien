@@ -86,6 +86,11 @@ export default function PaymentGatewaySelector() {
                             finalAmount,
                             `Thanh toan don hang ${result.data.OrderCode}`
                         );
+                        // Save phone to localStorage for tracking auto-fill
+                        if (typeof window !== 'undefined') {
+                            localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                        }
+
                         // Redirect to VNPay payment page
                         window.location.href = vnpayData.paymentUrl;
                         return;
@@ -105,6 +110,11 @@ export default function PaymentGatewaySelector() {
                             finalAmount,
                             `Thanh toan don hang ${result.data.OrderCode}`
                         );
+                        // Save phone to localStorage for tracking auto-fill
+                        if (typeof window !== 'undefined') {
+                            localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                        }
+
                         // Redirect to MoMo payment page
                         window.location.href = momoData.paymentUrl;
                         return;
@@ -124,6 +134,11 @@ export default function PaymentGatewaySelector() {
                             finalAmount,
                             `Thanh toan don hang ${result.data.OrderCode}`
                         );
+                        // Save phone to localStorage for tracking auto-fill
+                        if (typeof window !== 'undefined') {
+                            localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                        }
+
                         // Redirect to PayOS payment page
                         window.location.href = payosData.checkoutUrl;
                         return;

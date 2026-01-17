@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { CheckCircle, Package, Truck } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -8,6 +8,14 @@ import { useSearchParams } from 'next/navigation';
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderCode = searchParams.get('orderCode') || searchParams.get('orderId');
+  const [trackingUrl, setTrackingUrl] = useState("/tracking");
+
+  useEffect(() => {
+    if (orderCode) {
+        const savedPhone = localStorage.getItem(`lastOrderPhone_${orderCode}`);
+        setTrackingUrl(`/tracking?code=${orderCode}${savedPhone ? `&phone=${savedPhone}` : ''}`);
+    }
+  }, [orderCode]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24">
@@ -60,7 +68,7 @@ function OrderSuccessContent() {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href={orderCode ? `/tracking?code=${orderCode}` : "/tracking"}
+              href={trackingUrl}
               className="px-6 py-3 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors"
             >
               Theo dõi đơn hàng

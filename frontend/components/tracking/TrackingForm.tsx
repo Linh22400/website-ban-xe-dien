@@ -21,10 +21,10 @@ export default function TrackingForm() {
         const codeParam = searchParams?.get('code');
         const phoneParam = searchParams?.get('phone');
 
-        if (codeParam && phoneParam) {
-            setOrderCode(codeParam);
-            setPhone(phoneParam);
+        if (codeParam) setOrderCode(codeParam);
+        if (phoneParam) setPhone(phoneParam);
 
+        if (codeParam && phoneParam) {
             // Auto-submit after a short delay
             setTimeout(() => {
                 handleTrack(codeParam, phoneParam);

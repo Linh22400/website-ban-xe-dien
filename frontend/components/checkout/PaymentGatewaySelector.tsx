@@ -152,6 +152,11 @@ export default function PaymentGatewaySelector() {
 
                 // Handle VietQR - Show QR code
                 if (selectedGateway === 'vietqr') {
+                    // Save phone to localStorage for tracking auto-fill
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                    }
+
                     setOrderForBankTransfer({
                         orderId: result.data.OrderCode,
                         amount: finalAmount,
@@ -163,6 +168,11 @@ export default function PaymentGatewaySelector() {
 
                 // Handle Bank Transfer - Show upload form
                 if (selectedGateway === 'bank_transfer') {
+                    // Save phone to localStorage for tracking auto-fill
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                    }
+
                     setOrderForBankTransfer({
                         orderId: result.data.OrderCode,
                         amount: finalAmount,
@@ -174,6 +184,11 @@ export default function PaymentGatewaySelector() {
 
                 // Handle COD - Go to success page directly
                 if (selectedGateway === 'cod') {
+                    // Save phone to localStorage for tracking auto-fill
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                    }
+
                     goToNextStep();
                     setTimeout(() => {
                         goToNextStep();
@@ -182,6 +197,11 @@ export default function PaymentGatewaySelector() {
                 }
 
                 // Default flow
+                // Save phone to localStorage for tracking auto-fill
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem(`lastOrderPhone_${result.data.OrderCode}`, customerInfo.Phone || '');
+                }
+
                 goToNextStep();
                 setTimeout(() => {
                     goToNextStep();

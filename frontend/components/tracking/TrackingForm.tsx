@@ -16,18 +16,32 @@ export default function TrackingForm() {
     const [error, setError] = useState('');
     const [foundOrder, setFoundOrder] = useState<Order | null>(null);
 
-    // Auto-fill and submit if URL params exist
+    // Auto-fill and submit if URL params exist or fallback to localStorage
     useEffect(() => {
         const codeParam = searchParams?.get('code');
         const phoneParam = searchParams?.get('phone');
 
-        if (codeParam) setOrderCode(codeParam);
+        let targetPhone = phoneParam;
+
+        if (codeParam) {
+            setOrderCode(codeParam);
+            
+            // Fallback: Check localStorage if phoneParam is missing
+            if (!targetPhone) {
+                const savedPhone = localStorage.getItem(`lastOrderPhone_${codeParam}`);
+                if (savedPhone) {
+                    targetPhone = savedPhone;
+                    setPhone(savedPhone);
+                }
+            }
+        }
+        
         if (phoneParam) setPhone(phoneParam);
 
-        if (codeParam && phoneParam) {
+        if (codeParam && targetPhone) {
             // Auto-submit after a short delay
             setTimeout(() => {
-                handleTrack(codeParam, phoneParam);
+                handleTrack(codeParam, targetPhone!);
             }, 500);
         }
     }, [searchParams]);

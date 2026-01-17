@@ -38,7 +38,7 @@ export default {
       
       const body = {
         orderCode: payosOrderCode,
-        amount: Number(amount),
+        amount: Math.round(Number(amount)), // Ensure integer
         description: description || `Thanh toan don hang ${orderCode}`,
         cancelUrl: cancelUrl || `${domain}/checkout/payment-failed`,
         returnUrl: returnUrl || `${domain}/checkout/payos-return`,
@@ -81,7 +81,10 @@ export default {
 
     } catch (error) {
       console.error('PayOS createPayment error:', error);
-      return ctx.internalServerError('Failed to create PayOS payment link');
+      return ctx.internalServerError(`Failed to create PayOS payment link: ${error.message}`, {
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
   },
 

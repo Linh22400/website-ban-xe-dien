@@ -23,7 +23,7 @@ export default function Home() {
       {/* Hero Banner - Client Load for faster TTFB */}
       <HeroSlider />
 
-      <div className="relative z-10 pb-12 pt-8">
+      <div className="relative z-20 pb-12 pt-8">
         <div className="container mx-auto px-4">
           <QuickFinder />
         </div>

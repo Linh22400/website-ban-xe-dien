@@ -187,7 +187,7 @@ export default function QuickFinder() {
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 rounded-[2.5rem] blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
             
             <div
-                className="w-full border rounded-[2rem] relative backdrop-blur-xl shadow-2xl overflow-hidden bg-card/95 border-border p-6 md:p-8"
+                className="w-full border rounded-[2rem] relative backdrop-blur-xl shadow-2xl bg-card/95 border-border p-6 md:p-8"
             >
                 {/* Decorative Top Line */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />

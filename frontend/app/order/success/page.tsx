@@ -1,3 +1,5 @@
+'use client';
+
 import { Suspense } from 'react';
 import { CheckCircle, Package, Truck } from 'lucide-react';
 import Link from 'next/link';

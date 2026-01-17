@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
-export default function PayOSReturnPage() {
+function PayOSReturnContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
@@ -85,5 +85,17 @@ export default function PayOSReturnPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function PayOSReturnPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background flex items-center justify-center p-4">
+                <Loader2 className="w-16 h-16 text-primary mx-auto animate-spin" />
+            </div>
+        }>
+            <PayOSReturnContent />
+        </Suspense>
     );
 }

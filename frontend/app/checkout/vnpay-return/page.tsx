@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
-export default function VNPayReturnPage() {
+function VNPayReturnContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -27,5 +27,19 @@ export default function VNPayReturnPage() {
                 <p className="text-lg text-gray-600 dark:text-gray-300">Đang xác thực giao dịch...</p>
             </div>
         </div>
+    );
+}
+
+export default function VNPayReturnPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="w-12 h-12 text-primary mx-auto mb-4 animate-spin" />
+                </div>
+            </div>
+        }>
+            <VNPayReturnContent />
+        </Suspense>
     );
 }

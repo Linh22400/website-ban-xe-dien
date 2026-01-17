@@ -50,7 +50,7 @@ export default {
         // We will save the mapping in our DB before returning.
       };
 
-      const paymentLinkData = await payos.createPaymentLink(body);
+      const paymentLinkData = await payos.paymentRequests.create(body);
 
       // Create a pending transaction record to link PayOS code with our Order
       const order = await strapi.db.query('api::order.order').findOne({
@@ -112,11 +112,13 @@ export default {
         const payos = new PayOS(clientId, apiKey, checksumKey);
 
         // verifyPaymentWebhookData throws error if invalid
-        const verifiedData = payos.verifyPaymentWebhookData(webhookData);
+        // In v2, use payos.webhooks.verify which returns the data object
+        const verifiedData = await payos.webhooks.verify(webhookData);
         
         // 2. Process Success Payment
-        if (verifiedData.code === '00' && verifiedData.success) {
-            const payosOrderCode = String(verifiedData.data.orderCode);
+        // verify() throws if signature is invalid. If we are here, it is valid.
+        if (verifiedData) {
+            const payosOrderCode = String(verifiedData.orderCode);
             
             // Find the transaction by PayOS Order Code
             const transaction = await strapi.db.query('api::payment-transaction.payment-transaction').findOne({

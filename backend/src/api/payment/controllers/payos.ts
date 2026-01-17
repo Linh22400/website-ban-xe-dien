@@ -3,7 +3,7 @@
  * Strapi CMS - src/api/payment/controllers/payos.ts
  */
 
-const PayOS = require('@payos/node');
+const PayOS = require('@payos/node').PayOS;
 
 export default {
   /**

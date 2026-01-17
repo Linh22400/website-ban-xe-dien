@@ -342,13 +342,36 @@ export interface Article {
 export async function getArticles(): Promise<Article[]> {
     try {
         const url = `${STRAPI_URL}/api/articles?populate[0]=Cover_image&populate[1]=category&sort=createdAt:desc`;
-        const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
+        
+        // Use direct fetch with robust error handling for build stability
+        const response = await fetch(url, {
+            ...getDefaultFetchOptions(180)
+        });
+
+        if (!response.ok) {
+            // Log error even during build to help debugging
+            console.error(`Failed to fetch articles: ${response.status} ${response.statusText}`);
+            return [];
+        }
+
+        const data = await response.json();
 
         if (!data || !data.data) return [];
 
-        return data.data.map((item: any) => transformStrapiArticle(item));
+        return data.data
+            .map((item: any) => {
+                try {
+                    return transformStrapiArticle(item);
+                } catch (err) {
+                    console.error("Error transforming article:", err);
+                    return null;
+                }
+            })
+            .filter((item: any): item is Article => item !== null);
+            
     } catch (error) {
-        logFetchIssue("Error fetching articles:", error);
+        // Ensure we log errors even in production build for this critical path
+        console.error("Error fetching articles:", error);
         return [];
     }
 }

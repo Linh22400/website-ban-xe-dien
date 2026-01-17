@@ -742,16 +742,8 @@ export default {
             status: 'published',
           });
         } else {
-          strapi.log.info(`Updating TAILG model: ${car.name}`);
-          // Update existing record to ensure new fields (like color variants) are applied
-          const entry = existing[0];
-          await strapi.documents('api::car-model.car-model').update({
-            documentId: entry.documentId,
-            data: {
-              ...car,
-            },
-            status: 'published',
-          });
+          // Skip updating to improve startup time.
+          // strapi.log.info(`Skipping update for existing model: ${car.name}`);
         }
       } catch (error) {
         strapi.log.error(`Failed to seed ${car.name}:`, error);

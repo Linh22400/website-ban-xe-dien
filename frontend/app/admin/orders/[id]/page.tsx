@@ -102,20 +102,34 @@ export default function OrderDetailPage() {
                     // Auto-check PayOS if pending
                     // Check both Order Status (pending_payment) and Payment Status (pending)
                     if (data.Statuses === 'pending_payment' || data.PaymentStatus === 'pending') {
-                        // Small delay to ensure UI renders first
-                        setTimeout(async () => {
-                            try {
-                                console.log('Auto-checking PayOS status...');
-                                const result = await syncOrderPaymentStatus(token, orderId);
-                                if (result.success && result.status === 'completed') {
-                                     console.log('Auto-sync success: Order completed');
-                                     setStatus('completed');
-                                     setOrder(prev => prev ? { ...prev, PaymentStatus: 'completed', Statuses: 'processing' } : null);
-                                }
-                            } catch (e) {
-                                console.error('Auto-sync PayOS failed:', e);
-                            }
-                        }, 1000);
+                         const checkPayOS = async (attempt = 1) => {
+                             // Max 5 attempts (10 seconds coverage)
+                             if (attempt > 5) return; 
+                             
+                             try {
+                                 console.log(`Auto-checking PayOS status (Attempt ${attempt})...`);
+                                 const result = await syncOrderPaymentStatus(token, orderId);
+                                 
+                                 if (result.success && result.status === 'completed') {
+                                      console.log('Auto-sync success: Order completed');
+                                      setStatus('completed');
+                                      setOrder(prev => prev ? { ...prev, PaymentStatus: 'completed', Statuses: 'processing' } : null);
+                                      // Optional: Notify user
+                                      // alert("Đã tự động cập nhật trạng thái thanh toán!");
+                                 } else {
+                                     // Retry if not successful (PayOS might be slow to update status)
+                                     console.log(`Auto-sync attempt ${attempt} result:`, result);
+                                     if (attempt < 5) {
+                                         setTimeout(() => checkPayOS(attempt + 1), 2000);
+                                     }
+                                 }
+                             } catch (e) {
+                                 console.error('Auto-sync PayOS failed:', e);
+                             }
+                         };
+                         
+                         // Start checking after 1s
+                         setTimeout(() => checkPayOS(1), 1000);
                     }
                 }
             } catch (error: any) {

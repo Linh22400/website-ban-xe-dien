@@ -107,7 +107,7 @@ export default function AdminOrdersPage() {
                         placeholder="Tìm kiếm theo mã đơn, tên, SĐT..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-card/50 border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
 
@@ -119,7 +119,7 @@ export default function AdminOrdersPage() {
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="appearance-none bg-card/50 border border-white/10 rounded-xl pl-10 pr-10 py-3 text-foreground focus:outline-none focus:border-primary transition-colors h-full cursor-pointer min-w-[180px]"
+                        className="appearance-none bg-card/50 border border-border rounded-xl pl-10 pr-10 py-3 text-foreground focus:outline-none focus:border-primary transition-colors h-full cursor-pointer min-w-[180px]"
                     >
                         <option value="all">Tất cả trạng thái</option>
                         <option value="pending_payment">Chờ Thanh Toán</option>
@@ -132,11 +132,11 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-muted/50 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 font-bold">Mã Đơn <ArrowUpDown className="w-3 h-3 inline ml-1 opacity-50" /></th>
                                 <th className="p-4 font-bold">Khách Hàng</th>
                                 <th className="p-4 font-bold">Ngày Đặt</th>
@@ -146,7 +146,7 @@ export default function AdminOrdersPage() {
                                 <th className="p-4 font-bold text-right">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={7} className="p-8 text-center text-muted-foreground">

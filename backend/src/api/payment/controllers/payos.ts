@@ -197,15 +197,42 @@ export default {
                 });
 
                 // Update Order Status
-                // Only update if not already completed to avoid duplicate processing logs
-                if (transaction.Order.PaymentStatus !== 'completed') {
-                    await strapi.entityService.update('api::order.order', transaction.Order.id, {
-                        data: {
-                            PaymentStatus: 'completed',
-                            Statuses: 'processing', // Move to processing
+                // Update if payment is not completed OR if status is still pending_payment (fix inconsistency)
+                if (transaction.Order.PaymentStatus !== 'completed' || transaction.Order.Statuses === 'pending_payment') {
+                    console.log(`Updating Order ${transaction.Order.OrderCode} (ID: ${transaction.Order.id}, DocumentID: ${transaction.Order.documentId}) ...`);
+                    
+                    try {
+                        // Strapi v5: Prefer strapi.documents if available and documentId exists
+                        if (strapi.documents && transaction.Order.documentId) {
+                            // 1. Update the document (creates/updates draft)
+                            await strapi.documents('api::order.order').update({
+                                documentId: transaction.Order.documentId,
+                                data: {
+                                    PaymentStatus: 'completed',
+                                    Statuses: 'processing',
+                                }
+                            });
+                            
+                            // 2. Publish the document to make changes live
+                            await strapi.documents('api::order.order').publish({
+                                documentId: transaction.Order.documentId,
+                            });
+                            
+                            console.log(`Order ${transaction.Order.OrderCode} status updated and PUBLISHED using strapi.documents.`);
+                        } else {
+                            // Fallback to entityService (Note: Might not publish if Draft/Publish is enabled)
+                            await strapi.entityService.update('api::order.order', transaction.Order.id, {
+                                data: {
+                                    PaymentStatus: 'completed',
+                                    Statuses: 'processing',
+                                    publishedAt: new Date(), // Try to force publish in entityService
+                                }
+                            });
+                            console.log(`Order ${transaction.Order.OrderCode} status updated using entityService.`);
                         }
-                    });
-                    console.log(`Order ${transaction.Order.OrderCode} status updated to completed.`);
+                    } catch (updateError) {
+                        console.error(`Failed to update order status for ${transaction.Order.OrderCode}:`, updateError);
+                    }
                 } else {
                     console.log(`Order ${transaction.Order.OrderCode} was already completed.`);
                 }
@@ -299,12 +326,28 @@ export default {
                             });
 
                             // Update Order
-                            await strapi.entityService.update('api::order.order', transaction.Order.id, {
-                                data: {
-                                    PaymentStatus: 'completed',
-                                    Statuses: 'processing',
-                                }
-                            });
+                            console.log(`Updating Order ${transaction.Order.OrderCode} (ID: ${transaction.Order.id}, DocumentID: ${transaction.Order.documentId}) ...`);
+                            if (strapi.documents && transaction.Order.documentId) {
+                                await strapi.documents('api::order.order').update({
+                                    documentId: transaction.Order.documentId,
+                                    data: {
+                                        PaymentStatus: 'completed',
+                                        Statuses: 'processing',
+                                    }
+                                });
+                                // Publish
+                                await strapi.documents('api::order.order').publish({
+                                    documentId: transaction.Order.documentId,
+                                });
+                            } else {
+                                await strapi.entityService.update('api::order.order', transaction.Order.id, {
+                                    data: {
+                                        PaymentStatus: 'completed',
+                                        Statuses: 'processing',
+                                        publishedAt: new Date(),
+                                    }
+                                });
+                            }
                         } else if (paymentInfo.status === 'CANCELLED') {
                              // Update Transaction
                              await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
@@ -508,12 +551,28 @@ export default {
                         });
 
                         // Update Order
-                        await strapi.entityService.update('api::order.order', transaction.Order.id, {
-                            data: {
-                                PaymentStatus: 'completed',
-                                Statuses: 'processing',
-                            }
-                        });
+                        console.log(`Updating Order ${transaction.Order.OrderCode} (ID: ${transaction.Order.id}, DocumentID: ${transaction.Order.documentId}) ...`);
+                        if (strapi.documents && transaction.Order.documentId) {
+                             await strapi.documents('api::order.order').update({
+                                documentId: transaction.Order.documentId,
+                                data: {
+                                    PaymentStatus: 'completed',
+                                    Statuses: 'processing',
+                                }
+                            });
+                            // Publish
+                            await strapi.documents('api::order.order').publish({
+                                documentId: transaction.Order.documentId,
+                            });
+                        } else {
+                            await strapi.entityService.update('api::order.order', transaction.Order.id, {
+                                data: {
+                                    PaymentStatus: 'completed',
+                                    Statuses: 'processing',
+                                    publishedAt: new Date(),
+                                }
+                            });
+                        }
                         
                         return ctx.send({
                             success: true,

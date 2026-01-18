@@ -365,6 +365,16 @@ export default function AdminMarketingPage() {
                     </div>
                 )}
             </div>
+
+            {/* Pagination (Static for now) */}
+            <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                <div>Hiển thị {slides.length} kết quả</div>
+                <div className="flex gap-2">
+                    <button className="px-3 py-1 bg-muted rounded hover:bg-muted/80 disabled:opacity-50" disabled>Trước</button>
+                    <button className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded">1</button>
+                    <button className="px-3 py-1 bg-muted rounded hover:bg-muted/80" disabled>Sau</button>
+                </div>
+            </div>
         </div>
     );
 }

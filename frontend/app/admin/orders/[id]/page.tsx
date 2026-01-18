@@ -14,9 +14,10 @@ import {
     User,
     Package,
     ArrowUpDown,
-    XCircle
+    XCircle,
+    RefreshCcw
 } from "lucide-react";
-import { getOrderById, updateOrderStatus } from "@/lib/order-api";
+import { getOrderById, updateOrderStatus, syncOrderPaymentStatus } from "@/lib/order-api";
 import { useAuth } from "@/lib/auth-context";
 import { Order } from "@/types/order";
 
@@ -109,6 +110,21 @@ export default function OrderDetailPage() {
         window.print();
     };
 
+    const handleSync = async () => {
+        if (!confirm("Bạn có muốn kiểm tra và đồng bộ trạng thái thanh toán từ PayOS?")) return;
+        
+        const result = await syncOrderPaymentStatus(authToken || "", orderId);
+        if (result.success) {
+            alert(result.message);
+            if (result.status === 'completed') {
+                setStatus('completed');
+                setOrder(prev => prev ? { ...prev, PaymentStatus: 'completed', Statuses: 'processing' } : null);
+            }
+        } else {
+            alert(result.message);
+        }
+    };
+
     const updateStatus = async (newStatus: string) => {
         if (!confirm(`Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang "${newStatus}"?`)) return;
 
@@ -185,6 +201,15 @@ export default function OrderDetailPage() {
                     </div>
 
                     <div className="flex gap-3">
+                        <button
+                            onClick={handleSync}
+                            className="px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-500/20 flex items-center gap-2 transition-colors"
+                            title="Đồng bộ trạng thái thanh toán từ PayOS"
+                        >
+                            <RefreshCcw className="w-4 h-4" />
+                            Check PayOS
+                        </button>
+
                         <button
                             onClick={handlePrint}
                             className="px-4 py-2 bg-muted/50 hover:bg-muted text-foreground rounded-xl border border-border flex items-center gap-2 transition-colors"

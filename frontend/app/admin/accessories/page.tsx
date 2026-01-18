@@ -77,12 +77,12 @@ export default function AdminAccessoriesPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Phụ Kiện</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Phụ Kiện</h1>
                     <p className="text-muted-foreground">Danh sách mũ bảo hiểm, sạc, pin và phụ tùng khác.</p>
                 </div>
                 <Link
                     href="/admin/accessories/new"
-                    className="px-4 py-2 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+                    className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
                 >
                     <Plus className="w-5 h-5" />
                     Thêm Mới
@@ -98,7 +98,7 @@ export default function AdminAccessoriesPage() {
                         placeholder="Tìm tên phụ kiện..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-background border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
                 <div className="relative">
@@ -106,7 +106,7 @@ export default function AdminAccessoriesPage() {
                     <select
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
-                        className="pl-10 pr-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[200px]"
+                        className="pl-10 pr-8 py-3 bg-background hover:bg-muted/50 text-foreground rounded-xl border border-border focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[200px]"
                     >
                         <option value="all">Tất cả danh mục</option>
                         <option value="helmet">Mũ Bảo Hiểm</option>

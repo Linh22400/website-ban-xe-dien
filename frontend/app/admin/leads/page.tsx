@@ -65,13 +65,13 @@ export default function AdminLeadsPage() {
         switch (type) {
             case 'test-drive':
             case 'test_drive': // Handle both cases
-                return <span className="px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><Car className="w-3 h-3" /> Lái Thử</span>;
+                return <span className="px-2 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><Car className="w-3 h-3" /> Lái Thử</span>;
             case 'contact':
-                return <span className="px-2 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><MessageSquare className="w-3 h-3" /> Liên Hệ</span>;
+                return <span className="px-2 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><MessageSquare className="w-3 h-3" /> Liên Hệ</span>;
             case 'quote':
-                return <span className="px-2 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><MessageSquare className="w-3 h-3" /> Báo Giá</span>;
+                return <span className="px-2 py-1 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><MessageSquare className="w-3 h-3" /> Báo Giá</span>;
             default:
-                return <span className="px-2 py-1 bg-gray-500/10 text-gray-400 border border-gray-500/20 rounded-full text-xs font-bold w-fit">{type}</span>;
+                return <span className="px-2 py-1 bg-gray-500/10 text-gray-600 dark:text-gray-400 border border-gray-500/20 rounded-full text-xs font-bold w-fit">{type}</span>;
         }
     };
 

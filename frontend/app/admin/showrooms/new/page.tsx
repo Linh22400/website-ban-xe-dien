@@ -169,12 +169,12 @@ function ShowroomForm() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/showrooms"
-                        className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+                        className="p-2 hover:bg-muted/50 rounded-full transition-colors text-muted-foreground hover:text-foreground"
                     >
-                        <ArrowLeft className="w-5 h-5 text-white" />
+                        <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">
+                        <h1 className="text-2xl font-bold text-foreground">
                             {isEditMode ? "Chỉnh Sửa Cửa Hàng" : "Thêm Cửa Hàng Mới"}
                         </h1>
                         <p className="text-sm text-muted-foreground">
@@ -194,11 +194,11 @@ function ShowroomForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Image Upload Section */}
-                <div className="md:col-span-2 bg-card border border-white/10 rounded-2xl p-6">
-                    <h2 className="font-bold text-white mb-4">Hình Ảnh Cửa Hàng</h2>
+                <div className="md:col-span-2 bg-card border border-border rounded-2xl p-6">
+                    <h2 className="font-bold text-foreground mb-4">Hình Ảnh Cửa Hàng</h2>
                     <div className="grid grid-cols-4 gap-4">
                         {previewImages.map((src, idx) => (
-                            <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
+                            <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-border group">
                                 <img src={src} alt="Showroom" className="w-full h-full object-cover" />
                                 <button
                                     onClick={() => handleRemoveImage(idx)}
@@ -208,7 +208,7 @@ function ShowroomForm() {
                                 </button>
                             </div>
                         ))}
-                        <label className="aspect-square rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-white/5 transition-all">
+                        <label className="aspect-square rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-all">
                             <Plus className="w-8 h-8 text-muted-foreground mb-2" />
                             <span className="text-xs text-muted-foreground">Thêm ảnh</span>
                             <input type="file" multiple accept="image/*" onChange={handleImageSelect} className="hidden" />
@@ -217,9 +217,9 @@ function ShowroomForm() {
                 </div>
 
                 {/* Main Info */}
-                <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
+                <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
                     <div className="flex justify-between items-center mb-2">
-                        <h2 className="font-bold text-white">Thông Tin Chung</h2>
+                        <h2 className="font-bold text-foreground">Thông Tin Chung</h2>
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input
                                 type="checkbox"
@@ -227,57 +227,57 @@ function ShowroomForm() {
                                 onChange={(e) => setIsActive(e.target.checked)}
                                 className="w-5 h-5 accent-green-500"
                             />
-                            <span className={`text-sm font-bold ${isActive ? 'text-green-400' : 'text-gray-500'}`}>
+                            <span className={`text-sm font-bold ${isActive ? 'text-green-400' : 'text-muted-foreground'}`}>
                                 {isActive ? 'Đang hoạt động' : 'Tạm đóng'}
                             </span>
                         </label>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-gray-300">Tên Cửa Hàng <span className="text-red-500">*</span></label>
+                        <label className="text-sm font-bold text-muted-foreground">Tên Cửa Hàng <span className="text-red-500">*</span></label>
                         <input
                             type="text"
                             placeholder="Ví dụ: Showroom Cầu Giấy"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-gray-300">Quản Lý</label>
+                        <label className="text-sm font-bold text-muted-foreground">Quản Lý</label>
                         <input
                             type="text"
                             placeholder="Tên người quản lý"
                             value={manager}
                             onChange={(e) => setManager(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                         />
                     </div>
                 </div>
 
                 {/* Contact & Location */}
-                <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                    <h2 className="font-bold text-white mb-2">Liên Hệ & Vị Trí</h2>
+                <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                    <h2 className="font-bold text-foreground mb-2">Liên Hệ & Vị Trí</h2>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-gray-300">Địa Chỉ <span className="text-red-500">*</span></label>
+                        <label className="text-sm font-bold text-muted-foreground">Địa Chỉ <span className="text-red-500">*</span></label>
                         <input
                             type="text"
                             placeholder="Số nhà, tên đường..."
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Khu Vực</label>
+                            <label className="text-sm font-bold text-muted-foreground">Khu Vực</label>
                             <select
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors appearance-none"
                             >
                                 <option value="Hà Nội">Hà Nội</option>
                                 <option value="Hồ Chí Minh">TP. Hồ Chí Minh</option>
@@ -288,43 +288,43 @@ function ShowroomForm() {
                             </select>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Quận / Huyện</label>
+                            <label className="text-sm font-bold text-muted-foreground">Quận / Huyện</label>
                             <input
                                 type="text"
                                 placeholder="Cầu Giấy"
                                 value={district}
                                 onChange={(e) => setDistrict(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Số Điện Thoại</label>
+                            <label className="text-sm font-bold text-muted-foreground">Số Điện Thoại</label>
                             <input
                                 type="text"
                                 placeholder="0987..."
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Giờ Làm Việc</label>
+                            <label className="text-sm font-bold text-muted-foreground">Giờ Làm Việc</label>
                             <input
                                 type="text"
                                 placeholder="8:00 - 17:30"
                                 value={workingHours}
                                 onChange={(e) => setWorkingHours(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
                     </div>
 
-                    <div className="pt-4 border-t border-white/10">
+                    <div className="pt-4 border-t border-border">
                         <div className="flex items-center justify-between mb-2">
-                            <label className="text-sm font-bold text-gray-300 flex items-center gap-2">
+                            <label className="text-sm font-bold text-muted-foreground flex items-center gap-2">
                                 <MapPin className="w-4 h-4 text-primary" />
                                 Tọa Độ Bản Đồ
                             </label>
@@ -342,14 +342,14 @@ function ShowroomForm() {
                                 placeholder="Latitude (Vĩ độ)"
                                 value={latitude}
                                 onChange={(e) => setLatitude(e.target.value)}
-                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm"
+                                className="bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm"
                             />
                             <input
                                 type="text"
                                 placeholder="Longitude (Kinh độ)"
                                 value={longitude}
                                 onChange={(e) => setLongitude(e.target.value)}
-                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm"
+                                className="bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm"
                             />
                         </div>
                     </div>
@@ -361,7 +361,7 @@ function ShowroomForm() {
 
 export default function NewShowroomPage() {
     return (
-        <Suspense fallback={<div className="text-white">Đang tải...</div>}>
+        <Suspense fallback={<div className="text-foreground">Đang tải...</div>}>
             <ShowroomForm />
         </Suspense>
     );

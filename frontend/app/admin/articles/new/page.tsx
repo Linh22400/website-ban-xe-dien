@@ -234,12 +234,12 @@ function ArticleFormContent() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/articles"
-                        className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
+                        className="p-2 bg-muted/50 hover:bg-muted rounded-xl transition-colors"
                     >
-                        <ArrowLeft className="w-5 h-5 text-white" />
+                        <ArrowLeft className="w-5 h-5 text-foreground" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">
+                        <h1 className="text-2xl font-bold text-foreground">
                             {id ? "Chỉnh Sửa Bài Viết" : "Viết Bài Mới"}
                         </h1>
                         <p className="text-muted-foreground text-sm">Điền thông tin bài viết và SEO.</p>
@@ -248,7 +248,7 @@ function ArticleFormContent() {
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="px-6 py-2.5 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50"
                 >
                     <Save className="w-5 h-5" />
                     {loading ? "Đang lưu..." : "Lưu Bài Viết"}
@@ -259,38 +259,38 @@ function ArticleFormContent() {
                 {/* Main Content (Left) */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* General Info */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="text-lg font-bold text-white mb-4">Thông Tin Chung</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="text-lg font-bold text-foreground mb-4">Thông Tin Chung</h2>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Tiêu Đề Bài Viết <span className="text-red-500">*</span></label>
+                            <label className="text-sm font-bold text-muted-foreground">Tiêu Đề Bài Viết <span className="text-red-500">*</span></label>
                             <input
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                                 placeholder="Nhập tiêu đề bài viết..."
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Đường Dẫn (Slug) <span className="text-red-500">*</span></label>
+                            <label className="text-sm font-bold text-muted-foreground">Đường Dẫn (Slug) <span className="text-red-500">*</span></label>
                             <input
                                 type="text"
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors font-mono text-sm"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors font-mono text-sm"
                                 placeholder="tieu-de-bai-viet"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Tóm Tắt (Excerpt) <span className="text-red-500">*</span></label>
+                            <label className="text-sm font-bold text-muted-foreground">Tóm Tắt (Excerpt) <span className="text-red-500">*</span></label>
                             <textarea
                                 value={excerpt}
                                 onChange={(e) => setExcerpt(e.target.value)}
                                 rows={3}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                                 placeholder="Mô tả ngắn gọn về bài viết..."
                             />
                         </div>
@@ -298,7 +298,7 @@ function ArticleFormContent() {
 
                     {/* Block Content Editor */}
                     <div className="space-y-4">
-                        <h2 className="text-lg font-bold text-white">Nội Dung Bài Viết</h2>
+                        <h2 className="text-lg font-bold text-foreground">Nội Dung Bài Viết</h2>
                         <BlockManager
                             blocks={blocks}
                             onChange={setBlocks}
@@ -306,26 +306,26 @@ function ArticleFormContent() {
                     </div>
 
                     {/* SEO Info */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="text-lg font-bold text-white mb-4">Cấu Hình SEO</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="text-lg font-bold text-foreground mb-4">Cấu Hình SEO</h2>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">SEO Title</label>
+                            <label className="text-sm font-bold text-muted-foreground">SEO Title</label>
                             <input
                                 type="text"
                                 value={seoTitle}
                                 onChange={(e) => setSeoTitle(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">SEO Description</label>
+                            <label className="text-sm font-bold text-muted-foreground">SEO Description</label>
                             <textarea
                                 value={seoDesc}
                                 onChange={(e) => setSeoDesc(e.target.value)}
                                 rows={3}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
                     </div>
@@ -334,15 +334,15 @@ function ArticleFormContent() {
                 {/* Sidebar (Right) */}
                 <div className="lg:col-span-1 space-y-6">
                     {/* Cover Image */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="text-lg font-bold text-white mb-4">Ảnh Đại Diện</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="text-lg font-bold text-foreground mb-4">Ảnh Đại Diện</h2>
                         <div className="space-y-4">
                             {coverPreview && (
-                                <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
+                                <div className="relative aspect-video rounded-xl overflow-hidden border border-border">
                                     <img src={coverPreview} alt="Cover Preview" className="w-full h-full object-cover" />
                                 </div>
                             )}
-                            <label className="flex w-full h-32 border-2 border-dashed border-white/10 rounded-xl flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-white/5 transition-all">
+                            <label className="flex w-full h-32 border-2 border-dashed border-border rounded-xl flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-all">
                                 <Upload className="w-8 h-8 text-muted-foreground mb-2" />
                                 <span className="text-sm text-muted-foreground">Tải ảnh bìa lên</span>
                                 <input type="file" accept="image/*" onChange={handleCoverSelect} className="hidden" />
@@ -351,17 +351,17 @@ function ArticleFormContent() {
                     </div>
 
                     {/* Metadata */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="text-lg font-bold text-white mb-4">Thuộc Tính</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="text-lg font-bold text-foreground mb-4">Thuộc Tính</h2>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300 flex items-center gap-2">
+                            <label className="text-sm font-bold text-muted-foreground flex items-center gap-2">
                                 <Tag className="w-4 h-4" /> Danh Mục
                             </label>
                             <select
                                 value={categoryId}
                                 onChange={(e) => setCategoryId(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             >
                                 <option value="">Chọn danh mục...</option>
                                 {categories.map(cat => (
@@ -371,38 +371,38 @@ function ArticleFormContent() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300 flex items-center gap-2">
+                            <label className="text-sm font-bold text-muted-foreground flex items-center gap-2">
                                 <User className="w-4 h-4" /> Tác Giả
                             </label>
                             <input
                                 type="text"
                                 value={author}
                                 onChange={(e) => setAuthor(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300 flex items-center gap-2">
+                            <label className="text-sm font-bold text-muted-foreground flex items-center gap-2">
                                 <Calendar className="w-4 h-4" /> Ngày Đăng
                             </label>
                             <input
                                 type="date"
                                 value={publishedDate}
                                 onChange={(e) => setPublishedDate(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors [color-scheme:dark]"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors [color-scheme:dark]"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300 flex items-center gap-2">
+                            <label className="text-sm font-bold text-muted-foreground flex items-center gap-2">
                                 <Clock className="w-4 h-4" /> Thời Gian Đọc (phút)
                             </label>
                             <input
                                 type="number"
                                 value={readingTime}
                                 onChange={(e) => setReadingTime(Number(e.target.value))}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
@@ -412,9 +412,9 @@ function ArticleFormContent() {
                                 id="featured"
                                 checked={featured}
                                 onChange={(e) => setFeatured(e.target.checked)}
-                                className="w-5 h-5 rounded border-white/10 bg-white/5 text-primary focus:ring-primary"
+                                className="w-5 h-5 rounded border-border bg-background text-primary focus:ring-primary"
                             />
-                            <label htmlFor="featured" className="text-sm font-bold text-white cursor-pointer select-none">
+                            <label htmlFor="featured" className="text-sm font-bold text-foreground cursor-pointer select-none">
                                 Đánh dấu nổi bật (Featured)
                             </label>
                         </div>

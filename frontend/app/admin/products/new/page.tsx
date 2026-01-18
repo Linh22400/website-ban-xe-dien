@@ -279,12 +279,12 @@ function ProductForm() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/products"
-                        className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+                        className="p-2 bg-muted/50 rounded-full hover:bg-muted transition-colors"
                     >
-                        <ArrowLeft className="w-5 h-5 text-white" />
+                        <ArrowLeft className="w-5 h-5 text-foreground" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">
+                        <h1 className="text-2xl font-bold text-foreground">
                             {isEditMode ? "Chỉnh Sửa Sản Phẩm" : "Thêm Sản Phẩm Mới"}
                         </h1>
                         <p className="text-sm text-muted-foreground">
@@ -295,7 +295,7 @@ function ProductForm() {
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="px-6 py-2.5 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50"
                 >
                     <Save className="w-4 h-4" />
                     {loading ? "Đang xử lý..." : (isEditMode ? "Cập Nhật" : "Lưu Sản Phẩm")}
@@ -306,11 +306,11 @@ function ProductForm() {
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Basic Details */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="font-bold text-white">Thông Tin Cơ Bản</h2>
+                            <h2 className="font-bold text-foreground">Thông Tin Cơ Bản</h2>
                             <div className="flex items-center gap-2">
-                                <label className="text-sm font-bold text-gray-300">Nổi bật</label>
+                                <label className="text-sm font-bold text-muted-foreground">Nổi bật</label>
                                 <input
                                     type="checkbox"
                                     checked={isFeatured}
@@ -321,58 +321,58 @@ function ProductForm() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Tên sản phẩm</label>
+                            <label className="text-sm font-bold text-muted-foreground">Tên sản phẩm</label>
                             <input
                                 type="text"
                                 placeholder="Ví dụ: Xe Máy Điện Yadea G5"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-300">Giá Bán (VNĐ)</label>
+                                <label className="text-sm font-bold text-muted-foreground">Giá Bán (VNĐ)</label>
                                 <input
                                     type="number"
                                     placeholder="0"
                                     value={price}
                                     onChange={(e) => setPrice(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-300">Giá Khuyến Mãi (Nếu có)</label>
+                                <label className="text-sm font-bold text-muted-foreground">Giá Khuyến Mãi (Nếu có)</label>
                                 <input
                                     type="number"
                                     placeholder="0"
                                     value={salePrice}
                                     onChange={(e) => setSalePrice(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Mô Tả Ngắn</label>
+                            <label className="text-sm font-bold text-muted-foreground">Mô Tả Ngắn</label>
                             <textarea
                                 rows={3}
                                 placeholder="Mô tả các tính năng nổi bật..."
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors resize-none"
                             />
                         </div>
                     </div>
 
                     {/* Color Management */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="font-bold text-white">Quản Lý Màu Sắc</h2>
+                            <h2 className="font-bold text-foreground">Quản Lý Màu Sắc</h2>
                             <button
                                 onClick={addColor}
-                                className="px-3 py-1 bg-white/5 hover:bg-white/10 text-xs rounded-lg border border-white/10 flex items-center gap-1 transition-colors"
+                                className="px-3 py-1 bg-muted/50 hover:bg-muted text-xs rounded-lg border border-border flex items-center gap-1 transition-colors"
                             >
                                 <Plus className="w-3 h-3" /> Thêm Màu
                             </button>
@@ -380,7 +380,7 @@ function ProductForm() {
 
                         <div className="space-y-6">
                             {colors.map((color, index) => (
-                                <div key={index} className="p-4 bg-white/5 rounded-xl border border-white/5 space-y-4 relative group">
+                                <div key={index} className="p-4 bg-muted/30 rounded-xl border border-border space-y-4 relative group">
                                     <button
                                         onClick={() => removeColor(index)}
                                         className="absolute top-2 right-2 p-1 text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -391,17 +391,17 @@ function ProductForm() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-xs text-gray-400">Tên Màu</label>
+                                            <label className="text-xs text-muted-foreground">Tên Màu</label>
                                             <input
                                                 type="text"
                                                 placeholder="Ví dụ: Đỏ Đô"
                                                 value={color.name}
                                                 onChange={(e) => updateColor(index, 'name', e.target.value)}
-                                                className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm"
+                                                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs text-gray-400">Mã Màu (Hex)</label>
+                                            <label className="text-xs text-muted-foreground">Mã Màu (Hex)</label>
                                             <div className="flex gap-2">
                                                 <input
                                                     type="color"
@@ -414,7 +414,7 @@ function ProductForm() {
                                                     placeholder="#FF0000"
                                                     value={color.hex}
                                                     onChange={(e) => updateColor(index, 'hex', e.target.value)}
-                                                    className="flex-1 bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm uppercase"
+                                                    className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm uppercase"
                                                 />
                                             </div>
                                         </div>
@@ -434,7 +434,7 @@ function ProductForm() {
                                                     </button>
                                                 </div>
                                             ))}
-                                            <label className="w-16 h-16 flex-shrink-0 flex items-center justify-center border border-dashed border-white/20 rounded-lg cursor-pointer hover:border-primary hover:text-primary transition-colors">
+                                            <label className="w-16 h-16 flex-shrink-0 flex items-center justify-center border border-dashed border-border rounded-lg cursor-pointer hover:border-primary hover:text-primary transition-colors">
                                                 <Upload className="w-4 h-4" />
                                                 <input
                                                     type="file"
@@ -449,7 +449,7 @@ function ProductForm() {
                                 </div>
                             ))}
                             {colors.length === 0 && (
-                                <div className="text-center text-muted-foreground text-sm py-4 border border-dashed border-white/10 rounded-xl">
+                                <div className="text-center text-muted-foreground text-sm py-4 border border-dashed border-border rounded-xl">
                                     Chưa có màu sắc nào. Nhấn "Thêm Màu" để bắt đầu.
                                 </div>
                             )}
@@ -457,47 +457,47 @@ function ProductForm() {
                     </div>
 
                     {/* Specifications */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="font-bold text-white mb-4">Thông Số Kỹ Thuật</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="font-bold text-foreground mb-4">Thông Số Kỹ Thuật</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Vận tốc tối đa</label>
+                                <label className="text-sm text-muted-foreground">Vận tốc tối đa</label>
                                 <input
                                     type="text"
                                     placeholder="50 km/h"
                                     value={speed}
                                     onChange={(e) => setSpeed(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-foreground focus:outline-none focus:border-primary transition-colors text-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Quãng đường / lần sạc</label>
+                                <label className="text-sm text-muted-foreground">Quãng đường / lần sạc</label>
                                 <input
                                     type="text"
                                     placeholder="80 km"
                                     value={range}
                                     onChange={(e) => setRange(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-foreground focus:outline-none focus:border-primary transition-colors text-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Thời gian sạc</label>
+                                <label className="text-sm text-muted-foreground">Thời gian sạc</label>
                                 <input
                                     type="text"
                                     placeholder="6-8 giờ"
                                     value={chargeTime}
                                     onChange={(e) => setChargeTime(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-foreground focus:outline-none focus:border-primary transition-colors text-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Trọng lượng</label>
+                                <label className="text-sm text-muted-foreground">Trọng lượng</label>
                                 <input
                                     type="text"
                                     placeholder="90 kg"
                                     value={weight}
                                     onChange={(e) => setWeight(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-2 text-foreground focus:outline-none focus:border-primary transition-colors text-sm"
                                 />
                             </div>
                         </div>
@@ -506,8 +506,8 @@ function ProductForm() {
 
                 {/* Sidebar: Images & Status */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="font-bold text-white">Hình Ảnh</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="font-bold text-foreground">Hình Ảnh</h2>
                         <p className="text-xs text-muted-foreground">Chỉ chọn 1 ảnh đại diện cho danh sách.</p>
 
                         {/* Image Preview Grid */}
@@ -526,24 +526,24 @@ function ProductForm() {
                         </div>
 
                         {/* Upload Button */}
-                        <label className="flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-all group gap-2">
-                            <div className="p-3 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
-                                <Upload className="w-6 h-6 text-gray-400 group-hover:text-primary" />
+                        <label className="flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-all group gap-2">
+                            <div className="p-3 bg-muted/50 rounded-full group-hover:scale-110 transition-transform">
+                                <Upload className="w-6 h-6 text-muted-foreground group-hover:text-primary" />
                             </div>
-                            <span className="text-xs text-muted-foreground group-hover:text-white">Tải ảnh đại diện</span>
+                            <span className="text-xs text-muted-foreground group-hover:text-foreground">Tải ảnh đại diện</span>
                             <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
                         </label>
                     </div>
 
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h2 className="font-bold text-white">Phân Loại</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h2 className="font-bold text-foreground">Phân Loại</h2>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Danh Mục</label>
+                            <label className="text-sm font-bold text-muted-foreground">Danh Mục</label>
                             <select
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors appearance-none"
                             >
                                 <option value="">-- Chọn Danh Mục --</option>
                                 <option value="Xe Máy Điện">Xe Máy Điện</option>
@@ -552,11 +552,11 @@ function ProductForm() {
                             </select>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Thương Hiệu</label>
+                            <label className="text-sm font-bold text-muted-foreground">Thương Hiệu</label>
                             <select
                                 value={brand}
                                 onChange={(e) => setBrand(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors appearance-none"
                             >
                                 <option value="">-- Chọn Thương Hiệu --</option>
                                 <option value="Yadea">Yadea</option>
@@ -566,14 +566,14 @@ function ProductForm() {
                             </select>
                         </div>
 
-                        <div className="space-y-2 pt-2 border-t border-white/10">
-                            <label className="text-sm font-bold text-gray-300">Tồn Kho</label>
+                        <div className="space-y-2 pt-2 border-t border-border">
+                            <label className="text-sm font-bold text-muted-foreground">Tồn Kho</label>
                             <input
                                 type="number"
                                 placeholder="100"
                                 value={stock}
                                 onChange={(e) => setStock(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
                     </div>
@@ -585,7 +585,7 @@ function ProductForm() {
 
 export default function NewProductPage() {
     return (
-        <Suspense fallback={<div className="text-white">Đang tải...</div>}>
+        <Suspense fallback={<div className="text-foreground">Đang tải...</div>}>
             <ProductForm />
         </Suspense>
     );

@@ -129,7 +129,7 @@ function AccessoryForm() {
         }
     };
 
-    if (loading) return <div className="text-white p-8">Đang tải dữ liệu...</div>;
+    if (loading) return <div className="text-foreground p-8">Đang tải dữ liệu...</div>;
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
@@ -138,12 +138,12 @@ function AccessoryForm() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/accessories"
-                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-muted-foreground hover:text-white"
+                        className="p-2 hover:bg-muted/50 rounded-full transition-colors text-muted-foreground hover:text-foreground"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-bold text-white">
+                        <h1 className="text-3xl font-bold text-foreground">
                             {id ? "Chỉnh Sửa Phụ Kiện" : "Thêm Phụ Kiện Mới"}
                         </h1>
                         <p className="text-muted-foreground">Điền thông tin phụ kiện.</p>
@@ -163,9 +163,9 @@ function AccessoryForm() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column - Image */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-card border border-white/10 rounded-2xl p-6">
-                        <h3 className="font-bold text-lg text-white mb-4">Hình Ảnh</h3>
-                        <div className="aspect-square bg-white/5 rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden group hover:border-primary/50 transition-colors">
+                    <div className="bg-card border border-border rounded-2xl p-6">
+                        <h3 className="font-bold text-lg text-foreground mb-4">Hình Ảnh</h3>
+                        <div className="aspect-square bg-background rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center relative overflow-hidden group hover:border-primary/50 transition-colors">
                             {imagePreview ? (
                                 <>
                                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
@@ -209,18 +209,18 @@ function AccessoryForm() {
 
                 {/* Right Column - Details */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
-                        <h3 className="font-bold text-lg text-white mb-4">Thông Tin Cơ Bản</h3>
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h3 className="font-bold text-lg text-foreground mb-4">Thông Tin Cơ Bản</h3>
 
                         {/* Name */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Tên Phụ Kiện</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Tên Phụ Kiện</label>
                             <input
                                 type="text"
                                 required
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary"
                                 placeholder="Ví dụ: Mũ Bảo Hiểm 3/4"
                             />
                         </div>
@@ -228,24 +228,24 @@ function AccessoryForm() {
                         <div className="grid grid-cols-2 gap-4">
                             {/* Price */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Giá Bán (VNĐ)</label>
+                                <label className="block text-sm font-medium text-muted-foreground mb-1">Giá Bán (VNĐ)</label>
                                 <input
                                     type="number"
                                     required
                                     min="0"
                                     value={formData.price}
                                     onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary"
                                 />
                             </div>
 
                             {/* Category */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Danh Mục</label>
+                                <label className="block text-sm font-medium text-muted-foreground mb-1">Danh Mục</label>
                                 <select
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary appearance-none"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary appearance-none"
                                 >
                                     <option value="helmet">Mũ Bảo Hiểm</option>
                                     <option value="charger">Sạc Xe</option>
@@ -258,24 +258,24 @@ function AccessoryForm() {
 
                         {/* Slug */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Slug (Link - Tự động tạo)</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Slug (Link - Tự động tạo)</label>
                             <input
                                 type="text"
                                 value={formData.slug}
                                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-muted-foreground focus:outline-none focus:border-primary text-sm"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-muted-foreground focus:outline-none focus:border-primary text-sm"
                                 placeholder="mu-bao-hiem-3-4"
                             />
                         </div>
 
                         {/* Description */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Mô Tả</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Mô Tả</label>
                             <textarea
                                 rows={4}
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary resize-none"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary resize-none"
                                 placeholder="Mô tả chi tiết sản phẩm..."
                             />
                         </div>
@@ -287,9 +287,9 @@ function AccessoryForm() {
                                 id="isFeatured"
                                 checked={formData.isFeatured}
                                 onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                                className="w-5 h-5 rounded border-gray-400 text-primary focus:ring-primary bg-transparent"
+                                className="w-5 h-5 rounded border-muted-foreground text-primary focus:ring-primary bg-transparent accent-primary"
                             />
-                            <label htmlFor="isFeatured" className="text-white cursor-pointer select-none">
+                            <label htmlFor="isFeatured" className="text-foreground cursor-pointer select-none">
                                 Đánh dấu là Phụ Kiện Nổi Bật
                             </label>
                         </div>
@@ -302,7 +302,7 @@ function AccessoryForm() {
 
 export default function NewAccessoryPage() {
     return (
-        <Suspense fallback={<div className="text-white">Đang tải...</div>}>
+        <Suspense fallback={<div className="text-foreground">Đang tải...</div>}>
             <AccessoryForm />
         </Suspense>
     );

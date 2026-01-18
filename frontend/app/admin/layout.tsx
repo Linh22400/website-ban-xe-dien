@@ -45,7 +45,7 @@ export default function AdminLayout({
             {/* Main Content */}
             <div className="flex-1 ml-64 flex flex-col">
                 <AdminHeader />
-                <main className="flex-1 p-8 bg-black/20">
+                <main className="flex-1 p-8 bg-muted/10">
                     <div className="max-w-7xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {children}
                     </div>

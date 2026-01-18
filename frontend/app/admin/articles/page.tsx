@@ -148,7 +148,7 @@ export default function AdminArticlesPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 {article.category ? (
-                                                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs border border-blue-500/30">
+                                                    <span className="px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-xs border border-blue-500/20">
                                                         {article.category.name}
                                                     </span>
                                                 ) : (

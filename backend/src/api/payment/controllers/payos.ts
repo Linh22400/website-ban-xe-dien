@@ -189,8 +189,8 @@ export default {
         }
 
         // --- SYNC LOGIC START ---
-        // If transaction is still pending, check with PayOS directly
-        if (transaction.Statuses === 'pending') {
+        // If transaction is still pending OR Order is still pending (in case of previous partial failure), check with PayOS
+        if (transaction.Statuses === 'pending' || transaction.Order.PaymentStatus === 'pending' || transaction.Order.Statuses === 'pending_payment') {
              try {
                 const clientId = process.env.PAYOS_CLIENT_ID;
                 const apiKey = process.env.PAYOS_API_KEY;
@@ -198,11 +198,113 @@ export default {
 
                 if (clientId && apiKey && checksumKey) {
                     const payos = new PayOS(clientId, apiKey, checksumKey);
-                    const paymentInfo = await payos.getPaymentLinkInformation(Number(code));
+                    
+                    // Get payment link information
+                    const paymentInfo = await payos.getPaymentLinkInformation(Number(transaction.TransactionId));
+                    
+                    if (paymentInfo) {
+                        console.log('Syncing PayOS status:', paymentInfo.status);
+                        
+                        // If paid
+                        if (paymentInfo.status === 'PAID') {
+                             // Update Transaction
+                             await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
+                                data: {
+                                    Statuses: 'success',
+                                    GatewayResponse: paymentInfo
+                                }
+                            });
 
-                    if (paymentInfo && (paymentInfo.status === 'PAID' || paymentInfo.status === 'judged')) {
-                         // Update Transaction
-                        await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
+                            // Update Order
+                            await strapi.entityService.update('api::order.order', transaction.Order.id, {
+                                data: {
+                                    PaymentStatus: 'completed',
+                                    Statuses: 'processing',
+                                }
+                            });
+                        } else if (paymentInfo.status === 'CANCELLED') {
+                             // Update Transaction
+                             await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
+                                data: {
+                                    Statuses: 'failed',
+                                    GatewayResponse: paymentInfo
+                                }
+                            });
+                            
+                            // Optionally update order to cancelled or keep pending
+                        }
+                    }
+                }
+            } catch (syncError) {
+                console.error('Failed to sync with PayOS:', syncError);
+                // Ignore sync error and return local data
+            }
+        }
+        // --- SYNC LOGIC END ---
+
+        // Re-fetch to get latest status
+        const updatedOrder = await strapi.entityService.findOne('api::order.order', transaction.Order.id, {
+            populate: ['payment_transactions'] // basic populate
+        });
+
+        return ctx.send({
+            orderCode: updatedOrder.OrderCode,
+            status: updatedOrder.PaymentStatus,
+            transactionStatus: transaction.Statuses
+        });
+
+    } catch (error) {
+        console.error('Resolve Order Error:', error);
+        return ctx.internalServerError('Failed to resolve order');
+    }
+  },
+
+  /**
+   * POST /api/payment/payos/sync
+   * Manually sync order status from PayOS (Admin usage)
+   */
+  async syncOrder(ctx) {
+    try {
+        const { orderId } = ctx.request.body; // Internal Order ID (documentId or ID)
+        
+        if (!orderId) {
+            return ctx.badRequest('Missing orderId');
+        }
+
+        // Find transaction for this order
+        // We look for the latest transaction for this order
+        const transactions = await strapi.db.query('api::payment-transaction.payment-transaction').findMany({
+            where: { Order: orderId, Gateway: 'payos' },
+            orderBy: { createdAt: 'desc' },
+            limit: 1,
+            populate: { Order: true }
+        });
+
+        if (!transactions || transactions.length === 0) {
+            return ctx.notFound('No PayOS transaction found for this order');
+        }
+
+        const transaction = transactions[0];
+        
+        // --- SYNC LOGIC START ---
+        try {
+            const clientId = process.env.PAYOS_CLIENT_ID;
+            const apiKey = process.env.PAYOS_API_KEY;
+            const checksumKey = process.env.PAYOS_CHECKSUM_KEY;
+
+            if (clientId && apiKey && checksumKey) {
+                const payos = new PayOS(clientId, apiKey, checksumKey);
+                
+                // Get payment link information
+                const paymentInfo = await payos.getPaymentLinkInformation(Number(transaction.TransactionId));
+                
+                if (paymentInfo) {
+                    console.log('Manual Sync PayOS status:', paymentInfo.status);
+                    
+                    // If paid
+                    if (paymentInfo.status === 'PAID') {
+                            // Update Transaction
+                            await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
                             data: {
                                 Statuses: 'success',
                                 GatewayResponse: paymentInfo
@@ -216,31 +318,35 @@ export default {
                                 Statuses: 'processing',
                             }
                         });
-                        console.log(`PayOS Sync: Order ${transaction.Order.OrderCode} manually synced to paid.`);
-                    } else if (paymentInfo && paymentInfo.status === 'CANCELLED') {
-                         await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
-                            data: {
-                                Statuses: 'failed',
-                                GatewayResponse: paymentInfo
-                            }
+                        
+                        return ctx.send({
+                            success: true,
+                            message: 'Order synced successfully: PAID',
+                            status: 'completed'
+                        });
+                    } else {
+                         return ctx.send({
+                            success: true,
+                            message: `Order synced: ${paymentInfo.status}`,
+                            status: paymentInfo.status
                         });
                     }
                 }
-             } catch (syncError) {
-                 console.error('Failed to sync PayOS status:', syncError);
-                 // Continue to return order code even if sync fails
-             }
+            }
+        } catch (syncError) {
+            console.error('Failed to sync with PayOS:', syncError);
+            return ctx.internalServerError(`Failed to sync with PayOS: ${syncError.message}`);
         }
         // --- SYNC LOGIC END ---
 
         return ctx.send({
-            data: {
-                orderCode: transaction.Order.OrderCode
-            }
+            success: false,
+            message: 'Could not sync status'
         });
+
     } catch (error) {
-        console.error('Resolve order error:', error);
-        return ctx.internalServerError('Failed to resolve order');
+        console.error('Sync Order Error:', error);
+        return ctx.internalServerError(`Failed to sync order: ${error.message}`);
     }
-  }
+  },
 };

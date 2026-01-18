@@ -112,7 +112,7 @@ function PromotionForm() {
         }
     };
 
-    if (loading) return <div className="text-white p-8">Đang tải dữ liệu...</div>;
+    if (loading) return <div className="text-foreground p-8">Đang tải dữ liệu...</div>;
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
@@ -121,12 +121,12 @@ function PromotionForm() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/admin/promotions"
-                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-muted-foreground hover:text-white"
+                        className="p-2 hover:bg-muted/50 rounded-full transition-colors text-muted-foreground hover:text-foreground"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-bold text-white">
+                        <h1 className="text-3xl font-bold text-foreground">
                             {id ? "Sửa Khuyến Mãi" : "Tạo Mới Khuyến Mãi"}
                         </h1>
                         <p className="text-muted-foreground">Thiết lập mã giảm giá và banner chương trình.</p>
@@ -145,10 +145,10 @@ function PromotionForm() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column: Image Upload */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-card border border-white/10 rounded-2xl p-6">
-                        <label className="block text-sm font-medium text-gray-400 mb-4">Ảnh Banner (1200x600)</label>
+                    <div className="bg-card border border-border rounded-2xl p-6">
+                        <label className="block text-sm font-medium text-muted-foreground mb-4">Ảnh Banner (1200x600)</label>
 
-                        <div className="relative aspect-video rounded-xl border-2 border-dashed border-white/20 bg-white/5 overflow-hidden group hover:border-primary/50 transition-colors">
+                        <div className="relative aspect-video rounded-xl border-2 border-dashed border-border bg-background overflow-hidden group hover:border-primary/50 transition-colors">
                             {previewUrl ? (
                                 <>
                                     <img
@@ -165,7 +165,7 @@ function PromotionForm() {
                                     </button>
                                 </>
                             ) : (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 gap-2">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground gap-2">
                                     <ImageIcon className="w-8 h-8" />
                                     <span className="text-sm">Chưa có ảnh</span>
                                 </div>
@@ -190,7 +190,7 @@ function PromotionForm() {
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex items-center gap-2 text-sm text-primary hover:text-white transition-colors"
+                                className="flex items-center gap-2 text-sm text-primary hover:text-foreground transition-colors"
                             >
                                 <UploadCloud className="w-4 h-4" />
                                 Tải ảnh lên
@@ -200,27 +200,27 @@ function PromotionForm() {
                 </div>
 
                 {/* Right Column: Form Fields */}
-                <div className="lg:col-span-2 bg-card border border-white/10 rounded-2xl p-6 space-y-6">
+                <div className="lg:col-span-2 bg-card border border-border rounded-2xl p-6 space-y-6">
                     {/* Title & Code */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Tên Chương Trình</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Tên Chương Trình</label>
                             <input
                                 type="text"
                                 required
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary"
                                 placeholder="Ví dụ: Giảm giá hè 2024"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Mã Code (Coupon)</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Mã Code (Coupon)</label>
                             <input
                                 type="text"
                                 value={formData.code}
                                 onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono uppercase focus:outline-none focus:border-primary"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground font-mono uppercase focus:outline-none focus:border-primary"
                                 placeholder="SUMMER2024"
                             />
                         </div>
@@ -229,7 +229,7 @@ function PromotionForm() {
                     {/* Discount & Date */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Giảm Giá (%)</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Giảm Giá (%)</label>
                             <input
                                 type="number"
                                 required
@@ -237,29 +237,29 @@ function PromotionForm() {
                                 max="100"
                                 value={formData.discountPercent}
                                 onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Ngày Hết Hạn</label>
+                            <label className="block text-sm font-medium text-muted-foreground mb-1">Ngày Hết Hạn</label>
                             <input
                                 type="date"
                                 required
                                 value={formData.expiryDate}
                                 onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary [color-scheme:dark]"
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary [color-scheme:light] dark:[color-scheme:dark]"
                             />
                         </div>
                     </div>
 
                     {/* Description */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Mô Tả Chi Tiết</label>
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">Mô Tả Chi Tiết</label>
                         <textarea
                             rows={4}
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary resize-none"
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary resize-none"
                             placeholder="Điều kiện áp dụng..."
                         />
                     </div>
@@ -271,9 +271,9 @@ function PromotionForm() {
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                            className="w-5 h-5 rounded border-gray-400 text-primary focus:ring-primary bg-transparent"
+                            className="w-5 h-5 rounded border-muted-foreground text-primary focus:ring-primary bg-transparent accent-primary"
                         />
-                        <label htmlFor="isActive" className="text-white cursor-pointer select-none">
+                        <label htmlFor="isActive" className="text-foreground cursor-pointer select-none">
                             Kích Hoạt Chương Trình
                         </label>
                     </div>
@@ -285,7 +285,7 @@ function PromotionForm() {
 
 export default function NewPromotionPage() {
     return (
-        <Suspense fallback={<div className="text-white">Đang tải...</div>}>
+        <Suspense fallback={<div className="text-foreground">Đang tải...</div>}>
             <PromotionForm />
         </Suspense>
     );

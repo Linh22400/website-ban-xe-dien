@@ -133,7 +133,7 @@ export default function AdminCategoriesPage() {
                                             <div className="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
                                                 <Link
                                                     href={`/admin/categories/${cat.documentId}`}
-                                                    className="p-2 bg-muted hover:bg-muted/80 text-blue-400 rounded-lg transition-colors"
+                                                    className="p-2 bg-muted hover:bg-muted/80 text-blue-600 dark:text-blue-400 rounded-lg transition-colors"
                                                     title="Chỉnh sửa"
                                                 >
                                                     <Edit2 className="w-4 h-4" />

@@ -96,51 +96,51 @@ export default function NewCategoryPage() {
             <div className="flex items-center gap-4">
                 <Link
                     href="/admin/categories"
-                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors"
+                    className="p-2 rounded-xl bg-muted/50 hover:bg-muted text-foreground transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Thêm Danh Mục Mới</h1>
+                    <h1 className="text-2xl font-bold text-foreground">Thêm Danh Mục Mới</h1>
                     <p className="text-muted-foreground">Tạo phân loại mới cho sản phẩm.</p>
                 </div>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="bg-card border border-white/10 rounded-2xl p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 space-y-6">
 
                 {/* Name */}
                 <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-300">Tên Danh Mục <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-bold text-muted-foreground">Tên Danh Mục <span className="text-red-500">*</span></label>
                     <input
                         type="text"
                         required
                         value={formData.name}
                         onChange={handleNameChange}
                         placeholder="Ví dụ: Xe Máy Điện, Xe Đạp Địa Hình..."
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
 
                 {/* Slug */}
                 <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-300">Slug (Đường dẫn)</label>
+                    <label className="text-sm font-bold text-muted-foreground">Slug (Đường dẫn)</label>
                     <input
                         type="text"
                         required
                         value={formData.slug}
                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-gray-400 focus:outline-none focus:border-primary transition-colors font-mono text-sm"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-muted-foreground focus:outline-none focus:border-primary transition-colors font-mono text-sm"
                     />
                     <p className="text-xs text-muted-foreground">URL sẽ là: domain.com/danh-muc/{formData.slug || '...'}</p>
                 </div>
 
                 {/* Image Upload */}
                 <div className="space-y-4">
-                    <label className="text-sm font-bold text-gray-300">Hình Ảnh Danh Mục</label>
+                    <label className="text-sm font-bold text-muted-foreground">Hình Ảnh Danh Mục</label>
 
                     {imagePreview ? (
-                        <div className="relative w-full aspect-[2/1] bg-black/40 rounded-xl overflow-hidden group border border-white/10">
+                        <div className="relative w-full aspect-[2/1] bg-background rounded-xl overflow-hidden group border border-border">
                             <img
                                 src={imagePreview}
                                 alt="Preview"
@@ -161,7 +161,7 @@ export default function NewCategoryPage() {
                             </div>
                         </div>
                     ) : (
-                        <div className="w-full aspect-[3/1] bg-black/40 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center gap-4 hover:border-primary/50 transition-colors cursor-pointer relative">
+                        <div className="w-full aspect-[3/1] bg-background border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-4 hover:border-primary/50 transition-colors cursor-pointer relative">
                             <input
                                 type="file"
                                 accept="image/*"
@@ -169,11 +169,11 @@ export default function NewCategoryPage() {
                                 className="absolute inset-0 opacity-0 cursor-pointer p-4"
                                 disabled={uploading}
                             />
-                            <div className="p-4 bg-white/5 rounded-full text-primary">
+                            <div className="p-4 bg-muted/50 rounded-full text-primary">
                                 {uploading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6" />}
                             </div>
                             <div className="text-center">
-                                <p className="font-medium text-white">Thêm hình ảnh</p>
+                                <p className="font-medium text-foreground">Thêm hình ảnh</p>
                                 <p className="text-sm text-muted-foreground mt-1">Kéo thả hoặc click để tải lên</p>
                             </div>
                         </div>
@@ -182,22 +182,22 @@ export default function NewCategoryPage() {
 
                 {/* Description */}
                 <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-300">Mô Tả</label>
+                    <label className="text-sm font-bold text-muted-foreground">Mô Tả</label>
                     <textarea
                         rows={4}
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         placeholder="Mô tả ngắn về danh mục này..."
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors resize-none"
                     />
                 </div>
 
                 {/* Submit */}
-                <div className="pt-4 border-t border-white/10 flex justify-end">
+                <div className="pt-4 border-t border-border flex justify-end">
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-3 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
+                        className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
                     >
                         {loading ? (
                             <>

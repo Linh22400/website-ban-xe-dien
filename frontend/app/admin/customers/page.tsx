@@ -167,8 +167,8 @@ export default function AdminCustomersPage() {
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${customer.blocked
-                                                ? 'bg-red-500/10 text-red-400'
-                                                : 'bg-green-500/10 text-green-400'}`}>
+                                                ? 'bg-red-500/10 text-red-600 dark:text-red-400'
+                                                : 'bg-green-500/10 text-green-600 dark:text-green-400'}`}>
                                                 {customer.blocked ? 'Đã chặn' : 'Hoạt động'}
                                             </span>
                                         </td>

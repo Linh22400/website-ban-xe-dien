@@ -28,5 +28,13 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'POST',
+      path: '/payment/payos/sync',
+      handler: 'payos.syncOrder',
+      config: {
+        auth: false,
+      },
+    },
   ],
 };

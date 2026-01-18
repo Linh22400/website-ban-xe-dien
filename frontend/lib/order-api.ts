@@ -102,6 +102,32 @@ export async function getAdminOrders(token: string, params: any = {}): Promise<{
 }
 
 /**
+ * Sync Order Payment Status from PayOS (Admin)
+ */
+export async function syncOrderPaymentStatus(token: string, orderId: string): Promise<{ success: boolean; message: string; status?: string }> {
+    try {
+        const response = await fetch(`${STRAPI_URL}/api/payment/payos/sync`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }),
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+             return { success: false, message: result.error?.message || result.message || 'Lỗi đồng bộ' };
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error syncing order:', error);
+        return { success: false, message: 'Lỗi kết nối đến server' };
+    }
+}
+
+/**
  * Update Order Status (Admin)
  */
 export async function updateOrderStatus(token: string, documentId: string, status: string): Promise<boolean> {

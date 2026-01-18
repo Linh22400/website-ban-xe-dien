@@ -11,8 +11,8 @@ import {
 } from "@/components/blog/BlogContentRenderers";
 import { BlogSidebarHeading } from "@/components/blog/BlogSidebarHeading";
 
-// ISR: cache 60s để tải nhanh nhưng vẫn cập nhật nội dung.
-export const revalidate = 60;
+// ISR: cache 300s (5 phút) để tải nhanh nhưng vẫn cập nhật nội dung.
+export const revalidate = 300;
 
 interface PageProps {
     params: Promise<{ slug: string }>;

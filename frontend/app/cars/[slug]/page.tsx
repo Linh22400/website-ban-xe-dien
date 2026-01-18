@@ -3,7 +3,7 @@ import { getCarBySlug, getPromotions, Car } from "@/lib/api";
 import CarConfigurator from "@/components/sections/CarConfigurator";
 import { generateProductSchema } from "@/lib/seo";
 
-export const revalidate = 60;
+export const revalidate = 300; // Cache 5 phút cho trang chi tiết sản phẩm
 
 interface Props {
     params: Promise<{ slug: string }>;

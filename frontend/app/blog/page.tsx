@@ -7,8 +7,8 @@ export const metadata = {
     description: "Cập nhật tin tức và xu hướng mới nhất về xe điện tại Việt Nam.",
 };
 
-// ISR: cache 60s để trang blog tải nhanh hơn nhưng vẫn cập nhật nội dung định kỳ.
-export const revalidate = 60;
+// ISR: cache 300s (5 phút) để trang blog tải nhanh hơn nhưng vẫn cập nhật nội dung định kỳ.
+export const revalidate = 300;
 
 export default async function BlogPage() {
     const articles = await getArticles();

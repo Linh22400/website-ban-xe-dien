@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { CreditCard, Smartphone, Building2, Check, Loader2, Banknote, MapPin, QrCode } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { createOrder } from '@/lib/order-api';
-import { SubHeading, SectionHeading } from '@/components/common/ThemeText';
+import { SubHeading, SectionHeading, ThemeButton } from '@/components/common/ThemeText';
 import { createVNPayPayment } from '@/lib/vnpay';
 import { createMoMoPayment } from '@/lib/momo';
 import { createPayOSPayment } from '@/lib/payos';
@@ -22,6 +22,9 @@ export default function PaymentGatewaySelector() {
         customerInfo,
         selectedShowroom,
         goToNextStep,
+        goToPreviousStep,
+        setCurrentStep,
+        shippingMethod,
         setCreatedOrder,
         getOrderData
     } = useCheckout();
@@ -48,7 +51,7 @@ export default function PaymentGatewaySelector() {
 
     let depositAmount = 0;
     if (paymentMethod === 'deposit') {
-        depositAmount = 3000000;
+        depositAmount = totalAmount * 0.2;
     } else if (paymentMethod === 'full_payment') {
         depositAmount = totalAmount;
     } else if (paymentMethod === 'installment') {
@@ -286,11 +289,19 @@ export default function PaymentGatewaySelector() {
             </div>
 
             <div className="bg-card/30 border border-white/10 rounded-2xl p-6">
-                <div className="flex justify-between items-center mb-6 pb-6 border-b border-white/10">
-                    <span className="text-muted-foreground">Số tiền cần thanh toán:</span>
-                    <span className="text-3xl font-bold text-primary">
-                        {formatCurrency(depositAmount)}
-                    </span>
+                <div className="mb-6 pb-6 border-b border-white/10 space-y-3">
+                    <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Phí vận chuyển:</span>
+                        <span className="text-primary font-bold">
+                            {shippingMethod === 'delivery' ? 'MIỄN PHÍ' : 'MIỄN PHÍ (Nhận tại cửa hàng)'}
+                        </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Số tiền cần thanh toán:</span>
+                        <span className="text-3xl font-bold text-primary">
+                            {formatCurrency(depositAmount)}
+                        </span>
+                    </div>
                 </div>
 
                 <div className="space-y-4">
@@ -468,22 +479,39 @@ export default function PaymentGatewaySelector() {
                 </div>
             </div>
 
-            <button
-                onClick={handlePlaceOrder}
-                disabled={isProcessing}
-                className="w-full bg-primary text-black px-8 py-4 rounded-full font-bold 
+            <div className="flex gap-4">
+                <ThemeButton
+                    onClick={() => {
+                        if (shippingMethod === 'delivery') {
+                            setCurrentStep(3);
+                        } else {
+                            goToPreviousStep();
+                        }
+                    }}
+                    disabled={isProcessing}
+                    className="flex-1 bg-gray-100 dark:bg-white/5 px-8 py-4 rounded-full font-bold 
+                     border-2 border-gray-200 dark:border-white/10 hover:border-primary/50 transition-all
+                     disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Quay lại
+                </ThemeButton>
+                <button
+                    onClick={handlePlaceOrder}
+                    disabled={isProcessing}
+                    className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 
                    hover:bg-primary-dark transition-all hover:shadow-glow
                    disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-                {isProcessing ? (
-                    <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Đang xử lý...
-                    </>
-                ) : (
-                    'Thanh toán & Hoàn tất'
-                )}
-            </button>
+                >
+                    {isProcessing ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Đang xử lý...
+                        </>
+                    ) : (
+                        'Thanh toán & Hoàn tất'
+                    )}
+                </button>
+            </div>
 
             {errorMessage && (
                 <div className="text-sm text-red-500 text-center">

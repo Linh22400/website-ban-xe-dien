@@ -104,8 +104,10 @@ export default function PaymentMethodSelector() {
                     <div className="flex-1">
                         <ThemeText className="text-xl font-bold text-white mb-2">Đặt cọc online</ThemeText>
                         <div className="flex items-baseline gap-2 mb-3">
-                            <p className="text-3xl font-bold text-primary">3,000,000₫</p>
-                            <span className="text-sm text-muted-foreground">(Cọc)</span>
+                            <p className="text-3xl font-bold text-primary">
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalAmount * 0.2)}
+                            </p>
+                            <span className="text-sm text-muted-foreground">(20%)</span>
                         </div>
                         <ul className="space-y-2">
                             <li className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -118,7 +120,7 @@ export default function PaymentMethodSelector() {
                             </li>
                             <li className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Check className="w-4 h-4 text-primary" />
-                                <span>Còn lại: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalAmount - 3000000)}</span>
+                                <span>Còn lại: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalAmount - (totalAmount * 0.2))}</span>
                             </li>
                         </ul>
                     </div>

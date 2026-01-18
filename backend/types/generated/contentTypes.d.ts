@@ -981,6 +981,7 @@ export interface ApiPaymentTransactionPaymentTransaction
         'momo',
         'zalopay',
         'vnpay',
+        'payos',
         'viettel_money',
         'visa',
         'mastercard',

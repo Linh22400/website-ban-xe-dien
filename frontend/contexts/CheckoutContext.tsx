@@ -35,6 +35,10 @@ interface CheckoutContextType {
     customerInfo: Partial<OrderCustomerInfo>;
     setCustomerInfo: (info: Partial<OrderCustomerInfo>) => void;
 
+    // Shipping method
+    shippingMethod: 'delivery' | 'pickup';
+    setShippingMethod: (method: 'delivery' | 'pickup') => void;
+
     // Showroom selection
     selectedShowroom: number | null;
     setSelectedShowroom: (showroomId: number | null) => void;
@@ -72,6 +76,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     const [discountPercent, setDiscountPercent] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState<'full_payment' | 'deposit' | 'installment'>('deposit');
     const [installmentMonths, setInstallmentMonths] = useState(12);
+    const [shippingMethod, setShippingMethod] = useState<'delivery' | 'pickup'>('delivery');
     const [customerInfo, setCustomerInfo] = useState<Partial<OrderCustomerInfo>>({});
     const [selectedShowroom, setSelectedShowroom] = useState<number | null>(null);
     const [appointmentDate, setAppointmentDate] = useState<Date | null>(null);
@@ -96,6 +101,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
         setDiscountPercent(0);
         setPaymentMethod('deposit');
         setInstallmentMonths(12);
+        setShippingMethod('delivery');
         setCustomerInfo({});
         setSelectedShowroom(null);
         setAppointmentDate(null);
@@ -112,16 +118,27 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
             : [];
         const firstItem = cartItems[0];
 
+        // Prepare customer info based on shipping method
+        const finalCustomerInfo = { ...customerInfo };
+        if (shippingMethod === 'pickup') {
+            finalCustomerInfo.DeliveryAddress = 'Nhận tại cửa hàng';
+            finalCustomerInfo.City = undefined;
+            finalCustomerInfo.District = undefined;
+            finalCustomerInfo.Ward = undefined;
+        }
+
+        const notesWithShipping = `${notes ? notes + '\n' : ''}Phương thức nhận hàng: ${shippingMethod === 'delivery' ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng'}`;
+
         return {
             VehicleModel: selectedVehicle?.id || firstItem?.id, // Fallback to cart item
             SelectedColor: selectedColor || firstItem?.colorName || '',
             SelectedBattery: selectedBattery,
             SelectedGifts: selectedGifts,
             PaymentMethod: paymentMethod,
-            CustomerInfo: customerInfo as OrderCustomerInfo,
-            SelectedShowroom: selectedShowroom || undefined,
+            CustomerInfo: finalCustomerInfo as OrderCustomerInfo,
+            SelectedShowroom: shippingMethod === 'pickup' ? selectedShowroom || undefined : undefined,
             AppointmentDate: appointmentDate?.toISOString(),
-            Notes: notes,
+            Notes: notesWithShipping,
             InstallmentPlan: paymentMethod === 'installment' ? {
                 months: installmentMonths,
                 monthlyPayment: 0, // Will be calculated on backend
@@ -150,6 +167,8 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
                 setPaymentMethod,
                 installmentMonths,
                 setInstallmentMonths,
+                shippingMethod,
+                setShippingMethod,
                 customerInfo,
                 setCustomerInfo,
                 selectedShowroom,

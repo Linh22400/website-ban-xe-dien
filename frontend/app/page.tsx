@@ -5,6 +5,7 @@ import QuickFinder from "@/components/hero/QuickFinder";
 import CategoryExplorer from "@/components/sections/CategoryExplorer";
 import LazySection from "@/components/common/LazySection";
 import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
+import { getMergedHeroSlides } from "@/lib/hero-data";
 
 // Static imports for Server Components (Async)
 import TailgProductGrid from "@/components/sections/TailgProductGrid";
@@ -17,11 +18,13 @@ import LatestNews from "@/components/sections/LatestNews";
 // Dynamic import for Client Components ONLY
 const LiveChatWidget = dynamic(() => import("@/components/ui/LiveChatWidget"));
 
-export default function Home() {
+export default async function Home() {
+  const initialSlides = await getMergedHeroSlides();
+
   return (
     <main className="min-h-screen bg-background">
       {/* Hero Banner - Client Load for faster TTFB */}
-      <HeroSlider />
+      <HeroSlider initialSlides={initialSlides} />
 
       <div className="relative z-20 pb-12 pt-8">
         <div className="container mx-auto px-4">

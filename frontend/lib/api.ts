@@ -147,7 +147,7 @@ async function logNonOkResponse(context: string, response: Response) {
 
 // Ghi chú: Trong Next.js, fetch ở server có thể dùng ISR (revalidate) để tăng tốc và tốt cho SEO.
 // Browser-side fetch cũng nên cache với stale-while-revalidate để tăng tốc UX.
-function getDefaultFetchOptions(revalidateSeconds: number = 60): RequestInit & { next?: { revalidate: number } } {
+function getDefaultFetchOptions(revalidateSeconds: number = 300): RequestInit & { next?: { revalidate: number } } {
     if (typeof window === 'undefined') {
         // Server-side: Dùng Next.js ISR
         return { next: { revalidate: revalidateSeconds } };

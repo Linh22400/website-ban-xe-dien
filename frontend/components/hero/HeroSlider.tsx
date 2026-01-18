@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getHeroSlides, getPromotions, HeroSlide, Promotion } from "@/lib/api";
+import { getHeroSlides, getPromotions } from "@/lib/api";
+import { SlideType } from "@/lib/hero-data";
 import { resolveBannerLink } from "@/lib/banner-link-resolver";
 import { ArrowRight, ChevronLeft, ChevronRight, Zap, Clock, ShieldCheck } from "lucide-react";
 import CountdownTimer from "@/components/ui/CountdownTimer";
@@ -42,10 +43,6 @@ const STATIC_SLIDES = [
         order: 3
     }
 ];
-
-type HeroSlideWithType = HeroSlide & { slideType: 'hero' };
-type PromotionWithType = Promotion & { slideType: 'promotion' };
-type SlideType = HeroSlideWithType | PromotionWithType;
 
 interface HeroSliderProps {
     initialSlides?: SlideType[];
@@ -206,8 +203,8 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                             src={currentSlideData.image}
                             alt={currentSlideData.title || "Hero Banner"}
                             fill
-                            sizes="(max-width: 768px) 100vw, 90vw"
-                            quality={100}
+                            sizes="100vw"
+                            quality={80}
                             className="object-contain object-center"
                             priority={true}
                         />

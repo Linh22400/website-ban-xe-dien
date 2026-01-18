@@ -10,6 +10,7 @@ import { CartProvider } from "@/lib/cart-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import CompareFloatingBar from "@/components/compare/CompareFloatingBar";
+import KeepAliveManager from "@/components/common/KeepAliveManager";
 
 import JsonLd from "@/components/seo/JsonLd";
 
@@ -84,6 +85,7 @@ export default function RootLayout({
               <WishlistProvider>
                 <CompareProvider>
                   <JsonLd />
+                  <KeepAliveManager />
                   <Navbar />
                   <main className="pt-[140px] sm:pt-[130px] md:pt-[120px] lg:pt-[110px] min-h-screen">
                     {children}

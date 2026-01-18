@@ -5,7 +5,7 @@ import { useCart } from '@/lib/cart-context';
 import { formatCurrency } from '@/lib/utils';
 
 export default function OrderSummary() {
-    const { paymentMethod, installmentMonths } = useCheckout();
+    const { paymentMethod, installmentMonths, shippingMethod } = useCheckout();
     const { items, total } = useCart();
 
     const item = items[0];
@@ -24,7 +24,7 @@ export default function OrderSummary() {
     let remainingAmount = 0;
 
     if (paymentMethod === 'deposit') {
-        depositAmount = 3000000;
+        depositAmount = totalAmount * 0.2;
         remainingAmount = totalAmount - depositAmount;
     } else if (paymentMethod === 'full_payment') {
         depositAmount = totalAmount;
@@ -75,6 +75,12 @@ export default function OrderSummary() {
                         <span className="text-muted-foreground">VAT (10%):</span>
                         <span className="text-foreground">{formatCurrency(vat)}</span>
                     </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Phí vận chuyển:</span>
+                        <span className="text-primary font-bold">
+                            {shippingMethod === 'delivery' ? 'MIỄN PHÍ' : 'MIỄN PHÍ (Nhận tại cửa hàng)'}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Total */}
@@ -86,14 +92,14 @@ export default function OrderSummary() {
                 {/* Payment Info */}
                 {paymentMethod && (
                     <div className="space-y-3 mb-6">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">
-                                {paymentMethod === 'deposit' && 'Đặt cọc:'}
-                                {paymentMethod === 'full_payment' && 'Thanh toán đầy đủ:'}
-                                {paymentMethod === 'installment' && 'Trả trước (30%):'}
-                            </span>
-                            <span className="text-foreground font-semibold">{formatCurrency(depositAmount)}</span>
-                        </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                            {paymentMethod === 'deposit' && 'Đặt cọc (20%):'}
+                            {paymentMethod === 'full_payment' && 'Thanh toán đầy đủ:'}
+                            {paymentMethod === 'installment' && 'Trả trước (30%):'}
+                        </span>
+                        <span className="text-foreground font-semibold">{formatCurrency(depositAmount)}</span>
+                    </div>
                         {remainingAmount > 0 && (
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Còn lại:</span>

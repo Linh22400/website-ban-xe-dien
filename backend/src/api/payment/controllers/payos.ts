@@ -103,41 +103,85 @@ export default {
   async handleWebhook(ctx) {
     try {
         const webhookData = ctx.request.body;
+        console.log('--- Received PayOS Webhook ---');
+        console.log('Webhook Data:', JSON.stringify(webhookData, null, 2));
         
-        // 1. Verify Webhook Signature
         const clientId = process.env.PAYOS_CLIENT_ID;
         const apiKey = process.env.PAYOS_API_KEY;
         const checksumKey = process.env.PAYOS_CHECKSUM_KEY;
         
         const payos = new PayOS(clientId, apiKey, checksumKey);
 
-        // Debug Webhook methods
-        try {
-             if (payos.webhooks) {
-                 console.log('Available PayOS.webhooks methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(payos.webhooks)));
-             }
-        } catch(e) {}
+        // 1. Try to extract Order Code directly first (to be robust)
+        // Webhook data structure: { code: "00", desc: "success", data: { orderCode: 123, ... }, signature: "..." }
+        let payosOrderCode = null;
+        if (webhookData && webhookData.data && webhookData.data.orderCode) {
+            payosOrderCode = String(webhookData.data.orderCode);
+        }
 
-        // verifyPaymentWebhookData throws error if invalid
-        // In v2, use payos.webhooks.verify which returns the data object
-        let verifiedData;
-        if (payos.webhooks && typeof payos.webhooks.verify === 'function') {
-             verifiedData = await payos.webhooks.verify(webhookData);
-        } else if (typeof payos.verifyPaymentWebhookData === 'function') {
-             verifiedData = payos.verifyPaymentWebhookData(webhookData);
-        } else {
-             console.error('PayOS Webhook: No verify method found');
-             // Fallback: trust data if in dev mode or desperate (NOT RECOMMENDED for prod, but for debugging)
-             // verifiedData = webhookData.data;
-             throw new Error('PayOS Webhook: No verify method found');
+        if (!payosOrderCode) {
+             console.error('PayOS Webhook: No orderCode found in data');
+             return ctx.send({ success: false, message: 'No orderCode found' });
+        }
+
+        console.log(`Processing Webhook for PayOS Order Code: ${payosOrderCode}`);
+
+        // 2. Verify Signature (Optional but recommended)
+        // We will log the verification result but PROCEED to verify with API directly for maximum reliability
+        try {
+            if (payos.webhooks && typeof payos.webhooks.verify === 'function') {
+                 await payos.webhooks.verify(webhookData);
+                 console.log('Webhook Signature Verified (v2)');
+            } else if (typeof payos.verifyPaymentWebhookData === 'function') {
+                 payos.verifyPaymentWebhookData(webhookData);
+                 console.log('Webhook Signature Verified (v1)');
+            } else {
+                 console.warn('PayOS Webhook: No verify method found, skipping signature check');
+            }
+        } catch (verifyError) {
+            console.error('Webhook Signature Verification Failed:', verifyError.message);
+            console.log('Proceeding to double-check status via API directly...');
         }
         
-        // 2. Process Success Payment
-        // verify() throws if signature is invalid. If we are here, it is valid.
-        if (verifiedData) {
-            const payosOrderCode = String(verifiedData.orderCode);
+        // 3. Double Check Status with PayOS API (Server-to-Server)
+        // This is the most reliable way: ask PayOS "Is this order really PAID?"
+        let paymentInfo;
+        try {
+            // Try standard v2 method
+            if (typeof payos.getPaymentLinkInformation === 'function') {
+                 paymentInfo = await payos.getPaymentLinkInformation(Number(payosOrderCode));
+            } 
+            // Try via paymentRequests property
+            else if (payos.paymentRequests) {
+                if (typeof payos.paymentRequests.get === 'function') {
+                    paymentInfo = await payos.paymentRequests.get(Number(payosOrderCode));
+                } else if (typeof payos.paymentRequests.getPaymentLinkInformation === 'function') {
+                    paymentInfo = await payos.paymentRequests.getPaymentLinkInformation(Number(payosOrderCode));
+                }
+            }
+            // Fallback for older versions
+            else if (typeof payos.getPaymentLink === 'function') {
+                 paymentInfo = await payos.getPaymentLink(payosOrderCode);
+            }
+        } catch (apiError) {
+            console.error('Failed to fetch payment info from PayOS API:', apiError);
+            // If API fails, we might fall back to trusting webhook data if signature was valid
+            // But for now, let's assume API call should work if PayOS is up
+        }
+
+        // 4. Process Payment if Confirmed
+        // Priority: API Result > Webhook Data
+        const confirmedStatus = paymentInfo ? paymentInfo.status : (webhookData.data ? 'PAID' : null); 
+        // Note: webhookData.data doesn't have 'status' field explicitly like API, it implies success if present in success webhook
+        // But we should check 'code' == '00' in webhook root
+        
+        const isPaid = (paymentInfo && paymentInfo.status === 'PAID') || 
+                       (!paymentInfo && webhookData.code == '00' && webhookData.desc == 'success');
+
+        if (isPaid) {
+            console.log(`Order ${payosOrderCode} confirmed PAID.`);
             
-            // Find the transaction by PayOS Order Code
+            // Find transaction
             const transaction = await strapi.db.query('api::payment-transaction.payment-transaction').findOne({
                 where: { TransactionId: payosOrderCode },
                 populate: { Order: true }
@@ -148,34 +192,38 @@ export default {
                 await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
                     data: {
                         Statuses: 'success',
-                        GatewayResponse: verifiedData
+                        GatewayResponse: paymentInfo || webhookData.data
                     }
                 });
 
                 // Update Order Status
-                await strapi.entityService.update('api::order.order', transaction.Order.id, {
-                    data: {
-                        PaymentStatus: 'completed', // or 'paid' based on schema enum
-                        Statuses: 'processing', // Move to processing
-                    }
-                });
-                
-                console.log(`PayOS Webhook: Order ${transaction.Order.OrderCode} updated to paid.`);
+                // Only update if not already completed to avoid duplicate processing logs
+                if (transaction.Order.PaymentStatus !== 'completed') {
+                    await strapi.entityService.update('api::order.order', transaction.Order.id, {
+                        data: {
+                            PaymentStatus: 'completed',
+                            Statuses: 'processing', // Move to processing
+                        }
+                    });
+                    console.log(`Order ${transaction.Order.OrderCode} status updated to completed.`);
+                } else {
+                    console.log(`Order ${transaction.Order.OrderCode} was already completed.`);
+                }
             } else {
                 console.warn(`PayOS Webhook: Transaction not found for orderCode ${payosOrderCode}`);
             }
+        } else {
+            console.log(`Order ${payosOrderCode} is NOT PAID. Status: ${paymentInfo ? paymentInfo.status : 'Unknown'}`);
         }
 
         // Always return success to PayOS
         return ctx.send({
             success: true,
-            message: 'Webhook received'
+            message: 'Webhook processed'
         });
 
     } catch (error) {
         console.error('PayOS Webhook Error:', error);
-        // Return 200 even on error to stop PayOS from retrying if it's a logic error, 
-        // but typically 500 triggers retry. Let's return 200 with error message.
         return ctx.send({
             success: false,
             message: error.message

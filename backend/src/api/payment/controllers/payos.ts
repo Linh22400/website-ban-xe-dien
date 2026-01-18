@@ -200,7 +200,25 @@ export default {
                     const payos = new PayOS(clientId, apiKey, checksumKey);
                     
                     // Get payment link information
-                    const paymentInfo = await payos.getPaymentLinkInformation(Number(transaction.TransactionId));
+                    // Refactored to use robust method finding (same as syncOrder)
+                    let paymentInfo;
+                    
+                    // Try standard v2 method
+                    if (typeof payos.getPaymentLinkInformation === 'function') {
+                         paymentInfo = await payos.getPaymentLinkInformation(Number(transaction.TransactionId));
+                    } 
+                    // Try via paymentRequests property
+                    else if (payos.paymentRequests) {
+                        if (typeof payos.paymentRequests.get === 'function') {
+                            paymentInfo = await payos.paymentRequests.get(transaction.TransactionId);
+                        } else if (typeof payos.paymentRequests.getPaymentLinkInformation === 'function') {
+                            paymentInfo = await payos.paymentRequests.getPaymentLinkInformation(transaction.TransactionId);
+                        }
+                    }
+                    // Fallback for older versions
+                    else if (typeof payos.getPaymentLink === 'function') {
+                         paymentInfo = await payos.getPaymentLink(transaction.TransactionId);
+                    } 
                     
                     if (paymentInfo) {
                         console.log('Syncing PayOS status:', paymentInfo.status);
@@ -282,17 +300,20 @@ export default {
     // First, try to resolve the order to get its integer ID if it is a documentId
     let orderIntId = orderId;
     if (typeof orderId === 'string' && isNaN(Number(orderId))) {
+         console.log(`Resolving documentId ${orderId} to integer ID...`);
          const order = await strapi.db.query('api::order.order').findOne({
             where: { documentId: orderId },
             select: ['id']
          });
          if (order) {
             orderIntId = order.id;
+            console.log(`Resolved to Order ID: ${orderIntId}`);
          } else {
-             // Fallback: try finding transaction assuming orderId is documentId of the order relation
-             // But safer to just fail if order not found
+             console.log('Order not found by documentId');
              return ctx.notFound('Order not found');
          }
+    } else {
+        console.log(`Using provided ID: ${orderIntId}`);
     }
 
     const transactions = await strapi.db.query('api::payment-transaction.payment-transaction').findMany({
@@ -301,12 +322,54 @@ export default {
         limit: 1,
         populate: { Order: true }
     });
+    
+    let transaction = transactions && transactions.length > 0 ? transactions[0] : null;
 
-        if (!transactions || transactions.length === 0) {
-            return ctx.notFound('No PayOS transaction found for this order');
+    // DEBUG: Check all transactions for this order if not found
+    if (!transaction) {
+        console.log(`No PayOS transaction found by standard relation. Checking all transactions for Order ${orderIntId}...`);
+        const allTrans = await strapi.db.query('api::payment-transaction.payment-transaction').findMany({
+            where: { Order: orderIntId },
+        });
+        console.log(`DEBUG: Total transactions for order ${orderIntId}: ${allTrans.length}`);
+        if (allTrans.length > 0) {
+            console.log('Transaction Gateways:', allTrans.map(t => t.Gateway));
+            console.log('Transaction IDs:', allTrans.map(t => t.TransactionId));
         }
 
-        const transaction = transactions[0];
+        // Fallback: Find by Metadata.internalOrderCode (in case Order relation wasn't saved but Metadata was)
+        const orderDetails = await strapi.db.query('api::order.order').findOne({
+            where: { id: orderIntId },
+            select: ['OrderCode']
+        });
+        
+        if (orderDetails && orderDetails.OrderCode) {
+             console.log(`Attempting to find transaction by Metadata.internalOrderCode = ${orderDetails.OrderCode}`);
+             // Note: JSON filtering syntax depends on DB, but Strapi v4/v5 usually supports deep filtering if configured.
+             // We'll try a simple contain or direct match if possible. 
+             // Since Metadata is JSON, exact match might be tricky. 
+             // Let's try to fetch recent transactions and filter in memory if needed (safest for cross-db compatibility)
+             
+             // Fetch last 50 PayOS transactions
+             const recentPayosTrans = await strapi.db.query('api::payment-transaction.payment-transaction').findMany({
+                where: { Gateway: 'payos' },
+                orderBy: { createdAt: 'desc' },
+                limit: 50
+             });
+             
+             const foundInMeta = recentPayosTrans.find(t => t.Metadata && t.Metadata.internalOrderCode === orderDetails.OrderCode);
+             if (foundInMeta) {
+                 console.log(`Found transaction by Metadata! TransactionId: ${foundInMeta.TransactionId}`);
+                 transaction = foundInMeta;
+                 // Manually attach order for the sync logic below
+                 transaction.Order = { id: orderIntId, OrderCode: orderDetails.OrderCode };
+             }
+        }
+    }
+
+    if (!transaction) {
+        return ctx.notFound('No PayOS transaction found for this order. (Checking Relation and Metadata)');
+    }
         
         // --- SYNC LOGIC START ---
         try {
@@ -318,7 +381,53 @@ export default {
                 const payos = new PayOS(clientId, apiKey, checksumKey);
                 
                 // Get payment link information
-                const paymentInfo = await payos.getPaymentLinkInformation(Number(transaction.TransactionId));
+                // In v2, use getPaymentLinkInformation(orderCode)
+                // transaction.TransactionId is already Number or String of number
+                // Ensure it is passed as required type. The error "payos.getPaymentLinkInformation is not a function" is weird if library is installed.
+                // Check if payos instance has this method. If not, it might be named differently in v2 or library version issue.
+                // In @payos/node v2, it should be getPaymentLinkInformation(orderCode).
+                
+                let paymentInfo;
+                
+                // Try standard v2 method
+                if (typeof payos.getPaymentLinkInformation === 'function') {
+                     paymentInfo = await payos.getPaymentLinkInformation(transaction.TransactionId);
+                } 
+                // Try via paymentRequests property (seen in debug logs)
+                else if (payos.paymentRequests) {
+                    console.log('Accessing PayOS via paymentRequests property...');
+                    // Debug paymentRequests methods
+                    try {
+                        const prProto = Object.getPrototypeOf(payos.paymentRequests);
+                        const prMethods = Object.getOwnPropertyNames(prProto);
+                        console.log('Available PayOS.paymentRequests methods:', prMethods);
+                        
+                        if (typeof payos.paymentRequests.get === 'function') {
+                            paymentInfo = await payos.paymentRequests.get(transaction.TransactionId);
+                        } else if (typeof payos.paymentRequests.getPaymentLinkInformation === 'function') {
+                            paymentInfo = await payos.paymentRequests.getPaymentLinkInformation(transaction.TransactionId);
+                        } else {
+                            console.warn('payos.paymentRequests exists but no known get method found. Trying to find one...');
+                            // Try to find a method that looks like 'get'
+                            const getMethod = prMethods.find(m => m.startsWith('get'));
+                            if (getMethod && typeof payos.paymentRequests[getMethod] === 'function') {
+                                console.log(`Trying guessed method: ${getMethod}`);
+                                paymentInfo = await payos.paymentRequests[getMethod](transaction.TransactionId);
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error inspecting paymentRequests:', e);
+                    }
+                }
+                // Fallback for older versions
+                else if (typeof payos.getPaymentLink === 'function') {
+                     paymentInfo = await payos.getPaymentLink(transaction.TransactionId);
+                } 
+
+                if (!paymentInfo) {
+                     console.error('PayOS library does not have known payment info fetch methods', payos);
+                     throw new Error('PayOS library method missing: getPaymentLinkInformation not found');
+                }
                 
                 if (paymentInfo) {
                     console.log('Manual Sync PayOS status:', paymentInfo.status);

@@ -98,6 +98,24 @@ export default function OrderDetailPage() {
                     console.log('==========================');
                     setOrder(data);
                     setStatus(data.Statuses || 'pending');
+
+                    // Auto-check PayOS if pending
+                    if (data.Statuses === 'pending_payment' || data.Statuses === 'pending') {
+                        // Small delay to ensure UI renders first
+                        setTimeout(async () => {
+                            try {
+                                console.log('Auto-checking PayOS status...');
+                                const result = await syncOrderPaymentStatus(token, orderId);
+                                if (result.success && result.status === 'completed') {
+                                     console.log('Auto-sync success: Order completed');
+                                     setStatus('completed');
+                                     setOrder(prev => prev ? { ...prev, PaymentStatus: 'completed', Statuses: 'processing' } : null);
+                                }
+                            } catch (e) {
+                                console.error('Auto-sync PayOS failed:', e);
+                            }
+                        }, 1000);
+                    }
                 }
             } catch (error: any) {
                 console.error("Failed to fetch order:", error);

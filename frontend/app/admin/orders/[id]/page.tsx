@@ -29,6 +29,7 @@ export default function OrderDetailPage() {
 
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [status, setStatus] = useState('pending'); // Local status state for optimistic updates
 
     const [activeVehicleImage, setActiveVehicleImage] = useState<string | null>(null);
@@ -84,6 +85,7 @@ export default function OrderDetailPage() {
     useEffect(() => {
         async function fetchOrder() {
             setLoading(true);
+            setError(null);
             try {
                 // Use real token or empty string
                 const token = authToken || "";
@@ -97,14 +99,15 @@ export default function OrderDetailPage() {
                     setOrder(data);
                     setStatus(data.Statuses || 'pending');
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Failed to fetch order:", error);
+                setError(error.message || "Không thể tải thông tin đơn hàng");
             } finally {
                 setLoading(false);
             }
         }
         if (orderId) fetchOrder();
-    }, [orderId]);
+    }, [orderId, authToken]);
 
     const handlePrint = () => {
         window.print();
@@ -151,6 +154,16 @@ export default function OrderDetailPage() {
         return (
             <div className="p-8 text-center text-foreground">
                 <h1 className="text-2xl font-bold mb-4">Đang tải đơn hàng...</h1>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8 text-center text-foreground">
+                <h1 className="text-2xl font-bold mb-4 text-red-500">Đã xảy ra lỗi!</h1>
+                <p className="mb-4 text-muted-foreground">{error}</p>
+                <Link href="/admin/orders" className="text-primary hover:underline">Quay lại danh sách</Link>
             </div>
         );
     }

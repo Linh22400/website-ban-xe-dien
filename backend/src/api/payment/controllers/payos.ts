@@ -265,6 +265,8 @@ export default {
    */
   async syncOrder(ctx) {
     try {
+        console.log('--- Manual Sync Order Triggered ---');
+        console.log('Body:', ctx.request.body);
         const { orderId } = ctx.request.body; // Internal Order ID (documentId or ID)
         
         if (!orderId) {
@@ -272,13 +274,33 @@ export default {
         }
 
         // Find transaction for this order
-        // We look for the latest transaction for this order
-        const transactions = await strapi.db.query('api::payment-transaction.payment-transaction').findMany({
-            where: { Order: orderId, Gateway: 'payos' },
-            orderBy: { createdAt: 'desc' },
-            limit: 1,
-            populate: { Order: true }
-        });
+    // We look for the latest transaction for this order
+    // Note: orderId might be documentId (string) or id (integer).
+    // The error "invalid input syntax for type integer" happens because strapi.db.query expects integer ID for relations
+    // unless we use documentId filtering syntax.
+    
+    // First, try to resolve the order to get its integer ID if it is a documentId
+    let orderIntId = orderId;
+    if (typeof orderId === 'string' && isNaN(Number(orderId))) {
+         const order = await strapi.db.query('api::order.order').findOne({
+            where: { documentId: orderId },
+            select: ['id']
+         });
+         if (order) {
+            orderIntId = order.id;
+         } else {
+             // Fallback: try finding transaction assuming orderId is documentId of the order relation
+             // But safer to just fail if order not found
+             return ctx.notFound('Order not found');
+         }
+    }
+
+    const transactions = await strapi.db.query('api::payment-transaction.payment-transaction').findMany({
+        where: { Order: orderIntId, Gateway: 'payos' },
+        orderBy: { createdAt: 'desc' },
+        limit: 1,
+        populate: { Order: true }
+    });
 
         if (!transactions || transactions.length === 0) {
             return ctx.notFound('No PayOS transaction found for this order');

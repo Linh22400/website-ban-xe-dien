@@ -106,7 +106,7 @@ export async function getAdminOrders(token: string, params: any = {}): Promise<{
  */
 export async function syncOrderPaymentStatus(token: string, orderId: string): Promise<{ success: boolean; message: string; status?: string }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/payment/payos/sync`, {
+        const response = await fetch(`${STRAPI_URL}/api/payment/payos/manual-sync`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,13 +114,19 @@ export async function syncOrderPaymentStatus(token: string, orderId: string): Pr
             body: JSON.stringify({ orderId }),
         });
 
-        const result = await response.json();
-        
-        if (!response.ok) {
-             return { success: false, message: result.error?.message || result.message || 'Lỗi đồng bộ' };
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            const result = await response.json();
+            if (!response.ok) {
+                return { success: false, message: result.error?.message || result.message || `Lỗi ${response.status}: ${response.statusText}` };
+            }
+            return result;
+        } else {
+             // Handle non-JSON response (e.g. 404/405/500 HTML)
+             const text = await response.text();
+             console.error('Sync Order Non-JSON response:', text);
+             return { success: false, message: `Lỗi máy chủ (${response.status}): ${response.statusText}` };
         }
-
-        return result;
     } catch (error) {
         console.error('Error syncing order:', error);
         return { success: false, message: 'Lỗi kết nối đến server' };
@@ -155,28 +161,18 @@ export async function updateOrderStatus(token: string, documentId: string, statu
  */
 export async function getOrderById(token: string, documentId: string): Promise<Order | null> {
     try {
-        // Use qs for structured populate query
+        // Use a simpler but deep populate query to ensure we get necessary data without being too restrictive on fields
         const query = qs.stringify({
             populate: {
                 VehicleModel: {
-                    fields: ['name', 'brand', 'price', 'type', 'range', 'topSpeed', 'acceleration', 'description', 'documentId', 'slug'],
-                    populate: {
-                        thumbnail: {
-                            fields: ['url']
-                        },
-                        color: {
-                            populate: {
-                                images: {
-                                    fields: ['url']
-                                }
-                            }
-                        }
-                    }
+                    populate: '*' // Populate all fields and 1-level relations of VehicleModel (including thumbnail, color)
                 },
                 CustomerInfo: true,
                 SelectedShowroom: true,
                 payment_transactions: true,
-                payment: true
+                payment: true,
+                // Add specific nested populate if needed for VehicleModel colors
+                // But populate=* on VehicleModel usually covers it if 'color' is a component or relation
             }
         }, {
             encodeValuesOnly: true,
@@ -194,7 +190,7 @@ export async function getOrderById(token: string, documentId: string): Promise<O
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`GetOrderById Failed: ${response.status} ${response.statusText}`, errorText);
-            throw new Error(`Order not found (${response.status})`);
+            throw new Error(`Order not found (${response.status}): ${errorText}`);
         }
 
         const result = await response.json();
@@ -208,7 +204,7 @@ export async function getOrderById(token: string, documentId: string): Promise<O
         return orderData;
     } catch (error) {
         console.error('Error fetching order:', error);
-        return null;
+        throw error; // Re-throw to handle in component
     }
 }
 

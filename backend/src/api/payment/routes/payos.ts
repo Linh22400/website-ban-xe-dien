@@ -30,7 +30,7 @@ export default {
     },
     {
       method: 'POST',
-      path: '/payment/payos/sync',
+      path: '/payment/payos/manual-sync',
       handler: 'payos.syncOrder',
       config: {
         auth: false,

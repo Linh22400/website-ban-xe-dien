@@ -112,112 +112,113 @@ export default function AdminDashboardPage() {
 
     return (
         <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Tổng Quan</h1>
-                <p className="text-muted-foreground">Chào mừng trở lại! Dưới đây là tình hình kinh doanh hiện tại.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Tổng Quan</h1>
+                    <p className="text-muted-foreground">Chào mừng trở lại, Administrator!</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="px-4 py-2 bg-primary/10 rounded-xl border border-primary/20 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-sm font-medium text-foreground">Hệ thống hoạt động ổn định</span>
+                    </div>
+                </div>
             </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {STATS.map((stat, index) => {
-                    const Icon = stat.icon;
-                    return (
-                        <div key={index} className="bg-card border border-white/10 rounded-2xl p-6 hover:border-primary/50 transition-colors">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className={`p-3 rounded-xl ${stat.bg}`}>
-                                    <Icon className={`w-6 h-6 ${stat.color}`} />
-                                </div>
-                                <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${stat.trend === 'up' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
-                                    }`}>
-                                    {stat.trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                    {stat.change}
-                                </div>
+                {STATS.map((stat, index) => (
+                    <div key={index} className="bg-card border border-border p-6 rounded-3xl hover:border-primary/50 transition-colors group">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                <stat.icon className={`w-6 h-6 ${stat.color}`} />
                             </div>
-                            <div className="space-y-1">
-                                <h3 className="text-sm text-muted-foreground">{stat.title}</h3>
-                                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                            </div>
+                            <span className={`flex items-center text-xs font-bold px-2 py-1 rounded-full ${stat.trend === 'up' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                                {stat.trend === 'up' ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownRight className="w-3 h-3 mr-1" />}
+                                {stat.change}
+                            </span>
                         </div>
-                    );
-                })}
+                        <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                            <h3 className="text-2xl font-bold text-foreground">{stat.value}</h3>
+                        </div>
+                    </div>
+                ))}
             </div>
 
-            {/* Analytics Charts */}
-            <DashboardCharts orders={allOrders} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Recent Orders */}
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-bold text-foreground">Đơn Hàng Gần Đây</h2>
+                        <Link href="/admin/orders" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 font-medium">
+                            Xem tất cả <ArrowUpRight className="w-4 h-4" />
+                        </Link>
+                    </div>
 
-            {/* Recent Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
-                <div className="p-6 border-b border-white/10 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-white">Đơn Hàng Gần Đây</h2>
-                    <Link href="/admin/orders" className="text-sm text-primary hover:underline">
-                        Xem tất cả
-                    </Link>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-white/5 text-xs text-muted-foreground uppercase">
-                            <tr>
-                                <th className="p-4">Khách Hàng</th>
-                                <th className="p-4">Tổng Tiền</th>
-                                <th className="p-4">Trạng Thái</th>
-                                <th className="p-4">Thời Gian</th>
-                                <th className="p-4 text-right">Chi Tiết</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                            {recentOrders.length > 0 ? (
-                                recentOrders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-white/5 transition-colors">
-                                        <td className="p-4 font-bold text-white">
-                                            {order.CustomerInfo?.Name || "Khách lẻ"}
-                                            <div className="text-xs text-muted-foreground font-normal">
-                                                {order.OrderCode}
-                                            </div>
-                                        </td>
-                                        <td className="p-4 text-white">
-                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}
-                                        </td>
-                                        <td className="p-4">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${order.Statuses === 'pending_payment' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
-                                                order.Statuses === 'deposit_paid' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                                                    order.Statuses === 'processing' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
-                                                        order.Statuses === 'ready_for_pickup' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' :
-                                                            order.Statuses === 'completed' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                                                                'bg-red-500/10 text-red-400 border border-red-500/20'
-                                                }`}>
-                                                {order.Statuses === 'pending_payment' ? 'Chờ thanh toán' :
-                                                    order.Statuses === 'deposit_paid' ? 'Đã cọc' :
-                                                        order.Statuses === 'processing' ? 'Đang xử lý' :
-                                                            order.Statuses === 'ready_for_pickup' ? 'Sẵn sàng giao' :
-                                                                order.Statuses === 'completed' ? 'Hoàn thành' :
-                                                                    order.Statuses === 'cancelled' ? 'Đã hủy' : order.Statuses}
-                                            </span>
-                                        </td>
-                                        <td className="p-4 text-sm text-muted-foreground">
-                                            {new Date(order.createdAt).toLocaleDateString('vi-VN')}
-                                            <br />
-                                            {new Date(order.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                                        </td>
-                                        <td className="p-4 text-right">
-                                            <Link
-                                                href={`/admin/orders/${order.documentId}`}
-                                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-primary hover:text-black transition-colors"
-                                            >
-                                                <Eye className="w-4 h-4" />
-                                            </Link>
-                                        </td>
+                    <div className="bg-card border border-border rounded-3xl overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-border bg-muted/50">
+                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Mã Đơn</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Khách Hàng</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Sản Phẩm</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Tổng Tiền</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Trạng Thái</th>
+                                        <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider">Hành Động</th>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                                        Chưa có đơn hàng nào.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody className="divide-y divide-border">
+                                    {recentOrders.map((order) => (
+                                        <tr key={order.id} className="hover:bg-muted/50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="font-mono text-sm font-bold text-foreground">#{order.OrderCode}</span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                        <Users className="w-4 h-4 text-primary" />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-bold text-foreground">{order.CustomerInfo?.Name || 'Khách lẻ'}</span>
+                                                        <span className="text-xs text-muted-foreground">{order.CustomerInfo?.Phone}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm text-foreground">{order.VehicleModel?.name || 'Xe Điện'}</span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm font-bold text-primary">
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                                    ${order.Statuses === 'completed' ? 'bg-green-500/10 text-green-400' :
+                                                        order.Statuses === 'pending' ? 'bg-yellow-500/10 text-yellow-400' :
+                                                            'bg-blue-500/10 text-blue-400'}`}>
+                                                    {order.Statuses === 'completed' ? 'Hoàn thành' :
+                                                        order.Statuses === 'pending' ? 'Chờ xử lý' : order.Statuses}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <Link href={`/admin/orders/${order.documentId}`} className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition-colors inline-block">
+                                                    <Eye className="w-4 h-4" />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Charts Area */}
+                <div className="space-y-6">
+                     <DashboardCharts orders={allOrders} />
                 </div>
             </div>
         </div>

@@ -169,6 +169,7 @@ export default {
   /**
    * GET /api/payment/payos/resolve/:code
    * Resolve PayOS order code (numeric) to internal OrderCode (DH...)
+   * AND Sync payment status from PayOS if not yet updated (Fallback for Webhook)
    */
   async resolveOrder(ctx) {
     try {
@@ -186,6 +187,51 @@ export default {
         if (!transaction || !transaction.Order) {
             return ctx.notFound('Transaction or Order not found');
         }
+
+        // --- SYNC LOGIC START ---
+        // If transaction is still pending, check with PayOS directly
+        if (transaction.Statuses === 'pending') {
+             try {
+                const clientId = process.env.PAYOS_CLIENT_ID;
+                const apiKey = process.env.PAYOS_API_KEY;
+                const checksumKey = process.env.PAYOS_CHECKSUM_KEY;
+
+                if (clientId && apiKey && checksumKey) {
+                    const payos = new PayOS(clientId, apiKey, checksumKey);
+                    const paymentInfo = await payos.getPaymentLinkInformation(Number(code));
+
+                    if (paymentInfo && (paymentInfo.status === 'PAID' || paymentInfo.status === 'judged')) {
+                         // Update Transaction
+                        await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
+                            data: {
+                                Statuses: 'success',
+                                GatewayResponse: paymentInfo
+                            }
+                        });
+
+                        // Update Order
+                        await strapi.entityService.update('api::order.order', transaction.Order.id, {
+                            data: {
+                                PaymentStatus: 'completed',
+                                Statuses: 'processing',
+                            }
+                        });
+                        console.log(`PayOS Sync: Order ${transaction.Order.OrderCode} manually synced to paid.`);
+                    } else if (paymentInfo && paymentInfo.status === 'CANCELLED') {
+                         await strapi.entityService.update('api::payment-transaction.payment-transaction', transaction.id, {
+                            data: {
+                                Statuses: 'failed',
+                                GatewayResponse: paymentInfo
+                            }
+                        });
+                    }
+                }
+             } catch (syncError) {
+                 console.error('Failed to sync PayOS status:', syncError);
+                 // Continue to return order code even if sync fails
+             }
+        }
+        // --- SYNC LOGIC END ---
 
         return ctx.send({
             data: {

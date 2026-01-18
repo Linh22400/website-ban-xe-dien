@@ -133,7 +133,7 @@ export default function OrderDetailPage() {
 
     if (loading) {
         return (
-            <div className="p-8 text-center text-white">
+            <div className="p-8 text-center text-foreground">
                 <h1 className="text-2xl font-bold mb-4">Đang tải đơn hàng...</h1>
             </div>
         );
@@ -141,7 +141,7 @@ export default function OrderDetailPage() {
 
     if (!order) {
         return (
-            <div className="p-8 text-center text-white">
+            <div className="p-8 text-center text-foreground">
                 <h1 className="text-2xl font-bold mb-4">Không tìm thấy đơn hàng #{params.id}</h1>
                 <Link href="/admin/orders" className="text-primary hover:underline">Quay lại danh sách</Link>
             </div>
@@ -155,43 +155,43 @@ export default function OrderDetailPage() {
             {/* Header & Actions */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Link
-                        href="/admin/orders"
-                        className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-white" />
-                    </Link>
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-2xl font-bold text-white">Đơn Hàng {order.OrderCode}</h1>
-                            <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase border ${status === 'pending_payment' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
-                                status === 'deposit_paid' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                    status === 'processing' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
-                                        status === 'ready_for_pickup' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                                            status === 'completed' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                                status === 'cancelled' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                                    'bg-gray-500/10 text-gray-400 border-gray-500/20'
-                                }`}>
-                                {status === 'pending_payment' ? 'Chờ Thanh Toán' :
-                                    status === 'deposit_paid' ? 'Đã Cọc' :
-                                        status === 'processing' ? 'Đang Xử Lý' :
-                                            status === 'ready_for_pickup' ? 'Chờ Lấy' :
-                                                status === 'completed' ? 'Hoàn Thành' :
-                                                    status === 'cancelled' ? 'Đã Hủy' : status}
-                            </span>
+                        <Link
+                            href="/admin/orders"
+                            className="p-2 bg-muted/50 rounded-full hover:bg-muted transition-colors"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-foreground" />
+                        </Link>
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-2xl font-bold text-foreground">Đơn Hàng {order.OrderCode}</h1>
+                                <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase border ${status === 'pending_payment' ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' :
+                                    status === 'deposit_paid' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' :
+                                        status === 'processing' ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20' :
+                                            status === 'ready_for_pickup' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20' :
+                                                status === 'completed' ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20' :
+                                                    status === 'cancelled' ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20' :
+                                                        'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20'
+                                    }`}>
+                                    {status === 'pending_payment' ? 'Chờ Thanh Toán' :
+                                        status === 'deposit_paid' ? 'Đã Cọc' :
+                                            status === 'processing' ? 'Đang Xử Lý' :
+                                                status === 'ready_for_pickup' ? 'Chờ Lấy' :
+                                                    status === 'completed' ? 'Hoàn Thành' :
+                                                        status === 'cancelled' ? 'Đã Hủy' : status}
+                                </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
                         </div>
-                        <p className="text-sm text-muted-foreground">Đặt ngày {new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
                     </div>
-                </div>
 
-                <div className="flex gap-3">
-                    <button
-                        onClick={handlePrint}
-                        className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 flex items-center gap-2 transition-colors"
-                    >
-                        <Printer className="w-4 h-4" />
-                        In Hóa Đơn
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handlePrint}
+                            className="px-4 py-2 bg-muted/50 hover:bg-muted text-foreground rounded-xl border border-border flex items-center gap-2 transition-colors"
+                        >
+                            <Printer className="w-4 h-4" />
+                            In Hóa Đơn
+                        </button>
 
                     {/* Status Actions based on Current Status */}
                     {/* Simplified Logic for Demo: Valid transitions logic would typically be more complex */}
@@ -237,8 +237,8 @@ export default function OrderDetailPage() {
                 {/* Main: Items */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Customer Info (Mobile View / Top) */}
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 lg:hidden">
-                        <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="bg-card border border-border rounded-2xl p-6 lg:hidden">
+                        <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                             <User className="w-5 h-5 text-primary" />
                             Thông Tin Khách Hàng
                         </h2>
@@ -246,27 +246,27 @@ export default function OrderDetailPage() {
                             <div className="flex items-start gap-3">
                                 <User className="w-4 h-4 text-muted-foreground mt-1" />
                                 <div>
-                                    <div className="font-bold text-white">{customerInfo.FullName}</div>
+                                    <div className="font-bold text-foreground">{customerInfo.FullName}</div>
                                     <div className="text-sm text-muted-foreground">Khách lẻ</div>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <Phone className="w-4 h-4 text-muted-foreground mt-1" />
-                                <div className="text-gray-300">{customerInfo.Phone}</div>
+                                <div className="text-muted-foreground">{customerInfo.Phone}</div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
-                        <div className="p-6 border-b border-white/10">
-                            <h2 className="text-lg font-bold text-white">Chi Tiết Sản Phẩm</h2>
+                    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                        <div className="p-6 border-b border-border">
+                            <h2 className="text-lg font-bold text-foreground">Chi Tiết Sản Phẩm</h2>
                         </div>
                         <div className="p-6 space-y-6">
                             {vehicle ? (
                                 <div className="flex flex-col md:flex-row gap-4">
                                     {/* Image Gallery */}
                                     <div className="flex flex-col gap-2 w-full md:w-1/3 lg:w-1/4">
-                                        <div className="w-full aspect-square bg-white/5 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden relative">
+                                        <div className="w-full aspect-square bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden relative">
                                             {activeVehicleImage ? (
                                                 <img
                                                     src={activeVehicleImage}
@@ -283,7 +283,7 @@ export default function OrderDetailPage() {
                                                     <button
                                                         key={index}
                                                         onClick={() => setActiveVehicleImage(imgUrl)}
-                                                        className={`w-16 h-16 flex-shrink-0 bg-white/5 rounded-lg overflow-hidden border-2 ${activeVehicleImage === imgUrl ? 'border-primary' : 'border-transparent'} hover:border-primary transition-colors`}
+                                                        className={`w-16 h-16 flex-shrink-0 bg-muted/50 rounded-lg overflow-hidden border-2 ${activeVehicleImage === imgUrl ? 'border-primary' : 'border-transparent'} hover:border-primary transition-colors`}
                                                     >
                                                         <img
                                                             src={imgUrl}
@@ -300,18 +300,18 @@ export default function OrderDetailPage() {
                                     <div className="flex-1">
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <h3 className="font-bold text-white text-lg">{vehicle.name}</h3>
+                                                <h3 className="font-bold text-foreground text-lg">{vehicle.name}</h3>
                                                 <div className="flex items-center gap-2 mt-1">
                                                     <p className="text-sm text-muted-foreground">Loại: {vehicle.type === 'bicycle' ? 'Xe Đạp Điện' : 'Xe Máy Điện'}</p>
                                                     {order.SelectedColor && (
-                                                        <span className="text-sm text-gray-400 border-l border-white/10 pl-2">
-                                                            Màu: <span className="text-white">{order.SelectedColor}</span>
+                                                        <span className="text-sm text-muted-foreground border-l border-border pl-2">
+                                                            Màu: <span className="text-foreground">{order.SelectedColor}</span>
                                                         </span>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <div className="font-bold text-white text-lg">
+                                                <div className="font-bold text-foreground text-lg">
                                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground mt-1">
@@ -322,21 +322,21 @@ export default function OrderDetailPage() {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="text-center text-muted-foreground p-4 bg-white/5 rounded-lg border border-white/5 border-dashed">
+                                <div className="text-center text-muted-foreground p-4 bg-muted/50 rounded-lg border border-border border-dashed">
                                     Không có thông tin xe
                                 </div>
                             )}
                         </div>
-                        <div className="bg-white/5 p-6 space-y-3">
-                            <div className="flex justify-between text-sm text-gray-400">
+                        <div className="bg-muted/50 p-6 space-y-3">
+                            <div className="flex justify-between text-sm text-muted-foreground">
                                 <span>Tạm tính</span>
                                 <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}</span>
                             </div>
-                            <div className="flex justify-between text-sm text-gray-400">
+                            <div className="flex justify-between text-sm text-muted-foreground">
                                 <span>Phí vận chuyển</span>
                                 <span>Miễn phí</span>
                             </div>
-                            <div className="flex justify-between text-lg font-bold text-white border-t border-white/10 pt-3 mt-3">
+                            <div className="flex justify-between text-lg font-bold text-foreground border-t border-border pt-3 mt-3">
                                 <span>Tổng cộng</span>
                                 <span className="text-primary">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}</span>
                             </div>
@@ -346,8 +346,8 @@ export default function OrderDetailPage() {
 
                 {/* Sidebar: Customer & Notes */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-card border border-white/10 rounded-2xl p-6 hidden lg:block">
-                        <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="bg-card border border-border rounded-2xl p-6 hidden lg:block">
+                        <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                             <User className="w-5 h-5 text-primary" />
                             Thông Tin Khách Hàng
                         </h2>
@@ -355,27 +355,27 @@ export default function OrderDetailPage() {
                             <div className="flex items-start gap-3">
                                 <User className="w-4 h-4 text-muted-foreground mt-1" />
                                 <div>
-                                    <div className="font-bold text-white">{customerInfo.FullName}</div>
+                                    <div className="font-bold text-foreground">{customerInfo.FullName}</div>
                                     <div className="text-sm text-muted-foreground">Khách lẻ</div>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <Phone className="w-4 h-4 text-muted-foreground mt-1" />
-                                <div className="text-gray-300">{customerInfo.Phone}</div>
+                                <div className="text-muted-foreground">{customerInfo.Phone}</div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <Mail className="w-4 h-4 text-muted-foreground mt-1" />
-                                <div className="text-gray-300">customer@example.com</div>
+                                <div className="text-muted-foreground">customer@example.com</div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
-                                <div className="text-gray-300">Hà Nội, Việt Nam</div>
+                                <div className="text-muted-foreground">Hà Nội, Việt Nam</div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-card border border-white/10 rounded-2xl p-6">
-                        <h2 className="text-lg font-bold text-white mb-4">Thanh Toán</h2>
+                    <div className="bg-card border border-border rounded-2xl p-6">
+                        <h2 className="text-lg font-bold text-foreground mb-4">Thanh Toán</h2>
                         <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-bold flex items-center gap-2">
                             <CheckCircle className="w-4 h-4" />
                             {order.PaymentMethod || 'COD'}

@@ -174,12 +174,12 @@ export default function AdminMarketingPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Banner & Slide</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Banner & Slide</h1>
                     <p className="text-muted-foreground">Quản lý các banner hiển thị trên trang chủ.</p>
                 </div>
                 <button
                     onClick={() => setShowAddForm(true)}
-                    className="px-6 py-2.5 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-primary/20"
                 >
                     <Plus className="w-5 h-5" />
                     Thêm Banner
@@ -188,29 +188,29 @@ export default function AdminMarketingPage() {
 
             {/* Add/Edit Form */}
             {(showAddForm || editingId) && (
-                <div className="bg-card border border-white/10 rounded-2xl p-6 space-y-4">
+                <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold text-white">
+                        <h2 className="text-xl font-bold text-foreground">
                             {editingId ? "Chỉnh Sửa Banner" : "Thêm Banner Mới"}
                         </h2>
-                        <button onClick={resetForm} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                            <X className="w-5 h-5 text-white" />
+                        <button onClick={resetForm} className="p-2 hover:bg-muted rounded-lg transition-colors">
+                            <X className="w-5 h-5 text-foreground" />
                         </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Image Upload */}
                         <div className="md:col-span-2">
-                            <label className="text-sm font-bold text-gray-300 mb-2 block">
+                            <label className="text-sm font-bold text-muted-foreground mb-2 block">
                                 Hình Ảnh Banner <span className="text-red-500">*</span>
                             </label>
                             <div className="flex gap-4">
                                 {formImagePreview && (
-                                    <div className="relative w-48 h-32 rounded-xl overflow-hidden border border-white/10">
+                                    <div className="relative w-48 h-32 rounded-xl overflow-hidden border border-border">
                                         <img src={formImagePreview} alt="Preview" className="w-full h-full object-cover" />
                                     </div>
                                 )}
-                                <label className="flex-1 h-32 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-white/5 transition-all">
+                                <label className="flex-1 h-32 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-all">
                                     <Upload className="w-8 h-8 text-muted-foreground mb-2" />
                                     <span className="text-sm text-muted-foreground">Click để chọn ảnh</span>
                                     <input type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
@@ -219,35 +219,35 @@ export default function AdminMarketingPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Tiêu Đề</label>
+                            <label className="text-sm font-bold text-muted-foreground">Tiêu Đề</label>
                             <input
                                 type="text"
                                 placeholder="Ví dụ: Khuyến mãi cuối năm"
                                 value={formTitle}
                                 onChange={(e) => setFormTitle(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-card/50 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Phụ Đề</label>
+                            <label className="text-sm font-bold text-muted-foreground">Phụ Đề</label>
                             <input
                                 type="text"
                                 placeholder="Giảm giá đến 30%"
                                 value={formSubtitle}
                                 onChange={(e) => setFormSubtitle(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-card/50 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Mô Tả</label>
+                            <label className="text-sm font-bold text-muted-foreground">Mô Tả</label>
                             <textarea
                                 placeholder="Mô tả chi tiết về khuyến mãi..."
                                 value={formDesc}
                                 onChange={(e) => setFormDesc(e.target.value)}
                                 rows={3}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-card/50 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
@@ -260,22 +260,22 @@ export default function AdminMarketingPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Thứ Tự (Order)</label>
+                            <label className="text-sm font-bold text-muted-foreground">Thứ Tự (Order)</label>
                             <input
                                 type="number"
                                 placeholder="0"
                                 value={formOrder}
                                 onChange={(e) => setFormOrder(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-card/50 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-sm font-bold text-gray-300">Màu Gradient</label>
+                            <label className="text-sm font-bold text-muted-foreground">Màu Gradient</label>
                             <select
                                 value={formColor}
                                 onChange={(e) => setFormColor(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-card/50 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                             >
                                 <option value="from-emerald-600 to-green-500">Xanh Lá (TAILG)</option>
                                 <option value="from-rose-600 to-red-500">Hồng - Đỏ (Dưc Duy)</option>
@@ -290,14 +290,14 @@ export default function AdminMarketingPage() {
                         <button
                             onClick={handleSave}
                             disabled={loading}
-                            className="flex-1 px-6 py-3 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="flex-1 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             <Save className="w-5 h-5" />
                             {loading ? "Đang xử lý..." : (editingId ? "Cập Nhật" : "Thêm Mới")}
                         </button>
                         <button
                             onClick={resetForm}
-                            className="px-6 py-3 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 transition-colors"
+                            className="px-6 py-3 bg-muted text-foreground font-bold rounded-xl hover:bg-muted/80 transition-colors"
                         >
                             Hủy
                         </button>
@@ -316,12 +316,12 @@ export default function AdminMarketingPage() {
                             : '';
 
                         return (
-                            <div key={slide.id} className="bg-card border border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all group">
+                            <div key={slide.id} className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all group">
                                 <div className="relative h-48">
                                     {imageUrl ? (
                                         <img src={imageUrl} alt={slide.title} className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                                        <div className="w-full h-full bg-muted/50 flex items-center justify-center">
                                             <ImageIcon className="w-12 h-12 text-muted-foreground" />
                                         </div>
                                     )}
@@ -329,26 +329,26 @@ export default function AdminMarketingPage() {
                                 </div>
                                 <div className="p-4 space-y-3">
                                     <div>
-                                        <h3 className="font-bold text-white text-lg">{slide.title || "Không có tiêu đề"}</h3>
-                                        {slide.subtitle && <p className="text-sm text-gray-400">{slide.subtitle}</p>}
+                                        <h3 className="font-bold text-foreground text-lg">{slide.title || "Không có tiêu đề"}</h3>
+                                        {slide.subtitle && <p className="text-sm text-muted-foreground">{slide.subtitle}</p>}
                                     </div>
                                     {slide.desc && <p className="text-sm text-muted-foreground line-clamp-2">{slide.desc}</p>}
-                                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                                    <div className="flex items-center justify-between pt-2 border-t border-border">
                                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                            <span className="px-2 py-1 bg-white/5 rounded">Order: {slide.order || 0}</span>
-                                            <span className="px-2 py-1 bg-white/5 rounded truncate max-w-[150px]">{slide.link}</span>
+                                            <span className="px-2 py-1 bg-muted rounded">Order: {slide.order || 0}</span>
+                                            <span className="px-2 py-1 bg-muted rounded truncate max-w-[150px]">{slide.link}</span>
                                         </div>
                                         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => handleEdit(slide)}
-                                                className="p-2 bg-white/5 hover:bg-primary hover:text-black rounded-lg transition-colors"
+                                                className="p-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors"
                                                 title="Chỉnh sửa"
                                             >
                                                 <Edit className="w-4 h-4" />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(slide.documentId, slide.title)}
-                                                className="p-2 bg-white/5 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+                                                className="p-2 bg-muted hover:bg-red-500 hover:text-white rounded-lg transition-colors"
                                                 title="Xóa"
                                             >
                                                 <Trash2 className="w-4 h-4" />

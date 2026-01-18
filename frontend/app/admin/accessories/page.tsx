@@ -118,11 +118,11 @@ export default function AdminAccessoriesPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 pl-6 font-bold">Sản Phẩm</th>
                                 <th className="p-4 font-bold">Danh Mục</th>
                                 <th className="p-4 font-bold">Giá Bán</th>
@@ -130,7 +130,7 @@ export default function AdminAccessoriesPage() {
                                 <th className="p-4 font-bold text-right pr-6">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
@@ -146,10 +146,10 @@ export default function AdminAccessoriesPage() {
                                     }
 
                                     return (
-                                        <tr key={acc.id} className="hover:bg-white/5 transition-colors group">
+                                        <tr key={acc.id} className="hover:bg-muted/50 transition-colors group">
                                             <td className="p-4 pl-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
+                                                    <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
                                                         {imgUrl ? (
                                                             <img src={imgUrl} alt={acc.name} className="w-full h-full object-cover" />
                                                         ) : (
@@ -157,15 +157,15 @@ export default function AdminAccessoriesPage() {
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-white">{acc.name}</div>
+                                                        <div className="font-bold text-foreground">{acc.name}</div>
                                                         <div className="text-xs text-muted-foreground">ID: {acc.id}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-4 text-sm text-gray-300">
+                                            <td className="p-4 text-sm text-muted-foreground">
                                                 {getCategoryBadge(acc.category)}
                                             </td>
-                                            <td className="p-4 font-bold text-white">
+                                            <td className="p-4 font-bold text-foreground">
                                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(acc.price || 0)}
                                             </td>
                                             <td className="p-4">
@@ -179,14 +179,14 @@ export default function AdminAccessoriesPage() {
                                                 <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <Link
                                                         href={`/admin/accessories/new?id=${acc.documentId}`}
-                                                        className="p-2 bg-white/5 hover:bg-primary hover:text-black rounded-lg transition-colors inline-flex"
+                                                        className="p-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors inline-flex"
                                                         title="Sửa"
                                                     >
                                                         <Edit2 className="w-4 h-4" />
                                                     </Link>
                                                     <button
                                                         onClick={() => handleDelete(acc.documentId, acc.name)}
-                                                        className="p-2 bg-white/5 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+                                                        className="p-2 bg-muted hover:bg-red-500 hover:text-white rounded-lg transition-colors"
                                                         title="Xóa"
                                                     >
                                                         <Trash2 className="w-4 h-4" />

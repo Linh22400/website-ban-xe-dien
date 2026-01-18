@@ -85,7 +85,7 @@ export default function AdminCustomersPage() {
     };
 
     if (loading) {
-        return <div className="text-white">Đang tải danh sách khách hàng...</div>;
+        return <div className="text-foreground">Đang tải danh sách khách hàng...</div>;
     }
 
     return (
@@ -93,7 +93,7 @@ export default function AdminCustomersPage() {
             {/* Header and Filters */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Khách Hàng</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Khách Hàng</h1>
                     <p className="text-muted-foreground">Xem danh sách người dùng và phân quyền nhân viên.</p>
                 </div>
             </div>
@@ -107,7 +107,7 @@ export default function AdminCustomersPage() {
                         placeholder="Tìm tên đăng nhập, email..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-card/50 border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
                 <div className="flex gap-4">
@@ -116,7 +116,7 @@ export default function AdminCustomersPage() {
                         <select
                             value={filterRole}
                             onChange={(e) => setFilterRole(e.target.value)}
-                            className="pl-10 pr-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[150px]"
+                            className="pl-10 pr-8 py-3 bg-muted/50 hover:bg-muted/70 text-foreground rounded-xl border border-border focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[150px]"
                         >
                             <option value="all">Tất cả vai trò</option>
                             <option value="customer">Khách hàng</option>
@@ -128,11 +128,11 @@ export default function AdminCustomersPage() {
             </div>
 
             {/* Customers Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 pl-6 font-bold">Người Dùng</th>
                                 <th className="p-4 font-bold">Email / Liên Hệ</th>
                                 <th className="p-4 font-bold">Vai Trò</th>
@@ -140,22 +140,22 @@ export default function AdminCustomersPage() {
                                 {/* <th className="p-4 font-bold text-right pr-6">Hành Động</th> */}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {filteredCustomers.length > 0 ? (
                                 filteredCustomers.map((customer) => (
-                                    <tr key={customer.id} className="hover:bg-white/5 transition-colors group">
+                                    <tr key={customer.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary border border-white/5">
+                                                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary border border-border">
                                                     <span className="font-bold">{(customer.username || 'U').charAt(0).toUpperCase()}</span>
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-white">{customer.username}</div>
+                                                    <div className="font-bold text-foreground">{customer.username}</div>
                                                     <div className="text-xs text-muted-foreground">Tham gia: {customer.createdAt}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-300 space-y-1">
+                                        <td className="p-4 text-sm text-muted-foreground space-y-1">
                                             <div className="flex items-center gap-2">
                                                 <Mail className="w-3 h-3 text-muted-foreground" />
                                                 {customer.email}

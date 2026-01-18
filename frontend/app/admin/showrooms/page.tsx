@@ -58,12 +58,12 @@ export default function AdminShowroomsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Cửa Hàng</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Cửa Hàng</h1>
                     <p className="text-muted-foreground">Danh sách các showroom và chi nhánh trên toàn quốc.</p>
                 </div>
                 <Link
                     href="/admin/showrooms/new"
-                    className="px-6 py-2.5 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg shadow-primary/20"
                 >
                     <Plus className="w-5 h-5" />
                     Thêm Cửa Hàng
@@ -79,17 +79,17 @@ export default function AdminShowroomsPage() {
                         placeholder="Tìm kiếm theo tên, địa chỉ, thành phố..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-card/50 border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
             </div>
 
             {/* List */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 pl-6 font-bold">Tên Cửa Hàng</th>
                                 <th className="p-4 font-bold">Địa Chỉ</th>
                                 <th className="p-4 font-bold">Liên Hệ</th>
@@ -97,19 +97,19 @@ export default function AdminShowroomsPage() {
                                 <th className="p-4 font-bold text-right pr-6">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
                             ) : filteredShowrooms.length > 0 ? (
                                 filteredShowrooms.map((showroom) => (
-                                    <tr key={showroom.id} className="hover:bg-white/5 transition-colors group">
+                                    <tr key={showroom.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
-                                            <div className="font-bold text-white">{showroom.Name}</div>
+                                            <div className="font-bold text-foreground">{showroom.Name}</div>
                                             <div className="text-xs text-muted-foreground">{showroom.Code}</div>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-300 max-w-xs">
+                                        <td className="p-4 text-sm text-muted-foreground max-w-xs">
                                             <div className="flex items-start gap-2">
                                                 <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                                 <span>
@@ -118,7 +118,7 @@ export default function AdminShowroomsPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-300">
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-2">
                                                 <Phone className="w-3 h-3 text-muted-foreground" />
                                                 {showroom.Phone}
@@ -136,14 +136,14 @@ export default function AdminShowroomsPage() {
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <Link
                                                     href={`/admin/showrooms/new?id=${showroom.documentId}`}
-                                                    className="p-2 bg-white/5 hover:bg-primary hover:text-black rounded-lg transition-colors"
+                                                    className="p-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors"
                                                     title="Chỉnh sửa"
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDelete(showroom.documentId, showroom.Name)}
-                                                    className="p-2 bg-white/5 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+                                                    className="p-2 bg-muted hover:bg-red-500 hover:text-white rounded-lg transition-colors"
                                                     title="Xóa"
                                                 >
                                                     <Trash2 className="w-4 h-4" />

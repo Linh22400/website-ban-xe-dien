@@ -88,10 +88,10 @@ export default function AdminOrdersPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Đơn Hàng</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Đơn Hàng</h1>
                     <p className="text-muted-foreground">Theo dõi và xử lý đơn hàng từ khách hàng.</p>
                 </div>
-                <button className="px-4 py-2 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2">
+                <button className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2">
                     <Download className="w-4 h-4" />
                     Xuất Excel
                 </button>
@@ -107,7 +107,7 @@ export default function AdminOrdersPage() {
                         placeholder="Tìm kiếm theo mã đơn, tên, SĐT..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
 
@@ -119,7 +119,7 @@ export default function AdminOrdersPage() {
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="appearance-none bg-card/50 border border-white/10 rounded-xl pl-10 pr-10 py-3 text-white focus:outline-none focus:border-primary transition-colors h-full cursor-pointer min-w-[180px]"
+                        className="appearance-none bg-card/50 border border-white/10 rounded-xl pl-10 pr-10 py-3 text-foreground focus:outline-none focus:border-primary transition-colors h-full cursor-pointer min-w-[180px]"
                     >
                         <option value="all">Tất cả trạng thái</option>
                         <option value="pending_payment">Chờ Thanh Toán</option>
@@ -136,7 +136,7 @@ export default function AdminOrdersPage() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 font-bold">Mã Đơn <ArrowUpDown className="w-3 h-3 inline ml-1 opacity-50" /></th>
                                 <th className="p-4 font-bold">Khách Hàng</th>
                                 <th className="p-4 font-bold">Ngày Đặt</th>
@@ -155,21 +155,21 @@ export default function AdminOrdersPage() {
                                 </tr>
                             ) : orders.length > 0 ? (
                                 orders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-white/5 transition-colors group">
+                                    <tr key={order.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 font-mono font-bold text-primary">
                                             {order.OrderCode}
                                         </td>
                                         <td className="p-4">
-                                            <div className="font-bold text-white">{order.CustomerInfo?.FullName}</div>
+                                            <div className="font-bold text-foreground">{order.CustomerInfo?.FullName}</div>
                                             <div className="text-xs text-muted-foreground">{order.CustomerInfo?.Phone}</div>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-300">
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                                         </td>
-                                        <td className="p-4 text-sm text-gray-300">
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             {order.VehicleModel?.name || 'Sản phẩm'}
                                         </td>
-                                        <td className="p-4 font-bold text-white">
+                                        <td className="p-4 font-bold text-foreground">
                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}
                                         </td>
                                         <td className="p-4">
@@ -178,7 +178,7 @@ export default function AdminOrdersPage() {
                                         <td className="p-4 text-right">
                                             <Link
                                                 href={`/admin/orders/${order.documentId}`} // Use documentId for V5
-                                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-primary hover:text-black transition-colors"
+                                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary hover:text-primary-foreground transition-colors"
                                                 title="Xem chi tiết"
                                             >
                                                 <Eye className="w-4 h-4" />

@@ -84,12 +84,12 @@ export default function AdminProductsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Sản Phẩm</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Sản Phẩm</h1>
                     <p className="text-muted-foreground">Quản lý danh sách xe và phụ kiện.</p>
                 </div>
                 <Link
                     href="/admin/products/new"
-                    className="px-4 py-2 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+                    className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
                 >
                     <Plus className="w-5 h-5" />
                     Thêm Mới
@@ -106,7 +106,7 @@ export default function AdminProductsPage() {
                         placeholder="Tìm tên xe, mã sản phẩm..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-card/50 border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
 
@@ -118,7 +118,7 @@ export default function AdminProductsPage() {
                     <select
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
-                        className="appearance-none bg-card/50 border border-white/10 rounded-xl pl-10 pr-10 py-3 text-white focus:outline-none focus:border-primary transition-colors h-full cursor-pointer min-w-[200px]"
+                        className="appearance-none bg-card/50 border border-border rounded-xl pl-10 pr-10 py-3 text-foreground focus:outline-none focus:border-primary transition-colors h-full cursor-pointer min-w-[200px]"
                     >
                         <option value="all">Tất cả danh mục</option>
                         <option value="Xe Máy Điện">Xe Máy Điện</option>
@@ -128,11 +128,11 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Product Grid / List */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 pl-6 font-bold">Tên Sản Phẩm</th>
                                 <th className="p-4 font-bold">Danh Mục</th>
                                 <th className="p-4 font-bold">Giá Bán</th>
@@ -141,7 +141,7 @@ export default function AdminProductsPage() {
                                 <th className="p-4 font-bold text-right pr-6">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={6} className="p-8 text-center text-muted-foreground">
@@ -150,10 +150,10 @@ export default function AdminProductsPage() {
                                 </tr>
                             ) : filteredProducts.length > 0 ? (
                                 filteredProducts.map((product) => (
-                                    <tr key={product.id} className="hover:bg-white/5 transition-colors group">
+                                    <tr key={product.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
+                                                <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
                                                     {product.thumbnail ? (
                                                         <img src={product.thumbnail} alt={product.name} className="w-full h-full object-cover" />
                                                     ) : (
@@ -161,19 +161,19 @@ export default function AdminProductsPage() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-white">{product.name}</div>
+                                                    <div className="font-bold text-foreground">{product.name}</div>
                                                     <div className="text-xs text-muted-foreground">SKU: SP-{String(product.id).slice(-4)}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-sm text-gray-300">
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             {getCategoryBadge(product.type)}
                                         </td>
-                                        <td className="p-4 font-bold text-white">
+                                        <td className="p-4 font-bold text-foreground">
                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
                                         </td>
-                                        <td className="p-4 text-sm font-bold text-gray-300">
-                                            <span className={`${product.stock && product.stock > 0 ? 'text-white' : 'text-red-400'}`}>
+                                        <td className="p-4 text-sm font-bold text-muted-foreground">
+                                            <span className={`${product.stock && product.stock > 0 ? 'text-foreground' : 'text-red-400'}`}>
                                                 {product.stock || 0}
                                             </span>
                                         </td>
@@ -189,14 +189,14 @@ export default function AdminProductsPage() {
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <Link
                                                     href={`/admin/products/new?id=${product.documentId}`}
-                                                    className="p-2 bg-white/5 hover:bg-primary hover:text-black rounded-lg transition-colors inline-flex"
+                                                    className="p-2 bg-muted/50 hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors inline-flex"
                                                     title="Sửa"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDelete(product.documentId, product.name)}
-                                                    className="p-2 bg-white/5 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+                                                    className="p-2 bg-muted/50 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
                                                     title="Xóa"
                                                 >
                                                     <Trash2 className="w-4 h-4" />

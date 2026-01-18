@@ -79,7 +79,7 @@ export default function AdminLeadsPage() {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Yêu Cầu Khách Hàng (Leads)</h1>
+                <h1 className="text-3xl font-bold text-foreground mb-2">Yêu Cầu Khách Hàng (Leads)</h1>
                 <p className="text-muted-foreground">Danh sách khách hàng đăng ký lái thử và liên hệ tư vấn.</p>
             </div>
 
@@ -92,7 +92,7 @@ export default function AdminLeadsPage() {
                         placeholder="Tìm tên, email, số điện thoại..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-card/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-card/50 border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
                 <div className="relative">
@@ -100,7 +100,7 @@ export default function AdminLeadsPage() {
                     <select
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
-                        className="pl-10 pr-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[180px]"
+                        className="pl-10 pr-8 py-3 bg-card/50 hover:bg-muted/50 text-foreground rounded-xl border border-border focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer min-w-[180px]"
                     >
                         <option value="all">Tất cả loại hình</option>
                         <option value="test-drive">Đăng Ký Lái Thử</option>
@@ -111,11 +111,11 @@ export default function AdminLeadsPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 pl-6 font-bold">Khách Hàng</th>
                                 <th className="p-4 font-bold">Loại Yêu Cầu</th>
                                 <th className="p-4 font-bold">Nội Dung / Xe Quan Tâm</th>
@@ -123,16 +123,16 @@ export default function AdminLeadsPage() {
                                 <th className="p-4 font-bold text-right pr-6">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
                             ) : filteredLeads.length > 0 ? (
                                 filteredLeads.map((lead) => (
-                                    <tr key={lead.id} className="hover:bg-white/5 transition-colors group">
+                                    <tr key={lead.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
-                                            <div className="font-bold text-white">{lead.name}</div>
+                                            <div className="font-bold text-foreground">{lead.name}</div>
                                             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                                                 <Phone className="w-3 h-3" />
                                                 <a href={`tel:${lead.phone}`} className="hover:text-primary transition-colors">{lead.phone}</a>
@@ -152,12 +152,12 @@ export default function AdminLeadsPage() {
                                                 </div>
                                             )}
                                             {lead.message && (
-                                                <div className="text-sm text-gray-400 line-clamp-2" title={lead.message}>
+                                                <div className="text-sm text-muted-foreground line-clamp-2" title={lead.message}>
                                                     {lead.message}
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="p-4 text-sm text-gray-400">
+                                        <td className="p-4 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-1.5">
                                                 <Calendar className="w-3 h-3" />
                                                 {new Date(lead.createdAt).toLocaleDateString('vi-VN')}
@@ -166,7 +166,7 @@ export default function AdminLeadsPage() {
                                         <td className="p-4 text-right pr-6">
                                             <a
                                                 href={`tel:${lead.phone}`}
-                                                className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-black font-bold rounded-lg hover:bg-white transition-colors text-xs"
+                                                className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground font-bold rounded-lg hover:opacity-90 transition-colors text-xs"
                                             >
                                                 <Phone className="w-3.5 h-3.5" />
                                                 Gọi Ngay

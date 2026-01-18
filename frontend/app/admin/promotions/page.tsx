@@ -112,11 +112,11 @@ export default function AdminPromotionsPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/5 border-b border-white/10 text-sm text-muted-foreground uppercase tracking-wider">
+                            <tr className="bg-muted/50 border-b border-border text-sm text-muted-foreground uppercase tracking-wider">
                                 <th className="p-4 pl-6 font-bold">Chương Trình</th>
                                 <th className="p-4 font-bold">Mã Code</th>
                                 <th className="p-4 font-bold">Giảm Giá</th>
@@ -125,7 +125,7 @@ export default function AdminPromotionsPage() {
                                 <th className="p-4 font-bold text-right pr-6">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={6} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
@@ -137,10 +137,10 @@ export default function AdminPromotionsPage() {
                                     const isActive = promo.isActive && expiry > now;
 
                                     return (
-                                        <tr key={promo.id} className="hover:bg-white/5 transition-colors group">
+                                        <tr key={promo.id} className="hover:bg-muted/50 transition-colors group">
                                             <td className="p-4 pl-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
+                                                    <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
                                                         {promo.image?.url ? (
                                                             <img
                                                                 src={promo.image.url}
@@ -152,7 +152,7 @@ export default function AdminPromotionsPage() {
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-white max-w-[200px] truncate" title={promo.title}>{promo.title}</div>
+                                                        <div className="font-bold text-foreground max-w-[200px] truncate" title={promo.title}>{promo.title}</div>
                                                         <div className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">{promo.description}</div>
                                                     </div>
                                                 </div>
@@ -161,12 +161,12 @@ export default function AdminPromotionsPage() {
                                                 {promo.code || '---'}
                                             </td>
                                             <td className="p-4">
-                                                <div className="flex items-center gap-1 font-bold text-white">
+                                                <div className="flex items-center gap-1 font-bold text-foreground">
                                                     <Percent className="w-4 h-4 text-muted-foreground" />
                                                     {promo.discountPercent}%
                                                 </div>
                                             </td>
-                                            <td className="p-4 text-sm text-gray-300">
+                                            <td className="p-4 text-sm text-muted-foreground">
                                                 <div className="flex items-center gap-2">
                                                     <Calendar className="w-4 h-4 text-muted-foreground" />
                                                     {new Date(promo.expiryDate).toLocaleDateString('vi-VN')}
@@ -183,14 +183,14 @@ export default function AdminPromotionsPage() {
                                                 <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <Link
                                                         href={`/admin/promotions/new?id=${promo.documentId}`}
-                                                        className="p-2 bg-white/5 hover:bg-primary hover:text-black rounded-lg transition-colors inline-flex"
+                                                        className="p-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors inline-flex"
                                                         title="Sửa"
                                                     >
                                                         <Edit2 className="w-4 h-4" />
                                                     </Link>
                                                     <button
                                                         onClick={() => handleDelete(promo.documentId, promo.title)}
-                                                        className="p-2 bg-white/5 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+                                                        className="p-2 bg-muted hover:bg-red-500 hover:text-white rounded-lg transition-colors"
                                                         title="Xóa"
                                                     >
                                                         <Trash2 className="w-4 h-4" />

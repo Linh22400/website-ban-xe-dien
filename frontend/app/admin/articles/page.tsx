@@ -61,12 +61,12 @@ export default function AdminArticlesPage() {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Quản Lý Tin Tức</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Quản Lý Tin Tức</h1>
                     <p className="text-muted-foreground">Tạo và quản lý các bài viết tin tức, blog.</p>
                 </div>
                 <Link
                     href="/admin/articles/new"
-                    className="px-6 py-2.5 bg-primary text-black font-bold rounded-xl hover:bg-white transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
                 >
                     <Plus className="w-5 h-5" />
                     Viết Bài Mới
@@ -74,7 +74,7 @@ export default function AdminArticlesPage() {
             </div>
 
             {/* Search */}
-            <div className="bg-card border border-white/10 rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <input
@@ -82,25 +82,25 @@ export default function AdminArticlesPage() {
                         placeholder="Tìm kiếm bài viết theo tiêu đề, tác giả..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                 </div>
             </div>
 
             {/* Articles Table */}
-            <div className="bg-card border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-white/10 bg-white/5">
-                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-300">Bài Viết</th>
-                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-300">Danh Mục</th>
-                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-300">Tác Giả</th>
-                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-300">Ngày Đăng</th>
-                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-300">Hành Động</th>
+                            <tr className="border-b border-border bg-muted/50">
+                                <th className="px-6 py-4 text-left text-sm font-bold text-muted-foreground">Bài Viết</th>
+                                <th className="px-6 py-4 text-left text-sm font-bold text-muted-foreground">Danh Mục</th>
+                                <th className="px-6 py-4 text-left text-sm font-bold text-muted-foreground">Tác Giả</th>
+                                <th className="px-6 py-4 text-left text-sm font-bold text-muted-foreground">Ngày Đăng</th>
+                                <th className="px-6 py-4 text-right text-sm font-bold text-muted-foreground">Hành Động</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/10">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
@@ -115,10 +115,10 @@ export default function AdminArticlesPage() {
                                         : null;
 
                                     return (
-                                        <tr key={article.id} className="hover:bg-white/5 transition-colors group">
+                                        <tr key={article.id} className="hover:bg-muted/50 transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-16 h-12 rounded-lg bg-white/10 overflow-hidden shrink-0">
+                                                    <div className="w-16 h-12 rounded-lg bg-muted/50 overflow-hidden shrink-0">
                                                         {coverUrl ? (
                                                             <img
                                                                 src={coverUrl}
@@ -132,7 +132,7 @@ export default function AdminArticlesPage() {
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <h3 className="font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
+                                                        <h3 className="font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
                                                             {article.Title}
                                                         </h3>
                                                         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
@@ -155,7 +155,7 @@ export default function AdminArticlesPage() {
                                                     <span className="text-muted-foreground text-sm">-</span>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-white text-sm">
+                                            <td className="px-6 py-4 text-foreground text-sm">
                                                 <div className="flex items-center gap-2">
                                                     <User className="w-4 h-4 text-muted-foreground" />
                                                     {article.Author}
@@ -168,17 +168,17 @@ export default function AdminArticlesPage() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-2 text-white">
+                                                <div className="flex items-center justify-end gap-2 text-foreground">
                                                     <Link
                                                         href={`/admin/articles/new?id=${article.documentId}`}
-                                                        className="p-2 bg-white/10 hover:bg-primary hover:text-black rounded-lg transition-colors"
+                                                        className="p-2 bg-muted/50 hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors"
                                                         title="Chỉnh sửa"
                                                     >
                                                         <Edit className="w-4 h-4" />
                                                     </Link>
                                                     <button
                                                         onClick={() => handleDelete(article.documentId, article.Title)}
-                                                        className="p-2 bg-white/10 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+                                                        className="p-2 bg-muted/50 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
                                                         title="Xóa"
                                                     >
                                                         <Trash2 className="w-4 h-4" />

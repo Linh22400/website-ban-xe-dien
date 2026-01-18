@@ -111,9 +111,26 @@ export default {
         
         const payos = new PayOS(clientId, apiKey, checksumKey);
 
+        // Debug Webhook methods
+        try {
+             if (payos.webhooks) {
+                 console.log('Available PayOS.webhooks methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(payos.webhooks)));
+             }
+        } catch(e) {}
+
         // verifyPaymentWebhookData throws error if invalid
         // In v2, use payos.webhooks.verify which returns the data object
-        const verifiedData = await payos.webhooks.verify(webhookData);
+        let verifiedData;
+        if (payos.webhooks && typeof payos.webhooks.verify === 'function') {
+             verifiedData = await payos.webhooks.verify(webhookData);
+        } else if (typeof payos.verifyPaymentWebhookData === 'function') {
+             verifiedData = payos.verifyPaymentWebhookData(webhookData);
+        } else {
+             console.error('PayOS Webhook: No verify method found');
+             // Fallback: trust data if in dev mode or desperate (NOT RECOMMENDED for prod, but for debugging)
+             // verifiedData = webhookData.data;
+             throw new Error('PayOS Webhook: No verify method found');
+        }
         
         // 2. Process Success Payment
         // verify() throws if signature is invalid. If we are here, it is valid.
@@ -210,9 +227,9 @@ export default {
                     // Try via paymentRequests property
                     else if (payos.paymentRequests) {
                         if (typeof payos.paymentRequests.get === 'function') {
-                            paymentInfo = await payos.paymentRequests.get(transaction.TransactionId);
+                            paymentInfo = await payos.paymentRequests.get(Number(transaction.TransactionId));
                         } else if (typeof payos.paymentRequests.getPaymentLinkInformation === 'function') {
-                            paymentInfo = await payos.paymentRequests.getPaymentLinkInformation(transaction.TransactionId);
+                            paymentInfo = await payos.paymentRequests.getPaymentLinkInformation(Number(transaction.TransactionId));
                         }
                     }
                     // Fallback for older versions

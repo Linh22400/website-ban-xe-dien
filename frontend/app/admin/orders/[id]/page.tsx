@@ -100,7 +100,8 @@ export default function OrderDetailPage() {
                     setStatus(data.Statuses || 'pending');
 
                     // Auto-check PayOS if pending
-                    if (data.Statuses === 'pending_payment' || data.Statuses === 'pending') {
+                    // Check both Order Status (pending_payment) and Payment Status (pending)
+                    if (data.Statuses === 'pending_payment' || data.PaymentStatus === 'pending') {
                         // Small delay to ensure UI renders first
                         setTimeout(async () => {
                             try {

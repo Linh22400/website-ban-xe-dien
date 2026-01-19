@@ -148,10 +148,8 @@ export default function CartPage() {
                                                         {item.quantity}
                                                     </ThemeText>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, 1, item.colorName)}
-                                                        className="p-2 opacity-50 cursor-not-allowed"
-                                                        aria-disabled="true"
-                                                        title="Mỗi đơn hiện chỉ hỗ trợ 1 xe"
+                                                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.colorName)}
+                                                        className="p-2 hover:bg-white/10 transition-colors"
                                                     >
                                                         <Plus className="w-4 h-4" style={{ color: 'currentColor' }} />
                                                     </button>

@@ -8,14 +8,15 @@ export default function OrderSummary() {
     const { paymentMethod, installmentMonths, shippingMethod } = useCheckout();
     const { items, total } = useCart();
 
-    const item = items[0];
-    if (!item) return null;
+    if (items.length === 0) return null;
 
-    // Giá hiển thị theo thực tế checkout hiện tại:
-    // - Nếu có khuyến mãi: item.price là giá sau KM, item.originalPrice là giá trước KM
-    // - Online chỉ thu (giá sau KM) + VAT 10%
-    const basePrice = Number(item.originalPrice ?? item.price ?? total ?? 0);
-    const priceAfterDiscount = Number(item.price ?? total ?? 0);
+    // Calculate totals across all items
+    const basePrice = items.reduce((sum, item) => {
+        const itemBase = Number(item.originalPrice ?? item.price ?? 0);
+        return sum + (itemBase * item.quantity);
+    }, 0);
+    
+    const priceAfterDiscount = total; // total from context is sum(price * quantity)
     const discountAmount = Math.max(0, basePrice - priceAfterDiscount);
     const vat = Math.round(priceAfterDiscount * 0.1);
     const totalAmount = priceAfterDiscount + vat;
@@ -38,25 +39,40 @@ export default function OrderSummary() {
         <div className="sticky top-24">
             <div className="bg-card/30 border border-border rounded-2xl p-6">
                 {/* Header */}
-                <h3 className="text-xl font-bold text-foreground mb-6">Tóm tắt đơn hàng</h3>
+                <h3 className="text-xl font-bold text-foreground mb-6">Tóm tắt đơn hàng ({items.length} sản phẩm)</h3>
 
-                {/* Product Info */}
-                <div className="mb-6 pb-6 border-b border-border">
-                    {item.image && (
-                        <div className="relative h-32 mb-4 rounded-xl overflow-hidden bg-muted/20">
-                            <img
-                                src={(item.gallery?.[0] || item.image || '/placeholder-car.png')}
-                                alt={item.name}
-                                className="w-full h-full object-contain"
-                            />
+                {/* Product List */}
+                <div className="mb-6 pb-6 border-b border-border space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    {items.map((item, index) => (
+                        <div key={`${item.id}-${item.colorName}-${index}`} className="flex gap-4">
+                            {/* Image */}
+                            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted/20 shrink-0">
+                                {item.image ? (
+                                    <img
+                                        src={(item.gallery?.[0] || item.image || '/placeholder-car.png')}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-secondary flex items-center justify-center text-xs">No img</div>
+                                )}
+                            </div>
+                            
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <h4 className="font-bold text-foreground text-sm truncate">{item.name}</h4>
+                                <div className="space-y-1 text-xs text-muted-foreground">
+                                    {item.colorName && item.colorName !== 'Mặc định' && (
+                                        <p>Màu: <span className="text-foreground">{item.colorName}</span></p>
+                                    )}
+                                    <div className="flex justify-between items-center mt-1">
+                                        <span>SL: <span className="text-foreground font-medium">{item.quantity}</span></span>
+                                        <span className="text-foreground font-medium">{formatCurrency(item.price * item.quantity)}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                    <h4 className="font-bold text-foreground mb-2">{item.name}</h4>
-                    <div className="space-y-1 text-sm text-muted-foreground">
-                        {item.colorName && item.colorName !== 'Mặc định' && (
-                            <p>Màu: <span className="text-foreground">{item.colorName}</span></p>
-                        )}
-                    </div>
+                    ))}
                 </div>
 
                 {/* Pricing Breakdown */}

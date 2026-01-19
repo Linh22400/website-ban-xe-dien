@@ -46,14 +46,15 @@ export default function StickyActionBar({ car, selectedColorName, selectedColorI
             : (car.colors?.[selectedColorIndex]?.images || [car.thumbnail]);
 
         addToCart({
-            id: car.id,
+            id: car.documentId || car.id,
             name: car.name,
             price: finalPrice,
             originalPrice: discountPercent > 0 ? car.price : undefined,
             image: galleryImages[0],
             gallery: galleryImages,
             colorName: selectedColorName,
-            slug: car.slug
+            slug: car.slug,
+            type: 'vehicle'
         });
 
         // Navigate to cart
@@ -74,7 +75,8 @@ export default function StickyActionBar({ car, selectedColorName, selectedColorI
             image: galleryImages[0],
             gallery: galleryImages,
             colorName: selectedColorName,
-            slug: car.slug
+            slug: car.slug,
+            type: 'vehicle'
         });
 
         router.push("/checkout");

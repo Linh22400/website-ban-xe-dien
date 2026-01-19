@@ -3,6 +3,7 @@
  */
 
 import { factories } from '@strapi/strapi';
+import { generateOrderEmail } from '../../../utils/email-templates';
 
 import {
     RateLimitEntry,
@@ -62,8 +63,6 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
             const data = body.data || {};
 
             // Chống spam tạo đơn (public endpoint):
-            // - Theo IP: tối đa 20 lần / giờ, cooldown 10 giây
-            // - Theo SĐT: tối đa 5 lần / giờ, cooldown 60 giây
             const now = Date.now();
             const ip = getClientIp(ctx);
             const ipLimit = hitRateLimit({
@@ -79,7 +78,6 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
             }
 
             // Bảo mật: chống mass-assignment.
-            // Chỉ cho phép một số field từ client; các field nhạy cảm/ nội bộ sẽ do backend tự set.
             const allowedInput: any = {
                 VehicleModel: data.VehicleModel,
                 SelectedColor: data.SelectedColor,
@@ -92,20 +90,16 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                 PaymentMethod: data.PaymentMethod,
                 PreferredGateway: data.PreferredGateway,
                 CustomerInfo: data.CustomerInfo,
+                OrderItems: data.OrderItems,
             };
 
-            // Nếu user đã đăng nhập (OTP/member), tự gắn Order.Customer = user.id.
-            // Không cho client tự truyền Customer để tránh gán đơn sang người khác.
+            // Nếu user đã đăng nhập
             const user = ctx.state.user;
             if (user?.id) {
                 allowedInput.Customer = user.id;
             }
 
             // 1. Validate required fields
-            if (!allowedInput.VehicleModel) {
-                return ctx.badRequest('VehicleModel is required');
-            }
-
             const paymentMethod = String(allowedInput.PaymentMethod || '').trim();
             if (!['deposit', 'full_payment', 'installment'].includes(paymentMethod)) {
                 return ctx.badRequest('PaymentMethod is invalid');
@@ -132,88 +126,276 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                 return replyTooManyRequests(ctx, phoneLimit.retryAfterSec, 'Bạn đã gửi yêu cầu quá nhiều. Vui lòng thử lại sau.');
             }
 
-            // 2. Fetch vehicle details
-            const vehicle = await strapi.entityService.findOne('api::car-model.car-model', allowedInput.VehicleModel, {
-                fields: ['price', 'name']
-            });
+            // Vars
+            let orderData: any = {};
+            let metaPricing: any = {};
+            let mainVehicle: any = null;
+            let maxDiscountPercent = 0;
+            const stockUpdates: Array<() => Promise<void>> = [];
 
-            if (!vehicle) {
-                return ctx.notFound('Vehicle not found');
-            }
-
-            // 3. Generate Order Code (DH + Timestamp + Random)
+            // 3. Generate Order Code
             const timestamp = Date.now().toString().slice(-6);
             const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
             const orderCode = `DH${timestamp}${random}`;
 
-            // 4. Calculate prices (sát thực tế flow bán xe)
-            // - Online: chỉ thanh toán phần xe (đã trừ KM nếu có) + VAT
-            // - Phí trước bạ / biển số: thường đóng riêng khi làm hồ sơ đăng ký
-            const basePrice = Number(vehicle.price);
+            // Helper to fetch vehicle
+            const fetchVehicle = async (idOrDocId: any) => {
+                // If idOrDocId is a string, assume it's a documentId and try findMany with filters first
+                // to avoid "invalid input syntax for type integer" error in findOne if idOrDocId is string but findOne maps to ID
+                if (typeof idOrDocId === 'string') {
+                    const vs = await strapi.entityService.findMany('api::car-model.car-model', {
+                        filters: { documentId: idOrDocId } as any,
+                        fields: ['price', 'name', 'stock', 'sold', 'slug'],
+                        populate: ['thumbnail'],
+                        limit: 1
+                    });
+                    if (Array.isArray(vs) && vs.length > 0) return vs[0];
+                }
 
-            // 4.1. Tính khuyến mãi theo Promotion đang active liên kết tới xe này
-            // Ưu tiên % lớn nhất trong các promotion còn hiệu lực.
-            const nowIso = new Date().toISOString();
-            const promotions = await strapi.entityService.findMany('api::promotion.promotion', {
-                filters: {
-                    isActive: true,
-                    car_models: {
-                        id: { $eq: (vehicle as any).id }
+                let v = await strapi.entityService.findOne('api::car-model.car-model', idOrDocId, {
+                    fields: ['price', 'name', 'stock', 'sold', 'slug'],
+                    populate: ['thumbnail']
+                });
+                if (!v && (typeof idOrDocId === 'number' || !isNaN(Number(idOrDocId)))) {
+                    const vs = await strapi.entityService.findMany('api::car-model.car-model', {
+                        filters: { id: idOrDocId },
+                        fields: ['price', 'name', 'stock', 'sold', 'slug'],
+                        populate: ['thumbnail'],
+                        limit: 1
+                    });
+                    if (Array.isArray(vs) && vs.length > 0) v = vs[0];
+                }
+                return v;
+            };
+
+            // === MULTIPLE ITEMS CHECK ===
+            if (Array.isArray(allowedInput.OrderItems) && allowedInput.OrderItems.length > 0) {
+                let totalBasePrice = 0;
+                let totalDiscount = 0;
+                let totalAmountPreVat = 0;
+
+                for (const item of allowedInput.OrderItems) {
+                    const qty = Math.max(1, Number(item.quantity) || 1);
+                    
+                    if (item.type === 'vehicle') {
+                        const vehicle = await fetchVehicle(item.id);
+                        if (!vehicle) throw new Error(`Vehicle ${item.name} not found`);
+
+                        if (vehicle.stock !== null && vehicle.stock !== undefined && Number(vehicle.stock) < qty) {
+                            return ctx.badRequest(`Sản phẩm ${vehicle.name} không đủ hàng (còn lại: ${vehicle.stock})`);
+                        }
+
+                        if (!mainVehicle) mainVehicle = vehicle;
+
+                        const basePrice = Number(vehicle.price);
+                        
+                        // Calculate discount
+                        const nowIso = new Date().toISOString();
+                        const promotions = await strapi.entityService.findMany('api::promotion.promotion', {
+                            filters: {
+                                isActive: true,
+                                car_models: { id: { $eq: vehicle.id } },
+                                $or: [{ expiryDate: { $null: true } }, { expiryDate: { $gt: nowIso } }]
+                            },
+                            fields: ['discountPercent'],
+                            sort: ['discountPercent:desc'],
+                            limit: 1
+                        });
+                        const discountPercent = (promotions && promotions.length > 0) ? Number(promotions[0].discountPercent) : 0;
+                        if (discountPercent > maxDiscountPercent) maxDiscountPercent = discountPercent;
+
+                        const discount = Math.round(basePrice * (Math.max(0, Math.min(100, discountPercent)) / 100));
+                        const priceAfterDiscount = Math.max(0, basePrice - discount);
+
+                        totalBasePrice += basePrice * qty;
+                        totalDiscount += discount * qty;
+                        totalAmountPreVat += priceAfterDiscount * qty;
+
+                        // Queue stock update
+                        if (vehicle.stock !== null && vehicle.stock !== undefined) {
+                            stockUpdates.push(async () => {
+                                const current = await fetchVehicle(vehicle.documentId || vehicle.id);
+                                if (current) {
+                                     await strapi.entityService.update('api::car-model.car-model', current.documentId || current.id, {
+                                        data: {
+                                            stock: Math.max(0, Number(current.stock) - qty),
+                                            sold: Number(current.sold || 0) + qty
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                    } else if (item.type === 'accessory') {
+                         let accessory = null;
+                         
+                         // Try by documentId if string
+                         if (typeof item.id === 'string') {
+                             const accs = await strapi.entityService.findMany('api::accessory.accessory', {
+                                 filters: { documentId: item.id } as any,
+                                 fields: ['Price', 'Name'],
+                                 limit: 1
+                             });
+                             if (Array.isArray(accs) && accs.length > 0) accessory = accs[0];
+                         }
+
+                         // Fallback to findOne/findMany by ID if not found or number
+                         if (!accessory && (typeof item.id === 'number' || !isNaN(Number(item.id)))) {
+                             accessory = await strapi.entityService.findOne('api::accessory.accessory', item.id, { fields: ['Price', 'Name'] });
+                         }
+
+                         if (!accessory && (typeof item.id === 'number' || !isNaN(Number(item.id)))) {
+                              const accs = await strapi.entityService.findMany('api::accessory.accessory', {
+                                filters: { id: item.id },
+                                fields: ['Price', 'Name'],
+                                limit: 1
+                            });
+                            if (Array.isArray(accs) && accs.length > 0) accessory = accs[0];
+                         }
+
+                         if (!accessory) {
+                             // Skip or warn? Return badRequest to be safe.
+                             // return ctx.badRequest(`Phụ kiện ${item.name} không tìm thấy`);
+                             // If not found, ignore?
+                             continue;
+                         }
+                         
+                         const price = Number(accessory.Price || 0);
+                         totalBasePrice += price * qty;
+                         totalAmountPreVat += price * qty;
+                    }
+                }
+
+                const totalVat = Math.round(totalAmountPreVat * 0.1);
+                const totalAmount = totalAmountPreVat + totalVat;
+
+                let depositAmount = 0;
+                if (paymentMethod === 'deposit') {
+                    depositAmount = Math.min(3000000, totalAmount);
+                } else if (paymentMethod === 'full_payment') {
+                    depositAmount = totalAmount;
+                } else if (paymentMethod === 'installment') {
+                    depositAmount = Math.round(totalAmount * 0.3);
+                }
+
+                orderData = {
+                    ...allowedInput,
+                    OrderCode: orderCode,
+                    BasePrice: totalBasePrice,
+                    Discount: totalDiscount,
+                    RegistrationFee: 0,
+                    LicensePlateFee: 0,
+                    TotalAmount: totalAmount,
+                    DepositAmount: depositAmount,
+                    RemainingAmount: totalAmount - depositAmount,
+                    Statuses: 'pending_payment',
+                    PaymentStatus: 'pending',
+                    publishedAt: new Date(),
+                    VehicleModel: mainVehicle ? (mainVehicle.documentId || mainVehicle.id) : undefined,
+                };
+                
+                metaPricing = {
+                    basePrice: totalBasePrice,
+                    discount: totalDiscount,
+                    vat: totalVat,
+                    registrationFee: 0,
+                    licensePlateFee: 0,
+                    totalAmount,
+                    depositAmount,
+                    remainingAmount: totalAmount - depositAmount,
+                    discountPercent: maxDiscountPercent
+                };
+
+            } else {
+                // === OLD SINGLE ITEM LOGIC ===
+                if (!allowedInput.VehicleModel) {
+                    return ctx.badRequest('VehicleModel is required');
+                }
+                
+                const vehicle = await fetchVehicle(allowedInput.VehicleModel);
+                if (!vehicle) return ctx.notFound('Vehicle not found');
+
+                if (vehicle.stock !== null && vehicle.stock !== undefined && Number(vehicle.stock) <= 0) {
+                     return ctx.badRequest('Sản phẩm đã hết hàng');
+                }
+                
+                mainVehicle = vehicle;
+                const basePrice = Number(vehicle.price);
+                
+                const nowIso = new Date().toISOString();
+                const promotions = await strapi.entityService.findMany('api::promotion.promotion', {
+                    filters: {
+                        isActive: true,
+                        car_models: { id: { $eq: vehicle.id } },
+                        $or: [{ expiryDate: { $null: true } }, { expiryDate: { $gt: nowIso } }]
                     },
-                    $or: [
-                        { expiryDate: { $null: true } },
-                        { expiryDate: { $gt: nowIso } },
-                    ]
-                },
-                fields: ['discountPercent', 'expiryDate', 'isActive'],
-                sort: ['discountPercent:desc'],
-                limit: 10
-            });
+                    fields: ['discountPercent'],
+                    sort: ['discountPercent:desc'],
+                    limit: 10
+                });
 
-            const maxDiscountPercent = Array.isArray(promotions)
+                maxDiscountPercent = Array.isArray(promotions)
                 ? promotions.reduce((max: number, p: any) => {
                     const value = Number(p?.discountPercent ?? 0);
                     return Number.isFinite(value) ? Math.max(max, value) : max;
                 }, 0)
                 : 0;
 
-            const discount = Math.round(basePrice * (Math.max(0, Math.min(100, maxDiscountPercent)) / 100));
-            const priceAfterDiscount = Math.max(0, basePrice - discount);
+                const discount = Math.round(basePrice * (Math.max(0, Math.min(100, maxDiscountPercent)) / 100));
+                const priceAfterDiscount = Math.max(0, basePrice - discount);
+                const vat = Math.round(priceAfterDiscount * 0.1);
+                const totalAmount = priceAfterDiscount + vat;
 
-            // VAT 10% (làm tròn VND)
-            const vat = Math.round(priceAfterDiscount * 0.1);
+                let depositAmount = 0;
+                if (paymentMethod === 'deposit') {
+                    depositAmount = Math.min(3000000, totalAmount);
+                } else if (paymentMethod === 'full_payment') {
+                    depositAmount = totalAmount;
+                } else if (paymentMethod === 'installment') {
+                    depositAmount = Math.round(totalAmount * 0.3);
+                }
+                
+                orderData = {
+                    ...allowedInput,
+                    OrderCode: orderCode,
+                    BasePrice: basePrice,
+                    Discount: discount,
+                    RegistrationFee: 0,
+                    LicensePlateFee: 0,
+                    TotalAmount: totalAmount,
+                    DepositAmount: depositAmount,
+                    RemainingAmount: totalAmount - depositAmount,
+                    Statuses: 'pending_payment',
+                    PaymentStatus: 'pending',
+                    publishedAt: new Date(),
+                };
 
-            // Các phí này để 0 vì không thu online trong flow hiện tại
-            const registrationFee = 0;
-            const licensePlateFee = 0;
-
-            const totalAmount = priceAfterDiscount + vat;
-
-            let depositAmount = 0;
-            if (paymentMethod === 'deposit') {
-                // Đặt cọc cố định (không vượt quá tổng cần thanh toán)
-                depositAmount = Math.min(3000000, totalAmount);
-            } else if (paymentMethod === 'full_payment') {
-                depositAmount = totalAmount;
-            } else if (paymentMethod === 'installment') {
-                depositAmount = Math.round(totalAmount * 0.3); // Trả trước 30%
+                 metaPricing = {
+                    basePrice,
+                    discount,
+                    vat,
+                    registrationFee: 0,
+                    licensePlateFee: 0,
+                    totalAmount,
+                    depositAmount,
+                    remainingAmount: totalAmount - depositAmount,
+                    discountPercent: maxDiscountPercent
+                };
+                
+                if (vehicle.stock !== null && vehicle.stock !== undefined) {
+                     stockUpdates.push(async () => {
+                         const currentStock = Number(vehicle.stock);
+                         if (!isNaN(currentStock)) {
+                            await strapi.entityService.update('api::car-model.car-model', allowedInput.VehicleModel, {
+                                data: {
+                                    stock: Math.max(0, currentStock - 1),
+                                    sold: Number(vehicle.sold || 0) + 1
+                                }
+                            });
+                         }
+                    });
+                }
             }
-
-            // 5. Prepare order data
-            const orderData = {
-                ...allowedInput,
-                OrderCode: orderCode,
-                BasePrice: basePrice,
-                Discount: discount,
-                RegistrationFee: registrationFee,
-                LicensePlateFee: licensePlateFee,
-                TotalAmount: totalAmount,
-                DepositAmount: depositAmount,
-                RemainingAmount: totalAmount - depositAmount,
-                Statuses: 'pending_payment',
-                PaymentStatus: 'pending',
-                publishedAt: new Date(), // Auto publish
-            };
 
             // 6. Create order
             const entity = await strapi.entityService.create('api::order.order', {
@@ -221,22 +403,40 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                 populate: ['CustomerInfo', 'VehicleModel', 'SelectedShowroom']
             });
 
+            // 6.1 Update Inventory
+            for (const updateFn of stockUpdates) {
+                try { await updateFn(); } catch(e) { console.error("Stock update failed", e); }
+            }
+
+            // 6.2 Send Confirmation Email
+            try {
+                if (allowedInput.CustomerInfo?.Email) {
+                    const emailData = {
+                        ...entity,
+                        VehicleModel: mainVehicle ? { ...mainVehicle } : undefined,
+                        OrderItems: allowedInput.OrderItems
+                    };
+                    
+                    const { subject, text, html } = generateOrderEmail(emailData);
+
+                    await strapi.plugins['email'].services.email.send({
+                        to: allowedInput.CustomerInfo.Email,
+                        from: process.env.SMTP_FROM || 'no-reply@example.com',
+                        subject: subject,
+                        text: text,
+                        html: html,
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to send order confirmation email:', err);
+            }
+
             const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
 
             return ctx.send({
                 data: sanitizedEntity,
                 meta: {
-                    pricing: {
-                        basePrice,
-                        discount,
-                        vat,
-                        registrationFee,
-                        licensePlateFee,
-                        totalAmount,
-                        depositAmount,
-                        remainingAmount: totalAmount - depositAmount,
-                        discountPercent: maxDiscountPercent
-                    }
+                    pricing: metaPricing
                 }
             });
 

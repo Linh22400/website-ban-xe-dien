@@ -25,8 +25,8 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
     const [showToast, setShowToast] = useState<string | null>(null);
     const [selectedColorIndex, setSelectedColorIndex] = useState(0);
 
-    const isSelected = isInCompare(car.id);
-    const inWishlist = isInWishlist(car.id);
+    const isSelected = isInCompare(car.documentId || car.id);
+    const inWishlist = isInWishlist(car.documentId || car.id);
 
     // Filter valid colors
     const validColors = (car.colors || []).filter(c => c && c.name);
@@ -73,7 +73,7 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
         const gallery = colorImages.length > 0 ? colorImages : [car.thumbnail];
 
         addToCart({
-            id: car.id,
+            id: car.documentId || car.id,
             name: car.name,
             price: finalPrice,
             originalPrice: discountPercent > 0 ? originalPrice : undefined,
@@ -81,6 +81,7 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
             gallery: gallery,
             colorName: selectedColor?.name || "Mặc định",
             slug: car.slug,
+            type: 'vehicle'
         });
         setShowToast("Đã thêm vào giỏ hàng!");
         setTimeout(() => setShowToast(null), 2000);
@@ -98,6 +99,7 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
                 price: finalPrice,
                 image: car.thumbnail,
                 slug: car.slug,
+                type: 'vehicle'
             });
             setShowToast("Đã thêm vào yêu thích!");
         }

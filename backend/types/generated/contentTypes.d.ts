@@ -902,6 +902,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     OrderCode: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    OrderItems: Schema.Attribute.JSON;
     payment: Schema.Attribute.Relation<'oneToOne', 'api::payment.payment'>;
     payment_transactions: Schema.Attribute.Relation<
       'oneToMany',

@@ -17,7 +17,8 @@ export default function WishlistPage() {
         addToCart({
             ...item,
             gallery: [item.image], // Convert single image to gallery array
-            colorName: "Mặc định" // Default color for wishlist items
+            colorName: "Mặc định", // Default color for wishlist items
+            type: item.type // Pass type (vehicle/accessory)
         });
         // Optionally remove from wishlist after adding to cart
         // removeFromWishlist(item.id);

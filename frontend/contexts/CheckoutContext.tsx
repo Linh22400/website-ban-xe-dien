@@ -116,8 +116,11 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
         const cartItems = typeof window !== 'undefined'
             ? JSON.parse(localStorage.getItem('cart') || '[]')
             : [];
-        const firstItem = cartItems[0];
-
+        
+        // Find first vehicle in cart (preferred) or fall back to first item (legacy behavior)
+        // This ensures we don't accidentally send an Accessory ID as VehicleModel
+        const vehicleItem = cartItems.find((item: any) => item.type === 'vehicle') || cartItems[0];
+        
         // Prepare customer info based on shipping method
         const finalCustomerInfo = { ...customerInfo };
         if (shippingMethod === 'pickup') {
@@ -130,10 +133,11 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
         const notesWithShipping = `${notes ? notes + '\n' : ''}Phương thức nhận hàng: ${shippingMethod === 'delivery' ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng'}`;
 
         return {
-            VehicleModel: selectedVehicle?.id || firstItem?.id, // Fallback to cart item
-            SelectedColor: selectedColor || firstItem?.colorName || '',
+            VehicleModel: selectedVehicle?.documentId || selectedVehicle?.id || vehicleItem?.id, // Fallback to cart item
+            SelectedColor: selectedColor || vehicleItem?.colorName || '',
             SelectedBattery: selectedBattery,
             SelectedGifts: selectedGifts,
+            OrderItems: cartItems,
             PaymentMethod: paymentMethod,
             CustomerInfo: finalCustomerInfo as OrderCustomerInfo,
             SelectedShowroom: shippingMethod === 'pickup' ? selectedShowroom || undefined : undefined,

@@ -60,14 +60,8 @@ export default function CartPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Cart Items */}
                         <div className="lg:col-span-2 space-y-4">
-                            {!isCheckoutAllowed && (
-                                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-yellow-200">
-                                    <p className="font-semibold mb-1">Giỏ hàng hiện có nhiều hơn 1 xe</p>
-                                    <p className="text-sm text-yellow-100/80">
-                                        Hiện tại mỗi đơn đặt cọc/mua xe chỉ hỗ trợ 1 xe. Vui lòng xóa bớt để còn 1 xe trước khi thanh toán.
-                                    </p>
-                                </div>
-                            )}
+                            {/* Warning removed as we support multiple items now */}
+                            
                             {items.map((item) => (
                                 <div
                                     key={`${item.id}-${item.colorName || 'default'}`}
@@ -212,23 +206,12 @@ export default function CartPage() {
                                     </ThemeDiv>
                                 </div>
 
-                                {isCheckoutAllowed ? (
-                                    <Link
-                                        href="/checkout"
-                                        className="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all mb-4"
-                                    >
-                                        Tiến Hành Thanh Toán
-                                    </Link>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        disabled
-                                        className="block w-full text-center px-6 py-3 bg-white/10 text-muted-foreground font-bold rounded-full mb-4 cursor-not-allowed"
-                                        title="Vui lòng chỉ giữ 1 xe trong giỏ để thanh toán"
-                                    >
-                                        Tiến Hành Thanh Toán
-                                    </button>
-                                )}
+                                <Link
+                                    href="/checkout"
+                                    className="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all mb-4"
+                                >
+                                    Tiến Hành Thanh Toán
+                                </Link>
 
                                 <ThemeLink
                                     href="/cars"

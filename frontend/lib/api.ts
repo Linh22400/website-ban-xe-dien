@@ -1035,6 +1035,7 @@ export async function getAdminLeads(token: string): Promise<any[]> {
 
 export interface Accessory {
     id: number;
+    documentId: string;
     name: string;
     slug: string;
     price: number;
@@ -1070,6 +1071,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
 
             return {
                 id: id,
+                documentId: item.documentId || String(id),
                 name: attributes.name || attributes.Name || 'Unknown Accessory',
                 slug: attributes.slug || attributes.Slug || '',
                 price: Number(attributes.price || attributes.Price) || 0,
@@ -1137,6 +1139,7 @@ export async function getAccessoryBySlug(slug: string): Promise<Accessory | unde
 
         return {
             id: item.id,
+            documentId: item.documentId || String(item.id),
             name: attributes.name || attributes.Name || 'Unknown Accessory',
             slug: attributes.slug || attributes.Slug || '',
             price: Number(attributes.price || attributes.Price) || 0,

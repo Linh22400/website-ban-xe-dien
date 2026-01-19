@@ -80,15 +80,7 @@ function CheckoutContent() {
         }
     }, [items, router]);
 
-    // Flow hiện tại chỉ hỗ trợ 1 xe / 1 đơn.
-    // Nếu dữ liệu cũ có nhiều xe trong giỏ, đưa về trang giỏ để người dùng xử lý.
-    useEffect(() => {
-        if (items.length > 1) {
-            router.push('/cart');
-        }
-    }, [items, router]);
-
-    if (items.length === 0 || items.length > 1) {
+    if (items.length === 0) {
         return null; // Will redirect
     }
 

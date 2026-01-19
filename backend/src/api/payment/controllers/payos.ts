@@ -34,17 +34,21 @@ export default {
       // We will store this payosOrderCode in the transaction to link back.
       const payosOrderCode = Number(String(Date.now()).slice(-10)); // Take last 10 digits to be safe safe
 
-      const domain = process.env.FRONTEND_URL || 'http://localhost:3000';
-      
       // 25 characters max for description in PayOS
       const safeDescription = (description || `Thanh toan don hang ${orderCode}`).slice(0, 25);
+
+      const domain = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const defaultReturnUrl = `${domain}/checkout/payos-return?internalOrderCode=${orderCode}`;
+      const finalReturnUrl = returnUrl 
+          ? `${returnUrl}${returnUrl.includes('?') ? '&' : '?'}internalOrderCode=${orderCode}` 
+          : defaultReturnUrl;
 
       const body = {
         orderCode: payosOrderCode,
         amount: Math.round(Number(amount)), // Ensure integer
         description: safeDescription,
         cancelUrl: cancelUrl || `${domain}/checkout/payment-failed`,
-        returnUrl: returnUrl || `${domain}/checkout/payos-return`,
+        returnUrl: finalReturnUrl,
         // Optional: Embed internal orderCode in items or custom data if supported, 
         // but PayOS mainly uses orderCode. 
         // We will save the mapping in our DB before returning.

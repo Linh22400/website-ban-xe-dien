@@ -133,9 +133,22 @@ export default {
 
       if (verifyResult.isSuccess && responseCode === '00') {
         // Payment successful
-        await strapi.entityService.update('api::order.order', order.id, {
-          data: { PaymentStatus: 'completed' }
-        });
+        
+        // Strapi v5: Use documents API to ensure Published state
+        if (strapi.documents && order.documentId) {
+             await strapi.documents('api::order.order').update({
+                  documentId: order.documentId,
+                  data: { PaymentStatus: 'completed' }
+             });
+             await strapi.documents('api::order.order').publish({
+                  documentId: order.documentId,
+             });
+        } else {
+             // Fallback
+             await strapi.entityService.update('api::order.order', order.id, {
+                  data: { PaymentStatus: 'completed', publishedAt: new Date() }
+             });
+        }
 
         await strapi.entityService.create('api::payment-transaction.payment-transaction', {
           data: {
@@ -152,9 +165,19 @@ export default {
         return ctx.redirect(`${process.env.FRONTEND_URL}/order/success?orderId=${orderCode}`);
       } else {
         // Payment failed or Error
-        await strapi.entityService.update('api::order.order', order.id, {
-          data: { PaymentStatus: 'failed' }
-        });
+        if (strapi.documents && order.documentId) {
+             await strapi.documents('api::order.order').update({
+                  documentId: order.documentId,
+                  data: { PaymentStatus: 'failed' }
+             });
+             await strapi.documents('api::order.order').publish({
+                  documentId: order.documentId,
+             });
+        } else {
+             await strapi.entityService.update('api::order.order', order.id, {
+                  data: { PaymentStatus: 'failed', publishedAt: new Date() }
+             });
+        }
         return ctx.redirect(`${process.env.FRONTEND_URL}/checkout/payment-failed?orderId=${orderCode}&code=${responseCode}`);
       }
 
@@ -191,14 +214,34 @@ export default {
       if (order.PaymentStatus === 'completed') return ctx.send({ RspCode: '02', Message: 'Order already confirmed' });
 
       if (responseCode === '00') {
-        await strapi.entityService.update('api::order.order', order.id, {
-          data: { PaymentStatus: 'completed' }
-        });
+        if (strapi.documents && order.documentId) {
+             await strapi.documents('api::order.order').update({
+                  documentId: order.documentId,
+                  data: { PaymentStatus: 'completed' }
+             });
+             await strapi.documents('api::order.order').publish({
+                  documentId: order.documentId,
+             });
+        } else {
+             await strapi.entityService.update('api::order.order', order.id, {
+                  data: { PaymentStatus: 'completed', publishedAt: new Date() }
+             });
+        }
         return ctx.send({ RspCode: '00', Message: 'Confirm Success' });
       } else {
-        await strapi.entityService.update('api::order.order', order.id, {
-          data: { PaymentStatus: 'failed' }
-        });
+        if (strapi.documents && order.documentId) {
+             await strapi.documents('api::order.order').update({
+                  documentId: order.documentId,
+                  data: { PaymentStatus: 'failed' }
+             });
+             await strapi.documents('api::order.order').publish({
+                  documentId: order.documentId,
+             });
+        } else {
+             await strapi.entityService.update('api::order.order', order.id, {
+                  data: { PaymentStatus: 'failed', publishedAt: new Date() }
+             });
+        }
         return ctx.send({ RspCode: '00', Message: 'Confirm Success' });
       }
     } catch (error) {

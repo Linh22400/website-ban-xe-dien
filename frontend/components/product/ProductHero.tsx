@@ -37,6 +37,7 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
 
     // Initialize selected options
     const [selectedOptions, setSelectedOptions] = useState<Record<string, any>>({});
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         if (!car.options) return;
@@ -93,14 +94,16 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
         }
 
         addToCart({
-            id: car.id,
+            id: car.documentId || car.id,
             name: car.name,
             price: finalPrice,
             originalPrice: discountPercent > 0 ? originalPrice : undefined,
             image: galleryImages[0],
             gallery: galleryImages,
             colorName: colorName,
-            slug: car.slug
+            slug: car.slug,
+            type: 'vehicle',
+            quantity: quantity
         });
 
         // Navigate to cart
@@ -124,14 +127,16 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
         }
 
         addToCart({
-            id: car.id,
+            id: car.documentId || car.id,
             name: car.name,
             price: finalPrice,
             originalPrice: discountPercent > 0 ? originalPrice : undefined,
             image: galleryImages[0],
             gallery: galleryImages,
             colorName: colorName,
-            slug: car.slug
+            slug: car.slug,
+            type: 'vehicle',
+            quantity: quantity
         });
 
         router.push("/checkout");
@@ -315,6 +320,28 @@ export default function ProductHero({ car, selectedColor, onColorChange, discoun
                                 </div>
                                 <div className="mt-2 text-xs text-muted-foreground max-w-xl">
                                     Giá lẻ tham khảo; VAT/đăng ký tính theo quy định tại thời điểm giao xe. Đặt cọc linh hoạt, tư vấn trước khi thanh toán.
+                                </div>
+                            </div>
+
+                            {/* Quantity Selector */}
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm font-semibold text-foreground">Số lượng:</span>
+                                <div className="flex items-center border border-white/20 rounded-lg bg-card/50">
+                                    <button
+                                        onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                                        className="w-9 h-9 flex items-center justify-center hover:bg-white/10 transition-colors text-lg font-medium"
+                                        disabled={quantity <= 1}
+                                    >
+                                        -
+                                    </button>
+                                    <span className="w-10 text-center font-bold text-foreground">{quantity}</span>
+                                    <button
+                                        onClick={() => setQuantity(q => q + 1)}
+                                        className="w-9 h-9 flex items-center justify-center hover:bg-white/10 transition-colors text-lg font-medium"
+                                        disabled={!inStock}
+                                    >
+                                        +
+                                    </button>
                                 </div>
                             </div>
 

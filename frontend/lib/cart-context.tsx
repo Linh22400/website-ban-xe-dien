@@ -12,11 +12,12 @@ interface CartItem {
     colorName: string;       // Selected color name
     quantity: number;
     slug: string;
+    type?: 'vehicle' | 'accessory'; // Product type to distinguish in checkout
 }
 
 interface CartContextType {
     items: CartItem[];
-    addToCart: (item: Omit<CartItem, "quantity">) => void;
+    addToCart: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
     removeFromCart: (id: string | number, colorName?: string) => void;
     updateQuantity: (id: string | number, quantity: number, colorName?: string) => void;
     clearCart: () => void;
@@ -54,31 +55,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("cart", JSON.stringify(items));
     }, [items]);
 
-    const addToCart = (item: Omit<CartItem, "quantity">) => {
+    const addToCart = (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+        const quantityToAdd = item.quantity || 1;
+
         setItems((prev) => {
-            // Lưu ý thực tế: quy trình đặt cọc/mua xe thường áp dụng cho 1 xe mỗi đơn.
-            // Backend hiện cũng chỉ hỗ trợ 1 VehicleModel / order.
+            // Check if item already exists with same id and color
+            const existingIndex = prev.findIndex((i) => i.id === item.id && i.colorName === item.colorName);
 
-            // Nếu đã có đúng xe + đúng màu trong giỏ thì giữ nguyên (xe không mua theo "số lượng").
-            const existing = prev.find((i) => i.id === item.id && i.colorName === item.colorName);
-            if (existing) {
-                return prev;
+            if (existingIndex > -1) {
+                // Item exists, increment quantity
+                const newItems = [...prev];
+                newItems[existingIndex] = {
+                    ...newItems[existingIndex],
+                    quantity: newItems[existingIndex].quantity + quantityToAdd
+                };
+                return newItems;
             }
 
-            // Nếu giỏ đã có xe khác, hỏi người dùng có muốn thay thế không.
-            if (prev.length > 0) {
-                const ok = typeof window !== 'undefined'
-                    ? window.confirm('Giỏ hàng hiện chỉ hỗ trợ đặt/mua 1 xe mỗi đơn. Bạn có muốn thay thế xe đang có trong giỏ bằng xe mới không?')
-                    : true;
-
-                if (!ok) {
-                    return prev;
-                }
-
-                return [{ ...item, quantity: 1 }];
-            }
-
-            return [{ ...item, quantity: 1 }];
+            // Item does not exist, add new
+            // Clean up the item object to remove the optional quantity input property before adding to state
+            const { quantity, ...itemProps } = item;
+            return [...prev, { ...itemProps, quantity: quantityToAdd }];
         });
     };
 
@@ -94,15 +91,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
     const updateQuantity = (id: string | number, quantity: number, colorName?: string) => {
-        // Xe không mua theo số lượng trong một đơn ở flow hiện tại.
-        // Giữ quantity = 1, nếu người dùng muốn bỏ thì dùng nút xóa.
         if (quantity <= 0) {
             removeFromCart(id, colorName);
             return;
         }
-        if (quantity > 1) {
-            quantity = 1;
-        }
+        
         setItems((prev) =>
             prev.map((i) => {
                 // Match by both id and colorName if provided

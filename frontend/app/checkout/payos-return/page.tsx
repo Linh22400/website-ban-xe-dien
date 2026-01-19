@@ -14,6 +14,7 @@ function PayOSReturnContent() {
         const cancel = searchParams.get('cancel');
         const statusParam = searchParams.get('status');
         const orderCode = searchParams.get('orderCode');
+        const internalOrderCode = searchParams.get('internalOrderCode');
 
         if (cancel === 'true' || statusParam === 'CANCELLED') {
             setStatus('failed');
@@ -22,21 +23,30 @@ function PayOSReturnContent() {
 
         if (code === '00' || statusParam === 'PAID') {
             setStatus('success');
-            // Resolve real order code from backend
+
+            // If we have internalOrderCode from URL (passed by backend), use it directly
+            if (internalOrderCode) {
+                setTimeout(() => {
+                    router.push(`/order/success?orderCode=${internalOrderCode}`);
+                }, 3000);
+                return;
+            }
+
+            // Fallback: Resolve real order code from backend if not in URL
             const resolveOrderCode = async () => {
                 try {
                     const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
                     const res = await fetch(`${apiUrl}/api/payment/payos/resolve/${orderCode}`);
                     if (res.ok) {
                         const data = await res.json();
-                        if (data.data && data.data.orderCode) {
-                            return data.data.orderCode;
-                        }
+                        // Check both direct property and data wrapper
+                        if (data.orderCode) return data.orderCode;
+                        if (data.data && data.data.orderCode) return data.data.orderCode;
                     }
                 } catch (err) {
                     console.error('Failed to resolve order code', err);
                 }
-                return orderCode; // Fallback to numeric code
+                return orderCode; // Fallback to numeric code if resolution fails
             };
 
             resolveOrderCode().then((finalCode) => {

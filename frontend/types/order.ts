@@ -27,6 +27,7 @@ export interface OrderData {
         financialPartner?: string;
     };
     PreferredGateway?: 'momo' | 'zalopay' | 'vnpay' | 'viettel_money' | 'visa' | 'mastercard' | 'bank_transfer';
+    OrderItems?: any[];
 }
 
 export interface Order {
@@ -40,6 +41,7 @@ export interface Order {
     SelectedColor?: string;
     SelectedBattery?: string;
     SelectedGifts?: string[];
+    OrderItems?: any[]; // Multiple items JSON
     BasePrice: number;
     Discount: number;
     RegistrationFee: number;

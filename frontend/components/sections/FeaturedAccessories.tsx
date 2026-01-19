@@ -62,13 +62,14 @@ export default function FeaturedAccessories() {
     const handleAddToCart = (accessory: Accessory, e: React.MouseEvent) => {
         e.preventDefault();
         addToCart({
-            id: accessory.id,
+            id: accessory.documentId || accessory.id,
             name: accessory.name,
             price: accessory.price,
             image: accessory.image,
             slug: accessory.slug,
             gallery: [accessory.image], // Single image as gallery
-            colorName: "Mặc định" // Accessories don't have color variants
+            colorName: "Mặc định", // Accessories don't have color variants
+            type: 'accessory'
         });
         setToastMessage({ id: accessory.id, message: "Đã thêm vào giỏ hàng!" });
         setTimeout(() => setToastMessage(null), 2000);
@@ -76,17 +77,20 @@ export default function FeaturedAccessories() {
 
     const handleWishlistClick = (accessory: Accessory, e: React.MouseEvent) => {
         e.preventDefault();
-        const inWishlist = isInWishlist(accessory.id);
+        const wishlistId = accessory.documentId || accessory.id;
+        const inWishlist = isInWishlist(wishlistId);
+        
         if (inWishlist) {
-            removeFromWishlist(accessory.id);
+            removeFromWishlist(wishlistId);
             setToastMessage({ id: accessory.id, message: "Đã xóa khỏi yêu thích!" });
         } else {
             addToWishlist({
-                id: accessory.id,
+                id: wishlistId,
                 name: accessory.name,
                 price: accessory.price,
                 image: accessory.image,
                 slug: accessory.slug,
+                type: 'accessory'
             });
             setToastMessage({ id: accessory.id, message: "Đã thêm vào yêu thích!" });
         }
@@ -130,12 +134,13 @@ export default function FeaturedAccessories() {
                 {/* Products Grid */}
                 <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 pb-8 sm:pb-0 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
                     {accessories.map((accessory, index) => {
-                        const inWishlist = isInWishlist(accessory.id);
+                        const wishlistId = accessory.documentId || accessory.id;
+                        const inWishlist = isInWishlist(wishlistId);
                         const showToast = toastMessage?.id === accessory.id;
 
                         return (
                             <div
-                                key={accessory.id}
+                                key={wishlistId}
                                 className="flex-shrink-0 w-[80vw] sm:w-auto snap-center group relative bg-card rounded-3xl border border-border/50 hover:border-cyan-500/30 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-500/10"
                                 style={{
                                     animationDelay: `${index * 100}ms`

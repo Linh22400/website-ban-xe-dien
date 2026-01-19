@@ -100,6 +100,9 @@
     "InstallmentPlan": {
       "type": "json"
     },
+    "OrderItems": {
+      "type": "json"
+    },
     "TrackingHistory": {
       "type": "json"
     },

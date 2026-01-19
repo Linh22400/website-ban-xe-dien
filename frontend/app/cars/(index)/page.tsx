@@ -1,4 +1,4 @@
-import CarsPageClient from "./CarsPageClient";
+import CarsPageClient from "../CarsPageClient";
 import { getCarsWithMeta, getPromotions } from "@/lib/api";
 
 export const revalidate = 300; // Cache 5 phút cho trang danh sách sản phẩm

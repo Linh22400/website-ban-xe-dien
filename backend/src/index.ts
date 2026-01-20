@@ -1,4 +1,139 @@
 import type { Core } from '@strapi/strapi';
+import fs from 'fs';
+import path from 'path';
+
+async function seedArticles(strapi: Core.Strapi) {
+  const articlesDir = path.join(process.cwd(), '../docs/articles');
+  if (!fs.existsSync(articlesDir)) {
+    strapi.log.warn('Articles directory not found, skipping seeding.');
+    return;
+  }
+
+  const files = fs.readdirSync(articlesDir).filter(f => f.endsWith('.md'));
+  
+  // Find a default image to use as cover
+  const images = await strapi.documents('plugin::upload.file').findMany({ limit: 1 });
+  
+  if (images.length === 0) {
+    strapi.log.warn('No images found in media library. Cannot seed articles because Cover_image is required.');
+    return;
+  }
+  
+  const defaultImage = images[0];
+  strapi.log.info(`Using default image: id=${defaultImage.id}, documentId=${defaultImage.documentId}`);
+
+  // Create categories
+  const categories = [
+    { name: 'Tin tức', slug: 'tin-tuc' },
+    { name: 'Kiến thức', slug: 'kien-thuc' },
+    { name: 'Đánh giá', slug: 'danh-gia' }
+  ];
+
+  const categoryMap: Record<string, string> = {};
+
+  for (const cat of categories) {
+    const existing = await strapi.documents('api::article-category.article-category').findMany({
+      filters: { slug: cat.slug },
+      limit: 1
+    });
+    
+    if (existing.length > 0) {
+      categoryMap[cat.slug] = existing[0].documentId;
+      strapi.log.info(`Found category ${cat.name}: ${existing[0].documentId}`);
+    } else {
+      const newCat = await strapi.documents('api::article-category.article-category').create({
+        data: { ...cat, publishedAt: new Date() },
+        status: 'published'
+      });
+      categoryMap[cat.slug] = newCat.documentId;
+      strapi.log.info(`Created category ${cat.name}: ${newCat.documentId}`);
+    }
+  }
+
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(articlesDir, file), 'utf-8');
+    const lines = content.split('\n');
+    const titleLine = lines.find(l => l.startsWith('# '));
+    const title = titleLine ? titleLine.replace('# ', '').trim() : file.replace('.md', '');
+    
+    const slug = file.replace('.md', '').toLowerCase();
+    const excerpt = content.substring(0, 200).replace(/[#*]/g, '') + '...';
+
+    let catSlug = 'tin-tuc';
+    if (title.toLowerCase().includes('đánh giá') || title.toLowerCase().includes('so sánh')) catSlug = 'danh-gia';
+    if (title.toLowerCase().includes('hướng dẫn') || title.toLowerCase().includes('tại sao') || title.toLowerCase().includes('luật') || title.toLowerCase().includes('sai lầm')) catSlug = 'kien-thuc';
+    if (title.toLowerCase().includes('bảng giá')) catSlug = 'tin-tuc';
+
+    const existingArticle = await strapi.documents('api::article.article').findMany({
+      filters: { Slug: slug },
+      limit: 1
+    });
+
+    if (existingArticle.length === 0) {
+       strapi.log.info(`Seeding article: ${title}`);
+       try {
+         await strapi.documents('api::article.article').create({
+           data: {
+             Title: title,
+             Slug: slug,
+             Excerpt: excerpt,
+             content: [
+               {
+                 __component: 'product.article-text',
+                 content: content
+               }
+             ],
+             Tags: 'xe dien, tin tuc',
+             Author: 'Xe Điện Đức Duy',
+             Published_Date: new Date().toISOString().split('T')[0],
+             Reading_Time: 5,
+             seoTitle: title,
+             seoDescription: excerpt,
+             category: categoryMap[catSlug], 
+             // Try using ID for media instead of documentId if previous attempt failed
+             // Or try array?
+             Cover_image: defaultImage.id, // Trying integer ID for Media
+             publishedAt: new Date(),
+           },
+           status: 'published'
+         });
+       } catch (e) {
+         strapi.log.error(`Failed to create article ${title}:`, e);
+         // If failed, try with documentId again but explicitly log
+         try {
+             if (defaultImage.documentId) {
+                 await strapi.documents('api::article.article').create({
+                   data: {
+                     Title: title,
+                     Slug: slug,
+                     Excerpt: excerpt,
+                     content: [
+                       {
+                         __component: 'product.article-text',
+                         content: content
+                       }
+                     ],
+                     Tags: 'xe dien, tin tuc',
+                     Author: 'Xe Điện Đức Duy',
+                     Published_Date: new Date().toISOString().split('T')[0],
+                     Reading_Time: 5,
+                     seoTitle: title,
+                     seoDescription: excerpt,
+                     category: categoryMap[catSlug],
+                     Cover_image: defaultImage.documentId, // Retry with documentId
+                     publishedAt: new Date(),
+                   },
+                   status: 'published'
+                 });
+                 strapi.log.info(`Retry with documentId succeeded for ${title}`);
+             }
+         } catch(e2) {
+             strapi.log.error(`Retry failed for ${title}:`, e2);
+         }
+       }
+    }
+  }
+}
 
 const tailgModels: any[] = [
   // --- MOTORCYCLES (Xe máy điện) ---
@@ -749,5 +884,8 @@ export default {
         strapi.log.error(`Failed to seed ${car.name}:`, error);
       }
     }
+    
+    // Seed SEO articles
+    // await seedArticles(strapi);
   },
 };

@@ -215,12 +215,16 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                         if (vehicle.stock !== null && vehicle.stock !== undefined) {
                             stockUpdates.push(async () => {
                                 const current = await fetchVehicle(vehicle.documentId || vehicle.id);
-                                if (current) {
-                                     await strapi.entityService.update('api::car-model.car-model', current.documentId || current.id, {
+                                if (current && current.documentId) {
+                                     await strapi.documents('api::car-model.car-model').update({
+                                        documentId: current.documentId,
                                         data: {
                                             stock: Math.max(0, Number(current.stock) - qty),
                                             sold: Number(current.sold || 0) + qty
                                         }
+                                    });
+                                    await strapi.documents('api::car-model.car-model').publish({
+                                        documentId: current.documentId
                                     });
                                 }
                             });
@@ -291,7 +295,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                     Statuses: 'pending_payment',
                     PaymentStatus: 'pending',
                     publishedAt: new Date(),
-                    VehicleModel: mainVehicle ? (mainVehicle.documentId || mainVehicle.id) : undefined,
+                    VehicleModel: mainVehicle ? mainVehicle.id : undefined, // Use ID for entityService relation
                 };
                 
                 metaPricing = {
@@ -386,11 +390,16 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                      stockUpdates.push(async () => {
                          const currentStock = Number(vehicle.stock);
                          if (!isNaN(currentStock)) {
-                            await strapi.entityService.update('api::car-model.car-model', allowedInput.VehicleModel, {
+                            // allowedInput.VehicleModel is documentId string from request
+                            await strapi.documents('api::car-model.car-model').update({
+                                documentId: allowedInput.VehicleModel,
                                 data: {
                                     stock: Math.max(0, currentStock - 1),
                                     sold: Number(vehicle.sold || 0) + 1
                                 }
+                            });
+                            await strapi.documents('api::car-model.car-model').publish({
+                                documentId: allowedInput.VehicleModel
                             });
                          }
                     });

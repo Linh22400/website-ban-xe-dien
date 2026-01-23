@@ -73,42 +73,6 @@ export default {
       });
 
       const data = await response.json() as any;
-
-      // Update Order Status in Strapi if Payment Successful
-      if (data.status === 'COMPLETED') {
-        // Find Order by Reference ID (which is our OrderCode)
-        const purchaseUnit = data.purchase_units?.[0];
-        const orderCode = purchaseUnit?.reference_id;
-
-        if (orderCode) {
-          const orders = await strapi.documents('api::order.order').findMany({
-            filters: { OrderCode: orderCode },
-            status: 'draft', // Check drafts too
-          });
-
-          if (orders.length > 0) {
-            const order = orders[0];
-            
-            // Update Order Status
-            await strapi.documents('api::order.order').update({
-              documentId: order.documentId,
-              data: {
-                PaymentStatus: 'completed',
-                Statuses: 'processing',
-                PreferredGateway: 'paypal',
-              },
-            });
-
-            // Publish if needed (Strapi v5 Draft & Publish)
-            await strapi.documents('api::order.order').publish({
-              documentId: order.documentId,
-            });
-            
-            console.log(`Order ${orderCode} updated to PAID (PayPal)`);
-          }
-        }
-      }
-
       ctx.send(data);
     } catch (error) {
       console.error('PayPal createOrder error:', error);
@@ -137,7 +101,44 @@ export default {
         },
       });
 
-      const data = await response.json();
+      const data = await response.json() as any;
+
+      // Update Order Status in Strapi if Payment Successful
+      if (data.status === 'COMPLETED') {
+        const purchaseUnit = data.purchase_units?.[0];
+        const orderCode = purchaseUnit?.reference_id; 
+
+        if (orderCode) {
+            // Find order by OrderCode. Remove status filter to find any version (draft/published)
+            const orders = await strapi.documents('api::order.order').findMany({
+              filters: { OrderCode: orderCode },
+            });
+
+            if (orders.length > 0) {
+              const order = orders[0];
+              
+              console.log(`Updating PayPal order status for ${orderCode} (DocID: ${order.documentId})`);
+
+              await strapi.documents('api::order.order').update({
+                documentId: order.documentId,
+                data: {
+                  PaymentStatus: 'completed',
+                  Statuses: 'processing',
+                  PreferredGateway: 'paypal',
+                },
+              });
+
+              await strapi.documents('api::order.order').publish({
+                documentId: order.documentId,
+              });
+              
+              console.log(`Order ${orderCode} updated to PAID (PayPal) and PUBLISHED`);
+            } else {
+                console.warn(`Order not found for PayPal update: ${orderCode}`);
+            }
+          }
+      }
+
       ctx.send(data);
     } catch (error) {
       console.error('PayPal captureOrder error:', error);

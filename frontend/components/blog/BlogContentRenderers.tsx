@@ -45,6 +45,14 @@ export const MarkdownRenderer = ({ content }: { content: string }) => {
                 if (paragraph.startsWith('## ')) return <h2 key={index} className="text-2xl font-bold mt-8 mb-4" style={getTextStyle('heading')}>{paragraph.replace('## ', '')}</h2>;
                 if (paragraph.startsWith('### ')) return <h3 key={index} className="text-xl font-bold mt-6 mb-3" style={getTextStyle('heading')}>{paragraph.replace('### ', '')}</h3>;
 
+                if (paragraph.trim().startsWith('> ')) {
+                    return (
+                        <blockquote key={index} className="border-l-4 border-primary pl-4 py-2 my-4 italic bg-muted/30 rounded-r-lg" style={getTextStyle('body')}>
+                            {paragraph.replace(/^> /, '')}
+                        </blockquote>
+                    );
+                }
+
                 if (paragraph.trim().startsWith('- ') || paragraph.trim().startsWith('* ')) {
                     const items = paragraph.split('\n').map(line => line.replace(/^[-*]\s/, ''));
                     return (
@@ -54,9 +62,15 @@ export const MarkdownRenderer = ({ content }: { content: string }) => {
                     );
                 }
 
-                const formattedText = paragraph.split(/(\*\*.*?\*\*)/).map((part, i) => {
+                const formattedText = paragraph.split(/(\*\*.*?\*\*|\[.*?\]\(.*?\))/).map((part, i) => {
                     if (part.startsWith('**') && part.endsWith('**')) {
                         return <strong key={i} style={getTextStyle('bold')}>{part.slice(2, -2)}</strong>;
+                    }
+                    if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
+                        const match = part.match(/\[(.*?)\]\((.*?)\)/);
+                        if (match) {
+                            return <a key={i} href={match[2]} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">{match[1]}</a>;
+                        }
                     }
                     return part;
                 });

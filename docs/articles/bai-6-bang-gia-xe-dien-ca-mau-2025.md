@@ -1,62 +1,45 @@
-# Bảng Giá Xe Máy Điện, Xe Đạp Điện Mới Nhất 2025 Tại Cà Mau
+# Bảng Giá Xe Máy Điện, Xe Đạp Điện Cà Mau Mới Nhất 2025
 
-**Mô tả:** Cập nhật bảng giá xe máy điện VinFast, Yadea, DK Bike, Dibao năm 2025 tại Cà Mau. Hỗ trợ mua trả góp 0%, thủ tục đơn giản.
+Bạn đang quan tâm đến giá xe điện tại Cà Mau? Bạn muốn tìm một mẫu xe vừa túi tiền nhưng vẫn đảm bảo chất lượng? **Xe Điện Đức Duy** xin gửi đến quý khách hàng bảng giá tham khảo các dòng xe **TAILG** hot nhất năm 2025.
 
----
+> **Lưu ý:** Giá dưới đây là giá tham khảo, có thể thay đổi tùy theo chương trình khuyến mãi từng tháng. Để có giá chính xác nhất và nhận quà tặng, vui lòng liên hệ Zalo: **0943.424.787**.
 
-Bạn đang có ý định mua xe điện nhưng băn khoăn về giá cả? Bạn sợ bị "hớ" khi mua tại các cửa hàng không niêm yết giá rõ ràng?
+## 1. Bảng Giá Xe Đạp Điện (Học Sinh Cấp 2, Người Lớn Tuổi)
 
-**Xe Điện Đức Duy** xin gửi tới quý khách hàng bảng báo giá tổng hợp các dòng xe máy điện, xe đạp điện hot nhất năm 2025. Giá bán được cam kết tốt nhất thị trường Cà Mau.
+Phân khúc này phù hợp cho học sinh đi học gần, người nội trợ đi chợ. Xe gọn nhẹ, dễ điều khiển, không cần bằng lái.
 
-## 1. Bảng Giá Xe Máy Điện VinFast 2025
-
-VinFast hiện đang áp dụng chính sách giá "3 Không" cực kỳ hấp dẫn. Lưu ý: Giá dưới đây là giá xe đã bao gồm VAT và sạc (chưa bao gồm pin nếu thuê).
-
-| Mẫu xe | Giá niêm yết | Giá khuyến mãi tại Đức Duy |
+| Dòng Xe | Đặc Điểm Nổi Bật | Giá Tham Khảo |
 | :--- | :--- | :--- |
-| **VinFast Evo 200** | 18.000.000 đ | **Liên hệ** |
-| **VinFast Evo 200 Lite** | 18.000.000 đ | **Liên hệ** |
-| **VinFast Feliz S** | 27.000.000 đ | **2x.xxx.xxx đ** |
-| **VinFast Klara S (2022)** | 35.000.000 đ | **3x.xxx.xxx đ** |
-| **VinFast Vento S** | 50.000.000 đ | **Liên hệ** |
+| **TAILG A2** | Nhỏ gọn, pin bền, có bàn đạp | ~ 9.xxx.000đ |
+| **TAILG M1** | Thiết kế thời trang, giỏ xe lớn | ~ 10.xxx.000đ |
+| **TAILG Cap A** | Kiểu dáng Captain America, khỏe khoắn | ~ 11.xxx.000đ |
 
-*(Giá pin LFP mua đứt: 19.900.000 đ)*
+## 2. Bảng Giá Xe Máy Điện (Học Sinh Cấp 3, Sinh Viên, Người Đi Làm)
 
-## 2. Bảng Giá Xe Điện Yadea
+Phân khúc xe máy điện công suất lớn, kiểu dáng sang trọng như xe tay ga, đi xa hơn, nhanh hơn.
 
-Thương hiệu xe điện bán chạy số 1 thế giới với nhiều mẫu mã đa dạng.
-
-| Mẫu xe | Phân khúc | Giá tham khảo |
+| Dòng Xe | Đặc Điểm Nổi Bật | Giá Tham Khảo |
 | :--- | :--- | :--- |
-| **Yadea Xbull** | Học sinh | ~14.xxx.000 đ |
-| **Yadea i8** | Học sinh (nhỏ gọn) | ~10.xxx.000 đ |
-| **Yadea Orla** | Thời trang nữ | ~19.xxx.000 đ |
-| **Yadea Odora S1** | Cao cấp | ~17.xxx.000 đ |
-| **Yadea Voltguard** | Thể thao | ~26.xxx.000 đ |
+| **TAILG Nolan** | Sang trọng (giống Vespa), cốp rộng | ~ 16.xxx.000đ |
+| **TAILG X-Men** | Thể thao, hầm hố, nam tính | ~ 15.xxx.000đ |
+| **TAILG S1 (Graphene)** | Pin Graphene siêu trâu, đi 100km/lần | ~ 18.xxx.000đ |
 
-## 3. Bảng Giá Xe Điện DK Bike & Các Hãng Khác
+## Chính Sách Mua Xe Trả Góp Tại Đức Duy
 
-Phân khúc giá rẻ và tầm trung, phù hợp với đại đa số người lao động và học sinh.
+Bạn muốn sở hữu xe ngay nhưng chưa đủ tài chính? Đừng lo!
+- **Trả trước chỉ từ 20%:** Nhận xe ngay.
+- **Lãi suất 0%:** Áp dụng cho một số dòng xe và thẻ tín dụng.
+- **Thủ tục:** Chỉ cần Căn cước công dân (gắn chip).
+- **Thời hạn:** Linh hoạt 6 - 12 - 24 tháng.
 
-*   **DK 133M:** Giá từ 9.xxx.000 đ - 10.xxx.000 đ.
-*   **DK Samurai:** Giá từ 11.xxx.000 đ.
-*   **DK Gogo:** Giá từ 13.xxx.000 đ.
-*   **Xe đạp điện 133 (liên doanh):** Giá cực rẻ chỉ từ 6.xxx.000 đ.
+## Tại Sao Giá Tại Đức Duy Luôn Tốt Nhất Cà Mau?
 
-## Chính Sách Mua Xe Điện Trả Góp Tại Cà Mau
+1.  **Nhập khẩu trực tiếp:** Không qua trung gian, cắt giảm chi phí cầu nối.
+2.  **Chương trình trợ giá:** Hỗ trợ từ hãng TAILG cho thị trường Cà Mau.
+3.  **Tặng kèm gói bảo dưỡng:** Miễn phí công sửa chữa, bảo dưỡng định kỳ, giúp bạn tiết kiệm chi phí nuôi xe.
 
-Để hỗ trợ khách hàng sở hữu chiếc xe mơ ước dễ dàng hơn, **Xe Điện Đức Duy** liên kết với các đơn vị tài chính (HD Saison, FE Credit) triển khai gói trả góp ưu đãi:
+Đừng mua xe khi chưa tham khảo giá tại **Xe Điện Đức Duy**. Chúng tôi cam kết **"Ở đâu rẻ hơn, chúng tôi hoàn tiền"**.
 
-*   **Trả trước 0 đồng:** Nhận xe ngay.
-*   **Lãi suất 0%:** Áp dụng cho một số dòng xe (theo chương trình từng tháng).
-*   **Thủ tục:** Chỉ cần Căn cước công dân (CCCD) gắn chip.
-*   **Thời gian duyệt:** 15 phút.
-
-## Tại Sao Giá Tại Đức Duy Luôn Tốt Nhất?
-
-Chúng tôi nhập hàng trực tiếp từ nhà máy với số lượng lớn (cắt lô), không qua trung gian, nên chi phí đầu vào thấp hơn các cửa hàng nhỏ lẻ. Ngoài ra, Đức Duy thường xuyên có các chương trình "xả kho" giá sốc.
-
-Để nhận báo giá chính xác nhất và các quà tặng đi kèm (mũ bảo hiểm, áo mưa, voucher bảo dưỡng), quý khách vui lòng liên hệ hotline hoặc nhắn tin qua Zalo.
-
-> **Hotline báo giá:** 0xxx.xxx.xxx
-> **Địa chỉ:** [Địa chỉ của bạn]
+Địa chỉ showroom:
+- **CS1:** 118 Nguyễn Tất Thành, P.8, TP. Cà Mau.
+- **CS2:** 276B Ngô Quyền, P.1, TP. Cà Mau.

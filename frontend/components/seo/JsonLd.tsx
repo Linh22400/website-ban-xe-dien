@@ -6,9 +6,13 @@ export default function JsonLd() {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "MotorcycleDealer",
-        "name": "Xe Điện Đức Duy",
+        "name": "Xe Điện Đức Duy Cà Mau",
         "image": "https://xedienducduy.id.vn/logo(Ducduy).jpg",
-        "description": "Nhà phân phối xe đạp điện, xe máy điện cao cấp chính hãng TAILG và các thương hiệu uy tín hàng đầu tại Cà Mau.",
+        "description": "Hệ thống showroom Xe Điện Đức Duy uy tín số 1 tại Cà Mau. Chuyên phân phối xe máy điện, xe đạp điện TAILG chính hãng, giá tốt nhất.",
+        "url": "https://xedienducduy.id.vn",
+        "telephone": "+84943424787",
+        "email": "camauducduy@gmail.com",
+        "priceRange": "$",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "118 Nguyễn Tất Thành, Phường 8",
@@ -19,25 +23,13 @@ export default function JsonLd() {
         },
         "geo": {
             "@type": "GeoCoordinates",
-            "latitude": "9.17",
-            "longitude": "105.15"
+            "latitude": "9.176",
+            "longitude": "105.150"
         },
-        "url": "https://xedienducduy.id.vn",
-        "telephone": "+84943424787",
-        "email": "camauducduy@gmail.com",
-        "priceRange": "$$",
         "openingHoursSpecification": [
             {
                 "@type": "OpeningHoursSpecification",
-                "dayOfWeek": [
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday"
-                ],
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
                 "opens": "08:00",
                 "closes": "20:00"
             }
@@ -49,6 +41,22 @@ export default function JsonLd() {
         "sameAs": [
             "https://facebook.com/xedienducduy",
             "https://instagram.com/xedienducduy"
+        ],
+        "department": [
+            {
+                "@type": "MotorcycleDealer",
+                "name": "Xe Điện Đức Duy - Showroom 2",
+                "image": "https://xedienducduy.id.vn/logo(Ducduy).jpg",
+                "telephone": "+84943424787",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "276B Ngô Quyền, Phường 1",
+                    "addressLocality": "Cà Mau",
+                    "addressRegion": "Cà Mau",
+                    "postalCode": "970000",
+                    "addressCountry": "VN"
+                }
+            }
         ]
     };
 

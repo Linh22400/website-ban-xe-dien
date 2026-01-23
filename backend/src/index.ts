@@ -57,7 +57,11 @@ async function seedArticles(strapi: Core.Strapi) {
     const title = titleLine ? titleLine.replace('# ', '').trim() : file.replace('.md', '');
     
     const slug = file.replace('.md', '').toLowerCase();
-    const excerpt = content.substring(0, 200).replace(/[#*]/g, '') + '...';
+    // Improved markdown stripping for excerpt
+    const excerpt = content.substring(0, 200)
+        .replace(/[#*\[\]()_>]/g, '') // Remove markdown chars
+        .replace(/\n/g, ' ') // Remove newlines
+        .trim() + '...';
 
     let catSlug = 'tin-tuc';
     if (title.toLowerCase().includes('đánh giá') || title.toLowerCase().includes('so sánh')) catSlug = 'danh-gia';
@@ -69,67 +73,50 @@ async function seedArticles(strapi: Core.Strapi) {
       limit: 1
     });
 
+    const articleData = {
+      Title: title,
+      Slug: slug,
+      Excerpt: excerpt,
+      content: [
+        {
+          __component: 'product.article-text',
+          content: content
+        }
+      ],
+      Tags: 'xe dien, tin tuc',
+      Author: 'Xe Điện Đức Duy',
+      Published_Date: new Date().toISOString().split('T')[0],
+      Reading_Time: 5,
+      seoTitle: title,
+      seoDescription: excerpt,
+      category: categoryMap[catSlug], 
+      Cover_image: defaultImage.id, // Media relation often uses ID in v5
+      publishedAt: new Date(),
+    };
+
     if (existingArticle.length === 0) {
        strapi.log.info(`Seeding article: ${title}`);
        try {
          await strapi.documents('api::article.article').create({
-           data: {
-             Title: title,
-             Slug: slug,
-             Excerpt: excerpt,
-             content: [
-               {
-                 __component: 'product.article-text',
-                 content: content
-               }
-             ],
-             Tags: 'xe dien, tin tuc',
-             Author: 'Xe Điện Đức Duy',
-             Published_Date: new Date().toISOString().split('T')[0],
-             Reading_Time: 5,
-             seoTitle: title,
-             seoDescription: excerpt,
-             category: categoryMap[catSlug], 
-             // Try using ID for media instead of documentId if previous attempt failed
-             // Or try array?
-             Cover_image: defaultImage.id, // Trying integer ID for Media
-             publishedAt: new Date(),
-           },
+           data: articleData as any,
            status: 'published'
          });
        } catch (e) {
-         strapi.log.error(`Failed to create article ${title}:`, e);
-         // If failed, try with documentId again but explicitly log
-         try {
-             if (defaultImage.documentId) {
-                 await strapi.documents('api::article.article').create({
-                   data: {
-                     Title: title,
-                     Slug: slug,
-                     Excerpt: excerpt,
-                     content: [
-                       {
-                         __component: 'product.article-text',
-                         content: content
-                       }
-                     ],
-                     Tags: 'xe dien, tin tuc',
-                     Author: 'Xe Điện Đức Duy',
-                     Published_Date: new Date().toISOString().split('T')[0],
-                     Reading_Time: 5,
-                     seoTitle: title,
-                     seoDescription: excerpt,
-                     category: categoryMap[catSlug],
-                     Cover_image: defaultImage.documentId, // Retry with documentId
-                     publishedAt: new Date(),
-                   },
-                   status: 'published'
-                 });
-                 strapi.log.info(`Retry with documentId succeeded for ${title}`);
-             }
-         } catch(e2) {
-             strapi.log.error(`Retry failed for ${title}:`, e2);
-         }
+           strapi.log.error(`Failed to create article ${title}:`, e);
+       }
+    } else {
+       strapi.log.info(`Updating article: ${title}`);
+       try {
+         const docId = existingArticle[0].documentId;
+         await strapi.documents('api::article.article').update({
+            documentId: docId,
+            data: articleData as any,
+         });
+         await strapi.documents('api::article.article').publish({
+            documentId: docId,
+         });
+       } catch (e) {
+           strapi.log.error(`Failed to update article ${title}:`, e);
        }
     }
   }

@@ -29,12 +29,10 @@ export default ({ env }) => [
   {
     name: 'strapi::cors',
     config: {
-      origin: [
-        ...env('CLIENT_URL', 'http://localhost:3000').split(','),
-        'https://www.xedienducduy.id.vn',
-        'https://xedienducduy.id.vn'
-      ].map((origin: string) => origin.trim()),
+      origin: ['*'], // Allow ALL origins temporarily to fix CORS block immediately
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+      headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
     },
   },
   'strapi::poweredBy',

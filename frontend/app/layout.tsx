@@ -76,8 +76,8 @@ export const metadata: Metadata = {
     images: ["/og-image.jpg"],
   },
   icons: {
-    icon: "/logo(Ducduy).jpg",
-    apple: "/logo(Ducduy).jpg",
+    icon: "/logo(Ducduy).png",
+    apple: "/logo(Ducduy).png",
   },
   verification: {
     google: "IpXDTlD_KPAEX8MQOuQ0-6c5B2phQ5AUQJFJgk-qG7I",

@@ -24,8 +24,17 @@ interface Ward {
     name: string;
 }
 
-export default function CustomerInfoForm() {
-    const { customerInfo, setCustomerInfo, goToNextStep, goToPreviousStep, shippingMethod, setShippingMethod, setCurrentStep } = useCheckout();
+export default function CustomerInfoForm({ showButton = true }: { showButton?: boolean }) {
+    const { 
+        customerInfo, 
+        setCustomerInfo, 
+        goToNextStep, 
+        goToPreviousStep, 
+        shippingMethod, 
+        setShippingMethod, 
+        setCurrentStep,
+        selectedShowroom 
+    } = useCheckout();
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     // Location Data State
@@ -379,22 +388,24 @@ export default function CustomerInfoForm() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
-                <ThemeButton
-                    onClick={goToPreviousStep}
-                    className="flex-1 bg-white/5 text-white px-8 py-4 rounded-full font-bold 
+            {showButton && (
+                <div className="flex gap-4">
+                    <ThemeButton
+                        onClick={goToPreviousStep}
+                        className="flex-1 bg-white/5 text-white px-8 py-4 rounded-full font-bold 
                      border-2 border-white/10 hover:border-primary/50 transition-all"
-                >
-                    Quay lại
-                </ThemeButton>
-                <button
-                    onClick={handleContinue}
-                    className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 
+                    >
+                        Quay lại
+                    </ThemeButton>
+                    <button
+                        onClick={handleContinue}
+                        className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 
                      hover:bg-primary-dark transition-all hover:shadow-glow"
-                >
-                    Tiếp tục
-                </button>
-            </div>
+                    >
+                        Tiếp tục
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

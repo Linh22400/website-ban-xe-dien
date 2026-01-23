@@ -17,16 +17,7 @@ export interface VNPayPaymentResponse {
 export async function createVNPayPayment(
   orderCode: string,
   amount: number,
-  orderInfo: string,
-  customerInfo?: {
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-    email?: string;
-    address?: string;
-    city?: string;
-    country?: string;
-  }
+  orderInfo: string
 ): Promise<VNPayPaymentResponse> {
   try {
     const response = await fetch(`${STRAPI_URL}/api/payment/vnpay/create`, {
@@ -38,7 +29,6 @@ export async function createVNPayPayment(
         orderCode,
         amount,
         orderInfo,
-        billing: customerInfo,
       }),
     });
 

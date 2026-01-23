@@ -36,7 +36,7 @@ export default {
    */
   async createPayment(ctx) {
     try {
-      const { orderCode, amount, orderInfo, bankCode, billing } = ctx.request.body;
+      const { orderCode, amount, orderInfo, bankCode } = ctx.request.body;
 
       if (!orderCode || !amount || !orderInfo) {
         return ctx.badRequest('Missing required fields');
@@ -65,14 +65,6 @@ export default {
         vnp_ReturnUrl: returnUrl,
         vnp_Locale: 'vn',
         vnp_BankCode: bankCode,
-        // Billing Info (Crucial for International Cards in Sandbox)
-        vnp_Bill_Mobile: billing?.phone || '',
-        vnp_Bill_Email: billing?.email || '',
-        vnp_Bill_FirstName: billing?.firstName || '',
-        vnp_Bill_LastName: billing?.lastName || '',
-        vnp_Bill_Address: billing?.address || '',
-        vnp_Bill_City: billing?.city || '',
-        vnp_Bill_Country: billing?.country || 'VN',
       } as any);
 
       // MANUALLY FIX AMOUNT IF LIBRARY DOESN'T MULTIPLY?

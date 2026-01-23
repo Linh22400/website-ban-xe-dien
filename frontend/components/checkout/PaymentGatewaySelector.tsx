@@ -84,25 +84,10 @@ export default function PaymentGatewaySelector() {
                 // Handle VNPay - Redirect to VNPay payment page
                 if (selectedGateway === 'vnpay') {
                     try {
-                        // Split FullName into First/Last for VNPAY
-                        const fullName = customerInfo.FullName || 'Guest';
-                        const nameParts = fullName.trim().split(' ');
-                        const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : nameParts[0];
-                        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
-
                         const vnpayData = await createVNPayPayment(
                             result.data.OrderCode,
                             finalAmount,
-                            `Thanh toan don hang ${result.data.OrderCode}`,
-                            {
-                                firstName: firstName || 'Nguyen',
-                                lastName: lastName || 'Van A',
-                                phone: customerInfo.Phone || '0900000000',
-                                email: customerInfo.Email || 'test@example.com',
-                                address: customerInfo.DeliveryAddress || 'Hanoi',
-                                city: customerInfo.City || 'Hanoi',
-                                country: 'VN'
-                            }
+                            `Thanh toan don hang ${result.data.OrderCode}`
                         );
                         // Save phone to localStorage for tracking auto-fill
                         if (typeof window !== 'undefined') {
@@ -452,35 +437,6 @@ export default function PaymentGatewaySelector() {
                             </div>
                         )}
                     </div>
-
-                    {/* VNPAY Sandbox Instruction */}
-                    {!isProduction && selectedGateway === 'vnpay' && (
-                        <div className="mt-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-sm text-yellow-500 animate-in fade-in slide-in-from-top-2">
-                            <p className="font-bold mb-1">⚠️ Môi trường Test (Sandbox)</p>
-                            <p>Vui lòng sử dụng thông tin thẻ sau (không dùng thẻ thật/Stripe):</p>
-                            <ul className="list-disc list-inside mt-1 text-xs text-yellow-500/80 space-y-1">
-                                <li><strong>Thẻ Nội địa (NCB):</strong>
-                                    <ul className="pl-4 mt-1 space-y-1">
-                                        <li>Ngân hàng: <span className="font-mono bg-black/20 px-1 rounded">NCB</span></li>
-                                        <li>Số thẻ: <span className="font-mono bg-black/20 px-1 rounded select-all">9704198526191432198</span></li>
-                                        <li>Tên: <span className="font-mono bg-black/20 px-1 rounded">NGUYEN VAN A</span> - Ngày: <span className="font-mono bg-black/20 px-1 rounded">07/15</span></li>
-                                        <li>OTP: <span className="font-mono bg-black/20 px-1 rounded">123456</span></li>
-                                    </ul>
-                                </li>
-                                <li className="mt-2"><strong>Thẻ Quốc tế (Visa/Master):</strong>
-                                    <ul className="pl-4 mt-1 space-y-1">
-                                        <li>Số thẻ Visa: <span className="font-mono bg-black/20 px-1 rounded select-all">4456530000001005</span></li>
-                                        <li>Số thẻ Master: <span className="font-mono bg-black/20 px-1 rounded select-all">5200000000001005</span></li>
-                                        <li>Tên: <span className="font-mono bg-black/20 px-1 rounded">NGUYEN VAN A</span> - CVC: <span className="font-mono bg-black/20 px-1 rounded">123</span></li>
-                                        <li>Ngày hết hạn: <span className="font-mono bg-black/20 px-1 rounded">12/26</span></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <p className="mt-2 text-xs italic opacity-80">
-                                *Lưu ý: Trên trang VNPAY, vui lòng chọn đúng tab <strong>"Thẻ nội địa"</strong> hoặc <strong>"Thẻ quốc tế"</strong> tương ứng.
-                            </p>
-                        </div>
-                    )}
 
                     {/* Bank Transfer */}
                     <div

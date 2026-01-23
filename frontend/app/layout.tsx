@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   // metadataBase giúp Next resolve OG/Twitter image URL chính xác khi dùng đường dẫn tương đối.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    template: "%s | Xe Điện Đức Duy",
-    default: "Xe Điện Đức Duy | Xe Đạp & Xe Máy Điện Cao Cấp Chính Hãng",
+    template: "%s | Xe Điện Đức Duy Cà Mau",
+    default: "Xe Điện Đức Duy Cà Mau | Đại Lý Xe Máy & Xe Đạp Điện TAILG Chính Hãng",
   },
   viewport: {
     width: 'device-width',
@@ -37,34 +37,47 @@ export const metadata: Metadata = {
     maximumScale: 5,
     userScalable: true,
   },
-  description: "Showroom xe điện 3D tương tác đầu tiên. Phân phối chính hãng xe máy điện, xe đạp điện TAILG. Trải nghiệm mua sắm hiện đại, bảo hành uy tín.",
-  keywords: ["xe điện", "xe máy điện", "xe đạp điện", "TAILG", "xe điện đức duy", "mua xe điện"],
+  description: "Hệ thống showroom Xe Điện Đức Duy uy tín số 1 tại Cà Mau. Chuyên phân phối xe máy điện, xe đạp điện TAILG chính hãng. Mẫu mới 2025, Pin bền bỉ, Giá tốt nhất, Bảo hành & Cứu hộ tận nơi.",
+  keywords: [
+    "xe điện đức duy", 
+    "xe máy điện cà mau", 
+    "xe đạp điện cà mau", 
+    "xe máy điện tailg", 
+    "xe đạp điện tailg", 
+    "tailg việt nam",
+    "cửa hàng xe điện cà mau", 
+    "mua xe điện trả góp cà mau",
+    "giá xe máy điện tailg",
+    "xe điện học sinh cấp 2",
+    "sửa xe điện cà mau"
+  ],
   authors: [{ name: "Xe Điện Đức Duy Team" }],
   openGraph: {
     type: "website",
     locale: "vi_VN",
     // Dùng biến môi trường để tránh hardcode URL khi deploy.
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://website-xe-dien.vercel.app",
-    siteName: "Xe Điện Đức Duy",
-    title: "Xe Điện Đức Duy | Công Nghệ Tương Lai",
-    description: "Khám phá các dòng xe điện cao cấp với công nghệ pin vượt trội và thiết kế thời thượng.",
+    siteName: "Xe Điện Đức Duy Cà Mau",
+    title: "Xe Điện Đức Duy Cà Mau | Tổng Kho Xe Điện TAILG Chính Hãng",
+    description: "Khám phá các dòng xe máy điện, xe đạp điện TAILG thời thượng tại Cà Mau. Bền bỉ - Tiết kiệm - Giá cực tốt. Nhận ưu đãi ngay!",
     images: [
       {
         url: "/og-image.jpg", // Ensure this file exists or use a remote URL
         width: 1200,
         height: 630,
-        alt: "Xe Điện Đức Duy Showroom",
+        alt: "Showroom Xe Điện Đức Duy Cà Mau",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Xe Điện Đức Duy",
-    description: "Trải nghiệm mua sắm xe điện 3D đẳng cấp.",
+    title: "Xe Điện Đức Duy Cà Mau - Đại Lý TAILG Chính Hãng",
+    description: "Chuyên xe máy điện, xe đạp điện TAILG tại Cà Mau. Uy tín - Chất lượng - Giá tốt.",
     images: ["/og-image.jpg"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/logo(Ducduy).jpg",
+    apple: "/logo(Ducduy).jpg",
   },
   verification: {
     google: "IpXDTlD_KPAEX8MQOuQ0-6c5B2phQ5AUQJFJgk-qG7I",

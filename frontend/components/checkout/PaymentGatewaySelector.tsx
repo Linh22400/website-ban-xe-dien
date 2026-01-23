@@ -539,9 +539,9 @@ export default function PaymentGatewaySelector() {
                                         // Backend will convert VND to USD
                                         const paypalOrderId = await createPayPalOrder(result.data.OrderCode, amountToPay);
                                         return paypalOrderId;
-                                    } catch (err) {
+                                    } catch (err: any) {
                                         console.error("PayPal Create Order Error:", err);
-                                        setErrorMessage("Không thể khởi tạo thanh toán PayPal");
+                                        setErrorMessage(err.message || "Không thể khởi tạo thanh toán PayPal");
                                         throw err;
                                     }
                                 }}
@@ -551,7 +551,7 @@ export default function PaymentGatewaySelector() {
                                         goToNextStep();
                                     } catch (err: any) {
                                         console.error("PayPal Capture Error:", err);
-                                        setErrorMessage("Thanh toán PayPal thất bại");
+                                        setErrorMessage(err.message || "Thanh toán PayPal thất bại");
                                     }
                                 }}
                                 onError={(err: any) => {

@@ -5,6 +5,7 @@ export default {
       path: '/payment/paypal/create',
       handler: 'paypal.createOrder',
       config: {
+        auth: false,
         policies: [],
         middlewares: [],
       },
@@ -14,6 +15,7 @@ export default {
       path: '/payment/paypal/capture',
       handler: 'paypal.captureOrder',
       config: {
+        auth: false,
         policies: [],
         middlewares: [],
       },

@@ -72,7 +72,43 @@ export default {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as any;
+
+      // Update Order Status in Strapi if Payment Successful
+      if (data.status === 'COMPLETED') {
+        // Find Order by Reference ID (which is our OrderCode)
+        const purchaseUnit = data.purchase_units?.[0];
+        const orderCode = purchaseUnit?.reference_id;
+
+        if (orderCode) {
+          const orders = await strapi.documents('api::order.order').findMany({
+            filters: { OrderCode: orderCode },
+            status: 'draft', // Check drafts too
+          });
+
+          if (orders.length > 0) {
+            const order = orders[0];
+            
+            // Update Order Status
+            await strapi.documents('api::order.order').update({
+              documentId: order.documentId,
+              data: {
+                PaymentStatus: 'completed',
+                Statuses: 'processing',
+                PreferredGateway: 'paypal',
+              },
+            });
+
+            // Publish if needed (Strapi v5 Draft & Publish)
+            await strapi.documents('api::order.order').publish({
+              documentId: order.documentId,
+            });
+            
+            console.log(`Order ${orderCode} updated to PAID (PayPal)`);
+          }
+        }
+      }
+
       ctx.send(data);
     } catch (error) {
       console.error('PayPal createOrder error:', error);

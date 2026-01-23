@@ -29,9 +29,11 @@ export default ({ env }) => [
   {
     name: 'strapi::cors',
     config: {
-      origin: env('CLIENT_URL', 'http://localhost:3000')
-        .split(',')
-        .map((origin: string) => origin.trim()),
+      origin: [
+        ...env('CLIENT_URL', 'http://localhost:3000').split(','),
+        'https://www.xedienducduy.id.vn',
+        'https://xedienducduy.id.vn'
+      ].map((origin: string) => origin.trim()),
       credentials: true,
     },
   },

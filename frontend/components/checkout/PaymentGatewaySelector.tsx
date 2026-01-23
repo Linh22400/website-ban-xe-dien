@@ -10,6 +10,8 @@ import { SubHeading, SectionHeading, ThemeButton } from '@/components/common/The
 import { createVNPayPayment } from '@/lib/vnpay';
 import { createMoMoPayment } from '@/lib/momo';
 import { createPayOSPayment } from '@/lib/payos';
+import { createPayPalOrder, capturePayPalOrder } from '@/lib/paypal';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 import PaymentModal from './PaymentModal';
 import BankTransferForm from './BankTransferForm';
@@ -496,7 +498,7 @@ export default function PaymentGatewaySelector() {
             </div>
 
             <div className="flex gap-4">
-                <ThemeButton
+                <button
                     onClick={() => {
                         if (shippingMethod === 'delivery') {
                             setCurrentStep(3);
@@ -510,23 +512,73 @@ export default function PaymentGatewaySelector() {
                      disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Quay lại
-                </ThemeButton>
-                <button
-                    onClick={handlePlaceOrder}
-                    disabled={isProcessing}
-                    className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 
-                   hover:bg-primary-dark transition-all hover:shadow-glow
-                   disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                    {isProcessing ? (
-                        <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            Đang xử lý...
-                        </>
-                    ) : (
-                        'Thanh toán & Hoàn tất'
-                    )}
                 </button>
+                
+                {selectedGateway === 'paypal' ? (
+                    <div className="flex-1 z-0">
+                         <PayPalScriptProvider options={{ 
+                             clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+                             currency: "USD",
+                             intent: "capture"
+                         }}>
+                            <PayPalButtons 
+                                style={{ layout: "horizontal", height: 55, tagline: false }}
+                                createOrder={async (data: any, actions: any) => {
+                                    try {
+                                        // 1. Create Strapi Order first
+                                        const orderData = getOrderData();
+                                        orderData.PreferredGateway = 'paypal';
+                                        
+                                        // Use calculated amount
+                                        const amountToPay = paymentMethod === 'deposit' ? depositAmount : totalAmount;
+                                        
+                                        const result = await createOrder(orderData);
+                                        if (!result.data) throw new Error("Failed to create order");
+                                        
+                                        // 2. Create PayPal Order via Backend
+                                        // Backend will convert VND to USD
+                                        const paypalOrderId = await createPayPalOrder(result.data.OrderCode, amountToPay);
+                                        return paypalOrderId;
+                                    } catch (err) {
+                                        console.error("PayPal Create Order Error:", err);
+                                        setErrorMessage("Không thể khởi tạo thanh toán PayPal");
+                                        throw err;
+                                    }
+                                }}
+                                onApprove={async (data: any, actions: any) => {
+                                    try {
+                                        await capturePayPalOrder(data.orderID);
+                                        goToNextStep();
+                                    } catch (err: any) {
+                                        console.error("PayPal Capture Error:", err);
+                                        setErrorMessage("Thanh toán PayPal thất bại");
+                                    }
+                                }}
+                                onError={(err: any) => {
+                                    console.error("PayPal Error:", err);
+                                    setErrorMessage("Có lỗi xảy ra với PayPal");
+                                }}
+                            />
+                        </PayPalScriptProvider>
+                    </div>
+                ) : (
+                    <button
+                        onClick={handlePlaceOrder}
+                        disabled={isProcessing}
+                        className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 
+                    hover:bg-primary-dark transition-all hover:shadow-glow
+                    disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                        {isProcessing ? (
+                            <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                Đang xử lý...
+                            </>
+                        ) : (
+                            'Thanh toán & Hoàn tất'
+                        )}
+                    </button>
+                )}
             </div>
 
             {errorMessage && (

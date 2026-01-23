@@ -26,7 +26,7 @@ export interface OrderData {
         totalInterest: number;
         financialPartner?: string;
     };
-    PreferredGateway?: 'momo' | 'zalopay' | 'vnpay' | 'viettel_money' | 'visa' | 'mastercard' | 'bank_transfer';
+    PreferredGateway?: 'momo' | 'zalopay' | 'vnpay' | 'viettel_money' | 'visa' | 'mastercard' | 'bank_transfer' | 'paypal';
     OrderItems?: any[];
 }
 
@@ -68,7 +68,7 @@ export interface Order {
 export interface PaymentTransaction {
     id: number;
     TransactionId: string;
-    Gateway: 'momo' | 'zalopay' | 'vnpay' | 'viettel_money' | 'visa' | 'mastercard' | 'bank_transfer';
+    Gateway: 'momo' | 'zalopay' | 'vnpay' | 'viettel_money' | 'visa' | 'mastercard' | 'bank_transfer' | 'paypal';
     Amount: number;
     Currency: string;
     Status: 'pending' | 'processing' | 'success' | 'failed' | 'cancelled' | 'refunded';

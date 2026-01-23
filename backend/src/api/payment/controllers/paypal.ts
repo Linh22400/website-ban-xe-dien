@@ -102,17 +102,28 @@ export default {
       });
 
       const data = await response.json() as any;
+      console.log('PayPal Capture Response:', JSON.stringify(data, null, 2));
 
       // Update Order Status in Strapi if Payment Successful
       if (data.status === 'COMPLETED') {
         const purchaseUnit = data.purchase_units?.[0];
         const orderCode = purchaseUnit?.reference_id; 
+        
+        console.log(`PayPal Capture OrderCode: ${orderCode}`);
 
         if (orderCode) {
-            // Find order by OrderCode. Remove status filter to find any version (draft/published)
-            const orders = await strapi.documents('api::order.order').findMany({
+            // Find order by OrderCode. Check both published and draft.
+            let orders = await strapi.documents('api::order.order').findMany({
               filters: { OrderCode: orderCode },
             });
+            
+            if (orders.length === 0) {
+                 // Try finding in draft if not found in published
+                 orders = await strapi.documents('api::order.order').findMany({
+                    filters: { OrderCode: orderCode },
+                    status: 'draft',
+                  });
+            }
 
             if (orders.length > 0) {
               const order = orders[0];

@@ -517,7 +517,7 @@ export default function PaymentGatewaySelector() {
                 {selectedGateway === 'paypal' ? (
                     <div className="flex-1 z-0">
                          <PayPalScriptProvider options={{ 
-                             clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+                             clientId: (process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test").trim(),
                              currency: "USD",
                              intent: "capture"
                          }}>

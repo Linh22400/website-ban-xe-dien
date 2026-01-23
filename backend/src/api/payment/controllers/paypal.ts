@@ -7,8 +7,8 @@ const PAYPAL_API = process.env.PAYPAL_MODE === 'live'
   : 'https://api-m.sandbox.paypal.com';
 
 const getAccessToken = async () => {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  const clientId = process.env.PAYPAL_CLIENT_ID?.trim();
+  const clientSecret = process.env.PAYPAL_CLIENT_SECRET?.trim();
 
   if (!clientId || !clientSecret) {
     throw new Error('PayPal Client ID or Secret is missing');
@@ -24,6 +24,11 @@ const getAccessToken = async () => {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get PayPal access token: ${response.status} ${response.statusText} - ${errorText}`);
+  }
 
   const data = await response.json() as { access_token: string };
   return data.access_token;
@@ -73,10 +78,16 @@ export default {
       });
 
       const data = await response.json() as any;
+
+      if (!response.ok) {
+        console.error('PayPal API Error:', data);
+        return ctx.badRequest('PayPal API Error', data);
+      }
+
       ctx.send(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('PayPal createOrder error:', error);
-      ctx.internalServerError('Failed to create PayPal order');
+      ctx.internalServerError(error.message || 'Failed to create PayPal order');
     }
   },
 
@@ -102,6 +113,12 @@ export default {
       });
 
       const data = await response.json() as any;
+
+      if (!response.ok) {
+        console.error('PayPal Capture Error:', data);
+        return ctx.badRequest('PayPal Capture Error', data);
+      }
+
       console.log('PayPal Capture Response:', JSON.stringify(data, null, 2));
 
       // Update Order Status in Strapi if Payment Successful

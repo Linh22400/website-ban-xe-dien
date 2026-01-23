@@ -206,9 +206,6 @@ export default function PaymentGatewaySelector() {
                 }
 
                 goToNextStep();
-                setTimeout(() => {
-                    goToNextStep();
-                }, 1500);
             }
         } catch (error) {
             console.error('Order creation failed:', error);
@@ -222,17 +219,11 @@ export default function PaymentGatewaySelector() {
     const handlePaymentSuccess = () => {
         setShowPaymentModal(false);
         goToNextStep();
-        setTimeout(() => {
-            goToNextStep();
-        }, 1500);
     };
 
     const handleBankTransferSuccess = () => {
         setShowBankTransferForm(false);
         goToNextStep();
-        setTimeout(() => {
-            goToNextStep();
-        }, 1500);
     };
 
     // Show VietQR payment if triggered

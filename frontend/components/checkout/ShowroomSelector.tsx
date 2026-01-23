@@ -7,7 +7,7 @@ import { getShowrooms } from '@/lib/order-api';
 import type { Showroom } from '@/types/order';
 import { SubHeading, SectionHeading, FormLabel, ThemeSelect, ThemeInput, ThemeText, ThemeButton } from '@/components/common/ThemeText';
 
-export default function ShowroomSelector() {
+export default function ShowroomSelector({ showButton = true }: { showButton?: boolean }) {
     const {
         selectedShowroom,
         setSelectedShowroom,
@@ -158,24 +158,18 @@ export default function ShowroomSelector() {
                 </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-                <ThemeButton
-                    onClick={goToPreviousStep}
-                    className="flex-1 bg-white/5 px-8 py-4 rounded-full font-bold border-2 border-white/10 hover:border-primary/50 transition-all"
-                >
-                    Quay lại
-                </ThemeButton>
+            {/* Continue Button */}
+            {showButton && (
                 <button
                     onClick={handleContinue}
                     disabled={!selectedShowroom}
-                    className="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold 
-                     hover:bg-primary-dark transition-all hover:shadow-glow
-                     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                    className="w-full bg-primary text-black px-8 py-4 rounded-full font-bold 
+                   hover:bg-primary-dark transition-all hover:shadow-glow
+                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
                 >
                     Tiếp tục
                 </button>
-            </div>
+            )}
         </div>
     );
 }

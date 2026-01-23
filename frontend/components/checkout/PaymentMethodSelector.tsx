@@ -7,7 +7,7 @@ import { Check, CreditCard, Wallet, Building2, Calculator } from 'lucide-react';
 import { calculateInstallment } from '@/lib/order-api';
 import { ThemeText } from '@/components/common/ThemeText';
 
-export default function PaymentMethodSelector() {
+export default function PaymentMethodSelector({ showButton = true }: { showButton?: boolean }) {
     const {
         paymentMethod,
         setPaymentMethod,
@@ -236,15 +236,17 @@ export default function PaymentMethodSelector() {
             </div>
 
             {/* Continue Button */}
-            <button
-                onClick={handleContinue}
-                disabled={!paymentMethod}
-                className="w-full bg-primary text-black px-8 py-4 rounded-full font-bold 
+            {showButton && (
+                <button
+                    onClick={handleContinue}
+                    disabled={!paymentMethod}
+                    className="w-full bg-primary text-black px-8 py-4 rounded-full font-bold 
                    hover:bg-primary-dark transition-all hover:shadow-glow
                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
-            >
-                Tiếp tục
-            </button>
+                >
+                    Tiếp tục
+                </button>
+            )}
         </div>
     );
 }

@@ -85,7 +85,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
 
     const goToNextStep = () => {
-        setCurrentStep((prev) => Math.min(prev + 1, 7));
+        setCurrentStep((prev) => Math.min(prev + 1, 4));
     };
 
     const goToPreviousStep = () => {

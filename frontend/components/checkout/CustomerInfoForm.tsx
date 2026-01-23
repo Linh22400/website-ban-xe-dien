@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Check, Truck, Store } from 'lucide-react';
 import { ThemeText, ThemeInput, ThemeTextarea, ThemeButton } from '@/components/common/ThemeText';
 import CustomSelect from '../ui/CustomSelect';
+import ShowroomSelector from './ShowroomSelector';
 
 interface Province {
     code: number;
@@ -151,12 +152,12 @@ export default function CustomerInfoForm() {
 
     const handleContinue = () => {
         if (validateForm()) {
-            if (shippingMethod === 'delivery') {
-                // Skip ShowroomSelector (Step 4) and go to PaymentGatewaySelector (Step 5)
-                setCurrentStep(5);
-            } else {
-                goToNextStep();
+            if (shippingMethod === 'pickup' && !selectedShowroom) {
+                // You might want to add a visible error state here
+                alert("Vui lòng chọn đại lý nhận xe");
+                return;
             }
+            goToNextStep();
         }
     };
 
@@ -358,6 +359,13 @@ export default function CustomerInfoForm() {
                             )}
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Showroom Selector for Pickup */}
+            {shippingMethod === 'pickup' && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                    <ShowroomSelector showButton={false} />
                 </div>
             )}
 

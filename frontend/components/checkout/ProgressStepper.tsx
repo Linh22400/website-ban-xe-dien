@@ -5,13 +5,10 @@ import { Check } from 'lucide-react';
 import { ThemeText } from '@/components/common/ThemeText';
 
 const steps = [
-    { number: 1, label: 'Chọn xe' },
-    { number: 2, label: 'Hình thức' },
-    { number: 3, label: 'Thông tin' },
-    { number: 4, label: 'Đại lý' },
-    { number: 5, label: 'Thanh toán' },
-    { number: 6, label: 'Xác nhận' },
-    { number: 7, label: 'Hoàn thành' },
+    { number: 1, label: 'Đơn hàng' },
+    { number: 2, label: 'Thông tin' },
+    { number: 3, label: 'Thanh toán' },
+    { number: 4, label: 'Hoàn thành' },
 ];
 
 export default function ProgressStepper() {

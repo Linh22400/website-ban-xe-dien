@@ -311,6 +311,11 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
                     </div>
                 </div>
 
+                {/* Payment Method Selector (Embedded) */}
+                <div className="mt-8">
+                     <PaymentMethodSelector showButton={false} />
+                </div>
+
                 <button
                     onClick={goToNextStep}
                     className="w-full bg-gradient-to-r from-primary to-accent text-black px-8 py-4 rounded-full font-bold hover:shadow-lg hover:shadow-primary/30 transition-all"
@@ -321,24 +326,9 @@ function StepContent({ items, total, currentStep, goToNextStep, onImageClick }: 
         );
     }
 
-    if (currentStep === 2) return <PaymentMethodSelector />;
-    if (currentStep === 3) return <CustomerInfoForm />;
-    if (currentStep === 4) return <ShowroomSelector />;
-    if (currentStep === 5) return <PaymentGatewaySelector />;
-
-    if (currentStep === 6) {
-        return (
-            <div className="text-center py-12">
-                <div className="inline-block p-4 rounded-full bg-primary/10 mb-4">
-                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                </div>
-                <SubHeading className="mb-2">Đang xử lý đơn hàng...</SubHeading>
-                <p className="text-muted-foreground">Vui lòng không tắt trình duyệt</p>
-            </div>
-        );
-    }
-
-    if (currentStep === 7) return <OrderSuccess />;
+    if (currentStep === 2) return <CustomerInfoForm showButton={true} />;
+    if (currentStep === 3) return <PaymentGatewaySelector />;
+    if (currentStep === 4) return <OrderSuccess />;
 
     return null;
 }

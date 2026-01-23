@@ -383,6 +383,31 @@ export default function PaymentGatewaySelector() {
                         )}
                     </div>
 
+                    {/* PayPal */}
+                    <div
+                        onClick={() => setSelectedGateway('paypal')}
+                        className={`
+                            relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                            ${selectedGateway === 'paypal'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-white/10 hover:border-white/30 bg-white/5'
+                            }
+                        `}
+                    >
+                        <div className="w-12 h-12 bg-[#003087] rounded-lg flex items-center justify-center shrink-0">
+                            <span className="text-white font-bold text-xs">PayPal</span>
+                        </div>
+                        <div className="flex-1">
+                            <SectionHeading>PayPal</SectionHeading>
+                            <p className="text-sm text-muted-foreground">Thanh toán quốc tế (Visa/Master/Amex)</p>
+                        </div>
+                        {selectedGateway === 'paypal' && (
+                            <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-black" />
+                            </div>
+                        )}
+                    </div>
+
                     {/* PayOS - Auto Confirmation */}
                     <div
                         onClick={() => setSelectedGateway('payos')}

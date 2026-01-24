@@ -10,7 +10,7 @@ import { useWishlist } from "@/lib/wishlist-context";
 import { Heart, ShoppingCart } from "lucide-react";
 import ColorPicker from "./ColorPicker";
 import ProductBadge from "@/components/common/ProductBadge";
-import { getProductBadge } from "@/lib/product-badge";
+import { getProductBadge, getAllProductBadges } from "@/lib/product-badge";
 
 interface ProductCardProps {
     car: Car;
@@ -18,7 +18,11 @@ interface ProductCardProps {
     priority?: boolean;
 }
 
-export default function ProductCard({ car, discountPercent = 0, priority = false }: ProductCardProps) {
+export default function ProductCard({ 
+    car, 
+    discountPercent = 0, 
+    priority = false 
+}: ProductCardProps) {
     const { addCarToCompare, isInCompare, removeCarFromCompare } = useCompare();
     const { addToCart } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
@@ -39,12 +43,15 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
     const originalPrice = selectedColor?.price || car.price;
     const finalPrice = discountPercent > 0 ? originalPrice * (1 - discountPercent / 100) : originalPrice;
 
-    // Check if product has any badge to display
-    const hasBadge = getProductBadge({
+    // Check if product has any badge to display and count them
+    const badgeMetrics = {
         ...car,
         discount: discountPercent,
         originalPrice: discountPercent > 0 ? originalPrice / (1 - discountPercent / 100) : undefined
-    }) !== null;
+    };
+    const badges = getAllProductBadges(badgeMetrics);
+    const badgeCount = badges.length;
+    const hasBadge = badgeCount > 0;
 
 
 
@@ -145,8 +152,8 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
                     )}
                 </div>
 
-                {/* Dynamic Product Badge - Top Right */}
-                <div className="absolute top-3 right-3">
+                {/* Dynamic Product Badges - Top Right */}
+                <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 pointer-events-none z-10">
                     <ProductBadge
                         product={{
                             ...car,
@@ -154,16 +161,21 @@ export default function ProductCard({ car, discountPercent = 0, priority = false
                             originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
                         }}
                         size="md"
+                        showAll={true}
+                        className="flex-col items-end gap-1.5"
                     />
                 </div>
 
                 {/* Wishlist Button - Dynamic position based on badge presence */}
                 <button
                     onClick={handleWishlistClick}
-                    className={`absolute ${hasBadge ? 'top-14' : 'top-3'} right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${inWishlist
+                    className={`absolute right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${inWishlist
                         ? 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30'
                         : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-sm'
                         }`}
+                    style={{ 
+                        top: hasBadge ? `${12 + (badgeCount * 28) + 8}px` : '12px' 
+                    }}
                     title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                 >
                     <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />

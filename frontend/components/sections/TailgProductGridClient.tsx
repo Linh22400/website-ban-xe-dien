@@ -2,36 +2,60 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, TrendingUp, Sparkles, Clock, Shield, DollarSign, Headphones, Award } from 'lucide-react';
+import { ArrowRight, Zap, Bike, TrendingUp, Sparkles, Clock, Shield, DollarSign, Headphones, Award } from 'lucide-react';
 import { useTheme, ThemeText } from '@/components/common/ThemeText';
 import { TailgOfficialBadge } from '@/components/ui/TailgBadge';
 import ProductCard from '@/components/product/ProductCard';
-import { getCars, getPromotions, type Car, type Promotion } from '@/lib/api';
+import type { Car, Promotion } from '@/lib/api';
 
 interface TailgProductGridClientProps {
-    initialProducts?: Car[];
+    initialMotorcycles?: Car[];
+    initialBicycles?: Car[];
+    initialBestSellers?: Car[];
+    initialNewArrivals?: Car[];
+    initialPromotionCars?: Car[];
     initialPromotions?: Promotion[];
     initialDiscountMap?: Record<string, number>;
 }
 
 export default function TailgProductGridClient({
-    initialProducts = [],
+    initialMotorcycles = [],
+    initialBicycles = [],
+    initialBestSellers = [],
+    initialNewArrivals = [],
+    initialPromotionCars = [],
     initialPromotions = [],
     initialDiscountMap = {}
 }: TailgProductGridClientProps) {
     const isDark = useTheme();
-    const [activeTab, setActiveTab] = useState<'new' | 'bestseller' | 'promo'>('new');
-    const [products, setProducts] = useState<Car[]>(initialProducts);
-    const [loading, setLoading] = useState(!initialProducts.length);
-    const [promotedCarIds, setPromotedCarIds] = useState<Set<string>>(new Set());
+    const [activeTab, setActiveTab] = useState<'motorcycle' | 'bicycle' | 'promotion' | 'bestseller' | 'new'>('motorcycle');
+    const [products, setProducts] = useState<Car[]>(initialMotorcycles);
+    const [loading, setLoading] = useState(false);
     const [discountMap, setDiscountMap] = useState<Record<string, number>>(initialDiscountMap);
-    const [promotions, setPromotions] = useState<Promotion[]>(initialPromotions);
 
     const tabs = [
-        { id: 'new' as const, label: 'Mới Nhất', icon: Sparkles },
+        { id: 'promotion' as const, label: 'Khuyến Mãi', icon: Sparkles },
         { id: 'bestseller' as const, label: 'Bán Chạy', icon: TrendingUp },
-        { id: 'promo' as const, label: 'Khuyến Mãi', icon: Clock }
+        { id: 'new' as const, label: 'Mới Ra Mắt', icon: Clock },
+        { id: 'motorcycle' as const, label: 'Xe Máy Điện', icon: Zap },
+        { id: 'bicycle' as const, label: 'Xe Đạp Điện', icon: Bike }
     ];
+
+    useEffect(() => {
+        if (activeTab === 'motorcycle') {
+            setProducts(initialMotorcycles);
+        } else if (activeTab === 'bicycle') {
+            setProducts(initialBicycles);
+        } else if (activeTab === 'bestseller') {
+            setProducts(initialBestSellers);
+        } else if (activeTab === 'new') {
+            setProducts(initialNewArrivals);
+        } else if (activeTab === 'promotion') {
+            // Need to transform promotion cars to match Car interface if they are partial
+            // Or just assume they are close enough for ProductCard
+            setProducts(initialPromotionCars);
+        }
+    }, [activeTab, initialMotorcycles, initialBicycles, initialBestSellers, initialNewArrivals, initialPromotionCars]);
 
     const reasons = [
         {
@@ -72,90 +96,10 @@ export default function TailgProductGridClient({
         }
     ];
 
-    // Initialize promoted car IDs from initial data
-    useEffect(() => {
-        if (initialPromotions.length > 0 && !promotedCarIds.size) {
-            const promoCarIds = new Set<string>();
-            initialPromotions.forEach(promo => {
-                if (promo.isActive && promo.car_models) {
-                    promo.car_models.forEach((car: any) => {
-                        const carId = car.id?.toString() || car.documentId;
-                        if (carId) promoCarIds.add(carId);
-                    });
-                }
-            });
-            setPromotedCarIds(promoCarIds);
-        }
-    }, [initialPromotions, promotedCarIds.size]);
-
-    useEffect(() => {
-        // Only fetch if we don't have initial products or if tab changes from default
-        if (activeTab === 'new' && initialProducts.length > 0 && products === initialProducts) {
-            return;
-        }
-        fetchTailgProducts();
-    }, [activeTab]);
-
-    const fetchTailgProducts = async () => {
-        setLoading(true);
-        try {
-            // Fetch TAILG products based on active tab
-            const params: any = {
-                brand: 'TAILG',
-                pageSize: activeTab === 'promo' ? 50 : 8 // Get more for promo filtering
-            };
-
-            if (activeTab === 'new') {
-                params.sort = 'createdAt:desc';
-            } else if (activeTab === 'bestseller') {
-                params.sort = 'sold:desc';
-            }
-
-            const data = await getCars(params);
-
-            // Fetch fresh promotions data (or use cached)
-            let freshPromotions = promotions;
-            if (promotions.length === 0) {
-                freshPromotions = await getPromotions();
-                setPromotions(freshPromotions);
-            }
-
-            // Build discount map
-            const promoCarIds = new Set<string>();
-            const discounts: Record<string, number> = {};
-
-            freshPromotions.forEach(promo => {
-                if (promo.isActive && promo.car_models && promo.discountPercent) {
-                    promo.car_models.forEach((car: any) => {
-                        const carId = car.id?.toString() || car.documentId;
-                        if (carId) {
-                            promoCarIds.add(carId);
-                            const currentDiscount = discounts[carId] || 0;
-                            discounts[carId] = Math.max(currentDiscount, promo.discountPercent || 0);
-                        }
-                    });
-                }
-            });
-
-            setPromotedCarIds(promoCarIds);
-            setDiscountMap(discounts);
-
-            // For promo tab, filter only cars with active promotions
-            if (activeTab === 'promo') {
-                const filteredData = data.filter(car =>
-                    promoCarIds.has(car.id.toString()) || promoCarIds.has(car.documentId || '')
-                );
-                setProducts(filteredData.slice(0, 8));
-            } else {
-                setProducts(data || []);
-            }
-        } catch (error) {
-            console.error('Error fetching TAILG products:', error);
-            setProducts([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Ensure we have data even if server fetch failed (client-side fallback could be added here if needed,
+    // but typically server fetch handles it or returns empty).
+    // If we wanted to fetch on client when props are empty, we could add that logic.
+    // For now, assuming server fetch works or returns empty.
 
     return (
         <section className="py-4 relative overflow-hidden">
@@ -282,7 +226,7 @@ export default function TailgProductGridClient({
                 ) : (
                     <div className="text-center py-12">
                         <ThemeText className="text-lg opacity-60">
-                            Không tìm thấy sản phẩm TAILG
+                            Đang cập nhật sản phẩm {tabs.find(t => t.id === activeTab)?.label}
                         </ThemeText>
                     </div>
                 )}
@@ -290,14 +234,19 @@ export default function TailgProductGridClient({
                 {/* View All Button */}
                 <div className="text-center mt-12 mb-12">
                     <Link
-                        href="/cars?brand=TAILG"
+                        href={
+                            activeTab === 'promotion' ? '/promotions' :
+                            activeTab === 'bestseller' ? '/cars?brand=TAILG&sort=sold:desc' :
+                            activeTab === 'new' ? '/cars?brand=TAILG&sort=createdAt:desc' :
+                            `/cars?brand=TAILG&type=${activeTab}`
+                        }
                         className="inline-flex items-center gap-3 px-8 py-3 rounded-xl border-2 font-bold transition-all hover:scale-105 hover:shadow-lg group"
                         style={{
                             borderColor: isDark ? '#FFD700' : '#B8860B',
                             color: isDark ? '#FFD700' : '#B8860B'
                         }}
                     >
-                        <span>Xem Tất Cả TAILG</span>
+                        <span>Xem Tất Cả {tabs.find(t => t.id === activeTab)?.label}</span>
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>

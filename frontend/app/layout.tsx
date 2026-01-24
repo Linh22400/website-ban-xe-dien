@@ -11,6 +11,7 @@ import { WishlistProvider } from "@/lib/wishlist-context";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import CompareFloatingBar from "@/components/compare/CompareFloatingBar";
 import KeepAliveManager from "@/components/common/KeepAliveManager";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 import JsonLd from "@/components/seo/JsonLd";
 
@@ -95,6 +96,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GoogleAnalytics gaId="G-3HMGK02DS8" />
         <ThemeProvider>
           <AuthProvider>
             <CartProvider>

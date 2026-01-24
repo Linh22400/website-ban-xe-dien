@@ -23,6 +23,8 @@ export interface ProductMetrics {
   isFeatured?: boolean; // Admin đánh dấu nổi bật
   originalPrice?: number; // Giá gốc
   currentPrice?: number; // Giá hiện tại
+  forceNew?: boolean; // Ép buộc hiển thị badge NEW
+  forceBestSeller?: boolean; // Ép buộc hiển thị badge BESTSELLER
 }
 
 /**
@@ -37,14 +39,14 @@ export function calculateProductBadge(metrics: ProductMetrics): ProductBadgeData
     badges.push({
       type: 'HOT',
       label: 'HOT',
-      color: '#000000',
-      bgColor: '#FBBF24', // amber-400 - Vàng nổi bật
+      color: '#FFFFFF',
+      bgColor: '#EF4444', // Red-500 for HOT
       priority: 100,
     });
   }
 
   // 2. BESTSELLER - Bán chạy (>50 đơn hoặc top 20% sản phẩm)
-  if (metrics.salesCount && metrics.salesCount >= 50) {
+  if (metrics.forceBestSeller || (metrics.salesCount && metrics.salesCount >= 50)) {
     badges.push({
       type: 'BESTSELLER',
       label: 'BÁN CHẠY',
@@ -55,20 +57,24 @@ export function calculateProductBadge(metrics: ProductMetrics): ProductBadgeData
   }
 
   // 3. NEW - Sản phẩm mới (trong 30 ngày)
-  if (metrics.createdAt) {
+  let isNew = false;
+  if (metrics.forceNew) {
+    isNew = true;
+  } else if (metrics.createdAt) {
     const createdDate = new Date(metrics.createdAt);
     const now = new Date();
     const daysDiff = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
-    
-    if (daysDiff <= 30) {
-      badges.push({
-        type: 'NEW',
-        label: 'MỚI',
-        color: '#FFFFFF',
-        bgColor: '#3B82F6', // blue-500
-        priority: 80,
-      });
-    }
+    if (daysDiff <= 30) isNew = true;
+  }
+
+  if (isNew) {
+    badges.push({
+      type: 'NEW',
+      label: 'MỚI',
+      color: '#FFFFFF',
+      bgColor: '#3B82F6', // blue-500
+      priority: 80,
+    });
   }
 
   // 4. SALE - Đang giảm giá (>10%)
@@ -119,6 +125,8 @@ export function getProductBadge(product: any): ProductBadgeData | null {
     isFeatured: product.isFeatured || product.featured || false,
     originalPrice: product.originalPrice || product.comparePrice,
     currentPrice: product.price || product.currentPrice,
+    forceNew: product.forceNew || product.isNewArrival,
+    forceBestSeller: product.forceBestSeller || product.isBestSeller,
   };
 
   return calculateProductBadge(metrics);
@@ -140,7 +148,7 @@ export function getAllProductBadges(metrics: ProductMetrics): ProductBadgeData[]
     });
   }
 
-  if (metrics.salesCount && metrics.salesCount >= 50) {
+  if (metrics.forceBestSeller || (metrics.salesCount && metrics.salesCount >= 50)) {
     badges.push({
       type: 'BESTSELLER',
       label: 'BÁN CHẠY',
@@ -150,20 +158,24 @@ export function getAllProductBadges(metrics: ProductMetrics): ProductBadgeData[]
     });
   }
 
-  if (metrics.createdAt) {
+  let isNew = false;
+  if (metrics.forceNew) {
+    isNew = true;
+  } else if (metrics.createdAt) {
     const createdDate = new Date(metrics.createdAt);
     const now = new Date();
     const daysDiff = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
-    
-    if (daysDiff <= 30) {
-      badges.push({
-        type: 'NEW',
-        label: 'MỚI',
-        color: '#FFFFFF',
-        bgColor: '#3B82F6',
-        priority: 80,
-      });
-    }
+    if (daysDiff <= 30) isNew = true;
+  }
+
+  if (isNew) {
+    badges.push({
+      type: 'NEW',
+      label: 'MỚI',
+      color: '#FFFFFF',
+      bgColor: '#3B82F6',
+      priority: 80,
+    });
   }
 
   const discountPercent = metrics.discount || 

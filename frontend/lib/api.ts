@@ -42,6 +42,7 @@ export interface Car {
     warranty?: Warranty;
     stock: number;
     sold?: number;
+    createdAt?: string;
 }
 
 export interface PaginationMeta {
@@ -290,7 +291,8 @@ function transformStrapiCar(strapiCar: any): Car {
         technicalImage: technicalImageUrl,
         warranty: strapiCar.warranty || undefined,
         stock: strapiCar.stock || 0,
-        sold: typeof strapiCar.sold === 'number' ? strapiCar.sold : (parseInt(strapiCar.sold) || 0)
+        sold: typeof strapiCar.sold === 'number' ? strapiCar.sold : (parseInt(strapiCar.sold) || 0),
+        createdAt: strapiCar.createdAt || strapiCar.publishedAt
     };
 }
 
@@ -552,6 +554,7 @@ export interface GetCarsParams {
     type?: string;
     brand?: string;
     search?: string;
+    ids?: string[];
     minPrice?: number;
     maxPrice?: number;
     minRange?: number;
@@ -565,7 +568,7 @@ export interface GetCarsParams {
 
 export async function getCarsWithMeta(params: GetCarsParams = {}): Promise<GetCarsResult> {
     try {
-        const { type, brand, search, minPrice, maxPrice, sort, page = 1, pageSize = 12 } = params;
+        const { type, brand, search, ids, minPrice, maxPrice, sort, page = 1, pageSize = 12 } = params;
 
         // Build query parts
         const queryParts = [
@@ -582,6 +585,12 @@ export async function getCarsWithMeta(params: GetCarsParams = {}): Promise<GetCa
         // Add filters
         if (type) queryParts.push(`filters[type][$eq]=${encodeURIComponent(type)}`);
         if (brand) queryParts.push(`filters[brand][$eq]=${encodeURIComponent(brand)}`);
+
+        if (ids && ids.length > 0) {
+            ids.forEach((id, index) => {
+                queryParts.push(`filters[documentId][$in][${index}]=${id}`);
+            });
+        }
 
         // Search by name/brand/slug (case-insensitive)
         if (search && search.trim()) {

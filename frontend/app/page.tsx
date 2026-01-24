@@ -10,8 +10,6 @@ import { getMergedHeroSlides } from "@/lib/hero-data";
 // Static imports for Server Components (Async)
 import TailgProductGrid from "@/components/sections/TailgProductGrid";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
-import ElectricMotorcycles from "@/components/sections/ElectricMotorcycles";
-import ElectricBicycles from "@/components/sections/ElectricBicycles";
 import FeaturedAccessories from "@/components/sections/FeaturedAccessories";
 import LatestNews from "@/components/sections/LatestNews";
 
@@ -51,18 +49,6 @@ export default async function Home() {
       <LazySection className="min-h-[400px]">
         <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-64" />}>
           <FeaturedProducts />
-        </Suspense>
-      </LazySection>
-
-      <LazySection>
-        <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-48" />}>
-          <ElectricMotorcycles />
-        </Suspense>
-      </LazySection>
-
-      <LazySection>
-        <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-48" />}>
-          <ElectricBicycles />
         </Suspense>
       </LazySection>
 

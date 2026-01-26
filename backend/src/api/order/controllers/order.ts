@@ -457,154 +457,6 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
 
 
 
-    async findByCode(ctx) {
-        try {
-            const { code } = ctx.params;
-            const phone = (ctx.query?.phone ?? '') as unknown;
-
-            // Bảo mật: endpoint này trước đây trả PII (CustomerInfo) và có thể bị dò mã đơn.
-            // -> Yêu cầu xác minh bằng SĐT, rate-limit, và chỉ trả payload tối thiểu.
-            if (!code || !phone) {
-                return ctx.badRequest('Order code and phone number are required');
-            }
-
-            const now = Date.now();
-            const ip = getClientIp(ctx);
-            const normalizedPhone = normalizePhone(phone);
-            const normalizedCode = typeof code === 'string' ? code.trim() : String(code);
-
-            if (!normalizedPhone) {
-                return ctx.badRequest('Phone number is invalid');
-            }
-
-            // Chống dò mã đơn (giống trackOrder)
-            const ipLimit = hitRateLimit({
-                map: trackByIp,
-                key: ip,
-                now,
-                windowMs: 60 * 1000,
-                maxCount: 30,
-                minIntervalMs: 1000,
-            });
-            if (!ipLimit.allowed) {
-                return replyTooManyRequests(ctx, ipLimit.retryAfterSec, 'Bạn tra cứu quá nhanh. Vui lòng thử lại sau.');
-            }
-
-            const codeLimit = hitRateLimit({
-                map: trackByCode,
-                key: normalizedCode,
-                now,
-                windowMs: 10 * 60 * 1000,
-                maxCount: 10,
-                minIntervalMs: 3 * 1000,
-            });
-            if (!codeLimit.allowed) {
-                return replyTooManyRequests(ctx, codeLimit.retryAfterSec, 'Bạn tra cứu quá nhiều lần cho mã đơn này. Vui lòng thử lại sau.');
-            }
-
-            const order = await strapi.db.query('api::order.order').findOne({
-                where: {
-                    OrderCode: normalizedCode,
-                },
-                populate: {
-                    CustomerInfo: true,
-                    VehicleModel: {
-                        populate: {
-                            thumbnail: true,
-                            color: {
-                                populate: ['images'],
-                            },
-                        },
-                    },
-                    SelectedShowroom: true,
-                },
-            });
-
-            // Không phân biệt "mã đúng nhưng sai SĐT" để tránh lộ thông tin mã đơn tồn tại.
-            if (!order || normalizePhone((order as any).CustomerInfo?.Phone) !== normalizedPhone) {
-                return ctx.notFound('Order not found');
-            }
-
-            const vehicle = (order as any).VehicleModel;
-            const safeOrder = {
-                id: (order as any).id,
-                OrderCode: (order as any).OrderCode,
-                Statuses: (order as any).Statuses,
-                PaymentStatus: (order as any).PaymentStatus,
-                PaymentMethod: (order as any).PaymentMethod,
-                SelectedColor: (order as any).SelectedColor,
-                TotalAmount: (order as any).TotalAmount,
-                DepositAmount: (order as any).DepositAmount,
-                RemainingAmount: (order as any).RemainingAmount,
-                createdAt: (order as any).createdAt,
-                SelectedShowroom: (order as any).SelectedShowroom,
-                VehicleModel: vehicle
-                    ? {
-                        name: vehicle.name,
-                        price: vehicle.price,
-                        thumbnail: vehicle.thumbnail,
-                        color: vehicle.color,
-                        slug: vehicle.slug,
-                    }
-                    : undefined,
-            };
-
-            return ctx.send({ data: safeOrder });
-        } catch (error) {
-            return ctx.internalServerError('Failed to fetch order');
-        }
-    },
-
-    async updateStatus(ctx) {
-        try {
-            const { id } = ctx.params;
-            const { status } = ctx.request.body;
-
-            // Bảo mật: endpoint nhạy cảm, không cho public gọi.
-            const user = ctx.state.user;
-            if (!user) {
-                return ctx.unauthorized('User not authenticated');
-            }
-
-            // users-permissions role thường nằm ở user.role (ví dụ: Authenticated, Public, ...)
-            // Nếu hệ thống có role "Admin" cho users-permissions thì cho phép.
-            const roleName = String((user as any)?.role?.name ?? '').toLowerCase();
-            const roleType = String((user as any)?.role?.type ?? '').toLowerCase();
-            const isAdminLike = roleName.includes('admin') || roleType.includes('admin');
-            if (!isAdminLike) {
-                return ctx.forbidden('Forbidden');
-            }
-
-            const statusValue = typeof status === 'string' ? status.trim() : '';
-            if (!statusValue) {
-                return ctx.badRequest('Invalid status');
-            }
-
-            const allowedStatuses = [
-                'pending_payment',
-                'deposit_paid',
-                'processing',
-                'ready_for_pickup',
-                'completed',
-                'cancelled',
-                'refunded',
-            ] as const;
-
-            if (!allowedStatuses.includes(statusValue as any)) {
-                return ctx.badRequest('Invalid status');
-            }
-
-            const order = await strapi.entityService.update('api::order.order', id, {
-                data: { Statuses: statusValue as any }
-            });
-
-            const sanitizedEntity = await this.sanitizeOutput(order, ctx);
-            return this.transformResponse(sanitizedEntity);
-        } catch (error) {
-            return ctx.internalServerError('Failed to update status');
-        }
-    },
-
     async findUserOrders(ctx) {
         try {
             const user = ctx.state.user;
@@ -661,6 +513,84 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
             return ctx.send({ data: safeOrders });
         } catch (error) {
             return ctx.internalServerError('Failed to fetch user orders');
+        }
+    },
+
+    async findByCode(ctx) {
+        const { code } = ctx.params;
+
+        try {
+            const orders = await strapi.entityService.findMany('api::order.order', {
+                filters: { OrderCode: code } as any,
+                populate: {
+                    VehicleModel: {
+                        populate: ['thumbnail', 'colors']
+                    },
+                    SelectedShowroom: true,
+                    CustomerInfo: true,
+                    payment_transactions: true,
+                    Customer: {
+                        fields: ['id', 'username', 'email']
+                    }
+                }
+            });
+
+            if (Array.isArray(orders) && orders.length === 0) {
+                return ctx.notFound('Order not found');
+            }
+
+            const order = Array.isArray(orders) ? orders[0] : orders;
+
+            // Check if user has permission to view this order
+            if ((order as any).Customer && ctx.state.user) {
+                if ((order as any).Customer.id !== ctx.state.user.id) {
+                    return ctx.forbidden('You do not have permission to view this order');
+                }
+            }
+
+            return { data: order };
+
+        } catch (error) {
+            ctx.throw(500, `Failed to fetch order: ${error.message}`);
+        }
+    },
+
+    async updateStatus(ctx) {
+        const { id } = ctx.params;
+        const { status, note } = ctx.request.body;
+
+        try {
+            // Get current order
+            const order = await strapi.entityService.findOne('api::order.order', id);
+
+            if (!order) {
+                return ctx.notFound('Order not found');
+            }
+
+            // Add new tracking entry
+            const updatedHistory = [
+                ...((order as any).TrackingHistory || []),
+                {
+                    status,
+                    timestamp: new Date().toISOString(),
+                    note: note || `Cập nhật trạng thái: ${status}`,
+                    updatedBy: ctx.state.user?.username || 'system'
+                }
+            ];
+
+            // Update order
+            const updatedOrder = await strapi.entityService.update('api::order.order', id, {
+                data: {
+                    Statuses: status,
+                    TrackingHistory: updatedHistory
+                },
+                populate: ['VehicleModel', 'SelectedShowroom', 'payment_transactions']
+            });
+
+            return { data: updatedOrder };
+
+        } catch (error) {
+            ctx.throw(500, `Failed to update order status: ${error.message}`);
         }
     },
 

@@ -1,4 +1,6 @@
-export default {
+import { factories } from '@strapi/strapi';
+
+export default factories.createCoreController('api::notification.notification', ({ strapi }) => ({
   async create(ctx) {
     const user = ctx.state.user;
     if (!user) {
@@ -203,7 +205,7 @@ export default {
       return ctx.internalServerError('Failed to delete notification');
     }
   }
-};
+}));
 
 // Define notification types
 type NotificationType = 

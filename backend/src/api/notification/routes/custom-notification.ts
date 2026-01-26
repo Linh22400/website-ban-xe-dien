@@ -3,7 +3,7 @@ export default {
     {
       method: 'GET',
       path: '/notifications/user/my-notifications',
-      handler: 'notification.findByUser',
+      handler: 'api::notification.notification.findByUser',
       config: {
         policies: [],
         middlewares: [],
@@ -12,7 +12,7 @@ export default {
     {
       method: 'GET',
       path: '/notifications/user/unread-count',
-      handler: 'notification.getUnreadCount',
+      handler: 'api::notification.notification.getUnreadCount',
       config: {
         policies: [],
         middlewares: [],
@@ -21,7 +21,7 @@ export default {
     {
       method: 'PUT',
       path: '/notifications/:id/read',
-      handler: 'notification.markAsRead',
+      handler: 'api::notification.notification.markAsRead',
       config: {
         policies: [],
         middlewares: [],
@@ -30,7 +30,7 @@ export default {
     {
       method: 'PUT',
       path: '/notifications/user/mark-all-read',
-      handler: 'notification.markAllAsRead',
+      handler: 'api::notification.notification.markAllAsRead',
       config: {
         policies: [],
         middlewares: [],

@@ -3,7 +3,7 @@ export default {
     {
       method: 'GET',
       path: '/trade-ins/user/my-requests',
-      handler: 'trade-in.findByUser',
+      handler: 'api::trade-in.trade-in.findByUser',
       config: {
         policies: [],
         middlewares: [],
@@ -12,7 +12,7 @@ export default {
     {
       method: 'PUT',
       path: '/trade-ins/:id/appraisal',
-      handler: 'trade-in.updateAppraisal',
+      handler: 'api::trade-in.trade-in.updateAppraisal',
       config: {
         policies: [],
         middlewares: [],

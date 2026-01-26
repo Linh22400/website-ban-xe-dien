@@ -3,7 +3,7 @@ export default {
         {
             method: 'POST',
             path: '/payments/create',
-            handler: 'payment.create',
+            handler: 'api::payment.payment.create',
             config: {
                 auth: false
             }
@@ -19,7 +19,7 @@ export default {
         {
             method: 'POST',
             path: '/payments/mock-confirm',
-            handler: 'payment.mockConfirm',
+            handler: 'api::payment.payment.mockConfirm',
             config: {
                 auth: false
             }

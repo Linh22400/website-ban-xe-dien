@@ -3,7 +3,7 @@ export default {
     {
       method: 'GET',
       path: '/service-bookings/user/my-bookings',
-      handler: 'service-booking.findByUser',
+      handler: 'api::service-booking.service-booking.findByUser',
       config: {
         policies: [],
         middlewares: [],
@@ -12,7 +12,7 @@ export default {
     {
       method: 'PUT',
       path: '/service-bookings/:id/status',
-      handler: 'service-booking.updateStatus',
+      handler: 'api::service-booking.service-booking.updateStatus',
       config: {
         policies: [],
         middlewares: [],
@@ -21,7 +21,7 @@ export default {
     {
       method: 'POST',
       path: '/service-bookings/:id/feedback',
-      handler: 'service-booking.submitFeedback',
+      handler: 'api::service-booking.service-booking.submitFeedback',
       config: {
         policies: [],
         middlewares: [],
@@ -30,7 +30,7 @@ export default {
     {
       method: 'GET',
       path: '/service-bookings/available-slots',
-      handler: 'service-booking.getAvailableSlots',
+      handler: 'api::service-booking.service-booking.getAvailableSlots',
       config: {
         policies: [],
         middlewares: [],

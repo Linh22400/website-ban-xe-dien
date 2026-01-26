@@ -1,4 +1,6 @@
-export default {
+import { factories } from '@strapi/strapi';
+
+export default factories.createCoreController('api::trade-in.trade-in', ({ strapi }) => ({
   async create(ctx) {
     const user = ctx.state.user;
     if (!user) {
@@ -122,7 +124,7 @@ export default {
       return ctx.notFound('Trade-in request not found');
     }
   }
-};
+}));
 
 // Helper function to calculate estimated trade-in value
 function calculateEstimatedValue({

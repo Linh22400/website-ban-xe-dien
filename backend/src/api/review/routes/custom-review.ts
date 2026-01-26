@@ -3,7 +3,7 @@ export default {
         {
             method: 'POST',
             path: '/reviews',
-            handler: 'review.create',
+            handler: 'api::review.review.create',
             config: {
                 policies: [],
                 middlewares: []
@@ -12,7 +12,7 @@ export default {
         {
             method: 'GET',
             path: '/reviews/car-model/:carModelId',
-            handler: 'review.findByCarModel',
+            handler: 'api::review.review.findByCarModel',
             config: {
                 auth: false
             }
@@ -20,7 +20,7 @@ export default {
         {
             method: 'POST',
             path: '/reviews/:id/helpful',
-            handler: 'review.markHelpful',
+            handler: 'api::review.review.markHelpful',
             config: {
                 auth: false
             }

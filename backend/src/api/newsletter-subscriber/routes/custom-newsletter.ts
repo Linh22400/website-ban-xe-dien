@@ -3,7 +3,7 @@ export default {
         {
             method: 'POST',
             path: '/newsletter/subscribe',
-            handler: 'newsletter-subscriber.subscribe',
+            handler: 'api::newsletter-subscriber.newsletter-subscriber.subscribe',
             config: {
                 auth: false,
                 policies: [],

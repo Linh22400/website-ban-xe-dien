@@ -1,5 +1,0 @@
-/**
- * lead service
- */
-
-export default () => ({});

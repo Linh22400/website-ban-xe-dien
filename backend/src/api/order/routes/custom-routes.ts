@@ -3,9 +3,8 @@ export default {
         {
             method: 'GET',
             path: '/orders/my-orders',
-            handler: 'order.findUserOrders',
+            handler: 'api::order.order.findUserOrders',
             config: {
-                auth: {},
                 policies: [],
                 middlewares: [],
             },
@@ -13,7 +12,7 @@ export default {
         {
             method: 'POST',
             path: '/order-tracking/lookup',
-            handler: 'order.trackOrder',
+            handler: 'api::order.order.trackOrder',
             config: {
                 auth: false,
                 policies: [],
@@ -23,7 +22,7 @@ export default {
         {
             method: 'POST',
             path: '/auth/otp/send',
-            handler: 'order.sendOtp',
+            handler: 'api::order.order.sendOtp',
             config: {
                 auth: false,
                 policies: [],
@@ -33,7 +32,7 @@ export default {
         {
             method: 'POST',
             path: '/auth/otp/verify',
-            handler: 'order.verifyOtp',
+            handler: 'api::order.order.verifyOtp',
             config: {
                 auth: false,
                 policies: [],

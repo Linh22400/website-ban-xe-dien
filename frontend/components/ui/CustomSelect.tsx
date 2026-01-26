@@ -61,9 +61,11 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                     e.currentTarget.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)';
                 }}
             >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2 flex-1 min-w-0">
                     {icon}
-                    {selectedOption?.label || placeholder || "Chọn..."}
+                    <span className="truncate">
+                        {selectedOption?.label || placeholder || "Chọn..."}
+                    </span>
                 </span>
                 <ChevronDown
                     className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}

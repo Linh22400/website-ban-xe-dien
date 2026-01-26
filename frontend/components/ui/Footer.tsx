@@ -27,7 +27,7 @@ export default function Footer() {
         <footer className="bg-gradient-to-b from-card via-card to-secondary border-t border-white/10">
             {/* Main Footer Content - Enhanced Design */}
             <div className="container mx-auto px-6 py-6">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
                     {/* Column 1: Brand & Newsletter - Enhanced */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Brand with logo */}

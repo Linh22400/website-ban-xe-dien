@@ -318,6 +318,7 @@ export interface Promotion {
     isActive: boolean;
     discountPercent?: number;
     car_models?: any[];
+    color?: string;
 }
 
 export interface ArticleCategory {
@@ -480,7 +481,8 @@ function transformStrapiArticle(item: any): Article {
 
 export async function getPromotions(): Promise<Promotion[]> {
     try {
-        const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate[0]=image&populate[1]=car_models&sort=createdAt:desc`;
+        // Optimized: Only fetch necessary fields for car_models (ids) to reduce payload
+        const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate[0]=image&populate[car_models][fields][0]=id&populate[car_models][fields][1]=documentId&sort=createdAt:desc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
 
         if (!data || !data.data) return [];
@@ -495,6 +497,7 @@ export async function getPromotions(): Promise<Promotion[]> {
             expiryDate: item.expiryDate || null,
             isActive: item.isActive ?? true,
             discountPercent: item.discountPercent || 0,
+            color: item.color,
             // Handle both Strapi v4 (data wrapper) and v5 (direct array) styles just in case, 
             // but based on observation it's likely array or data wrapper. 
             // Let's normalize to array.
@@ -508,7 +511,7 @@ export async function getPromotions(): Promise<Promotion[]> {
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
     try {
-        const url = `${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc`;
+        const url = `${STRAPI_URL}/api/hero-slides?populate[0]=image&sort=order:asc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
 
         if (!data || !data.data) return [];
@@ -564,23 +567,39 @@ export interface GetCarsParams {
     sort?: string;
     page?: number;
     pageSize?: number;
+    fields?: string[];
+    populate?: string[];
 }
 
 export async function getCarsWithMeta(params: GetCarsParams = {}): Promise<GetCarsResult> {
     try {
-        const { type, brand, search, ids, minPrice, maxPrice, sort, page = 1, pageSize = 12 } = params;
+        const { type, brand, search, ids, minPrice, maxPrice, sort, page = 1, pageSize = 12, fields, populate } = params;
 
         // Build query parts
         const queryParts = [
-            'populate[0]=thumbnail',
-            'populate[1]=model3D',
-            'populate[2]=colors.images',
-            'populate[3]=technicalImage',
-            'populate[4]=warranty',
-            'populate[5]=options',
             `pagination[page]=${page}`,
             `pagination[pageSize]=${pageSize}`
         ];
+
+        // Handle populate
+        if (populate) {
+            populate.forEach((p, i) => queryParts.push(`populate[${i}]=${p}`));
+        } else {
+            // Default populate if not specified
+            queryParts.push(
+                'populate[0]=thumbnail',
+                'populate[1]=model3D',
+                'populate[2]=colors.images',
+                'populate[3]=technicalImage',
+                'populate[4]=warranty',
+                'populate[5]=options'
+            );
+        }
+
+        // Handle fields
+        if (fields) {
+            fields.forEach((f, i) => queryParts.push(`fields[${i}]=${f}`));
+        }
 
         // Add filters
         if (type) queryParts.push(`filters[type][$eq]=${encodeURIComponent(type)}`);

@@ -162,7 +162,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
 
     return (
         <div
-            className="relative w-full aspect-[16/8] md:aspect-[21/9] lg:h-[600px] rounded-[2rem] overflow-hidden group border border-white/10 shadow-2xl bg-black"
+            className="relative w-full h-[500px] md:h-auto md:aspect-[21/9] lg:h-[600px] rounded-[2rem] overflow-hidden group border border-white/10 shadow-2xl bg-black"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
@@ -175,7 +175,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                 />
             )}
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                     key={currentSlide}
                     initial={{ opacity: 0, scale: 1.05 }}
@@ -184,18 +184,8 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                     transition={{ duration: 0.7 }}
                     className="absolute inset-0 z-0 bg-neutral-900"
                 >
-                    {/* Blurred Background Layer for Fill Effect */}
-                    <div className="absolute inset-0 z-0 overflow-hidden">
-                        <Image
-                            src={currentSlideData.image}
-                            alt="Background Blur"
-                            fill
-                            sizes="100vw"
-                            quality={30}
-                            className="object-cover blur-3xl scale-110 opacity-50 dark:opacity-30"
-                            priority={true}
-                        />
-                    </div>
+                    {/* Background Color/Gradient Fallback */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${currentSlideData.color || 'from-neutral-800 to-black'}`} />
 
                     {/* Main Image - Resized to Contain (Sharp & Full) */}
                     <div className="absolute inset-0 z-10">
@@ -203,10 +193,10 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                             src={currentSlideData.image}
                             alt={currentSlideData.title || "Hero Banner"}
                             fill
-                            sizes="100vw"
-                            quality={80}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                            quality={85}
                             className="object-contain object-center"
-                            priority={true}
+                            priority={currentSlide === 0}
                         />
                     </div>
 
@@ -222,7 +212,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
             <div className="absolute inset-0 z-20 flex items-center pointer-events-none">
                 <div className="container mx-auto px-6 md:px-12 h-full flex items-center">
                     <div className="max-w-xl md:max-w-xl lg:max-w-[45%] space-y-6 pt-10 md:pt-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence mode="wait" initial={false}>
                             <motion.div
                                 key={currentSlide}
                                 initial={{ x: -30, opacity: 0 }}

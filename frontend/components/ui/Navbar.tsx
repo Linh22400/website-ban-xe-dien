@@ -95,10 +95,26 @@ export default function Navbar() {
                 setIsLoading(true);
 
                 // Fetch motorcycles, bicycles, accessories and promotions in parallel
-                // Fetch ALL products to ensure we have enough for sorting and display
+                // Optimized: Fetch only needed items (top 6) sorted by Featured and Sold count
+                // Reduced payload by selecting only necessary fields
+                const commonFields = ['name', 'slug', 'price', 'range', 'topSpeed', 'isFeatured', 'sold', 'type', 'brand', 'documentId'];
+                const commonPopulate = ['thumbnail'];
+
                 const [motorcyclesData, bicyclesData, accessoriesData, promotionsData] = await Promise.all([
-                    getCars({ type: 'motorcycle', pageSize: 100 }), // Fetch all to ensure enough products
-                    getCars({ type: 'bicycle', pageSize: 100 }), // Fetch all to ensure enough products
+                    getCars({ 
+                        type: 'motorcycle', 
+                        pageSize: 8, 
+                        sort: 'isFeatured:desc',
+                        fields: commonFields,
+                        populate: commonPopulate
+                    }), 
+                    getCars({ 
+                        type: 'bicycle', 
+                        pageSize: 8, 
+                        sort: 'isFeatured:desc',
+                        fields: commonFields,
+                        populate: commonPopulate
+                    }),
                     getAccessories(),
                     getPromotions()
                 ]);
@@ -304,26 +320,35 @@ export default function Navbar() {
                     <div className="flex flex-col w-full">
                         {/* Top Row: Logo & Actions */}
                         <div className="flex items-center justify-between py-4 w-full">
-                            {/* Logo */}
-                            <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
-                                <div className="relative w-10 h-10 sm:w-12 sm:h-12 transform group-hover:scale-105 transition-transform flex-shrink-0">
-                                    <Image
-                                        src="/logo(Ducduy).jpg"
-                                        alt="Đức Duy Logo"
-                                        fill
-                                        className="object-contain"
-                                        priority
-                                    />
-                                </div>
-                                <div className="hidden sm:block flex-shrink-0">
-                                    <div className="text-base sm:text-lg md:text-xl font-black text-[#0D5E3A] dark:text-[#10B981] whitespace-nowrap">
-                                        XE ĐIỆN ĐỨC DUY
+                            {/* Logo & Tracking */}
+                            <div className="flex flex-col items-start">
+                                <Link
+                                    href="/tracking"
+                                    className="flex text-[10px] text-muted-foreground hover:text-primary items-center gap-1 mb-0.5 pl-1 transition-colors"
+                                >
+                                    <Truck className="w-3 h-3" />
+                                    Tra Cứu Đơn Hàng
+                                </Link>
+                                <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 transform group-hover:scale-105 transition-transform flex-shrink-0">
+                                        <Image
+                                            src="/logo(Ducduy).jpg"
+                                            alt="Đức Duy Logo"
+                                            fill
+                                            className="object-contain"
+                                            priority
+                                        />
                                     </div>
-                                    <div className="text-[9px] sm:text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold whitespace-nowrap">
-                                        Chính Hãng TAILG - Uy Tín
+                                    <div className="hidden sm:block flex-shrink-0">
+                                        <div className="text-base sm:text-lg md:text-xl font-black text-[#0D5E3A] dark:text-[#10B981] whitespace-nowrap">
+                                            XE ĐIỆN ĐỨC DUY
+                                        </div>
+                                        <div className="text-[9px] sm:text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold whitespace-nowrap">
+                                            Chính Hãng TAILG - Uy Tín
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
+                                </Link>
+                            </div>
 
                             {/* Promotion Marquee Banner - Modern Slide */}
                             <div className="hidden lg:flex flex-1 mx-6 xl:mx-12 overflow-hidden">
@@ -484,17 +509,17 @@ export default function Navbar() {
                                     Trang Chủ
                                 </Link>
                                 {/* Motorcycles Dropdown */}
-                                <div className="relative group">
-                                    <Link
-                                        href="/cars?type=motorcycle"
-                                        className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
-                                    >
-                                        Xe Máy Điện
-                                        <ChevronDown className="w-4 h-4" />
-                                    </Link>
-                                    <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
-                                        <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                                            {/* Grid Products */}
+                                    <div className="relative group">
+                                        <Link
+                                            href="/cars?type=motorcycle"
+                                            className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
+                                        >
+                                            Xe Máy Điện
+                                            <ChevronDown className="w-4 h-4" />
+                                        </Link>
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[90vw] max-w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                                            <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                                                {/* Grid Products */}
                                             <div className="grid grid-cols-2 gap-2 p-3">
                                                 {motorcycles.filter(item => !item.isViewAll).map((item) => (
                                                     <Link
@@ -508,6 +533,7 @@ export default function Navbar() {
                                                                 src={item.image || '/images/placeholder-motorcycle.svg'}
                                                                 alt={item.label}
                                                                 fill
+                                                                sizes="100px"
                                                                 className="object-cover group-hover/item:scale-110 transition-transform duration-300"
                                                             />
                                                             {item.product && (
@@ -562,7 +588,7 @@ export default function Navbar() {
                                         Xe Đạp Điện
                                         <ChevronDown className="w-4 h-4" />
                                     </Link>
-                                    <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[90vw] max-w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
                                         <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                                             {/* Grid Products */}
                                             <div className="grid grid-cols-2 gap-2 p-3">
@@ -578,6 +604,7 @@ export default function Navbar() {
                                                                 src={item.image || '/images/placeholder-bicycle.svg'}
                                                                 alt={item.label}
                                                                 fill
+                                                                sizes="100px"
                                                                 className="object-cover group-hover/item:scale-110 transition-transform duration-300"
                                                             />
                                                             {item.product && (
@@ -632,7 +659,7 @@ export default function Navbar() {
                                         Phụ Kiện
                                         <ChevronDown className="w-4 h-4" />
                                     </Link>
-                                    <div className="absolute top-full left-0 pt-2 w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[90vw] max-w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
                                         <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                                             {/* Grid Products */}
                                             <div className="grid grid-cols-2 gap-1 p-2">
@@ -703,13 +730,6 @@ export default function Navbar() {
                                     Khuyến Mãi Hot
                                 </Link>
                                 <Link
-                                    href="/tracking"
-                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
-                                >
-                                    <Truck className="w-4 h-4" />
-                                    Tra Cứu Đơn Hàng
-                                </Link>
-                                <Link
                                     href="/about"
                                     className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                                 >
@@ -723,13 +743,6 @@ export default function Navbar() {
                                     <MessageCircle className="w-4 h-4" />
                                     Liên Hệ
                                 </Link>
-                                <a
-                                    href="tel:1900xxxx"
-                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
-                                >
-                                    <Phone className="w-4 h-4" />
-                                    Hotline: 1900 XXXX
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -739,7 +752,7 @@ export default function Navbar() {
 
             {/* Mobile Menu - Moved OUTSIDE nav to avoid transform context issues */}
             <div
-                className={`lg:hidden fixed inset-x-0 top-[70px] bottom-0 z-[990] bg-background/98 backdrop-blur-xl border-t border-white/10 overflow-y-auto transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
+                className={`lg:hidden fixed inset-x-0 top-[90px] bottom-0 z-[990] bg-background/98 backdrop-blur-xl border-t border-white/10 overflow-y-auto transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
                     }`}
             >
                 <div className="flex flex-col p-6 space-y-6 min-h-full pb-20">
@@ -826,6 +839,7 @@ export default function Navbar() {
                                                 src={item.image || '/images/placeholder-bicycle.svg'}
                                                 alt={item.label}
                                                 fill
+                                                sizes="50vw"
                                                 className="object-contain"
                                             />
                                             {item.product?.discount && (
@@ -877,6 +891,7 @@ export default function Navbar() {
                                                 src={item.image || (item.label.toLowerCase().includes('pin') ? '/images/placeholder-battery.svg' : item.label.toLowerCase().includes('mũ') ? '/images/placeholder-helmet.svg' : '/images/placeholder.svg')}
                                                 alt={item.label}
                                                 fill
+                                                sizes="50vw"
                                                 className="object-contain"
                                             />
                                         </div>

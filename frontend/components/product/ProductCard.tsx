@@ -16,12 +16,14 @@ interface ProductCardProps {
     car: Car;
     discountPercent?: number;
     priority?: boolean;
+    sizes?: string;
 }
 
 export default function ProductCard({ 
     car, 
     discountPercent = 0, 
-    priority = false 
+    priority = false,
+    sizes = "(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
 }: ProductCardProps) {
     const { addCarToCompare, isInCompare, removeCarFromCompare } = useCompare();
     const { addToCart } = useCart();
@@ -132,7 +134,7 @@ export default function ProductCard({
                     style={{ willChange: 'transform' }}
                     priority={priority}
                     quality={80} // Optimal balance
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                    sizes={sizes}
                 />
 
                 {/* Overlay Gradient */}

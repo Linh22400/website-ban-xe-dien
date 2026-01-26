@@ -4,6 +4,7 @@ import "./globals.css";
 import "./responsive.css";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import MainLayout from "@/components/layout/MainLayout";
 import { AuthProvider } from "@/lib/auth-context";
 import { CompareProvider } from "@/lib/compare-context";
 import { CartProvider } from "@/lib/cart-context";
@@ -105,9 +106,9 @@ export default function RootLayout({
                   <JsonLd />
                   <KeepAliveManager />
                   <Navbar />
-                  <main className="pt-[140px] sm:pt-[130px] md:pt-[120px] lg:pt-[110px] min-h-screen">
+                  <MainLayout>
                     {children}
-                  </main>
+                  </MainLayout>
                   <CompareFloatingBar />
                   <Footer />
                 </CompareProvider>

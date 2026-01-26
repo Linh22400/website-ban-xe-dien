@@ -218,6 +218,7 @@ export default function TailgProductGridClient({
                                         car={car}
                                         discountPercent={discount}
                                         priority={index < 4} // Eager load first 4 images (desktop row)
+                                        sizes="(max-width: 640px) 70vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                     />
                                 </div>
                             );

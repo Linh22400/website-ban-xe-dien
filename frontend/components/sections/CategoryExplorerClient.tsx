@@ -129,7 +129,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
     // Let's stick to a clean grid but with distinct visual hierarchy
     
     return (
-        <section className="w-full py-4 px-4 md:px-8 relative">
+        <section className="w-full py-4 px-4 md:px-8 relative overflow-hidden">
              {/* Decorative Background Blur */}
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
 
@@ -155,7 +155,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
                     </Link>
                 </div>
 
-                <div className="flex md:grid md:grid-cols-12 gap-4 md:gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory md:h-[500px] no-scrollbar">
+                <div className="flex md:grid md:grid-cols-12 gap-4 md:gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory md:min-h-[500px] no-scrollbar">
                     {categories.map((cat, index) => {
                         const colorStyle = getColorStyle(cat.color, cat.title, cat.subtitle);
                         

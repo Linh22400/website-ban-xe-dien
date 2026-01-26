@@ -30,7 +30,14 @@ export default function QuickFinder() {
         (async () => {
             try {
                 // Lightweight sampling: enough to build a brand list for the selector.
-                const cars = await getCars({ pageSize: 60, sort: 'createdAt:desc' });
+                // Optimized: Reduced pageSize from 60 to 20 to improve mobile performance
+                // Further optimized: Select ONLY 'brand' field and disable all population
+                const cars = await getCars({ 
+                    pageSize: 20, 
+                    sort: 'createdAt:desc',
+                    fields: ['brand'],
+                    populate: []
+                });
                 if (cancelled) return;
                 const brandSet = new Set(
                     (cars || [])
@@ -304,7 +311,7 @@ export default function QuickFinder() {
                     </div>
 
                     {/* Row 3: Range & Speed */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
                                 <Battery className="w-3.5 h-3.5 text-primary" />

@@ -10,6 +10,7 @@ interface AuthContextType {
     loading: boolean;
     login: (data: LoginData) => Promise<boolean>;
     register: (data: RegisterData) => Promise<boolean>;
+    socialLogin: (jwt: string, user: User) => void;
     logout: () => void;
 }
 
@@ -90,6 +91,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const socialLogin = (jwt: string, userData: User) => {
+        setUser(userData);
+        setToken(jwt);
+        // Save to both localStorage and cookie
+        localStorage.setItem('auth_token', jwt);
+        setCookie('auth_token', jwt);
+    };
+
     const logout = () => {
         setUser(null);
         setToken(null);
@@ -107,6 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 loading,
                 login,
                 register,
+                socialLogin,
                 logout,
             }}
         >

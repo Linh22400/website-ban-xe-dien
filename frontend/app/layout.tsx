@@ -101,7 +101,7 @@ export default async function RootLayout({
     // Website tiếng Việt
     <html lang="vi" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <GoogleAnalytics gaId="G-3HMGK02DS8" />
         <ThemeProvider>

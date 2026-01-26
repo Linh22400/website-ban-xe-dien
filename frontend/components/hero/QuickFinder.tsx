@@ -276,25 +276,27 @@ export default function QuickFinder({ initialBrands = [] }: { initialBrands?: st
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
-                                <Zap className="w-3.5 h-3.5 text-primary" />
+                                <Zap className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                                 Loại Xe
                             </label>
                             <CustomSelect
                                 value={type}
                                 onChange={setType}
                                 options={typeOptions}
+                                aria-label="Chọn loại xe"
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
-                                <Tag className="w-3.5 h-3.5 text-primary" />
+                                <Tag className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                                 Thương Hiệu
                             </label>
                             <CustomSelect
                                 value={brand}
                                 onChange={setBrand}
                                 options={brandOptions}
+                                aria-label="Chọn thương hiệu"
                             />
                         </div>
                     </div>
@@ -302,13 +304,14 @@ export default function QuickFinder({ initialBrands = [] }: { initialBrands?: st
                     {/* Row 2: Price (Full width) */}
                     <div className="space-y-2">
                         <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
-                            <Banknote className="w-3.5 h-3.5 text-primary" />
+                            <Banknote className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                             Mức Giá
                         </label>
                         <CustomSelect
                             value={price}
                             onChange={setPrice}
                             options={priceOptions}
+                            aria-label="Chọn mức giá"
                         />
                     </div>
 
@@ -316,25 +319,27 @@ export default function QuickFinder({ initialBrands = [] }: { initialBrands?: st
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
-                                <Battery className="w-3.5 h-3.5 text-primary" />
+                                <Battery className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                                 Quãng Đường
                             </label>
                             <CustomSelect
                                 value={range}
                                 onChange={setRange}
                                 options={rangeOptions}
+                                aria-label="Chọn quãng đường"
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide text-muted-foreground">
-                                <Gauge className="w-3.5 h-3.5 text-primary" />
+                                <Gauge className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                                 Tốc Độ
                             </label>
                             <CustomSelect
                                 value={speed}
                                 onChange={setSpeed}
                                 options={speedOptions}
+                                aria-label="Chọn tốc độ"
                             />
                         </div>
                     </div>
@@ -344,7 +349,7 @@ export default function QuickFinder({ initialBrands = [] }: { initialBrands?: st
                         type="submit"
                         className="w-full bg-gradient-to-r from-primary via-primary to-accent text-white font-black py-4 rounded-xl transition-colors hover:brightness-105 mt-6 flex items-center justify-center gap-2.5 text-base shadow-lg shadow-primary/25"
                     >
-                        <Search className="w-5 h-5" />
+                        <Search className="w-5 h-5" aria-hidden="true" />
                         <span>Tìm Kiếm Ngay</span>
                     </button>
                 </form>

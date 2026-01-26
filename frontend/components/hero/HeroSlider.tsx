@@ -140,7 +140,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                 <Link 
                     href={globalLink}
                     className="absolute inset-0 z-10 cursor-pointer"
-                    aria-label={`Go to ${currentSlideData.title}`}
+                    aria-label={`Xem chi tiết ${currentSlideData.title}`}
                 />
             )}
 
@@ -161,7 +161,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                         {currentSlideData.image ? (
                             <Image
                                 src={currentSlideData.image}
-                                alt={currentSlideData.title || "Hero Banner"}
+                                alt={currentSlideData.title || "Banner giới thiệu"}
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                                 quality={85}
@@ -252,7 +252,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                 <button 
                     onClick={prevSlide}
                     className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:scale-110 active:scale-95 pointer-events-auto"
-                    aria-label="Previous Slide"
+                    aria-label="Slide trước"
                 >
                     <ChevronLeft className="w-6 h-6" aria-hidden="true" />
                 </button>
@@ -261,7 +261,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                 <button 
                     onClick={nextSlide}
                     className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:scale-110 active:scale-95 pointer-events-auto"
-                    aria-label="Next Slide"
+                    aria-label="Slide tiếp theo"
                 >
                     <ChevronRight className="w-6 h-6" aria-hidden="true" />
                 </button>
@@ -290,7 +290,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                         {currentSlideData.expiryDate ? (
                              <div className="space-y-1">
                                 <div className="text-[10px] text-gray-400 flex items-center gap-1">
-                                    <Clock className="w-3 h-3" /> Kết thúc trong
+                                    <Clock className="w-3 h-3" aria-hidden="true" /> Kết thúc trong
                                 </div>
                                 <CountdownTimer expiryDate={currentSlideData.expiryDate} />
                              </div>

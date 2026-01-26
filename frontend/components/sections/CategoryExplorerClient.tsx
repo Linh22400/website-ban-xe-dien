@@ -131,7 +131,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
     return (
         <section className="w-full py-4 px-4 md:px-8 relative overflow-hidden">
              {/* Decorative Background Blur */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" aria-hidden="true" />
 
             <div className="container mx-auto relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-4 gap-4">

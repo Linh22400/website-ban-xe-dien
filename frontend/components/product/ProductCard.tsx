@@ -187,7 +187,7 @@ export default function ProductCard({
                     title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                     aria-label={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                 >
-                    <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
+                    <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} aria-hidden="true" />
                 </button>
             </Link>
 

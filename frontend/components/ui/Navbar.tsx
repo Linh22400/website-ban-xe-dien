@@ -144,7 +144,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                     href="/tracking"
                                     className="flex text-[10px] text-muted-foreground hover:text-primary items-center gap-1 mb-0.5 pl-1 transition-colors"
                                 >
-                                    <Truck className="w-3 h-3" />
+                                    <Truck className="w-3 h-3" aria-hidden="true" />
                                     Tra Cứu Đơn Hàng
                                 </Link>
                                 <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
@@ -223,7 +223,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                     className="p-2 text-muted-foreground hover:text-primary transition-colors"
                                     aria-label="Tìm kiếm"
                                 >
-                                    <Search className="w-5 h-5" />
+                                    <Search className="w-5 h-5" aria-hidden="true" />
                                 </button>
 
                                 {/* Wishlist */}
@@ -232,7 +232,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                     className="hidden md:flex relative p-2 text-muted-foreground hover:text-primary transition-colors group"
                                     aria-label={`Danh sách yêu thích${wishlistCount > 0 ? `, có ${wishlistCount} sản phẩm` : ''}`}
                                 >
-                                    <Heart className="w-5 h-5 group-hover:fill-primary transition-all" />
+                                    <Heart className="w-5 h-5 group-hover:fill-primary transition-all" aria-hidden="true" />
                                     {wishlistCount > 0 && (
                                         <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-600 text-white text-xs font-bold rounded-full flex items-center justify-center px-1">
                                             {wishlistCount}
@@ -253,7 +253,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                     aria-label={`Giỏ hàng${cartCount > 0 ? `, có ${cartCount} sản phẩm` : ''}`}
                                 >
                                     <ShoppingCart className="w-5 h-5 group-hover:scale-105 transition-transform"
-                                        style={{ willChange: 'transform' }} />
+                                        style={{ willChange: 'transform' }} aria-hidden="true" />
                                     {cartCount > 0 && (
                                         <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-primary text-black text-xs font-bold rounded-full flex items-center justify-center px-1">
                                             {cartCount}
@@ -264,8 +264,8 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                 {/* Account */}
                                 {isAuthenticated ? (
                                     <div className="hidden md:block relative group">
-                                        <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground hover:text-emerald-700 dark:hover:text-primary transition-colors">
-                                            <User className="w-4 h-4" />
+                                        <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground hover:text-emerald-700 dark:hover:text-primary transition-colors" aria-label="Tài khoản người dùng">
+                                            <User className="w-4 h-4" aria-hidden="true" />
                                             {user?.username}
                                         </button>
                                         <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-card/95 border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
@@ -310,9 +310,9 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                 <button
                                     onClick={() => setIsOpen(!isOpen)}
                                     className="lg:hidden p-2 text-foreground"
-                                    aria-label="Toggle menu"
+                                    aria-label="Mở menu chính"
                                 >
-                                    {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                    {isOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
                                 </button>
                             </div>
                         </div>
@@ -335,7 +335,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                             aria-expanded="false"
                                         >
                                             Xe Máy Điện
-                                            <ChevronDown className="w-4 h-4" />
+                                            <ChevronDown className="w-4 h-4" aria-hidden="true" />
                                         </Link>
                                         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[90vw] max-w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
                                             <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
@@ -393,7 +393,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                                 className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
                                             >
                                                 <span>Xem tất cả xe máy điện</span>
-                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                                             </Link>
                                         </div>
                                     </div>
@@ -406,7 +406,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                         className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-emerald-700 dark:group-hover:text-primary transition-colors py-2 whitespace-nowrap"
                                     >
                                         Xe Đạp Điện
-                                        <ChevronDown className="w-4 h-4" />
+                                        <ChevronDown className="w-4 h-4" aria-hidden="true" />
                                     </Link>
                                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[90vw] max-w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
                                         <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
@@ -464,7 +464,7 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                                 className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-emerald-700 dark:text-primary font-bold text-sm transition-all group/btn"
                                             >
                                                 <span>Xem tất cả xe đạp điện</span>
-                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                                             </Link>
                                         </div>
                                     </div>
@@ -548,21 +548,21 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
                                     href="/promotions"
                                     className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                                 >
-                                    <Gift className="w-4 h-4" />
+                                    <Gift className="w-4 h-4" aria-hidden="true" />
                                     Khuyến Mãi Hot
                                 </Link>
                                 <Link
                                     href="/about"
                                     className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                                 >
-                                    <Info className="w-4 h-4" />
+                                    <Info className="w-4 h-4" aria-hidden="true" />
                                     Về Chúng Tôi
                                 </Link>
                                 <Link
                                     href="/contact"
                                     className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                                 >
-                                    <MessageCircle className="w-4 h-4" />
+                                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
                                     Liên Hệ
                                 </Link>
                             </div>

@@ -53,7 +53,7 @@ export default function Footer() {
                         {/* Newsletter Form - Premium Design */}
                         <div className="relative">
                             <div className="flex items-center gap-2 mb-3">
-                                <Sparkles className="w-4 h-4 text-primary" />
+                                <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
                                 <ThemeText className="text-xs font-bold uppercase tracking-wider">
                                     Nhận tin khuyến mãi
                                 </ThemeText>
@@ -106,7 +106,7 @@ export default function Footer() {
                                         setNewsletterEmail(e.target.value);
                                         if (newsletterStatus !== "idle") setNewsletterStatus("idle");
                                     }}
-                                    className="w-full px-4 py-3 pr-12 text-sm border-2 rounded-xl focus:outline-none focus:border-primary/50 transition-colors placeholder:text-gray-500"
+                                    className="w-full pl-4 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-muted-foreground/50"
                                     style={{
                                         backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                                         borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
@@ -114,10 +114,11 @@ export default function Footer() {
                                 />
                                 <button
                                     type="submit"
+                                    aria-label="Đăng ký nhận tin"
                                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-r from-primary to-accent text-black rounded-lg hover:shadow-lg hover:shadow-primary/30 hover:scale-105 transition-transform duration-300"
                                     style={{ willChange: 'transform' }}
                                 >
-                                    <Send className="w-4 h-4" />
+                                    <Send className="w-4 h-4" aria-hidden="true" />
                                 </button>
                             </form>
 
@@ -136,9 +137,9 @@ export default function Footer() {
                             </ThemeText>
                             <div className="flex gap-3">
                                 {[
-                                    { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Facebook" },
-                                    { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500", label: "Instagram" },
-                                    { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Youtube" }
+                                    { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Theo dõi trên Facebook" },
+                                    { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500", label: "Theo dõi trên Instagram" },
+                                    { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Đăng ký kênh Youtube" }
                                 ].map(({ icon: Icon, href, color, label }) => (
                                     <a
                                         key={href}
@@ -153,7 +154,7 @@ export default function Footer() {
                                             borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
                                         }}
                                     >
-                                        <Icon className="w-5 h-5" />
+                                        <Icon className="w-5 h-5" aria-hidden="true" />
                                     </a>
                                 ))}
                             </div>
@@ -181,7 +182,7 @@ export default function Footer() {
                                         href={href}
                                         className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300"
                                     >
-                                        <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                                        <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" aria-hidden="true" />
                                         <span className="group-hover:translate-x-1 transition-transform">{label}</span>
                                         {badge && (
                                             <span className="px-2 py-0.5 bg-gradient-to-r from-primary to-accent text-black text-[10px] font-bold rounded-full">
@@ -216,7 +217,7 @@ export default function Footer() {
                                         href={href}
                                         className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-all"
                                     >
-                                        <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                                        <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" aria-hidden="true" />
                                         <span className="group-hover:translate-x-1 transition-transform">{label}</span>
                                     </Link>
                                 </li>
@@ -271,7 +272,7 @@ export default function Footer() {
                             ].map(({ icon: Icon, value, href, color }) => (
                                 <li key={value} className="flex items-start gap-3">
                                     <div className={`mt-0.5 ${color}`}>
-                                        <Icon className="w-4 h-4" />
+                                        <Icon className="w-4 h-4" aria-hidden="true" />
                                     </div>
                                     <div className="flex-1 text-sm">
                                         {href ? (

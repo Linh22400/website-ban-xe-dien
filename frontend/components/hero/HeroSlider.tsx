@@ -162,6 +162,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                                 quality={85}
                                 className="object-contain object-center"
                                 priority={currentSlide === 0}
+                                fetchPriority={currentSlide === 0 ? "high" : "auto"}
                             />
                         ) : null}
                     </div>

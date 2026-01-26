@@ -185,7 +185,7 @@ export default function TailgProductGridClient({
                                     px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2
                                     ${activeTab === tab.id
                                         ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg shadow-yellow-500/30'
-                                        : 'hover:bg-white/10'
+                                        : (isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')
                                     }
                                 `}
                                 style={{
@@ -271,7 +271,7 @@ export default function TailgProductGridClient({
                         }}
                     >
                         <span>Xem Tất Cả {tabs.find(t => t.id === activeTab)?.label}</span>
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                     </Link>
                 </div>
 
@@ -282,7 +282,7 @@ export default function TailgProductGridClient({
                         {reasons.map((reason, index) => (
                             <div key={index} className="text-center group">
                                 <div className={`w-12 h-12 mx-auto rounded-xl mb-3 flex items-center justify-center bg-gradient-to-br ${reason.color} shadow-sm group-hover:scale-110 transition-transform`}>
-                                    <reason.icon className="w-6 h-6 text-white" />
+                                    <reason.icon className="w-6 h-6 text-white" aria-hidden="true" />
                                 </div>
                                 <h3 className="font-bold text-sm mb-1" style={{ color: isDark ? '#ffffff' : '#111827' }}>
                                     {reason.title}

@@ -78,6 +78,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'lodash', 'date-fns'],
+  },
 };
 
 export default nextConfig;

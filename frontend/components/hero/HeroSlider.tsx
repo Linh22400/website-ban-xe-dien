@@ -22,6 +22,11 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
     // Only load if no initial slides provided
     const [loading, setLoading] = useState(initialSlides.length === 0);
     const [isPaused, setIsPaused] = useState(false);
+    const [hasLoaded, setHasLoaded] = useState(false);
+
+    useEffect(() => {
+        setHasLoaded(true);
+    }, []);
 
     useEffect(() => {
         // Only fetch if we didn't receive initial slides
@@ -139,10 +144,10 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                 />
             )}
 
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="wait">
                 <motion.div
                     key={currentSlide}
-                    initial={{ opacity: 0, scale: 1.05 }}
+                    initial={currentSlide === 0 && !hasLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.7 }}
@@ -162,7 +167,6 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                                 quality={85}
                                 className="object-contain object-center"
                                 priority={currentSlide === 0}
-                                fetchPriority={currentSlide === 0 ? "high" : "auto"}
                             />
                         ) : null}
                     </div>
@@ -250,7 +254,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                     className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:scale-110 active:scale-95 pointer-events-auto"
                     aria-label="Previous Slide"
                 >
-                    <ChevronLeft className="w-6 h-6" />
+                    <ChevronLeft className="w-6 h-6" aria-hidden="true" />
                 </button>
             </div>
             <div className="absolute inset-y-0 right-4 z-30 flex items-center transition-opacity duration-300 pointer-events-none">
@@ -259,7 +263,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                     className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:scale-110 active:scale-95 pointer-events-auto"
                     aria-label="Next Slide"
                 >
-                    <ChevronRight className="w-6 h-6" />
+                    <ChevronRight className="w-6 h-6" aria-hidden="true" />
                 </button>
             </div>
 

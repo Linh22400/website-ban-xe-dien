@@ -1,5 +1,7 @@
 import { getCars, getPromotions } from '@/lib/api';
-import TailgProductGridClient from './TailgProductGridClient';
+import dynamic from 'next/dynamic';
+
+const TailgProductGridClient = dynamic(() => import('./TailgProductGridClient'));
 
 export const revalidate = 180; // 3 minutes
 

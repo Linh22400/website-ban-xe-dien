@@ -1,5 +1,7 @@
 import { getCategories } from "@/lib/api";
-import CategoryExplorerClient from "./CategoryExplorerClient";
+import dynamic from "next/dynamic";
+
+const CategoryExplorerClient = dynamic(() => import("./CategoryExplorerClient"));
 
 export const revalidate = 3600; // Cache for 1 hour
 

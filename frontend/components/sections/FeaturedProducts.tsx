@@ -1,5 +1,7 @@
 import { getFeaturedCars, getPromotions } from "@/lib/api";
-import FeaturedProductsClient from "./FeaturedProductsClient";
+import dynamic from 'next/dynamic';
+
+const FeaturedProductsClient = dynamic(() => import("./FeaturedProductsClient"));
 
 export const revalidate = 180; // 3 minutes ISR
 

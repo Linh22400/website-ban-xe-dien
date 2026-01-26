@@ -10,31 +10,31 @@ interface CategoryExplorerClientProps {
 }
 
 export default function CategoryExplorerClient({ categories }: CategoryExplorerClientProps) {
-    // Color presets - matching product tag colors
+    // Color presets - matching product tag colors - Darkened for Accessibility (WCAG AA)
     const COLOR_PRESETS: Record<string, string> = {
         // Motorcycle - Green (TAILG)
-        'motorcycle': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
-        'blue-cyan': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
-        'green-emerald': 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600',
+        'motorcycle': 'bg-gradient-to-r from-emerald-700 via-green-600 to-emerald-800',
+        'blue-cyan': 'bg-gradient-to-r from-emerald-700 via-green-600 to-emerald-800',
+        'green-emerald': 'bg-gradient-to-r from-emerald-700 via-green-600 to-emerald-800',
 
         // Bicycle - Red (Đức Duy)
-        'bicycle': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
-        'green-light': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
-        'red-orange': 'bg-gradient-to-r from-red-500 via-rose-500 to-pink-500',
+        'bicycle': 'bg-gradient-to-r from-red-700 via-rose-600 to-pink-700',
+        'green-light': 'bg-gradient-to-r from-red-700 via-rose-600 to-pink-700',
+        'red-orange': 'bg-gradient-to-r from-red-700 via-rose-600 to-pink-700',
 
         // Accessories - Blue
-        'accessories': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
-        'purple-pink': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
-        'violet-indigo': 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500',
+        'accessories': 'bg-gradient-to-r from-blue-700 via-cyan-600 to-teal-700',
+        'purple-pink': 'bg-gradient-to-r from-blue-700 via-cyan-600 to-teal-700',
+        'violet-indigo': 'bg-gradient-to-r from-blue-700 via-cyan-600 to-teal-700',
 
         // Fallbacks
-        'orange-yellow': 'bg-gradient-to-r from-orange-500 to-yellow-400',
-        'pink-rose': 'bg-gradient-to-r from-pink-500 to-rose-400',
-        'teal-cyan': 'bg-gradient-to-r from-teal-500 to-cyan-400',
-        'indigo-purple': 'bg-gradient-to-r from-indigo-600 to-purple-600',
-        'amber-orange': 'bg-gradient-to-r from-amber-500 to-orange-500',
-        'lime-green': 'bg-gradient-to-r from-lime-500 to-green-500',
-        'sky-blue': 'bg-gradient-to-r from-sky-500 to-blue-600',
+        'orange-yellow': 'bg-gradient-to-r from-orange-600 to-yellow-600',
+        'pink-rose': 'bg-gradient-to-r from-pink-600 to-rose-600',
+        'teal-cyan': 'bg-gradient-to-r from-teal-600 to-cyan-600',
+        'indigo-purple': 'bg-gradient-to-r from-indigo-700 to-purple-700',
+        'amber-orange': 'bg-gradient-to-r from-amber-600 to-orange-600',
+        'lime-green': 'bg-gradient-to-r from-lime-600 to-green-600',
+        'sky-blue': 'bg-gradient-to-r from-sky-600 to-blue-700',
     };
 
     // Helper to get hover color class based on category

@@ -149,12 +149,12 @@ export default function ProductCard({
                 {/* Badges - Top Left: Type */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
                     {car.type === 'motorcycle' && (
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/50 border border-white/20 backdrop-blur-sm">
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-emerald-700 via-green-600 to-emerald-800 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/50 border border-white/20 backdrop-blur-sm">
                             Xe Máy Điện
                         </span>
                     )}
                     {car.type === 'bicycle' && (
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20 backdrop-blur-sm">
+                        <span className="px-3 py-1.5 bg-gradient-to-r from-red-700 via-rose-600 to-pink-700 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20 backdrop-blur-sm">
                             Xe Đạp Điện
                         </span>
                     )}
@@ -185,6 +185,7 @@ export default function ProductCard({
                         top: hasBadge ? `${12 + (badgeCount * 28) + 8}px` : '12px' 
                     }}
                     title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+                    aria-label={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                 >
                     <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
                 </button>
@@ -279,6 +280,7 @@ export default function ProductCard({
                                     'group-hover:bg-primary group-hover:text-black'
                                 }`}
                             title="Xem chi tiết"
+                            aria-label={`Xem chi tiết ${car.name}`}
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />

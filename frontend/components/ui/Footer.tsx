@@ -135,15 +135,16 @@ export default function Footer() {
                             </ThemeText>
                             <div className="flex gap-3">
                                 {[
-                                    { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500" },
-                                    { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500" },
-                                    { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500" }
-                                ].map(({ icon: Icon, href, color }) => (
+                                    { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Facebook" },
+                                    { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500", label: "Instagram" },
+                                    { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Youtube" }
+                                ].map(({ icon: Icon, href, color, label }) => (
                                     <a
                                         key={href}
                                         href={href}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        aria-label={label}
                                         className={`w-10 h-10 border-2 rounded-xl flex items-center justify-center text-muted-foreground transition-transform duration-300 transform hover:scale-105 hover:shadow-lg ${color}`}
                                         style={{
                                             willChange: 'transform',

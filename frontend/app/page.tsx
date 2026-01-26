@@ -13,9 +13,7 @@ import TailgProductGrid from "@/components/sections/TailgProductGrid";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import FeaturedAccessories from "@/components/sections/FeaturedAccessories";
 import LatestNews from "@/components/sections/LatestNews";
-
-// Dynamic import for Client Components ONLY
-const LiveChatWidget = dynamic(() => import("@/components/ui/LiveChatWidget"), { ssr: false });
+import LiveChatWrapper from "@/components/ui/LiveChatWrapper";
 
 export default async function Home() {
   const [initialSlides, brands] = await Promise.all([
@@ -64,7 +62,7 @@ export default async function Home() {
         <LatestNews />
       </LazySection>
 
-      <LiveChatWidget />
+      <LiveChatWrapper />
     </main>
   );
 }

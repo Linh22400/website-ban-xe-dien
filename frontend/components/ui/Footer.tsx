@@ -99,6 +99,7 @@ export default function Footer() {
                                 />
                                 <ThemeInput
                                     type="email"
+                                    aria-label="Email đăng ký nhận tin"
                                     placeholder="Nhập email của bạn..."
                                     value={newsletterEmail}
                                     onChange={(e) => {
@@ -238,34 +239,34 @@ export default function Footer() {
                                     label: "Hotline",
                                     value: "094 342 4787",
                                     href: "tel:+84943424787",
-                                    color: "text-green-500"
+                                    color: "text-green-700 dark:text-green-500"
                                 },
                                 {
                                     icon: Mail,
                                     label: "Email",
                                     value: "camauducduy@gmail.com",
                                     href: "mailto:camauducduy@gmail.com",
-                                    color: "text-blue-500"
+                                    color: "text-blue-700 dark:text-blue-500"
                                 },
                                 {
                                     icon: MapPin,
                                     label: "Showroom 1",
                                     value: "118 Nguyễn Tất Thành, P.8, Cà Mau",
                                     href: "https://www.google.com/maps?q=9.17,105.15",
-                                    color: "text-red-500"
+                                    color: "text-red-700 dark:text-red-500"
                                 },
                                 {
                                     icon: MapPin,
                                     label: "Showroom 2",
                                     value: "276B Ngô Quyền, P.1, Cà Mau",
                                     href: "https://www.google.com/maps?q=9.19,105.14",
-                                    color: "text-purple-500"
+                                    color: "text-purple-700 dark:text-purple-500"
                                 },
                                 {
                                     icon: Clock,
                                     label: "Giờ Làm Việc",
                                     value: "T2-CN: 8:00 - 20:00",
-                                    color: "text-orange-500"
+                                    color: "text-orange-700 dark:text-orange-500"
                                 }
                             ].map(({ icon: Icon, value, href, color }) => (
                                 <li key={value} className="flex items-start gap-3">

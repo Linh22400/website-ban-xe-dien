@@ -147,6 +147,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
                     <Link
                         href="/cars"
                         className="group flex items-center gap-3 px-6 py-3 rounded-full border border-primary/20 hover:border-primary/50 bg-background/50 backdrop-blur-sm transition-all hover:bg-primary/5"
+                        aria-label="Xem tất cả danh mục"
                     >
                         <span className="font-semibold text-sm">Xem tất cả</span>
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">

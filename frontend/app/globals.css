@@ -36,9 +36,9 @@
   /* Deep black */
   --foreground: #fafafa;
 
-  --primary: #10B981;
-  /* Bright emerald green - Modern & Electric */
-  --primary-foreground: #000000;
+  --primary: #059669;
+  /* Emerald 600 - Accessible contrast */
+  --primary-foreground: #ffffff;
 
   --secondary: #1c1c1c;
   --secondary-foreground: #ffffff;

@@ -38,6 +38,9 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none transition-colors duration-300 cursor-pointer shadow-lg flex items-center justify-between"
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                aria-label={placeholder || "Chọn tùy chọn"}
                 style={{
                     willChange: 'border-color',
                     backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
@@ -53,7 +56,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                     e.currentTarget.style.borderColor = isDark ? 'rgba(107, 114, 128, 0.5)' : 'rgba(0, 0, 0, 0.15)';
                 }}
                 onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#10B981';
+                    e.currentTarget.style.borderColor = '#059669';
                     e.currentTarget.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)';
                 }}
                 onBlur={(e) => {
@@ -84,6 +87,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
             >
                 <div
                     className="bg-card border rounded-xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar"
+                    role="listbox"
                     style={{
                         backgroundColor: isDark ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.85)',
                         borderColor: isDark ? 'rgba(107, 114, 128, 0.5)' : 'rgba(0, 0, 0, 0.2)',
@@ -95,6 +99,8 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                         <button
                             key={option.value}
                             type="button"
+                            role="option"
+                            aria-selected={value === option.value}
                             onClick={() => {
                                 onChange(option.value);
                                 setIsOpen(false);
@@ -102,7 +108,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, ic
                             className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200`}
                             style={{
                                 backgroundColor: value === option.value
-                                    ? '#10B981'
+                                    ? '#059669'
                                     : (isDark ? 'transparent' : 'transparent'),
                                 color: value === option.value
                                     ? '#ffffff'

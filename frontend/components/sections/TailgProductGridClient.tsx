@@ -62,37 +62,37 @@ export default function TailgProductGridClient({
             icon: Award,
             title: 'Đại Lý Chính Hãng',
             description: 'Sản phẩm 100% chính hãng',
-            color: 'from-yellow-400 to-yellow-600'
+            color: 'from-yellow-500 to-yellow-700'
         },
         {
             icon: DollarSign,
             title: 'Giá Tốt Nhất',
             description: 'Cam kết giá cạnh tranh nhất',
-            color: 'from-green-400 to-green-600'
+            color: 'from-green-500 to-green-700'
         },
         {
             icon: Shield,
             title: 'Bảo Hành Ưu Đãi',
             description: 'Chính sách bảo hành mở rộng',
-            color: 'from-blue-400 to-blue-600'
+            color: 'from-blue-500 to-blue-700'
         },
         {
             icon: Headphones,
             title: 'Hỗ Trợ 24/7',
             description: 'Tư vấn chuyên nghiệp mọi lúc',
-            color: 'from-emerald-400 to-emerald-600'
+            color: 'from-emerald-500 to-emerald-700'
         },
         {
             icon: TrendingUp,
             title: 'Ưu Đãi Độc Quyền',
             description: 'Quà tặng và khuyến mãi riêng',
-            color: 'from-pink-400 to-pink-600'
+            color: 'from-pink-500 to-pink-700'
         },
         {
             icon: Clock,
             title: 'Giao Hàng Nhanh',
             description: 'Vận chuyển toàn quốc 24-48h',
-            color: 'from-orange-400 to-orange-600'
+            color: 'from-orange-500 to-orange-700'
         }
     ];
 
@@ -166,6 +166,8 @@ export default function TailgProductGridClient({
                 <div className="flex justify-center mb-8">
                     <div
                         className="inline-flex p-1.5 rounded-xl gap-2 backdrop-blur-md border"
+                        role="tablist"
+                        aria-label="Lọc sản phẩm theo danh mục"
                         style={{
                             backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
                             borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
@@ -174,6 +176,10 @@ export default function TailgProductGridClient({
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
+                                role="tab"
+                                aria-selected={activeTab === tab.id}
+                                aria-controls={`panel-${tab.id}`}
+                                id={`tab-${tab.id}`}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`
                                     px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2
@@ -188,7 +194,7 @@ export default function TailgProductGridClient({
                                         : (isDark ? '#9ca3af' : '#6b7280')
                                 }}
                             >
-                                <tab.icon className="w-4 h-4" />
+                                <tab.icon className="w-4 h-4" aria-hidden="true" />
                                 {tab.label}
                             </button>
                         ))}
@@ -197,7 +203,13 @@ export default function TailgProductGridClient({
 
                 {/* Products Grid */}
                 {loading ? (
-                    <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide">
+                    <div
+                        role="tabpanel"
+                        id={`panel-${activeTab}`}
+                        aria-labelledby={`tab-${activeTab}`}
+                        aria-busy="true"
+                        className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide"
+                    >
                         {[...Array(8)].map((_, i) => (
                             <div
                                 key={i}
@@ -209,7 +221,12 @@ export default function TailgProductGridClient({
                         ))}
                     </div>
                 ) : products.length > 0 ? (
-                    <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide">
+                    <div
+                        role="tabpanel"
+                        id={`panel-${activeTab}`}
+                        aria-labelledby={`tab-${activeTab}`}
+                        className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 pb-4 sm:pb-0 scrollbar-hide"
+                    >
                         {products.map((car, index) => {
                             const discount = discountMap[car.id.toString()] || discountMap[car.documentId || ''] || 0;
                             return (
@@ -225,7 +242,12 @@ export default function TailgProductGridClient({
                         })}
                     </div>
                 ) : (
-                    <div className="text-center py-12">
+                    <div
+                        role="tabpanel"
+                        id={`panel-${activeTab}`}
+                        aria-labelledby={`tab-${activeTab}`}
+                        className="text-center py-12"
+                    >
                         <ThemeText className="text-lg opacity-60">
                             Đang cập nhật sản phẩm {tabs.find(t => t.id === activeTab)?.label}
                         </ThemeText>
@@ -242,6 +264,7 @@ export default function TailgProductGridClient({
                             `/cars?brand=TAILG&type=${activeTab}`
                         }
                         className="inline-flex items-center gap-3 px-8 py-3 rounded-xl border-2 font-bold transition-all hover:scale-105 hover:shadow-lg group"
+                        aria-label={`Xem tất cả ${tabs.find(t => t.id === activeTab)?.label}`}
                         style={{
                             borderColor: isDark ? '#FFD700' : '#B8860B',
                             color: isDark ? '#FFD700' : '#B8860B'

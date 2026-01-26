@@ -118,8 +118,10 @@ export default function ComparisonSearch() {
             )}
 
             {isOpen && (
-                <div
-                    className="fixed inset-0 z-40"
+                <button
+                    type="button"
+                    className="fixed inset-0 z-40 w-full h-full cursor-default"
+                    aria-label="Đóng tìm kiếm"
                     onClick={() => setIsOpen(false)}
                 />
             )}

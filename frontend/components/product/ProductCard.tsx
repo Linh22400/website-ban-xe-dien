@@ -195,8 +195,8 @@ export default function ProductCard({
             <div className="p-5">
                 <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">{car.brand}</div>
                 <Link href={`/cars/${car.slug}`}>
-                    <h3 className={`text-xl font-bold mb-2 transition-all duration-300 line-clamp-1 relative inline-block ${car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
-                        car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                    <h3 className={`text-xl font-bold mb-2 transition-all duration-300 line-clamp-1 relative inline-block ${car.type === 'motorcycle' ? 'text-emerald-700 dark:text-emerald-400' :
+                        car.type === 'bicycle' ? 'text-rose-700 dark:text-rose-400' :
                             'text-primary'
                         } group-hover:scale-105 group-hover:tracking-wide`}>
                         {car.name}
@@ -218,8 +218,8 @@ export default function ProductCard({
                             maxDisplay={5}
                         />
                         <p className="text-xs text-muted-foreground mt-1.5">
-                            Màu: <span className={`font-medium ${car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
-                                car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                            Màu: <span className={`font-medium ${car.type === 'motorcycle' ? 'text-emerald-700 dark:text-emerald-400' :
+                                car.type === 'bicycle' ? 'text-rose-700 dark:text-rose-400' :
                                     'text-primary'
                                 }`}>{selectedColor?.name}</span>
                         </p>
@@ -228,9 +228,9 @@ export default function ProductCard({
 
                 <div className="flex items-end justify-between mt-4">
                     <div>
-                        <div className={`text-lg font-bold ${discountPercent > 0 ? 'text-red-500' :
-                            car.type === 'motorcycle' ? 'text-emerald-500 dark:text-emerald-400' :
-                                car.type === 'bicycle' ? 'text-rose-500 dark:text-rose-400' :
+                        <div className={`text-lg font-bold ${discountPercent > 0 ? 'text-red-600 dark:text-red-500' :
+                            car.type === 'motorcycle' ? 'text-emerald-700 dark:text-emerald-400' :
+                                car.type === 'bicycle' ? 'text-rose-700 dark:text-rose-400' :
                                     'text-primary'
                             }`}>
                             {formatPrice(finalPrice)}
@@ -252,6 +252,7 @@ export default function ProductCard({
                                 }`}
                             style={{ willChange: 'transform' }}
                             title="Thêm vào giỏ hàng"
+                            aria-label={`Thêm ${car.name} vào giỏ hàng`}
                         >
                             <ShoppingCart className="w-4 h-4" />
                         </button>
@@ -266,6 +267,7 @@ export default function ProductCard({
                                 : 'bg-white/10 hover:bg-white hover:text-black'
                                 }`}
                             title={isSelected ? "Bỏ so sánh" : "Thêm vào so sánh"}
+                            aria-label={isSelected ? `Bỏ ${car.name} khỏi so sánh` : `Thêm ${car.name} vào so sánh`}
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />

@@ -305,10 +305,13 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
                                 <button
                                     key={index}
                                     onClick={() => goToSlide(index)}
-                                    className={`group relative h-2 rounded-full transition-all duration-500 ${
-                                        index === currentSlide ? 'w-12 bg-primary' : 'w-2 bg-white/30 hover:bg-white/60'
+                                    aria-label={`Đi tới slide ${index + 1}`}
+                                    aria-current={index === currentSlide ? "true" : "false"}
+                                    className={`relative h-1.5 rounded-full transition-all duration-300 ${
+                                        index === currentSlide 
+                                            ? 'w-12 bg-primary' 
+                                            : 'w-6 bg-white/30 hover:bg-white/50'
                                     }`}
-                                    aria-label={`Go to slide ${index + 1}`}
                                 >
                                     {index === currentSlide && !isPaused && (
                                         <motion.div

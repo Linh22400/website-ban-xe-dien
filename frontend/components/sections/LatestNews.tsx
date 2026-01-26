@@ -29,10 +29,10 @@ export default async function LatestNews() {
                 <div className="flex flex-col md:flex-row items-end justify-between mb-4 gap-6">
                     <div>
                         <div className="flex items-center gap-2 mb-3">
-                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500/10 text-orange-500">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500/10 text-orange-700 dark:text-orange-400">
                                 <Calendar className="w-4 h-4" />
                             </span>
-                            <span className="text-sm font-bold text-orange-500 uppercase tracking-wider">Thông Tin & Sự Kiện</span>
+                            <span className="text-sm font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider">Thông Tin & Sự Kiện</span>
                         </div>
                         <h2 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
                             Tin Tức <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Mới Nhất</span>
@@ -45,6 +45,7 @@ export default async function LatestNews() {
                     <Link
                         href="/blog"
                         className="group flex items-center gap-3 px-6 py-3 rounded-full border border-orange-500/20 hover:border-orange-500/50 bg-background/50 backdrop-blur-sm transition-all hover:bg-orange-500/5"
+                        aria-label="Xem tất cả tin tức"
                     >
                         <span className="font-semibold text-sm">Xem tất cả tin tức</span>
                         <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-all">
@@ -83,7 +84,7 @@ export default async function LatestNews() {
                             {/* Content */}
                             <div className="flex flex-col flex-grow p-6 md:p-8 relative">
                                 {/* Date */}
-                                <div className="flex items-center gap-2 text-xs font-bold text-orange-500 mb-3 uppercase tracking-wide">
+                                <div className="flex items-center gap-2 text-xs font-bold text-orange-700 dark:text-orange-400 mb-3 uppercase tracking-wide">
                                     <Calendar className="w-3.5 h-3.5" />
                                     {article.publishedDate ? new Date(article.publishedDate).toLocaleDateString('vi-VN') : 'Mới nhất'}
                                 </div>
@@ -98,7 +99,7 @@ export default async function LatestNews() {
 
                                 <div className="flex items-center text-foreground font-bold text-sm mt-auto group/link">
                                     <span className="border-b-2 border-orange-500/30 group-hover:border-orange-500 transition-all pb-0.5">Đọc tiếp bài viết</span>
-                                    <ChevronRight className="w-4 h-4 ml-1 text-orange-500 group-hover:translate-x-1 transition-transform" />
+                                    <ChevronRight className="w-4 h-4 ml-1 text-orange-700 dark:text-orange-400 group-hover:translate-x-1 transition-transform" />
                                 </div>
                             </div>
                         </Link>

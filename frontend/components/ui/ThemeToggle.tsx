@@ -34,7 +34,9 @@ export default function ThemeToggle() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="relative p-2.5 rounded-full bg-card border border-border hover:border-primary/50 transition-colors duration-300 group"
-                aria-label="Toggle theme"
+                aria-label="Chuyển đổi giao diện"
+                aria-haspopup="true"
+                aria-expanded={isOpen}
             >
                 <CurrentIcon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
 
@@ -52,7 +54,11 @@ export default function ThemeToggle() {
                     />
 
                     {/* Menu */}
-                    <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div 
+                        className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                        role="menu"
+                        aria-label="Chọn giao diện"
+                    >
                         {themes.map((t) => {
                             const Icon = t.icon;
                             const isActive = t.value === theme;
@@ -64,6 +70,8 @@ export default function ThemeToggle() {
                                         setTheme(t.value);
                                         setIsOpen(false);
                                     }}
+                                    role="menuitem"
+                                    aria-current={isActive ? 'true' : undefined}
                                     className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 ${isActive
                                             ? 'bg-primary/10 text-primary'
                                             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -72,7 +80,7 @@ export default function ThemeToggle() {
                                     <Icon className="w-5 h-5" />
                                     <span className="font-medium">{t.label}</span>
                                     {isActive && (
-                                        <div className="ml-auto w-2 h-2 rounded-full bg-primary" />
+                                        <div className="ml-auto w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
                                     )}
                                 </button>
                             );

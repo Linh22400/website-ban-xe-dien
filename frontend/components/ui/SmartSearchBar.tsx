@@ -346,12 +346,15 @@ export default function SmartSearchBar({
                         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                         className="fixed left-0 right-0 z-45"
                         onClick={(e) => e.stopPropagation()}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Tìm kiếm sản phẩm"
                     >
                 <div className="container mx-auto px-4 pt-4 pb-2">
                     <div className="bg-white dark:bg-card/98 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 overflow-hidden max-w-3xl mx-auto">
                         {/* Search Input */}
-                        <form onSubmit={handleSubmit} className="relative border-b border-gray-200 dark:border-white/10">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <form onSubmit={handleSubmit} className="relative border-b border-gray-200 dark:border-white/10" role="search">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                             <input
                                 ref={inputRef}
                                 type="text"
@@ -361,6 +364,12 @@ export default function SmartSearchBar({
                                 placeholder="Nhập tên xe, hãng, loại xe..."
                                 className="w-full bg-transparent pl-12 pr-24 py-4 text-base text-foreground placeholder:text-gray-400 focus:outline-none"
                                 autoComplete="off"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-expanded={results.length > 0}
+                                aria-controls="search-results-list"
+                                aria-activedescendant={selectedIndex >= 0 ? `result-item-${selectedIndex}` : undefined}
+                                aria-label="Tìm kiếm sản phẩm"
                             />
                             {query && (
                                 <button
@@ -371,14 +380,16 @@ export default function SmartSearchBar({
                                         inputRef.current?.focus();
                                     }}
                                     className="absolute right-16 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-foreground transition-colors"
-                                    title="Xóa"
+                                    title="Xóa tìm kiếm"
+                                    aria-label="Xóa từ khóa tìm kiếm"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-4 h-4" aria-hidden="true" />
                                 </button>
                             )}
                         <button
                             type="submit"
                             className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-primary hover:bg-primary/90 text-black text-sm font-semibold rounded-lg transition-colors"
+                            aria-label="Thực hiện tìm kiếm"
                         >
                             Tìm
                         </button>
@@ -387,17 +398,20 @@ export default function SmartSearchBar({
                         <div className="max-h-[70vh] overflow-y-auto border-t border-gray-200 dark:border-white/10">
                             {isLoading ? (
                                 <div className="flex items-center justify-center py-12">
-                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                    <Loader2 className="w-8 h-8 animate-spin text-primary" aria-label="Đang tải kết quả" />
                                 </div>
                             ) : results.length > 0 ? (
-                                <div ref={resultsRef} className="p-3">
-                                    <div className="text-sm font-semibold text-foreground px-2 py-2 border-b border-gray-200 dark:border-white/10 mb-2">
+                                <div ref={resultsRef} className="p-3" id="search-results-list" role="listbox">
+                                    <div className="text-sm font-semibold text-foreground px-2 py-2 border-b border-gray-200 dark:border-white/10 mb-2" id="results-heading">
                                         Kết quả tìm kiếm ({results.length})
                                     </div>
                                     {results.map((product, index) => (
                                         <button
                                             key={product.id}
+                                            id={`result-item-${index}`}
                                             onClick={() => handleProductClick(product)}
+                                            role="option"
+                                            aria-selected={selectedIndex === index}
                                             className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all ${
                                                 selectedIndex === index
                                                     ? 'bg-primary/10 border-primary/30'
@@ -438,7 +452,7 @@ export default function SmartSearchBar({
                                                 </div>
                                             </div>
 
-                                            <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                            <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
                                         </button>
                                     ))}
 
@@ -446,14 +460,15 @@ export default function SmartSearchBar({
                                     <button
                                         onClick={handleSubmit}
                                         className="w-full mt-2 p-3 text-center text-sm font-semibold text-primary hover:bg-primary/5 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                        aria-label="Xem tất cả kết quả tìm kiếm"
                                     >
                                         <span>Xem tất cả kết quả</span>
-                                        <ArrowRight className="w-4 h-4" />
+                                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
                                     </button>
                                 </div>
                             ) : query.trim() ? (
                                 <div className="py-12 text-center">
-                                    <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                                    <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" aria-hidden="true" />
                                     <p className="text-gray-500 dark:text-gray-400 mb-2 font-medium">
                                         Không tìm thấy kết quả cho “{query}”
                                     </p>
@@ -465,14 +480,15 @@ export default function SmartSearchBar({
                                 <div className="p-4 space-y-5">
                                     {/* Recent Searches */}
                                     {recentSearches.length > 0 && (
-                                        <div>
+                                        <div role="group" aria-labelledby="recent-searches-heading">
                                             <div className="flex items-center justify-between mb-3">
-                                                <div className="text-sm font-semibold text-foreground">
+                                                <div id="recent-searches-heading" className="text-sm font-semibold text-foreground">
                                                     Tìm kiếm gần đây
                                                 </div>
                                                 <button
                                                     onClick={clearRecentSearches}
                                                     className="text-xs text-primary hover:text-primary/80 transition-colors font-medium"
+                                                    aria-label="Xóa tất cả tìm kiếm gần đây"
                                                 >
                                                     Xóa tất cả
                                                 </button>
@@ -483,6 +499,7 @@ export default function SmartSearchBar({
                                                         key={index}
                                                         onClick={() => handleRecentClick(term)}
                                                         className="px-3 py-1.5 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full text-sm text-foreground transition-colors"
+                                                        aria-label={`Tìm kiếm lại: ${term}`}
                                                     >
                                                         {term}
                                                     </button>
@@ -492,8 +509,8 @@ export default function SmartSearchBar({
                                     )}
 
                                     {/* Trending Searches */}
-                                    <div>
-                                        <div className="text-sm font-semibold text-foreground mb-3">
+                                    <div role="group" aria-labelledby="trending-searches-heading">
+                                        <div id="trending-searches-heading" className="text-sm font-semibold text-foreground mb-3">
                                             Tìm kiếm phổ biến
                                         </div>
                                         <div className="flex flex-wrap gap-2">
@@ -502,6 +519,7 @@ export default function SmartSearchBar({
                                                     key={index}
                                                     onClick={() => handleRecentClick(term)}
                                                     className="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-full text-sm text-primary font-medium transition-colors"
+                                                    aria-label={`Tìm kiếm phổ biến: ${term}`}
                                                 >
                                                     {term}
                                                 </button>

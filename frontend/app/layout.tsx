@@ -99,7 +99,7 @@ export default async function RootLayout({
 
   return (
     // Website tiếng Việt
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

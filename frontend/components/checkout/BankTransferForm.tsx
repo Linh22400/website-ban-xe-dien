@@ -156,7 +156,7 @@ export default function BankTransferForm({ orderId, amount, onSuccess }: BankTra
           {/* Amount */}
           <div className="bg-white rounded-lg p-4 border-2 border-blue-200">
             <div className="text-sm text-gray-600 mb-1">Số tiền cần chuyển</div>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-blue-700">
               {formatCurrency(amount)}
             </div>
           </div>
@@ -169,14 +169,15 @@ export default function BankTransferForm({ orderId, amount, onSuccess }: BankTra
             </div>
             <button
               onClick={() => handleCopy(selectedBank.accountNumber, 'account')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              aria-label={copiedField === 'account' ? "Đã sao chép số tài khoản" : "Sao chép số tài khoản"}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
             >
               {copiedField === 'account' ? (
-                <Check className="w-5 h-5 text-green-600" />
+                <Check className="w-5 h-5 text-green-700" />
               ) : (
-                <Copy className="w-5 h-5 text-blue-600" />
+                <Copy className="w-5 h-5 text-blue-700" />
               )}
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium text-blue-900">
                 {copiedField === 'account' ? 'Đã copy' : 'Copy'}
               </span>
             </button>
@@ -280,9 +281,14 @@ export default function BankTransferForm({ orderId, amount, onSuccess }: BankTra
 
         <div>
           <label className="block text-sm font-medium mb-2">
-            Ảnh chụp biên lai chuyển khoản <span className="text-red-500">*</span>
+            Ảnh chụp biên lai chuyển khoản <span className="text-red-600">*</span>
           </label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+          <div 
+            className="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center hover:border-blue-400 transition-colors"
+            role="button"
+            tabIndex={0}
+            aria-label="Tải lên ảnh biên lai chuyển khoản"
+          >
             {previewUrl ? (
               <div className="space-y-3">
                 <img src={previewUrl} alt="Preview" className="max-h-64 mx-auto rounded" />

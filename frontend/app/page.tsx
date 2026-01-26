@@ -23,6 +23,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background">
+      <h1 className="sr-only">Xe Điện Đức Duy Cà Mau - Đại Lý Xe Máy & Xe Đạp Điện TAILG Chính Hãng</h1>
       {/* Hero Banner - Client Load for faster TTFB */}
       <HeroSlider initialSlides={initialSlides} />
 

@@ -342,7 +342,7 @@ export default function QuickFinder({ initialBrands = [] }: { initialBrands?: st
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-primary via-primary to-accent text-black font-black py-4 rounded-xl transition-colors hover:brightness-105 mt-6 flex items-center justify-center gap-2.5 text-base"
+                        className="w-full bg-gradient-to-r from-primary via-primary to-accent text-white font-black py-4 rounded-xl transition-colors hover:brightness-105 mt-6 flex items-center justify-center gap-2.5 text-base shadow-lg shadow-primary/25"
                     >
                         <Search className="w-5 h-5" />
                         <span>Tìm Kiếm Ngay</span>

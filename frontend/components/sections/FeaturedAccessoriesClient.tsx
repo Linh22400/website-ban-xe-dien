@@ -113,6 +113,7 @@ export default function FeaturedAccessoriesClient({ initialAccessories }: Featur
                     <Link
                         href="/accessories"
                         className="group flex items-center gap-3 px-6 py-3 rounded-full border border-cyan-500/20 hover:border-cyan-500/50 bg-background/50 backdrop-blur-sm transition-all hover:bg-cyan-500/5"
+                        aria-label="Xem tất cả phụ kiện"
                     >
                         <span className="font-semibold text-sm">Xem tất cả</span>
                         <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-all">
@@ -169,6 +170,7 @@ export default function FeaturedAccessoriesClient({ initialAccessories }: Featur
                                             : 'bg-white/90 dark:bg-black/90 text-muted-foreground hover:text-red-500 hover:scale-110'
                                             }`}
                                         title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+                                        aria-label={inWishlist ? `Xóa ${accessory.name} khỏi yêu thích` : `Thêm ${accessory.name} vào yêu thích`}
                                     >
                                         <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
                                     </button>
@@ -201,6 +203,7 @@ export default function FeaturedAccessoriesClient({ initialAccessories }: Featur
                                             onClick={(e) => handleAddToCart(accessory, e)}
                                             className="group/btn relative w-10 h-10 rounded-full bg-foreground text-background flex items-center justify-center transition-all hover:w-28 hover:bg-cyan-600 overflow-hidden shadow-lg hover:shadow-cyan-500/25"
                                             title="Thêm vào giỏ hàng"
+                                            aria-label={`Thêm ${accessory.name} vào giỏ hàng`}
                                         >
                                             <div className="absolute inset-0 flex items-center justify-center transition-transform group-hover/btn:-translate-x-full">
                                                 <ShoppingCart className="w-5 h-5" />

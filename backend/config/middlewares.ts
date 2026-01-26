@@ -45,7 +45,15 @@ export default ({ env }) => [
       textLimit: '1mb',
     },
   },
-  'strapi::session',
+  {
+    name: 'strapi::session',
+    config: {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      key: 'strapi.sid',
+      secure: process.env.NODE_ENV === 'production',
+    },
+  },
   'strapi::favicon',
   'strapi::public',
 ];

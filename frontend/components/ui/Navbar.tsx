@@ -22,7 +22,12 @@ import {
     User,
     ChevronDown,
     Zap,
-    ArrowRight
+    ArrowRight,
+    Truck,
+    Info,
+    MessageCircle,
+    Gift,
+    ShieldCheck
 } from "lucide-react";
 
 interface NavbarItem {
@@ -293,378 +298,439 @@ export default function Navbar() {
                 style={{ willChange: 'transform' }}
             >
                 <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-                    {/* Top Bar - Hotline & Quick Links */}
-                    <div className={`hidden lg:flex items-center justify-between py-2 border-b border-white/5 transition-all duration-300 ${isScrolled ? "opacity-0 h-0 py-0 overflow-hidden" : "opacity-100"
-                        }`}>
-                        <div className="flex items-center gap-3 xl:gap-6 text-xs">
-                            <a
-                                href="tel:1900xxxx"
-                                className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                <Phone className="w-3.5 h-3.5" />
-                                <span className="font-semibold">Hotline: 1900 XXXX</span>
-                            </a>
-                            <Link
-                                href="/tracking"
-                                className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                Tra Cứu Đơn Hàng
-                            </Link>
-                            <Link
-                                href="/promotions"
-                                className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                Khuyến Mãi Hot
-                            </Link>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <Link href="/about" className="hover:text-primary transition-colors">
-                                Về Chúng Tôi
-                            </Link>
-                            <Link href="/contact" className="hover:text-primary transition-colors">
-                                Liên Hệ
-                            </Link>
-                        </div>
-                    </div>
+
 
                     {/* Main Navbar */}
-                    <div className="flex items-center justify-between py-4">
-                        {/* Logo */}
-                        <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
-                            <div className="relative w-10 h-10 sm:w-12 sm:h-12 transform group-hover:scale-105 transition-transform flex-shrink-0">
-                                <Image
-                                    src="/logo(Ducduy).jpg"
-                                    alt="Đức Duy Logo"
-                                    fill
-                                    className="object-contain"
-                                    priority
-                                />
-                            </div>
-                            <div className="hidden sm:block flex-shrink-0">
-                                <div className="text-base sm:text-lg md:text-xl font-black text-[#0D5E3A] dark:text-[#10B981] whitespace-nowrap">
-                                    XE ĐIỆN ĐỨC DUY
+                    <div className="flex flex-col w-full">
+                        {/* Top Row: Logo & Actions */}
+                        <div className="flex items-center justify-between py-4 w-full">
+                            {/* Logo */}
+                            <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+                                <div className="relative w-10 h-10 sm:w-12 sm:h-12 transform group-hover:scale-105 transition-transform flex-shrink-0">
+                                    <Image
+                                        src="/logo(Ducduy).jpg"
+                                        alt="Đức Duy Logo"
+                                        fill
+                                        className="object-contain"
+                                        priority
+                                    />
                                 </div>
-                                <div className="text-[9px] sm:text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold whitespace-nowrap">
-                                    Chính Hãng TAILG - Uy Tín
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Desktop Navigation */}
-                        <div className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8">
-                            {/* Motorcycles Dropdown */}
-                            <div className="relative group">
-                                <Link
-                                    href="/cars?type=motorcycle"
-                                    className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
-                                >
-                                    Xe Máy Điện
-                                    <ChevronDown className="w-4 h-4" />
-                                </Link>
-                                <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
-                                    <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                                        {/* Grid Products */}
-                                        <div className="grid grid-cols-2 gap-2 p-3">
-                                            {motorcycles.filter(item => !item.isViewAll).map((item) => (
-                                                <Link
-                                                    key={item.href}
-                                                    href={item.href}
-                                                    className="group/item flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
-                                                >
-                                                    {/* Image */}
-                                                    <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
-                                                        <Image
-                                                            src={item.image || '/images/placeholder-motorcycle.svg'}
-                                                            alt={item.label}
-                                                            fill
-                                                            className="object-cover group-hover/item:scale-110 transition-transform duration-300"
-                                                        />
-                                                        {item.product && (
-                                                            <div className="absolute top-1 right-1">
-                                                                <ProductBadge product={item.product} size="sm" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {/* Info */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <h4 className="font-bold text-sm text-foreground group-hover/item:text-primary transition-colors line-clamp-2 mb-1">
-                                                            {item.label}
-                                                        </h4>
-                                                        <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
-                                                            {item.desc}
-                                                        </p>
-                                                        <div className="flex flex-col gap-1">
-                                                            {item.originalPrice && item.discount ? (
-                                                                <>
-                                                                    <span className="text-xs text-muted-foreground line-through">{item.originalPrice}</span>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <span className="text-sm font-bold text-primary">{item.price}</span>
-                                                                        <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded">-{Math.round(item.discount)}%</span>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <span className="text-sm font-bold text-primary">{item.price}</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                        {/* View All Button */}
-                                        <Link
-                                            href="/cars?type=motorcycle"
-                                            className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
-                                        >
-                                            <span>Xem tất cả xe máy điện</span>
-                                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                        </Link>
+                                <div className="hidden sm:block flex-shrink-0">
+                                    <div className="text-base sm:text-lg md:text-xl font-black text-[#0D5E3A] dark:text-[#10B981] whitespace-nowrap">
+                                        XE ĐIỆN ĐỨC DUY
+                                    </div>
+                                    <div className="text-[9px] sm:text-[10px] -mt-1 text-[#C81E1E] dark:text-[#EF4444] font-semibold whitespace-nowrap">
+                                        Chính Hãng TAILG - Uy Tín
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Bicycles Dropdown */}
-                            <div className="relative group">
-                                <Link
-                                    href="/cars?type=bicycle"
-                                    className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
-                                >
-                                    Xe Đạp Điện
-                                    <ChevronDown className="w-4 h-4" />
-                                </Link>
-                                <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
-                                    <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                                        {/* Grid Products */}
-                                        <div className="grid grid-cols-2 gap-2 p-3">
-                                            {bicycles.filter(item => !item.isViewAll).map((item) => (
-                                                <Link
-                                                    key={item.href}
-                                                    href={item.href}
-                                                    className="group/item flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
-                                                >
-                                                    {/* Image */}
-                                                    <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
-                                                        <Image
-                                                            src={item.image || '/images/placeholder-bicycle.svg'}
-                                                            alt={item.label}
-                                                            fill
-                                                            className="object-cover group-hover/item:scale-110 transition-transform duration-300"
-                                                        />
-                                                        {item.product && (
-                                                            <div className="absolute top-1 right-1">
-                                                                <ProductBadge product={item.product} size="sm" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {/* Info */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <h4 className="font-bold text-sm text-foreground group-hover/item:text-primary transition-colors line-clamp-2 mb-1">
-                                                            {item.label}
-                                                        </h4>
-                                                        <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
-                                                            {item.desc}
-                                                        </p>
-                                                        <div className="flex flex-col gap-1">
-                                                            {item.originalPrice && item.discount ? (
-                                                                <>
-                                                                    <span className="text-xs text-muted-foreground line-through">{item.originalPrice}</span>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <span className="text-sm font-bold text-primary">{item.price}</span>
-                                                                        <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded">-{Math.round(item.discount)}%</span>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <span className="text-sm font-bold text-primary">{item.price}</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                        {/* View All Button */}
-                                        <Link
-                                            href="/cars?type=bicycle"
-                                            className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
-                                        >
-                                            <span>Xem tất cả xe đạp điện</span>
-                                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Accessories Dropdown */}
-                            <div className="relative group">
-                                <Link
-                                    href="/accessories"
-                                    className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
-                                >
-                                    Phụ Kiện
-                                    <ChevronDown className="w-4 h-4" />
-                                </Link>
-                                <div className="absolute top-full left-0 pt-2 w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
-                                    <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                                        {/* Grid Products */}
-                                        <div className="grid grid-cols-2 gap-1 p-2">
-                                            {accessories.filter(item => !item.isViewAll).map((item) => (
-                                                <Link
-                                                    key={item.href}
-                                                    href={item.href}
-                                                    className="group/item flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
-                                                >
-                                                    {/* Image */}
-                                                    <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
-                                                        <Image
-                                                            src={item.image || '/images/placeholder.svg'}
-                                                            alt={item.label}
-                                                            fill
-                                                            className="object-cover group-hover/item:scale-110 transition-transform duration-300"
-                                                        />
-                                                        {item.product && (
-                                                            <div className="absolute top-1 left-1">
-                                                                <ProductBadge product={item.product} size="sm" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {/* Info */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <h4 className="font-bold text-sm text-foreground group-hover/item:text-primary transition-colors line-clamp-2 mb-1">
-                                                            {item.label}
-                                                        </h4>
-                                                        <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
-                                                            {item.desc}
-                                                        </p>
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-sm font-bold text-primary">{item.price}</span>
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                        {/* View All Button */}
-                                        <Link
-                                            href="/accessories"
-                                            className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
-                                        >
-                                            <span>Xem tất cả phụ kiện</span>
-                                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Link
-                                href="/compare"
-                                className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
-                            >
-                                So Sánh
                             </Link>
-                            <Link
-                                href="/blog"
-                                className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
-                            >
-                                Tin Tức
-                            </Link>
+
+                            {/* Promotion Marquee Banner - Modern Slide */}
+                            <div className="hidden lg:flex flex-1 mx-6 xl:mx-12 overflow-hidden">
+                                <div className="relative flex w-full max-w-2xl mx-auto h-9 bg-secondary/50 backdrop-blur-sm rounded-full items-center overflow-hidden">
+                                    <div className="flex whitespace-nowrap animate-marquee hover:[animation-play-state:paused]">
+                                        {/* Original Set */}
+                                        <div className="flex items-center gap-8 px-4">
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Xe Điện Đức Duy - Phân phối chính hãng Xe Máy Điện & Xe Đạp Điện TAILG
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-foreground/30"></span>
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Top 1 Đại lý Xe Điện uy tín - Giá tốt nhất thị trường - Trả góp 0%
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-foreground/30"></span>
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Bảo hành chính hãng 3 năm - Cứu hộ 24/7 - Giao hàng toàn quốc
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-foreground/30"></span>
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Đa dạng mẫu mã - Mới nhất 2026 - Cam kết chất lượng 100%
+                                            </span>
+                                        </div>
+                                        {/* Duplicate Set for Seamless Loop */}
+                                        <div className="flex items-center gap-8 px-4">
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Xe Điện Đức Duy - Phân phối chính hãng Xe Máy Điện & Xe Đạp Điện TAILG
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-foreground/30"></span>
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Top 1 Đại lý Xe Điện uy tín - Giá tốt nhất thị trường - Trả góp 0%
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-foreground/30"></span>
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Bảo hành chính hãng 3 năm - Cứu hộ 24/7 - Giao hàng toàn quốc
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-foreground/30"></span>
+                                            <span className="text-sm font-medium text-foreground/90">
+                                                Đa dạng mẫu mã - Mới nhất 2026 - Cam kết chất lượng 100%
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {/* Fade Masks */}
+                                    <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background/80 to-transparent z-10 pointer-events-none"></div>
+                                    <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background/80 to-transparent z-10 pointer-events-none"></div>
+                                </div>
+                            </div>
+
+                            {/* Right Side Actions */}
+                            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+                                {/* Smart Search Toggle - Desktop & Mobile */}
+                                <button
+                                    onClick={() => setShowSmartSearch(true)}
+                                    className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                                    aria-label="Tìm kiếm"
+                                >
+                                    <Search className="w-5 h-5" />
+                                </button>
+
+                                {/* Wishlist */}
+                                <Link
+                                    href="/wishlist"
+                                    className="hidden md:flex relative p-2 text-muted-foreground hover:text-primary transition-colors group"
+                                    aria-label="Wishlist"
+                                >
+                                    <Heart className="w-5 h-5 group-hover:fill-primary transition-all" />
+                                    {wishlistCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-foreground text-xs font-bold rounded-full flex items-center justify-center px-1">
+                                            {wishlistCount}
+                                        </span>
+                                    )}
+                                </Link>
+
+                                {/* Theme Toggle */}
+                                <ThemeToggle />
+
+                                {/* Notifications */}
+                                <NotificationBell />
+
+                                {/* Shopping Cart */}
+                                <Link
+                                    href="/cart"
+                                    className="relative p-2 text-muted-foreground hover:text-primary transition-colors group"
+                                    aria-label="Shopping Cart"
+                                >
+                                    <ShoppingCart className="w-5 h-5 group-hover:scale-105 transition-transform"
+                                        style={{ willChange: 'transform' }} />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-primary text-black text-xs font-bold rounded-full flex items-center justify-center px-1">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </Link>
+
+                                {/* Account */}
+                                {isAuthenticated ? (
+                                    <div className="hidden md:block relative group">
+                                        <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
+                                            <User className="w-4 h-4" />
+                                            {user?.username}
+                                        </button>
+                                        <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-card/95 border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                                            <Link
+                                                href="/account"
+                                                className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors rounded-t-xl"
+                                            >
+                                                Tài Khoản
+                                            </Link>
+                                            <Link
+                                                href="/account/orders"
+                                                className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors"
+                                            >
+                                                Đơn Hàng
+                                            </Link>
+                                            <button
+                                                onClick={logout}
+                                                className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors rounded-b-xl"
+                                            >
+                                                Đăng Xuất
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="hidden md:flex items-center gap-2">
+                                        <Link
+                                            href="/login"
+                                            className="px-3 xl:px-4 py-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                        >
+                                            Đăng Nhập
+                                        </Link>
+                                        <Link
+                                            href="/register"
+                                            className="px-4 xl:px-6 py-2 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-shadow text-sm xl:text-base whitespace-nowrap"
+                                        >
+                                            Đăng Ký
+                                        </Link>
+                                    </div>
+                                )}
+
+                                {/* Mobile Menu Button */}
+                                <button
+                                    onClick={() => setIsOpen(!isOpen)}
+                                    className="lg:hidden p-2 text-foreground"
+                                    aria-label="Toggle menu"
+                                >
+                                    {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Right Side Actions */}
-                        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-                            {/* Smart Search Toggle - Desktop & Mobile */}
-                            <button
-                                onClick={() => setShowSmartSearch(true)}
-                                className="p-2 text-muted-foreground hover:text-primary transition-colors"
-                                aria-label="Tìm kiếm"
-                            >
-                                <Search className="w-5 h-5" />
-                            </button>
-
-                            {/* Wishlist */}
-                            <Link
-                                href="/wishlist"
-                                className="hidden md:flex relative p-2 text-muted-foreground hover:text-primary transition-colors group"
-                                aria-label="Wishlist"
-                            >
-                                <Heart className="w-5 h-5 group-hover:fill-primary transition-all" />
-                                {wishlistCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-foreground text-xs font-bold rounded-full flex items-center justify-center px-1">
-                                        {wishlistCount}
-                                    </span>
-                                )}
-                            </Link>
-
-                            {/* Theme Toggle */}
-                            <ThemeToggle />
-
-                            {/* Notifications */}
-                            <NotificationBell />
-
-                            {/* Shopping Cart */}
-                            <Link
-                                href="/cart"
-                                className="relative p-2 text-muted-foreground hover:text-primary transition-colors group"
-                                aria-label="Shopping Cart"
-                            >
-                                <ShoppingCart className="w-5 h-5 group-hover:scale-105 transition-transform"
-                                    style={{ willChange: 'transform' }} />
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-primary text-black text-xs font-bold rounded-full flex items-center justify-center px-1">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </Link>
-
-                            {/* Account */}
-                            {isAuthenticated ? (
-                                <div className="hidden md:block relative group">
-                                    <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                                        <User className="w-4 h-4" />
-                                        {user?.username}
-                                    </button>
-                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-card/95 border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                                        <Link
-                                            href="/account"
-                                            className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors rounded-t-xl"
-                                        >
-                                            Tài Khoản
-                                        </Link>
-                                        <Link
-                                            href="/account/orders"
-                                            className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors"
-                                        >
-                                            Đơn Hàng
-                                        </Link>
-                                        <button
-                                            onClick={logout}
-                                            className="w-full text-left px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-primary transition-colors rounded-b-xl"
-                                        >
-                                            Đăng Xuất
-                                        </button>
+                        {/* Bottom Row: Desktop Navigation */}
+                        <div className="hidden lg:flex items-center justify-center w-full pb-4">
+                            <div className="flex items-center gap-4 xl:gap-6">
+                                <Link
+                                    href="/"
+                                    className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    Trang Chủ
+                                </Link>
+                                {/* Motorcycles Dropdown */}
+                                <div className="relative group">
+                                    <Link
+                                        href="/cars?type=motorcycle"
+                                        className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
+                                    >
+                                        Xe Máy Điện
+                                        <ChevronDown className="w-4 h-4" />
+                                    </Link>
+                                    <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                                        <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                                            {/* Grid Products */}
+                                            <div className="grid grid-cols-2 gap-2 p-3">
+                                                {motorcycles.filter(item => !item.isViewAll).map((item) => (
+                                                    <Link
+                                                        key={item.href}
+                                                        href={item.href}
+                                                        className="group/item flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
+                                                    >
+                                                        {/* Image */}
+                                                        <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
+                                                            <Image
+                                                                src={item.image || '/images/placeholder-motorcycle.svg'}
+                                                                alt={item.label}
+                                                                fill
+                                                                className="object-cover group-hover/item:scale-110 transition-transform duration-300"
+                                                            />
+                                                            {item.product && (
+                                                                <div className="absolute top-1 right-1">
+                                                                    <ProductBadge product={item.product} size="sm" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {/* Info */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className="font-bold text-sm text-foreground group-hover/item:text-primary transition-colors line-clamp-2 mb-1">
+                                                                {item.label}
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
+                                                                {item.desc}
+                                                            </p>
+                                                            <div className="flex flex-col gap-1">
+                                                                {item.originalPrice && item.discount ? (
+                                                                    <>
+                                                                        <span className="text-xs text-muted-foreground line-through">{item.originalPrice}</span>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                                            <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded">-{Math.round(item.discount)}%</span>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                            {/* View All Button */}
+                                            <Link
+                                                href="/cars?type=motorcycle"
+                                                className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
+                                            >
+                                                <span>Xem tất cả xe máy điện</span>
+                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="hidden md:flex items-center gap-2">
-                                    <Link
-                                        href="/login"
-                                        className="px-3 xl:px-4 py-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
-                                    >
-                                        Đăng Nhập
-                                    </Link>
-                                    <Link
-                                        href="/register"
-                                        className="px-4 xl:px-6 py-2 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-shadow text-sm xl:text-base whitespace-nowrap"
-                                    >
-                                        Đăng Ký
-                                    </Link>
-                                </div>
-                            )}
 
-                            {/* Mobile Menu Button */}
-                            <button
-                                onClick={() => setIsOpen(!isOpen)}
-                                className="lg:hidden p-2 text-foreground"
-                                aria-label="Toggle menu"
-                            >
-                                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                            </button>
+                                {/* Bicycles Dropdown */}
+                                <div className="relative group">
+                                    <Link
+                                        href="/cars?type=bicycle"
+                                        className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
+                                    >
+                                        Xe Đạp Điện
+                                        <ChevronDown className="w-4 h-4" />
+                                    </Link>
+                                    <div className="absolute top-full left-0 pt-2 w-[640px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                                        <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                                            {/* Grid Products */}
+                                            <div className="grid grid-cols-2 gap-2 p-3">
+                                                {bicycles.filter(item => !item.isViewAll).map((item) => (
+                                                    <Link
+                                                        key={item.href}
+                                                        href={item.href}
+                                                        className="group/item flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
+                                                    >
+                                                        {/* Image */}
+                                                        <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
+                                                            <Image
+                                                                src={item.image || '/images/placeholder-bicycle.svg'}
+                                                                alt={item.label}
+                                                                fill
+                                                                className="object-cover group-hover/item:scale-110 transition-transform duration-300"
+                                                            />
+                                                            {item.product && (
+                                                                <div className="absolute top-1 right-1">
+                                                                    <ProductBadge product={item.product} size="sm" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {/* Info */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className="font-bold text-sm text-foreground group-hover/item:text-primary transition-colors line-clamp-2 mb-1">
+                                                                {item.label}
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
+                                                                {item.desc}
+                                                            </p>
+                                                            <div className="flex flex-col gap-1">
+                                                                {item.originalPrice && item.discount ? (
+                                                                    <>
+                                                                        <span className="text-xs text-muted-foreground line-through">{item.originalPrice}</span>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                                            <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded">-{Math.round(item.discount)}%</span>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                            {/* View All Button */}
+                                            <Link
+                                                href="/cars?type=bicycle"
+                                                className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
+                                            >
+                                                <span>Xem tất cả xe đạp điện</span>
+                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Accessories Dropdown */}
+                                <div className="relative group">
+                                    <Link
+                                        href="/accessories"
+                                        className="flex items-center gap-1 text-sm xl:text-base font-semibold text-muted-foreground group-hover:text-primary transition-colors py-2 whitespace-nowrap"
+                                    >
+                                        Phụ Kiện
+                                        <ChevronDown className="w-4 h-4" />
+                                    </Link>
+                                    <div className="absolute top-full left-0 pt-2 w-[520px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out">
+                                        <div className="bg-white dark:bg-card/98 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                                            {/* Grid Products */}
+                                            <div className="grid grid-cols-2 gap-1 p-2">
+                                                {accessories.filter(item => !item.isViewAll).map((item) => (
+                                                    <Link
+                                                        key={item.href}
+                                                        href={item.href}
+                                                        className="group/item flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/20 hover:shadow-md"
+                                                    >
+                                                        {/* Image */}
+                                                        <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/5">
+                                                            <Image
+                                                                src={item.image || '/images/placeholder.svg'}
+                                                                alt={item.label}
+                                                                fill
+                                                                className="object-cover group-hover/item:scale-110 transition-transform duration-300"
+                                                            />
+                                                            {item.product && (
+                                                                <div className="absolute top-1 left-1">
+                                                                    <ProductBadge product={item.product} size="sm" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {/* Info */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className="font-bold text-sm text-foreground group-hover/item:text-primary transition-colors line-clamp-2 mb-1">
+                                                                {item.label}
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
+                                                                {item.desc}
+                                                            </p>
+                                                            <div className="flex items-center justify-between">
+                                                                <span className="text-sm font-bold text-primary">{item.price}</span>
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                            {/* View All Button */}
+                                            <Link
+                                                href="/accessories"
+                                                className="flex items-center justify-center gap-2 py-3 border-t border-gray-200 dark:border-white/10 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10 hover:to-accent/10 text-primary font-bold text-sm transition-all group/btn"
+                                            >
+                                                <span>Xem tất cả phụ kiện</span>
+                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Link
+                                    href="/compare"
+                                    className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    So Sánh
+                                </Link>
+                                <Link
+                                    href="/blog"
+                                    className="text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    Tin Tức
+                                </Link>
+                                <Link
+                                    href="/promotions"
+                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    <Gift className="w-4 h-4" />
+                                    Khuyến Mãi Hot
+                                </Link>
+                                <Link
+                                    href="/tracking"
+                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    <Truck className="w-4 h-4" />
+                                    Tra Cứu Đơn Hàng
+                                </Link>
+                                <Link
+                                    href="/about"
+                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    <Info className="w-4 h-4" />
+                                    Về Chúng Tôi
+                                </Link>
+                                <Link
+                                    href="/contact"
+                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    <MessageCircle className="w-4 h-4" />
+                                    Liên Hệ
+                                </Link>
+                                <a
+                                    href="tel:1900xxxx"
+                                    className="flex items-center gap-2 text-sm xl:text-base font-semibold text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                                >
+                                    <Phone className="w-4 h-4" />
+                                    Hotline: 1900 XXXX
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -679,6 +745,13 @@ export default function Navbar() {
                 <div className="flex flex-col p-6 space-y-6 min-h-full pb-20">
                     {/* Main Categories - Rich Accordion Style */}
                     <div className="space-y-2">
+                        <Link
+                            href="/"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center justify-between w-full py-3 text-lg font-bold text-foreground hover:text-primary transition-colors border-b border-white/10"
+                        >
+                            <span>Trang Chủ</span>
+                        </Link>
                         {/* Motorcycles Config */}
                         <div className="border-b border-white/10 pb-2">
                             <button

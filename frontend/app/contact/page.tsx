@@ -57,13 +57,13 @@ export default function ContactPage() {
                         <div className="w-20 h-20 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
                             ✓
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Đã Nhận Yêu Cầu!</h3>
+                        <h3 className="text-2xl font-bold text-foreground mb-2">Đã Nhận Yêu Cầu!</h3>
                         <p className="text-muted-foreground">
                             Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận lịch hẹn.
                         </p>
                         <button
                             onClick={() => setStatus("idle")}
-                            className="mt-8 px-6 py-2 text-primary hover:text-white transition-colors"
+                            className="mt-8 px-6 py-2 text-primary hover:text-primary/80 transition-colors"
                         >
                             Gửi yêu cầu khác
                         </button>
@@ -73,13 +73,13 @@ export default function ContactPage() {
                         <div className="w-20 h-20 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
                             ✕
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Có Lỗi Xảy Ra!</h3>
+                        <h3 className="text-2xl font-bold text-foreground mb-2">Có Lỗi Xảy Ra!</h3>
                         <p className="text-muted-foreground">
                             {errorMessage || "Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline."}
                         </p>
                         <button
                             onClick={() => setStatus("idle")}
-                            className="mt-8 px-6 py-2 text-primary hover:text-white transition-colors"
+                            className="mt-8 px-6 py-2 text-primary hover:text-primary/80 transition-colors"
                         >
                             Thử lại
                         </button>
@@ -92,7 +92,7 @@ export default function ContactPage() {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
                                     placeholder="Nguyễn Văn A"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -103,7 +103,7 @@ export default function ContactPage() {
                                 <input
                                     type="tel"
                                     required
-                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
                                     placeholder="0901 234 567"
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -116,7 +116,7 @@ export default function ContactPage() {
                             <input
                                 type="email"
                                 required
-                                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
+                                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
                                 placeholder="email@example.com"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -127,7 +127,7 @@ export default function ContactPage() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-muted-foreground">Loại Yêu Cầu</label>
                                 <select
-                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                                     value={formData.type}
                                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                 >
@@ -139,7 +139,7 @@ export default function ContactPage() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-muted-foreground">Sản Phẩm Quan Tâm</label>
                                 <select
-                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
                                     value={formData.model}
                                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                                 >
@@ -155,7 +155,7 @@ export default function ContactPage() {
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-muted-foreground">Lời Nhắn (Tùy chọn)</label>
                             <textarea
-                                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors min-h-[120px]"
+                                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors min-h-[120px]"
                                 placeholder="Yêu cầu hoặc câu hỏi cụ thể..."
                                 value={formData.message}
                                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -165,7 +165,7 @@ export default function ContactPage() {
                         <button
                             type="submit"
                             disabled={status === "submitting"}
-                            className="w-full py-4 bg-primary text-black font-bold rounded-xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+                            className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
                         >
                             {status === "submitting" ? "Đang Gửi..." : "Gửi Yêu Cầu"}
                         </button>

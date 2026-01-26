@@ -16,6 +16,8 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 import JsonLd from "@/components/seo/JsonLd";
 
+import { getNavbarData } from "@/lib/navbar-data";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -88,11 +90,13 @@ export const viewport = {
 };
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const navbarData = await getNavbarData();
+
   return (
     // Website tiếng Việt
     <html lang="vi">
@@ -107,7 +111,7 @@ export default function RootLayout({
                 <CompareProvider>
                   <JsonLd />
                   <KeepAliveManager />
-                  <Navbar />
+                  <Navbar initialData={navbarData} />
                   <MainLayout>
                     {children}
                   </MainLayout>

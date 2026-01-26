@@ -1,33 +1,21 @@
-"use client";
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Calendar, Clock, ChevronRight } from 'lucide-react';
-import { getArticles, Article } from '@/lib/api';
+import { ArrowRight, Calendar, ChevronRight } from 'lucide-react';
+import { getArticles } from '@/lib/api';
 import Image from 'next/image';
 
-export default function LatestNews() {
-    const [articles, setArticles] = useState<Article[]>([]);
-    const [loading, setLoading] = useState(true);
+export const revalidate = 3600; // 1 hour ISR
 
-    useEffect(() => {
-        const fetchNews = async () => {
-            try {
-                // Fetch articles using existing API
-                // Assuming getArticles() sorts by date desc by default
-                const allArticles = await getArticles();
-                setArticles(allArticles.slice(0, 3)); // Take top 3
-            } catch (error) {
-                console.error("Failed to fetch news", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+export default async function LatestNews() {
+    let articles = [];
+    try {
+        const allArticles = await getArticles();
+        articles = allArticles.slice(0, 3);
+    } catch (error) {
+        console.error("Failed to fetch news", error);
+        return null;
+    }
 
-        fetchNews();
-    }, []);
-
-    if (!loading && articles.length === 0) {
+    if (articles.length === 0) {
         return null;
     }
 
@@ -67,69 +55,54 @@ export default function LatestNews() {
 
                 {/* Articles Grid */}
                 <div className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 md:gap-8 pb-8 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-                    {loading ? (
-                        // Loading Skeletons
-                        [1, 2, 3].map((i) => (
-                            <div key={i} className="flex-shrink-0 w-[85vw] md:w-auto snap-center animate-pulse">
-                                <div className="bg-muted aspect-[16/9] rounded-2xl mb-4"></div>
-                                <div className="h-4 bg-muted w-1/3 mb-3 rounded"></div>
-                                <div className="h-6 bg-muted w-3/4 mb-3 rounded"></div>
-                                <div className="h-20 bg-muted w-full rounded"></div>
+                    {articles.map((article, index) => (
+                        <Link
+                            href={`/blog/${article.slug}`}
+                            key={article.id}
+                            className="flex-shrink-0 w-[85vw] md:w-auto snap-center group flex flex-col h-full bg-card rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 border border-border/50 hover:border-orange-500/30 hover:-translate-y-2"
+                        >
+                            {/* Image Container */}
+                            <div className="relative aspect-[16/10] overflow-hidden">
+                                <Image
+                                    src={article.coverImage}
+                                    alt={article.title}
+                                    fill
+                                    sizes="(min-width: 768px) 33vw, 85vw"
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+
+                                {/* Category Badge */}
+                                {article.category && (
+                                    <span className="absolute top-4 left-4 bg-white/90 dark:bg-black/80 backdrop-blur-md text-orange-600 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                                        {article.category.name}
+                                    </span>
+                                )}
                             </div>
-                        ))
-                    ) : (
-                        articles.map((article, index) => (
-                            <Link
-                                href={`/blog/${article.slug}`}
-                                key={article.id}
-                                className="flex-shrink-0 w-[85vw] md:w-auto snap-center group flex flex-col h-full bg-card rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 border border-border/50 hover:border-orange-500/30 hover:-translate-y-2"
-                                style={{
-                                    transitionDelay: `${index * 50}ms`
-                                }}
-                            >
-                                {/* Image Container */}
-                                <div className="relative aspect-[16/10] overflow-hidden">
-                                    <Image
-                                        src={article.coverImage}
-                                        alt={article.title}
-                                        fill
-                                        sizes="(min-width: 768px) 33vw, 85vw"
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
 
-                                    {/* Category Badge */}
-                                    {article.category && (
-                                        <span className="absolute top-4 left-4 bg-white/90 dark:bg-black/80 backdrop-blur-md text-orange-600 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                                            {article.category.name}
-                                        </span>
-                                    )}
+                            {/* Content */}
+                            <div className="flex flex-col flex-grow p-6 md:p-8 relative">
+                                {/* Date */}
+                                <div className="flex items-center gap-2 text-xs font-bold text-orange-500 mb-3 uppercase tracking-wide">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    {article.publishedDate ? new Date(article.publishedDate).toLocaleDateString('vi-VN') : 'Mới nhất'}
                                 </div>
 
-                                {/* Content */}
-                                <div className="flex flex-col flex-grow p-6 md:p-8 relative">
-                                    {/* Date */}
-                                    <div className="flex items-center gap-2 text-xs font-bold text-orange-500 mb-3 uppercase tracking-wide">
-                                        <Calendar className="w-3.5 h-3.5" />
-                                        {article.publishedDate ? new Date(article.publishedDate).toLocaleDateString('vi-VN') : 'Mới nhất'}
-                                    </div>
+                                <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2">
+                                    {article.title}
+                                </h3>
 
-                                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2">
-                                        {article.title}
-                                    </h3>
+                                <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
+                                    {article.excerpt}
+                                </p>
 
-                                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
-                                        {article.excerpt}
-                                    </p>
-
-                                    <div className="flex items-center text-foreground font-bold text-sm mt-auto group/link">
-                                        <span className="border-b-2 border-orange-500/30 group-hover:border-orange-500 transition-all pb-0.5">Đọc tiếp bài viết</span>
-                                        <ChevronRight className="w-4 h-4 ml-1 text-orange-500 group-hover:translate-x-1 transition-transform" />
-                                    </div>
+                                <div className="flex items-center text-foreground font-bold text-sm mt-auto group/link">
+                                    <span className="border-b-2 border-orange-500/30 group-hover:border-orange-500 transition-all pb-0.5">Đọc tiếp bài viết</span>
+                                    <ChevronRight className="w-4 h-4 ml-1 text-orange-500 group-hover:translate-x-1 transition-transform" />
                                 </div>
-                            </Link>
-                        ))
-                    )}
+                            </div>
+                        </Link>
+                    ))}
                 </div>
             </div>
         </section>

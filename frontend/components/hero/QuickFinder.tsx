@@ -7,7 +7,7 @@ import CustomSelect from "../ui/CustomSelect";
 import { useTheme, ThemeText } from "@/components/common/ThemeText";
 import { getCars } from "@/lib/api";
 
-export default function QuickFinder() {
+export default function QuickFinder({ initialBrands = [] }: { initialBrands?: string[] }) {
     const router = useRouter();
     const isDark = useTheme();
     const [type, setType] = useState("");
@@ -23,9 +23,11 @@ export default function QuickFinder() {
         { value: "motorcycle", label: "Xe Máy Điện" },
     ];
 
-    const [availableBrands, setAvailableBrands] = useState<string[]>([]);
+    const [availableBrands, setAvailableBrands] = useState<string[]>(initialBrands);
 
     useEffect(() => {
+        if (initialBrands.length > 0) return;
+
         let cancelled = false;
         (async () => {
             try {
@@ -53,7 +55,7 @@ export default function QuickFinder() {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [initialBrands.length]);
 
     const brandOptions = useMemo(() => {
         const normalized = Array.from(

@@ -487,7 +487,7 @@ export async function getPromotions(): Promise<Promotion[]> {
         // Let's stick to explicit populate but make sure image is correct.
         // Actually, let's use populate=* to be safe about images, as getHeroSlides uses it successfully.
         const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate=*&sort=createdAt:desc`;
-        const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(3600), 3600);
 
         if (!data || !data.data) return [];
 
@@ -535,7 +535,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
         // Use populate=image to fetch the image relation. 
         // In Strapi v5, this should return the image object directly or as a document.
         const url = `${STRAPI_URL}/api/hero-slides?populate=image&sort=order:asc`;
-        const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(3600), 3600);
 
         if (!data || !data.data) return [];
 
@@ -682,7 +682,7 @@ export async function getCarsWithMeta(params: GetCarsParams = {}): Promise<GetCa
         const url = `${STRAPI_URL}/api/car-models?${queryString}`;
 
         const response = await fetch(url, {
-            ...getDefaultFetchOptions(60)
+            ...getDefaultFetchOptions(3600)
         });
 
         if (!response.ok) {
@@ -734,7 +734,7 @@ export async function getCarById(documentId: string): Promise<Car | undefined> {
         // Use filters instead of direct ID endpoint to avoid 404 if findOne permission is missing
         const response = await fetch(
             `${STRAPI_URL}/api/car-models/${documentId}?populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=warranty&populate[4]=options`,
-            { ...getDefaultFetchOptions(60) }
+            { ...getDefaultFetchOptions(3600) }
         );
 
         if (!response.ok) {
@@ -780,11 +780,31 @@ export async function getCarBySlug(slug: string): Promise<Car | undefined> {
     }
 }
 
+export async function getBrands(): Promise<string[]> {
+    try {
+        const cars = await getCars({
+            pageSize: 50,
+            sort: 'createdAt:desc',
+            fields: ['brand'],
+            populate: []
+        });
+        const brandSet = new Set(
+            (cars || [])
+                .map((c: any) => (c?.brand ? String(c.brand).trim() : ''))
+                .filter(Boolean)
+        );
+        return Array.from(brandSet);
+    } catch (error) {
+        console.error("Error fetching brands:", error);
+        return [];
+    }
+}
+
 export async function getRelatedCars(currentSlug: string, type: string, limit: number = 3): Promise<Car[]> {
     try {
         const response = await fetch(
             `${STRAPI_URL}/api/car-models?filters[slug][$ne]=${currentSlug}&filters[type][$eq]=${type}&pagination[limit]=${limit}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=options`,
-            { ...getDefaultFetchOptions(60) }
+            { ...getDefaultFetchOptions(3600) }
         );
 
         if (!response.ok) {
@@ -808,7 +828,7 @@ export async function getCarsBySlugs(slugs: string[]): Promise<Car[]> {
 
         const response = await fetch(
             `${STRAPI_URL}/api/car-models?${slugFilters}&populate[0]=thumbnail&populate[1]=model3D&populate[2]=colors.images&populate[3]=options`,
-            { ...getDefaultFetchOptions(60) }
+            { ...getDefaultFetchOptions(3600) }
         );
 
         if (!response.ok) {
@@ -1121,7 +1141,7 @@ export async function getAccessories(category?: string): Promise<Accessory[]> {
         const url = `${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc`;
 
         if (DEBUG_LOG) console.log("Fetching accessories from:", url);
-        const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
+        const data = await cachedFetch<any>(url, getDefaultFetchOptions(3600), 3600);
 
         if (!data || !data.data) return [];
 

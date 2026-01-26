@@ -6,6 +6,7 @@ import CategoryExplorer from "@/components/sections/CategoryExplorer";
 import LazySection from "@/components/common/LazySection";
 import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
 import { getMergedHeroSlides } from "@/lib/hero-data";
+import { getBrands } from "@/lib/api";
 
 // Static imports for Server Components (Async)
 import TailgProductGrid from "@/components/sections/TailgProductGrid";
@@ -14,10 +15,13 @@ import FeaturedAccessories from "@/components/sections/FeaturedAccessories";
 import LatestNews from "@/components/sections/LatestNews";
 
 // Dynamic import for Client Components ONLY
-const LiveChatWidget = dynamic(() => import("@/components/ui/LiveChatWidget"));
+const LiveChatWidget = dynamic(() => import("@/components/ui/LiveChatWidget"), { ssr: false });
 
 export default async function Home() {
-  const initialSlides = await getMergedHeroSlides();
+  const [initialSlides, brands] = await Promise.all([
+    getMergedHeroSlides(),
+    getBrands()
+  ]);
 
   return (
     <main className="min-h-screen bg-background">
@@ -26,11 +30,11 @@ export default async function Home() {
 
       <div className="relative z-20 pb-12 pt-8">
         <div className="container mx-auto px-4">
-          <QuickFinder />
+          <QuickFinder initialBrands={brands} />
         </div>
       </div>
 
-      <Suspense fallback={<div className="h-24 w-full bg-gray-100/5 dark:bg-gray-800/5 animate-pulse" />}>
+      <Suspense fallback={<div className="h-[500px] w-full bg-gray-100/5 dark:bg-gray-800/5 animate-pulse rounded-[2rem]" />}>
         <CategoryExplorer />
       </Suspense>
 
@@ -46,17 +50,17 @@ export default async function Home() {
       {/* ========== TAILG ZONE END ========== */}
 
       {/* ========== STANDARD E-COMMERCE BLOCKS ========== */}
-      <LazySection className="min-h-[400px]">
+      <LazySection className="min-h-[600px]">
         <Suspense fallback={<SectionGridSkeleton count={4} titleWidth="w-64" />}>
           <FeaturedProducts />
         </Suspense>
       </LazySection>
 
-      <LazySection>
+      <LazySection className="min-h-[500px]">
         <FeaturedAccessories />
       </LazySection>
 
-      <LazySection>
+      <LazySection className="min-h-[500px]">
         <LatestNews />
       </LazySection>
 

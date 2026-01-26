@@ -206,7 +206,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
                                     <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 transform translate-y-4 transition-all duration-500 group-hover:translate-y-0 group-hover:bg-white/10">
                                         <div className="flex justify-between items-start mb-2">
                                             <span
-                                                className={`inline-block px-3 py-1 rounded-lg text-xs font-bold text-white mb-2 ${colorStyle.className}`}
+                                                className={`inline-block px-3 py-1 rounded-lg text-xs font-bold text-white mb-2 whitespace-nowrap ${colorStyle.className}`}
                                                 style={colorStyle.style}
                                             >
                                                 {cat.subtitle}
@@ -214,7 +214,7 @@ export default function CategoryExplorerClient({ categories }: CategoryExplorerC
                                             <ArrowRight className="text-white w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                                         </div>
                                         
-                                        <h3 className="text-white text-2xl md:text-3xl font-black leading-tight mb-2">
+                                        <h3 className="text-white text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-3xl font-black leading-tight mb-2 whitespace-nowrap">
                                             {cat.title}
                                         </h3>
                                         <p className="text-gray-300 text-sm line-clamp-2 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto transition-all duration-300 delay-100">

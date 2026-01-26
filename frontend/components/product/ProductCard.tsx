@@ -51,11 +51,6 @@ export default function ProductCard({
         discount: discountPercent,
         originalPrice: discountPercent > 0 ? originalPrice / (1 - discountPercent / 100) : undefined
     };
-    const badges = getAllProductBadges(badgeMetrics);
-    const badgeCount = badges.length;
-    const hasBadge = badgeCount > 0;
-
-
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -146,49 +141,50 @@ export default function ProductCard({
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Badges - Top Left: Type */}
-                <div className="absolute top-3 left-3 flex flex-col gap-2">
-                    {car.type === 'motorcycle' && (
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-emerald-700 via-green-600 to-emerald-800 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/50 border border-white/20 backdrop-blur-sm">
-                            Xe Máy Điện
-                        </span>
-                    )}
-                    {car.type === 'bicycle' && (
-                        <span className="px-3 py-1.5 bg-gradient-to-r from-red-700 via-rose-600 to-pink-700 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20 backdrop-blur-sm">
-                            Xe Đạp Điện
-                        </span>
-                    )}
-                </div>
+                {/* Top Actions & Badges Container */}
+                <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10 pointer-events-none">
+                    {/* Left: Type Badges */}
+                    <div className="flex flex-col gap-2">
+                        {car.type === 'motorcycle' && (
+                            <span className="self-start px-3 py-1.5 bg-gradient-to-r from-emerald-700 via-green-600 to-emerald-800 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/50 border border-white/20 backdrop-blur-sm">
+                                Xe Máy Điện
+                            </span>
+                        )}
+                        {car.type === 'bicycle' && (
+                            <span className="self-start px-3 py-1.5 bg-gradient-to-r from-red-700 via-rose-600 to-pink-700 text-white text-xs font-bold rounded-full shadow-lg shadow-red-500/50 border border-white/20 backdrop-blur-sm">
+                                Xe Đạp Điện
+                            </span>
+                        )}
+                    </div>
 
-                {/* Dynamic Product Badges - Top Right */}
-                <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 pointer-events-none z-10">
-                    <ProductBadge
-                        product={{
-                            ...car,
-                            discount: discountPercent,
-                            originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
-                        }}
-                        size="md"
-                        showAll={true}
-                        className="flex-col items-end gap-1.5"
-                    />
-                </div>
+                    {/* Right: Actions & Product Badges */}
+                    <div className="flex flex-col items-end gap-2">
+                        {/* Wishlist Button */}
+                        <button
+                            onClick={handleWishlistClick}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all pointer-events-auto ${inWishlist
+                                ? 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30'
+                                : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-sm'
+                                }`}
+                            title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+                            aria-label={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+                        >
+                            <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} aria-hidden="true" />
+                        </button>
 
-                {/* Wishlist Button - Dynamic position based on badge presence */}
-                <button
-                    onClick={handleWishlistClick}
-                    className={`absolute right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${inWishlist
-                        ? 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30'
-                        : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 shadow-lg backdrop-blur-sm'
-                        }`}
-                    style={{ 
-                        top: hasBadge ? `${12 + (badgeCount * 28) + 8}px` : '12px' 
-                    }}
-                    title={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
-                    aria-label={inWishlist ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
-                >
-                    <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} aria-hidden="true" />
-                </button>
+                        {/* Dynamic Product Badges */}
+                        <ProductBadge
+                            product={{
+                                ...car,
+                                discount: discountPercent,
+                                originalPrice: discountPercent > 0 ? car.price / (1 - discountPercent / 100) : undefined
+                            }}
+                            size="md"
+                            showAll={true}
+                            className="flex-col items-end gap-1.5"
+                        />
+                    </div>
+                </div>
             </Link>
 
             {/* Content */}
@@ -226,8 +222,8 @@ export default function ProductCard({
                     </div>
                 )}
 
-                <div className="flex items-end justify-between mt-4">
-                    <div>
+                <div className="flex flex-wrap items-end justify-between mt-4 gap-y-3">
+                    <div className="min-w-[100px]">
                         <div className={`text-lg font-bold ${discountPercent > 0 ? 'text-red-600 dark:text-red-500' :
                             car.type === 'motorcycle' ? 'text-emerald-700 dark:text-emerald-400' :
                                 car.type === 'bicycle' ? 'text-rose-700 dark:text-rose-400' :

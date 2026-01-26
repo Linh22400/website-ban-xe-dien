@@ -263,12 +263,12 @@ export default function Navbar({ initialData }: { initialData?: NavbarData }) {
 
                                 {/* Account */}
                                 {isAuthenticated ? (
-                                    <div className="hidden md:block relative group">
+                                    <div className="hidden md:block relative group pb-4 -mb-4">
                                         <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground hover:text-emerald-700 dark:hover:text-primary transition-colors" aria-label="Tài khoản người dùng">
                                             <User className="w-4 h-4" aria-hidden="true" />
                                             {user?.username}
                                         </button>
-                                        <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-card/95 border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                                        <div className="absolute top-full right-0 mt-0 w-48 bg-white dark:bg-card/95 border-2 border-gray-200 dark:border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                                             <Link
                                                 href="/account"
                                                 className="block px-4 py-3 text-sm text-foreground hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-emerald-700 dark:hover:text-primary transition-colors rounded-t-xl"

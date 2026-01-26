@@ -51,7 +51,7 @@ export default ({ env }) => [
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       key: 'strapi.sid',
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // Set to false to fix "Cannot send secure cookie over unencrypted connection" on Render
     },
   },
   'strapi::favicon',

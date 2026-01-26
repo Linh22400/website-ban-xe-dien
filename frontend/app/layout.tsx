@@ -33,12 +33,6 @@ export const metadata: Metadata = {
     template: "%s | Xe Điện Đức Duy Cà Mau",
     default: "Xe Điện Đức Duy Cà Mau | Đại Lý Xe Máy & Xe Đạp Điện TAILG Chính Hãng",
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
   description: "Hệ thống showroom Xe Điện Đức Duy uy tín số 1 tại Cà Mau. Chuyên phân phối xe máy điện, xe đạp điện TAILG chính hãng. Mẫu mới 2025, Pin bền bỉ, Giá tốt nhất, Bảo hành & Cứu hộ tận nơi.",
   keywords: [
     "xe điện đức duy", 
@@ -85,6 +79,14 @@ export const metadata: Metadata = {
     google: "IpXDTlD_KPAEX8MQOuQ0-6c5B2phQ5AUQJFJgk-qG7I",
   },
 };
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
 
 export default function RootLayout({
   children,

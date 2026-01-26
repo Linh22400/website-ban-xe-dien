@@ -126,16 +126,22 @@ export default function ProductCard({
 
             {/* Image Container */}
             <Link href={`/cars/${car.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
-                <Image
-                    src={displayImage}
-                    alt={car.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    style={{ willChange: 'transform' }}
-                    priority={priority}
-                    quality={80} // Optimal balance
-                    sizes={sizes}
-                />
+                {displayImage ? (
+                    <Image
+                        src={displayImage}
+                        alt={car.name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        style={{ willChange: 'transform' }}
+                        priority={priority}
+                        quality={80} // Optimal balance
+                        sizes={sizes}
+                    />
+                ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 dark:bg-neutral-900">
+                        <span className="text-sm text-neutral-400">No Image</span>
+                    </div>
+                )}
 
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

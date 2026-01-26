@@ -45,6 +45,10 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
+    // Add qualities to fix the warning "is using quality '80' which is not configured in images.qualities [75]"
+    // Note: If 'qualities' is not valid in this Next.js version, we might need to remove quality={80} from components instead.
+    // But based on the error message, this configuration seems expected.
+    qualities: [75, 80, 85, 90], 
     remotePatterns: [
       {
         protocol: 'https',

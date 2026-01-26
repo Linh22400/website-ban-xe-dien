@@ -482,27 +482,48 @@ function transformStrapiArticle(item: any): Article {
 export async function getPromotions(): Promise<Promotion[]> {
     try {
         // Optimized: Only fetch necessary fields for car_models (ids) to reduce payload
-        const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate[0]=image&populate[car_models][fields][0]=id&populate[car_models][fields][1]=documentId&sort=createdAt:desc`;
+        // Using populate=* to ensure image is fetched correctly, while keeping car_models minimal if possible
+        // But populate=* overrides specific population in some Strapi versions/plugins.
+        // Let's stick to explicit populate but make sure image is correct.
+        // Actually, let's use populate=* to be safe about images, as getHeroSlides uses it successfully.
+        const url = `${STRAPI_URL}/api/promotions?filters[isActive][$eq]=true&populate=*&sort=createdAt:desc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(180), 180);
 
         if (!data || !data.data) return [];
 
-        return data.data.map((item: any) => ({
-            id: item.id,
-            title: item.title || '',
-            description: item.description || '',
-            discountTag: item.discountTag || '',
-            image: item.image?.url ? (item.image.url.startsWith('http') ? item.image.url : `${STRAPI_URL}${item.image.url}`) : '',
-            link: item.link || '/cars',
-            expiryDate: item.expiryDate || null,
-            isActive: item.isActive ?? true,
-            discountPercent: item.discountPercent || 0,
-            color: item.color,
-            // Handle both Strapi v4 (data wrapper) and v5 (direct array) styles just in case, 
-            // but based on observation it's likely array or data wrapper. 
-            // Let's normalize to array.
-            car_models: Array.isArray(item.car_models) ? item.car_models : (item.car_models?.data || [])
-        }));
+        return data.data.map((item: any) => {
+             // Robust image extraction
+             let imageUrl = '';
+             const imgData = item.image;
+ 
+             if (imgData) {
+                 if (typeof imgData === 'string') {
+                     imageUrl = imgData;
+                 } else if (Array.isArray(imgData) && imgData.length > 0) {
+                      const firstImg = imgData[0];
+                      imageUrl = firstImg.url || firstImg.attributes?.url || '';
+                 } else if (typeof imgData === 'object') {
+                      imageUrl = imgData.url || imgData.data?.attributes?.url || imgData.attributes?.url || '';
+                 }
+             }
+
+            return {
+                id: item.id,
+                title: item.title || '',
+                description: item.description || '',
+                discountTag: item.discountTag || '',
+                image: imageUrl ? (imageUrl.startsWith('http') ? imageUrl : `${STRAPI_URL}${imageUrl}`) : '',
+                link: item.link || '/cars',
+                expiryDate: item.expiryDate || null,
+                isActive: item.isActive ?? true,
+                discountPercent: item.discountPercent || 0,
+                color: item.color,
+                // Handle both Strapi v4 (data wrapper) and v5 (direct array) styles just in case, 
+                // but based on observation it's likely array or data wrapper. 
+                // Let's normalize to array.
+                car_models: Array.isArray(item.car_models) ? item.car_models : (item.car_models?.data || [])
+            };
+        });
     } catch (error) {
         logFetchIssue("Error fetching promotions:", error);
         return [];
@@ -511,21 +532,42 @@ export async function getPromotions(): Promise<Promotion[]> {
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
     try {
-        const url = `${STRAPI_URL}/api/hero-slides?populate[0]=image&sort=order:asc`;
+        // Use populate=image to fetch the image relation. 
+        // In Strapi v5, this should return the image object directly or as a document.
+        const url = `${STRAPI_URL}/api/hero-slides?populate=image&sort=order:asc`;
         const data = await cachedFetch<any>(url, getDefaultFetchOptions(300), 300);
 
         if (!data || !data.data) return [];
 
-        return data.data.map((item: any) => ({
-            id: item.id,
-            title: item.title || '',
-            subtitle: item.subtitle || '',
-            desc: item.desc || '',
-            image: item.image?.url ? (item.image.url.startsWith('http') ? item.image.url : `${STRAPI_URL}${item.image.url}`) : '',
-            link: item.link || '',
-            color: item.color || 'from-primary/80 to-blue-600/80',
-            order: item.order || 0
-        }));
+        return data.data.map((item: any) => {
+            // Robust image extraction handling various Strapi formats (v4/v5, array/object)
+            let imageUrl = '';
+            const imgData = item.image;
+
+            if (imgData) {
+                if (typeof imgData === 'string') {
+                    imageUrl = imgData; // Direct URL? Unlikely but possible
+                } else if (Array.isArray(imgData) && imgData.length > 0) {
+                     // Handle array case
+                     const firstImg = imgData[0];
+                     imageUrl = firstImg.url || firstImg.attributes?.url || '';
+                } else if (typeof imgData === 'object') {
+                     // Handle object case (single relation or v4 data wrapper)
+                     imageUrl = imgData.url || imgData.data?.attributes?.url || imgData.attributes?.url || '';
+                }
+            }
+
+            return {
+                id: item.id,
+                title: item.title || '',
+                subtitle: item.subtitle || '',
+                desc: item.desc || '',
+                image: imageUrl ? (imageUrl.startsWith('http') ? imageUrl : `${STRAPI_URL}${imageUrl}`) : '',
+                link: item.link || '',
+                color: item.color || 'from-primary/80 to-blue-600/80',
+                order: item.order || 0
+            };
+        });
     } catch (error) {
         console.error("Error fetching hero slides:", error);
         return [];

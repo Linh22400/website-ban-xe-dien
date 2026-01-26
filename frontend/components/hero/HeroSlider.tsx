@@ -11,39 +11,6 @@ import CountdownTimer from "@/components/ui/CountdownTimer";
 import { useTheme } from "@/components/common/ThemeText";
 import { motion, AnimatePresence } from "framer-motion";
 
-const STATIC_SLIDES = [
-    {
-        id: 1,
-        title: "Tự Do Khám Phá",
-        subtitle: "Hành Trình Mới",
-        desc: "Khám phá thế giới với dòng xe điện TAILG thế hệ mới. Vận hành êm ái, thân thiện môi trường.",
-        image: "/images/hero-1.jpg",
-        link: "/cars?brand=TAILG",
-        color: "from-emerald-600/90 to-teal-900/90",
-        order: 1
-    },
-    {
-        id: 2,
-        title: "Công Nghệ Đỉnh Cao",
-        subtitle: "Tiên Phong Xu Hướng",
-        desc: "Trải nghiệm công nghệ pin thông minh và động cơ hiệu suất cao. Sạc 1 lần, đi cả tuần.",
-        image: "/images/hero-2.jpg",
-        link: "/technology",
-        color: "from-blue-600/90 to-indigo-900/90",
-        order: 2
-    },
-    {
-        id: 3,
-        title: "Ưu Đãi Đặc Biệt",
-        subtitle: "Mùa Hè Sôi Động",
-        desc: "Giảm ngay 2.000.000đ khi mua xe máy điện trong tháng này. Tặng kèm mũ bảo hiểm cao cấp.",
-        image: "/images/hero-3.jpg",
-        link: "/promotions",
-        color: "from-rose-600/90 to-red-900/90",
-        order: 3
-    }
-];
-
 interface HeroSliderProps {
     initialSlides?: SlideType[];
 }
@@ -102,7 +69,7 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
 
         const timer = setInterval(() => {
             setSlides(prevSlides => {
-                const total = prevSlides.length > 0 ? prevSlides.length : STATIC_SLIDES.length;
+                const total = prevSlides.length;
                 if (total > 0 && !loading) {
                     setCurrentSlide((prev) => (prev + 1) % total);
                 }
@@ -113,11 +80,8 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
     }, [loading, isPaused]);
 
     // Ensure all slides have slideType property
-    // If loading is true (fetching client side) or slides is empty, use STATIC_SLIDES
-    // But if we have initialSlides, use those.
-    const displaySlides: SlideType[] = slides.length > 0
-        ? slides
-        : (loading ? STATIC_SLIDES.map(s => ({ ...s, slideType: 'hero' as const })) : STATIC_SLIDES.map(s => ({ ...s, slideType: 'hero' as const })));
+    // If loading is true (fetching client side) or slides is empty, render nothing or loader
+    const displaySlides: SlideType[] = slides;
 
     // Manual navigation handler
     const goToSlide = (index: number) => {
@@ -189,15 +153,17 @@ export default function HeroSlider({ initialSlides = [] }: HeroSliderProps) {
 
                     {/* Main Image - Resized to Contain (Sharp & Full) */}
                     <div className="absolute inset-0 z-10">
-                        <Image
-                            src={currentSlideData.image}
-                            alt={currentSlideData.title || "Hero Banner"}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                            quality={85}
-                            className="object-contain object-center"
-                            priority={currentSlide === 0}
-                        />
+                        {currentSlideData.image ? (
+                            <Image
+                                src={currentSlideData.image}
+                                alt={currentSlideData.title || "Hero Banner"}
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                                quality={85}
+                                className="object-contain object-center"
+                                priority={currentSlide === 0}
+                            />
+                        ) : null}
                     </div>
 
                     {/* Gradient Overlay - Adjusted for visibility */}

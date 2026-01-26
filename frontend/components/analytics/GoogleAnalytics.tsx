@@ -3,6 +3,12 @@
 import Script from 'next/script';
 
 export default function GoogleAnalytics({ gaId }: { gaId: string }) {
+  // Avoid running Google Analytics in development to prevent console errors (net::ERR_ABORTED)
+  // and data pollution.
+  if (process.env.NODE_ENV === 'development') {
+    return null;
+  }
+
   return (
     <>
       {/* Google Analytics 4 (GA4) Script */}

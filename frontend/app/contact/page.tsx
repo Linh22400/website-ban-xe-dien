@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getCars } from "@/lib/api";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -8,12 +9,35 @@ export default function ContactPage() {
         email: "",
         phone: "",
         type: "test-drive", // test-drive, deposit, consultation
-        model: "xe-dap-dien-giant",
+        model: "",
         message: "",
     });
 
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [carOptions, setCarOptions] = useState<{ label: string; value: string }[]>([]);
+
+    useEffect(() => {
+        async function fetchCars() {
+            try {
+                // Fetch all cars for the dropdown
+                const cars = await getCars({ pageSize: 100, sort: "name:asc" });
+                const options = cars.map(car => ({
+                    label: car.name,
+                    value: car.slug
+                }));
+                setCarOptions(options);
+                
+                // Set default model if not set and options exist
+                if (options.length > 0 && !formData.model) {
+                    setFormData(prev => ({ ...prev, model: options[0].value }));
+                }
+            } catch (error) {
+                console.error("Failed to fetch car options:", error);
+            }
+        }
+        fetchCars();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,7 +54,7 @@ export default function ContactPage() {
                 email: "",
                 phone: "",
                 type: "test-drive",
-                model: "xe-dap-dien-giant",
+                model: carOptions.length > 0 ? carOptions[0].value : "",
                 message: "",
             });
         } catch (error) {
@@ -143,10 +167,15 @@ export default function ContactPage() {
                                     value={formData.model}
                                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                                 >
-                                    <option value="xe-dap-dien-giant">Giant E-Bike Pro</option>
-                                    <option value="xe-may-dien-vinfast-klara">VinFast Klara S</option>
-                                    <option value="xe-dap-dien-trek">Trek Verve+ 3</option>
-                                    <option value="xe-may-dien-yadea">Yadea G5</option>
+                                    {carOptions.length > 0 ? (
+                                        carOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))
+                                    ) : (
+                                        <option value="" disabled>Đang tải danh sách xe...</option>
+                                    )}
                                     <option value="other">Khác</option>
                                 </select>
                             </div>

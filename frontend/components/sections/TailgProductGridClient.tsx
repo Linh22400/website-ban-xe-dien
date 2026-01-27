@@ -163,9 +163,9 @@ export default function TailgProductGridClient({
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-start md:justify-center mb-8 overflow-x-auto pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
                     <div
-                        className="inline-flex p-1.5 rounded-xl gap-2 backdrop-blur-md border"
+                        className="inline-flex p-1.5 rounded-xl gap-2 backdrop-blur-md border min-w-max"
                         role="tablist"
                         aria-label="Lọc sản phẩm theo danh mục"
                         style={{
@@ -182,7 +182,7 @@ export default function TailgProductGridClient({
                                 id={`tab-${tab.id}`}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`
-                                    px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2
+                                    px-4 md:px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap
                                     ${activeTab === tab.id
                                         ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg shadow-yellow-500/30'
                                         : (isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')

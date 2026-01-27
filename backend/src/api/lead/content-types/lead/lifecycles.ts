@@ -6,6 +6,12 @@ export default {
       const adminEmail = process.env.SMTP_USERNAME || 'camauducduy@gmail.com';
       const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
 
+      // Check if email plugin is loaded
+      if (!strapi.plugins['email']) {
+        strapi.log.error('Email plugin is NOT loaded. Please check your plugins.ts configuration and ensure @strapi/provider-email-nodemailer is installed.');
+        return;
+      }
+
       // 1. Email to Admin
       try {
         await strapi.plugins['email'].services.email.send({

@@ -130,35 +130,7 @@ export default function Footer() {
                             )}
                         </div>
 
-                        {/* Social Links - Enhanced */}
-                        <div>
-                            <ThemeText className="text-xs font-semibold mb-3 uppercase tracking-wider">
-                                Kết nối với chúng tôi
-                            </ThemeText>
-                            <div className="flex gap-3">
-                                {[
-                                    { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Theo dõi trên Facebook" },
-                                    { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500", label: "Theo dõi trên Instagram" },
-                                    { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Đăng ký kênh Youtube" }
-                                ].map(({ icon: Icon, href, color, label }) => (
-                                    <a
-                                        key={href}
-                                        href={href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={label}
-                                        className={`w-10 h-10 border-2 rounded-xl flex items-center justify-center text-muted-foreground transition-transform duration-300 transform hover:scale-105 hover:shadow-lg ${color}`}
-                                        style={{
-                                            willChange: 'transform',
-                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                                        }}
-                                    >
-                                        <Icon className="w-5 h-5" aria-hidden="true" />
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
+
                     </div>
 
                     {/* Column 2: Quick Links - Enhanced */}
@@ -294,6 +266,35 @@ export default function Footer() {
                 {/* Partners & Payment - Compact & Professional */}
                 <div className="border-t border-white/10 pt-4 mt-0">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        {/* Social Links */}
+                        <div className="flex flex-col items-center md:items-start gap-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                                Kết nối với chúng tôi
+                            </span>
+                            <div className="flex gap-2">
+                                {[
+                                    { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Facebook" },
+                                    { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500", label: "Instagram" },
+                                    { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Youtube" }
+                                ].map(({ icon: Icon, href, color, label }) => (
+                                    <a
+                                        key={href}
+                                        href={href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={label}
+                                        className={`w-8 h-8 border rounded-lg flex items-center justify-center text-muted-foreground transition-all hover:scale-105 ${color}`}
+                                        style={{
+                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
+                                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                        }}
+                                    >
+                                        <Icon className="w-4 h-4" aria-hidden="true" />
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Payment Methods */}
                         <div className="flex flex-col items-center md:items-start gap-2">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">

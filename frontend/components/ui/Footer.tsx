@@ -4,8 +4,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import type { ReactNode } from "react";
-import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Youtube, Send, ArrowRight, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Facebook, Youtube, Send, ArrowRight, Sparkles } from "lucide-react";
 import { PageHeading, ThemeText, ThemeInput, useTheme } from "@/components/common/ThemeText";
+
+// Tiktok Icon Component
+const Tiktok = ({ className, ...props }: React.ComponentProps<'svg'>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        stroke="none"
+        className={className}
+        {...props}
+    >
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+    </svg>
+);
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -290,9 +306,16 @@ export default function Footer() {
                                         </span>
                                         <div className="flex gap-2">
                                             {[
-                                                { icon: Facebook, href: "https://facebook.com", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Facebook" },
-                                                { icon: Instagram, href: "https://instagram.com", color: "hover:bg-pink-500/10 hover:border-pink-500 hover:text-pink-500", label: "Instagram" },
-                                                { icon: Youtube, href: "https://youtube.com", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Youtube" }
+                                                { icon: Facebook, href: "https://www.facebook.com/xemayducduy", color: "hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-500", label: "Facebook" },
+                                                { 
+                                                    icon: Tiktok, 
+                                                    href: "https://www.tiktok.com/@xedienducduycm", 
+                                                    color: isDark 
+                                                        ? "hover:bg-white/10 hover:border-white hover:text-white" 
+                                                        : "hover:bg-black/10 hover:border-black hover:text-black", 
+                                                    label: "Tiktok" 
+                                                },
+                                                { icon: Youtube, href: "https://www.youtube.com/@XEDIENDUCDUY", color: "hover:bg-red-500/10 hover:border-red-500 hover:text-red-500", label: "Youtube" }
                                             ].map(({ icon: Icon, href, color, label }) => (
                                                 <a
                                                     key={href}
@@ -300,11 +323,7 @@ export default function Footer() {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     aria-label={label}
-                                                    className={`w-8 h-8 border rounded-lg flex items-center justify-center text-muted-foreground transition-all hover:scale-105 ${color}`}
-                                                    style={{
-                                                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)',
-                                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-                                                    }}
+                                                    className={`w-8 h-8 border rounded-lg flex items-center justify-center text-muted-foreground transition-all hover:scale-105 ${isDark ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'} ${color}`}
                                                 >
                                                     <Icon className="w-4 h-4" aria-hidden="true" />
                                                 </a>

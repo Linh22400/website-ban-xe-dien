@@ -37,6 +37,7 @@ function readLeadInput(ctx: any) {
 
 export default factories.createCoreController('api::lead.lead', ({ strapi }) => ({
 	async create(ctx) {
+		console.log('!!! LEAD CONTROLLER - CREATE ACTION TRIGGERED !!!');
 		try {
 			const now = Date.now();
 			const ip = getClientIp(ctx);

@@ -102,6 +102,26 @@ export async function getAdminOrders(token: string, params: any = {}): Promise<{
 }
 
 /**
+ * Create a new lead (consultation request)
+ */
+export async function createLead(leadData: any): Promise<any> {
+    const response = await fetch(`${STRAPI_URL}/api/leads`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: leadData }),
+    });
+
+    if (!response.ok) {
+        const message = await getApiErrorMessage(response, 'Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.');
+        throw new Error(message);
+    }
+
+    return await response.json();
+}
+
+/**
  * Sync Order Payment Status from PayOS (Admin)
  */
 export async function syncOrderPaymentStatus(token: string, orderId: string): Promise<{ success: boolean; message: string; status?: string }> {
@@ -258,21 +278,31 @@ export async function getShowrooms(city?: string): Promise<Showroom[]> {
 /**
  * Calculate installment plan
  */
-export function calculateInstallment(totalAmount: number, months: number): {
+export function calculateInstallment(
+    totalAmount: number, 
+    months: number, 
+    downPaymentPercent: number = 0.3,
+    customInterestRate?: number
+): {
     monthlyPayment: number;
     totalInterest: number;
     totalPayable: number;
+    downPayment: number;
 } {
-    const downPayment = totalAmount * 0.3; // 30% down payment
+    const downPayment = totalAmount * downPaymentPercent;
     const principal = totalAmount - downPayment;
 
     let interestRate = 0;
-    if (months <= 12) {
-        interestRate = 0; // 0% for 6-12 months
-    } else if (months === 18) {
-        interestRate = 0.05; // 5% for 18 months
-    } else if (months === 24) {
-        interestRate = 0.1; // 10% for 24 months
+    if (customInterestRate !== undefined) {
+        interestRate = customInterestRate;
+    } else {
+        if (months <= 12) {
+            interestRate = 0; // 0% for 6-12 months
+        } else if (months === 18) {
+            interestRate = 0.05; // 5% for 18 months
+        } else if (months === 24) {
+            interestRate = 0.1; // 10% for 24 months
+        }
     }
 
     const totalInterest = principal * interestRate;
@@ -283,6 +313,7 @@ export function calculateInstallment(totalAmount: number, months: number): {
         monthlyPayment: Math.round(monthlyPayment),
         totalInterest: Math.round(totalInterest),
         totalPayable: Math.round(totalPayable),
+        downPayment: Math.round(downPayment),
     };
 }
 

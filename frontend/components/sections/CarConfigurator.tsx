@@ -12,6 +12,7 @@ import { SectionHeading } from '../product/ProductTextComponents';
 import ReviewList from "../product/ReviewList";
 import ReviewForm from "../product/ReviewForm";
 import RelatedProductsSidebar from "../product/RelatedProductsSidebar";
+import InstallmentCalculator from "../product/InstallmentCalculator";
 
 interface CarConfiguratorProps {
     car: Car;
@@ -50,6 +51,12 @@ export default function CarConfigurator({ car, discountPercent = 0 }: CarConfigu
 
                     {/* Main Content Column */}
                     <div className="flex-1 min-w-0">
+                        {/* Installment Calculator */}
+                        <InstallmentCalculator 
+                            price={discountPercent > 0 ? car.price * (1 - discountPercent / 100) : car.price} 
+                            productName={car.name}
+                        />
+
                         {/* 2. Feature Highlights (Cards) */}
                         <FeatureHighlights car={car} />
 

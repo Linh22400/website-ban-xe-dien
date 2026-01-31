@@ -3,20 +3,14 @@ export default ({ env }) => ({
         config: {
             provider: 'nodemailer',
             providerOptions: {
-                // SWITCH TO GMAIL SMTP (Best for @gmail.com senders)
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true, // SSL for Gmail
+                // SIMPLEST GMAIL CONFIGURATION
+                service: 'Gmail', // Nodemailer auto-sets host: smtp.gmail.com, port: 465, secure: true
                 auth: {
-                    user: env('SMTP_USERNAME'), // Your Gmail address
-                    pass: env('SMTP_PASSWORD'), // Your Gmail App Password
-                },
-                tls: {
-                    rejectUnauthorized: false, 
+                    user: env('SMTP_USERNAME'),
+                    pass: env('SMTP_PASSWORD'),
                 },
                 debug: true,
                 logger: true,
-                connectionTimeout: 20000,
             },
             settings: {
                 defaultFrom: env('SMTP_FROM', 'no-reply@example.com'),

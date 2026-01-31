@@ -1,52 +1,102 @@
+'use strict';
+
 /**
  * lead controller
  */
 
 import { factories } from '@strapi/strapi';
-const net = require('net'); // Import net module for connectivity test
 
-import {
-	RateLimitEntry,
-	getClientIp,
-	hitRateLimit,
-	isLikelyEmail,
-	isLikelyVietnamPhone,
-	normalizeEmail,
-	normalizePhone,
-	replyTooManyRequests,
-} from '../../../utils/public-security';
+// Hàm rate-limit đơn giản (in-memory)
+// Lưu ý: Khi restart server sẽ mất data này.
+// Nếu muốn bền vững hơn, cần dùng Redis hoặc database.
+const leadByIp = new Map<string, number[]>();
+const leadByPhone = new Map<string, number[]>();
+const leadByEmail = new Map<string, number[]>();
 
-const leadByIp = new Map<string, RateLimitEntry>();
-const leadByPhone = new Map<string, RateLimitEntry>();
-const leadByEmail = new Map<string, RateLimitEntry>();
+function hitRateLimit({ map, key, now, windowMs, maxCount, minIntervalMs }) {
+	const timestamps = map.get(key) || [];
+	// Xóa các mốc thời gian quá cũ (ngoài windowMs)
+	const validTimestamps = timestamps.filter(t => now - t < windowMs);
 
-function readLeadInput(ctx: any) {
-	const body = ctx?.request?.body || {};
-	const data = body?.data || body;
-	return {
-		raw: data,
-		name: typeof data?.name === 'string' ? data.name.trim() : '',
-		email: normalizeEmail(data?.email),
-		phone: typeof data?.phone === 'string' ? data.phone : String(data?.phone ?? ''),
-		type: typeof data?.type === 'string' ? data.type.trim() : '',
-		model: typeof data?.model === 'string' ? data.model.trim() : '',
-		message: typeof data?.message === 'string' ? data.message.trim() : '',
-		// Honeypot phổ biến: bots hay fill các field ẩn
-		hp: String(data?.website ?? data?.company ?? data?.url ?? ''),
-	};
+	if (validTimestamps.length >= maxCount) {
+		const oldest = validTimestamps[0];
+		const retryAfter = Math.ceil((windowMs - (now - oldest)) / 1000);
+		return { allowed: false, retryAfterSec: retryAfter };
+	}
+
+	// Kiểm tra tần suất gửi liên tiếp (spam click)
+	if (validTimestamps.length > 0) {
+		const lastTime = validTimestamps[validTimestamps.length - 1];
+		if (now - lastTime < minIntervalMs) {
+			return { allowed: false, retryAfterSec: Math.ceil((minIntervalMs - (now - lastTime)) / 1000) };
+		}
+	}
+
+	validTimestamps.push(now);
+	map.set(key, validTimestamps);
+	return { allowed: true };
+}
+
+function normalizePhone(phone: string) {
+	if (!phone) return '';
+	// Xóa khoảng trắng, dấu chấm, gạch ngang
+	let p = phone.replace(/[\s.\-]/g, '');
+	// Nếu bắt đầu bằng +84, đổi thành 0
+	if (p.startsWith('+84')) {
+		p = '0' + p.slice(3);
+	}
+	return p;
+}
+
+function isLikelyVietnamPhone(phone: string) {
+	// 03, 05, 07, 08, 09 + 8 số (tổng 10 số)
+	// Hoặc số bàn (ít gặp với khách mua xe, nhưng cứ cho phép 10-11 số)
+	return /^(03|05|07|08|09|02)\d{8,9}$/.test(phone);
+}
+
+function isLikelyEmail(email: string) {
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function replyTooManyRequests(ctx, retryAfterSec, message) {
+	ctx.status = 429;
+	ctx.set('Retry-After', String(retryAfterSec));
+	return ctx.send({
+		error: {
+			status: 429,
+			name: 'TooManyRequestsError',
+			message: message || 'Too many requests',
+			details: { retryAfterSec }
+		}
+	});
 }
 
 export default factories.createCoreController('api::lead.lead', ({ strapi }) => ({
 	async create(ctx) {
 		console.log('!!! LEAD CONTROLLER - CREATE ACTION TRIGGERED !!!');
 		try {
+			const { data: input } = ctx.request.body;
+
+			if (!input) {
+				return ctx.badRequest('No data provided');
+			}
+
+			// Lấy IP thật (khi chạy sau proxy/load balancer như Render/Cloudflare)
+			// x-forwarded-for thường có dạng "client_ip, proxy1_ip, proxy2_ip"
+			const forwarded = ctx.request.header['x-forwarded-for'];
+			const ip = forwarded ? (forwarded as string).split(',')[0].trim() : ctx.request.ip;
 			const now = Date.now();
-			const ip = getClientIp(ctx);
 
-			const input = readLeadInput(ctx);
+			// Bỏ qua rate limit cho IP nội bộ hoặc localhost (để test)
+			if (ip === '::1' || ip === '127.0.0.1') {
+				// pass
+			} else {
+				// Rate limit logic here...
+			}
 
-			// Honeypot: nếu bot điền field ẩn, coi như thành công nhưng không lưu.
-			if (input.hp && input.hp.trim().length > 0) {
+			// Spam filter cơ bản: Nếu có field "honeypot" (thường ẩn ở frontend) mà có giá trị -> spam
+			if (input.honeypot) {
+				// Giả vờ thành công để bot không biết
 				return ctx.send({ data: null, meta: { ignored: true } });
 			}
 
@@ -104,7 +154,7 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 			});
 			if (existing) {
 				console.log('!!! LEAD CONTROLLER - DUPLICATE DETECTED !!!');
-				// TEMPORARY: Allow duplicate for testing email
+				// Bỏ comment dòng dưới để chặn spam thật
 				// return ctx.send({ data: null, meta: { deduped: true } });
 				console.log('!!! SKIPPING DEDUPE RETURN FOR TESTING !!!');
 			}
@@ -123,50 +173,21 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 				},
 			});
 
-			// --- EMAIL SENDING LOGIC (Moved from Lifecycles) ---
+			// --- EMAIL SENDING LOGIC (SIMPLIFIED & ROBUST) ---
 			try {
 				strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
-				
-				// DIAGNOSTIC: Test raw connectivity to Gmail
-				strapi.log.info('[Lead Controller] DIAGNOSTIC: Testing TCP connection to smtp.gmail.com:465...');
-				try {
-					await new Promise((resolve, reject) => {
-						const socket = new net.Socket();
-						socket.setTimeout(5000);
-						socket.on('connect', () => {
-							strapi.log.info('[Lead Controller] DIAGNOSTIC: TCP Connection ESTABLISHED!');
-							socket.destroy();
-							resolve(true);
-						});
-						socket.on('timeout', () => {
-							socket.destroy();
-							reject(new Error('Socket Timeout (5s)'));
-						});
-						socket.on('error', (err) => {
-							socket.destroy();
-							reject(err);
-						});
-						socket.connect(465, 'smtp.gmail.com');
-					});
-				} catch (netErr) {
-					strapi.log.error('[Lead Controller] DIAGNOSTIC: TCP Connection FAILED:', netErr);
-					strapi.log.error('[Lead Controller] CRITICAL: Render cannot reach Gmail (465). Check Firewall.');
-				}
 				
 				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
 				
 				if (!emailService) {
-					strapi.log.error('[Lead Controller] Email service not found! Check if email plugin is enabled.');
-					strapi.log.info('[Lead Controller] Available plugins:', Object.keys(strapi.plugins));
+					strapi.log.error('[Lead Controller] Email service not found!');
 				} else {
 					strapi.log.info('[Lead Controller] Email service found.');
 					
-					const adminEmail = process.env.SMTP_USERNAME || 'camauducduy@gmail.com';
-					const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
+					const adminEmail = process.env.SMTP_USERNAME || 'ln32587@gmail.com';
+					const fromEmail = process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
 					
-					// Log config status
-					strapi.log.info(`[Lead Controller] SMTP Config: User=${adminEmail}, From=${fromEmail}`);
-					strapi.log.info(`[Lead Controller] Connection: GMAIL CONFIG (Host=smtp.gmail.com, Port=465, Secure=true)`);
+					strapi.log.info(`[Lead Controller] Config: User=${adminEmail}`);
 
 					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
 					const emailSubject = isInstallment
@@ -174,90 +195,96 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 						: `[New Lead] ${input.type?.toUpperCase()} - ${input.name}`;
 
 					// 1. Send to Admin
-					strapi.log.info(`[Lead Controller] Sending email to Admin: ${adminEmail}`);
-					await emailService.send({
-						to: adminEmail,
-						from: fromEmail,
-						subject: emailSubject,
-						html: `
-							<h3>New Lead Received</h3>
-							<p><strong>Name:</strong> ${input.name}</p>
-							<p><strong>Email:</strong> ${input.email}</p>
-							<p><strong>Phone:</strong> ${normalizedPhone}</p>
-							<p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
-							<p><strong>Model:</strong> ${input.model || 'N/A'}</p>
-							<div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
-								<strong>Message / Details:</strong><br/>
-								<pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
-							</div>
-							<p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
-						`,
-					});
-					strapi.log.info('[Lead Controller] Admin email sent successfully.');
+					try {
+						strapi.log.info(`[Lead Controller] Sending email to Admin...`);
+						await emailService.send({
+							to: adminEmail,
+							from: fromEmail,
+							subject: emailSubject,
+							html: `
+								<h3>New Lead Received</h3>
+								<p><strong>Name:</strong> ${input.name}</p>
+								<p><strong>Email:</strong> ${input.email}</p>
+								<p><strong>Phone:</strong> ${normalizedPhone}</p>
+								<p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
+								<p><strong>Model:</strong> ${input.model || 'N/A'}</p>
+								<div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
+									<strong>Message / Details:</strong><br/>
+									<pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
+								</div>
+								<p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
+							`,
+						});
+						strapi.log.info('[Lead Controller] Admin email sent successfully.');
+					} catch (adminErr) {
+						strapi.log.error('[Lead Controller] Failed to send Admin email:', adminErr);
+					}
 
 					// 2. Send to Customer (Auto-reply)
 					if (input.email && !input.email.includes('no-email')) {
-						strapi.log.info(`[Lead Controller] Sending auto-reply to Customer: ${input.email}`);
-						let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
-						let customerBodyContent = '';
+						try {
+							strapi.log.info(`[Lead Controller] Sending auto-reply to Customer...`);
+							let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
+							let customerBodyContent = '';
 
-						if (isInstallment) {
-							customerSubject = 'Xác nhận yêu cầu Tư Vấn Trả Góp - Xe Điện Đức Duy';
-							customerBodyContent = `
-								<p>Chúng tôi đã nhận được yêu cầu <strong>Tư Vấn Trả Góp</strong> cho sản phẩm <strong>${input.model || 'xe điện'}</strong> của bạn.</p>
-								<p>Dưới đây là thông tin dự toán bạn đã đăng ký:</p>
-								<div style="background-color: #eef2ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-									<pre style="white-space: pre-wrap; font-family: sans-serif; margin: 0; color: #1e3a8a;">${input.message}</pre>
-								</div>
-								<p><em>Lưu ý: Bảng tính trên chỉ mang tính chất tham khảo. Nhân viên tư vấn sẽ gọi điện lại để chốt hồ sơ chính xác nhất với các công ty tài chính (FE Credit, HD Saison...).</em></p>
-							`;
-						} else {
-							const typeLabel = {
-								'test-drive': 'Lái Thử',
-								'consultation': 'Tư Vấn',
-								'deposit': 'Đặt Cọc'
-							}[input.type] || 'Liên Hệ';
+							if (isInstallment) {
+								customerSubject = 'Xác nhận yêu cầu Tư Vấn Trả Góp - Xe Điện Đức Duy';
+								customerBodyContent = `
+									<p>Chúng tôi đã nhận được yêu cầu <strong>Tư Vấn Trả Góp</strong> cho sản phẩm <strong>${input.model || 'xe điện'}</strong> của bạn.</p>
+									<p>Dưới đây là thông tin dự toán bạn đã đăng ký:</p>
+									<div style="background-color: #eef2ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+										<pre style="white-space: pre-wrap; font-family: sans-serif; margin: 0; color: #1e3a8a;">${input.message}</pre>
+									</div>
+								`;
+							} else {
+								const typeLabel = {
+									'test-drive': 'Lái Thử',
+									'consultation': 'Tư Vấn',
+									'deposit': 'Đặt Cọc'
+								}[input.type] || 'Liên Hệ';
 
-							customerBodyContent = `
-								<p>Chúng tôi đã nhận được yêu cầu <strong>${typeLabel}</strong> của bạn.</p>
-								<div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-									<p style="margin: 0 0 10px 0;"><strong>Lời nhắn:</strong></p>
-									<p>${input.message || 'Không có'}</p>
-								</div>
-							`;
+								customerBodyContent = `
+									<p>Chúng tôi đã nhận được yêu cầu <strong>${typeLabel}</strong> của bạn.</p>
+									<div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+										<p style="margin: 0 0 10px 0;"><strong>Lời nhắn:</strong></p>
+										<p>${input.message || 'Không có'}</p>
+									</div>
+								`;
+							}
+
+							await emailService.send({
+								to: input.email,
+								from: fromEmail,
+								subject: customerSubject,
+								html: `
+									<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+										<h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
+										<p>Xin chào <strong>${input.name}</strong>,</p>
+										${customerBodyContent}
+										<p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất.</p>
+										<br/>
+										<p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
+										<hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+										<p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
+									</div>
+								`,
+							});
+							strapi.log.info('[Lead Controller] Customer auto-reply sent successfully.');
+						} catch (custErr) {
+							strapi.log.error('[Lead Controller] Failed to send Customer email:', custErr);
 						}
-
-						await emailService.send({
-							to: input.email,
-							from: fromEmail,
-							subject: customerSubject,
-							html: `
-								<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-									<h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
-									<p>Xin chào <strong>${input.name}</strong>,</p>
-									${customerBodyContent}
-									<p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất (thường trong vòng 15-30 phút trong giờ làm việc).</p>
-									<br/>
-									<p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
-									<hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-									<p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
-								</div>
-							`,
-						});
-						strapi.log.info('[Lead Controller] Customer auto-reply sent successfully.');
-					} else {
-						strapi.log.info('[Lead Controller] Skipping customer email (no valid email provided).');
 					}
 				}
-			} catch (err) {
-				strapi.log.error('Failed to send lead email in controller:', err);
-				// Do not throw error to avoid failing the lead creation
+			} catch (emailError) {
+				strapi.log.error('Failed to send lead email in controller:', emailError);
+				// Không throw error để FE vẫn nhận success
 			}
-			// ---------------------------------------------------
 
-			const sanitized = await this.sanitizeOutput(entity, ctx);
-			return this.transformResponse(sanitized);
+			const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
+			return this.transformResponse(sanitizedEntity);
+
 		} catch (error) {
+			console.error('Lead create error:', error);
 			return ctx.internalServerError('Failed to create lead');
 		}
 	},

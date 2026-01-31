@@ -69,9 +69,9 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                 setShowForm(false);
                 setFormData({ name: '', phone: '', email: '', note: '' });
             }, 3000);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Lỗi gửi yêu cầu:', error);
-            alert('Có lỗi xảy ra, vui lòng thử lại sau.');
+            alert(error.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
         } finally {
             setIsSubmitting(false);
         }

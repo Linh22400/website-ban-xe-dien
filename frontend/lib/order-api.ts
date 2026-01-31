@@ -105,20 +105,33 @@ export async function getAdminOrders(token: string, params: any = {}): Promise<{
  * Create a new lead (consultation request)
  */
 export async function createLead(leadData: any): Promise<any> {
-    const response = await fetch(`${STRAPI_URL}/api/leads`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: leadData }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-    if (!response.ok) {
-        const message = await getApiErrorMessage(response, 'Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.');
-        throw new Error(message);
+    try {
+        const response = await fetch(`${STRAPI_URL}/api/leads`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ data: leadData }),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            const message = await getApiErrorMessage(response, 'Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.');
+            throw new Error(message);
+        }
+
+        return await response.json();
+    } catch (error: any) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            throw new Error('Yêu cầu quá hạn (timeout). Vui lòng kiểm tra kết nối mạng.');
+        }
+        throw error;
     }
-
-    return await response.json();
 }
 
 /**

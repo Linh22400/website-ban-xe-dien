@@ -18,11 +18,7 @@ async function sendLeadEmail(strapi, entity, input) {
         strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
         
         const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
-        
-        if (!emailService) {
-            strapi.log.error('[Lead Controller] Email service not found!');
-            return;
-        }
+        const emailApiUrl = process.env.EMAIL_API_URL; // Google Apps Script URL
 
         const adminEmail = process.env.SMTP_USERNAME || 'ln32587@gmail.com';
         const fromEmail = process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
@@ -36,26 +32,43 @@ async function sendLeadEmail(strapi, entity, input) {
             ? `[Tư Vấn Trả Góp] ${input.name} - ${input.model || 'N/A'}`
             : `[New Lead] ${input.type?.toUpperCase()} - ${input.name}`;
 
+        const adminHtml = `
+            <h3>New Lead Received</h3>
+            <p><strong>Name:</strong> ${input.name}</p>
+            <p><strong>Email:</strong> ${input.email}</p>
+            <p><strong>Phone:</strong> ${normalizedPhone}</p>
+            <p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
+            <p><strong>Model:</strong> ${input.model || 'N/A'}</p>
+            <div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
+                <strong>Message / Details:</strong><br/>
+                <pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
+            </div>
+            <p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
+        `;
+
         // 1. Send to Admin
         try {
-            await emailService.send({
-                to: adminEmail,
-                from: fromEmail,
-                subject: emailSubject,
-                html: `
-                    <h3>New Lead Received</h3>
-                    <p><strong>Name:</strong> ${input.name}</p>
-                    <p><strong>Email:</strong> ${input.email}</p>
-                    <p><strong>Phone:</strong> ${normalizedPhone}</p>
-                    <p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
-                    <p><strong>Model:</strong> ${input.model || 'N/A'}</p>
-                    <div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
-                        <strong>Message / Details:</strong><br/>
-                        <pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
-                    </div>
-                    <p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
-                `,
-            });
+            if (emailApiUrl) {
+                // Use Google Apps Script Proxy (Bypasses Render SMTP Block)
+                strapi.log.info(`[Lead Controller] Sending Admin email via API Proxy...`);
+                await fetch(emailApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: adminEmail,
+                        subject: emailSubject,
+                        htmlBody: adminHtml
+                    })
+                });
+            } else if (emailService) {
+                // Use Standard SMTP
+                await emailService.send({
+                    to: adminEmail,
+                    from: fromEmail,
+                    subject: emailSubject,
+                    html: adminHtml,
+                });
+            }
             strapi.log.info('[Lead Controller] Admin email sent successfully.');
         } catch (adminErr) {
             strapi.log.error('[Lead Controller] Failed to send Admin email:', adminErr);
@@ -92,23 +105,40 @@ async function sendLeadEmail(strapi, entity, input) {
                     `;
                 }
 
-                await emailService.send({
-                    to: input.email,
-                    from: fromEmail,
-                    subject: customerSubject,
-                    html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                            <h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
-                            <p>Xin chào <strong>${input.name}</strong>,</p>
-                            ${customerBodyContent}
-                            <p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất.</p>
-                            <br/>
-                            <p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
-                            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-                            <p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
-                        </div>
-                    `,
-                });
+                const customerHtml = `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
+                        <p>Xin chào <strong>${input.name}</strong>,</p>
+                        ${customerBodyContent}
+                        <p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất.</p>
+                        <br/>
+                        <p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+                        <p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
+                    </div>
+                `;
+
+                if (emailApiUrl) {
+                    // Use Google Apps Script Proxy
+                    strapi.log.info(`[Lead Controller] Sending Customer email via API Proxy...`);
+                    await fetch(emailApiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: input.email,
+                            subject: customerSubject,
+                            htmlBody: customerHtml
+                        })
+                    });
+                } else if (emailService) {
+                    // Use Standard SMTP
+                    await emailService.send({
+                        to: input.email,
+                        from: fromEmail,
+                        subject: customerSubject,
+                        html: customerHtml,
+                    });
+                }
                 strapi.log.info('[Lead Controller] Customer auto-reply sent successfully.');
             } catch (custErr) {
                 strapi.log.error('[Lead Controller] Failed to send Customer email:', custErr);

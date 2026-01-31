@@ -102,7 +102,10 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 				},
 			});
 			if (existing) {
-				return ctx.send({ data: null, meta: { deduped: true } });
+				console.log('!!! LEAD CONTROLLER - DUPLICATE DETECTED !!!');
+				// TEMPORARY: Allow duplicate for testing email
+				// return ctx.send({ data: null, meta: { deduped: true } });
+				console.log('!!! SKIPPING DEDUPE RETURN FOR TESTING !!!');
 			}
 
 			const user = ctx.state?.user;

@@ -1,25 +1,34 @@
+
 export default {
   async afterCreate(event) {
     const { result } = event;
+    const { strapi } = event as any; // Cast to access global strapi if needed, though it's global
 
     try {
+      strapi.log.info('============== LEAD LIFECYCLE TRIGGERED ==============');
+      strapi.log.info(`New Lead ID: ${result.id}, Email: ${result.email}, Type: ${result.type}`);
+
       const adminEmail = process.env.SMTP_USERNAME || 'camauducduy@gmail.com';
       const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
 
-      // Check if email plugin is loaded
-      if (!strapi.plugins['email']) {
-        strapi.log.error('Email plugin is NOT loaded. Please check your plugins.ts configuration and ensure @strapi/provider-email-nodemailer is installed.');
+      // Robustly get email service
+      const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
+
+      if (!emailService) {
+        strapi.log.error('CRITICAL: Email plugin is NOT loaded. Cannot send email.');
+        strapi.log.info('Available plugins:', Object.keys(strapi.plugins));
         return;
       }
 
-      const isInstallment = result.message?.toLowerCase().includes('trả góp');
+      const isInstallment = result.message?.toLowerCase().includes('trả góp') || result.type === 'consultation';
       const emailSubject = isInstallment 
         ? `[Tư Vấn Trả Góp] ${result.name} - ${result.model}`
-        : `[New Lead] ${result.type.toUpperCase()} - ${result.name}`;
+        : `[New Lead] ${result.type?.toUpperCase()} - ${result.name}`;
 
       // 1. Email to Admin
       try {
-        await strapi.plugins['email'].services.email.send({
+        strapi.log.info(`Attempting to send email to Admin: ${adminEmail}`);
+        await emailService.send({
           to: adminEmail,
           from: fromEmail,
           subject: emailSubject,
@@ -34,18 +43,19 @@ export default {
                 <strong>Message / Details:</strong><br/>
                 <pre style="white-space: pre-wrap; font-family: sans-serif;">${result.message || 'No message'}</pre>
             </div>
-            <p><strong>Status:</strong> ${result.statuses}</p>
+            <p><strong>Status:</strong> ${result.statuses || 'pending'}</p>
             <p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
           `,
         });
-        strapi.log.info(`Lead email sent to admin: ${adminEmail}`);
+        strapi.log.info(`SUCCESS: Lead email sent to admin: ${adminEmail}`);
       } catch (adminErr) {
-        strapi.log.error('Error sending lead email to admin:', adminErr);
+        strapi.log.error('ERROR sending lead email to admin:', adminErr);
       }
 
       // 2. Email to Customer (Auto-reply)
       if (result.email && !result.email.includes('no-email@provided.com')) {
         try {
+          strapi.log.info(`Attempting to send auto-reply to Customer: ${result.email}`);
           let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
           let customerBodyContent = '';
 
@@ -69,7 +79,7 @@ export default {
             `;
           }
 
-          await strapi.plugins['email'].services.email.send({
+          await emailService.send({
             to: result.email,
             from: fromEmail,
             subject: customerSubject,
@@ -86,22 +96,22 @@ export default {
               </div>
             `,
           });
-          strapi.log.info(`Lead auto-reply sent to customer: ${result.email}`);
+          strapi.log.info(`SUCCESS: Lead auto-reply sent to customer: ${result.email}`);
         } catch (customerErr) {
-          strapi.log.error('Error sending lead auto-reply to customer:', customerErr);
+          strapi.log.error('ERROR sending lead auto-reply to customer:', customerErr);
         }
       }
     } catch (err) {
-      strapi.log.error('Critical error in lead lifecycle:', err);
+      strapi.log.error('CRITICAL ERROR in lead lifecycle:', err);
     }
   },
 };
 
 function getErrorTypeLabel(type: string): string {
-  const map: Record<string, string> = {
-    'test-drive': 'Lái thử xe',
-    'consultation': 'Tư vấn sản phẩm',
-    'deposit': 'Đặt cọc xe'
-  };
-  return map[type] || type;
+  switch (type) {
+    case 'test-drive': return 'Lái Thử';
+    case 'consultation': return 'Tư Vấn';
+    case 'deposit': return 'Đặt Cọc';
+    default: return 'Liên Hệ';
+  }
 }

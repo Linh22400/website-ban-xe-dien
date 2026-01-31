@@ -4,18 +4,18 @@ export default ({ env }) => ({
             provider: 'nodemailer',
             providerOptions: {
                 host: 'smtp.gmail.com',
-                port: 465,
-                secure: true,
+                port: 587,
+                secure: false, // Must be false for 587
                 auth: {
                     user: env('SMTP_USERNAME'),
                     pass: env('SMTP_PASSWORD'),
                 },
                 tls: {
-                    rejectUnauthorized: false,
+                    rejectUnauthorized: false, // Help with self-signed certs issues
                 },
                 debug: true,
                 logger: true,
-                connectionTimeout: 30000,
+                connectionTimeout: 20000,
             },
             settings: {
                 defaultFrom: env('SMTP_FROM', 'no-reply@example.com'),

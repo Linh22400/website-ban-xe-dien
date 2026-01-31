@@ -3,6 +3,7 @@
  */
 
 import { factories } from '@strapi/strapi';
+const net = require('net'); // Import net module for connectivity test
 
 import {
 	RateLimitEntry,
@@ -125,6 +126,32 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 			// --- EMAIL SENDING LOGIC (Moved from Lifecycles) ---
 			try {
 				strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
+				
+				// DIAGNOSTIC: Test raw connectivity to Gmail
+				strapi.log.info('[Lead Controller] DIAGNOSTIC: Testing TCP connection to smtp.gmail.com:587...');
+				try {
+					await new Promise((resolve, reject) => {
+						const socket = new net.Socket();
+						socket.setTimeout(5000);
+						socket.on('connect', () => {
+							strapi.log.info('[Lead Controller] DIAGNOSTIC: TCP Connection ESTABLISHED!');
+							socket.destroy();
+							resolve(true);
+						});
+						socket.on('timeout', () => {
+							socket.destroy();
+							reject(new Error('Socket Timeout (5s)'));
+						});
+						socket.on('error', (err) => {
+							socket.destroy();
+							reject(err);
+						});
+						socket.connect(587, 'smtp.gmail.com');
+					});
+				} catch (netErr) {
+					strapi.log.error('[Lead Controller] DIAGNOSTIC: TCP Connection FAILED:', netErr);
+					strapi.log.error('[Lead Controller] CRITICAL: Render cannot reach Gmail. Please check Render firewall/region blocking.');
+				}
 				
 				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
 				

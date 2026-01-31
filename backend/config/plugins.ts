@@ -5,13 +5,14 @@ export default ({ env }) => ({
             providerOptions: {
                 host: env('SMTP_HOST', 'smtp.gmail.com'),
                 port: env.int('SMTP_PORT', 587),
-                secure: env.bool('SMTP_SECURE', false),
+                secure: false, // FORCE FALSE for Port 587
                 auth: {
                     user: env('SMTP_USERNAME'),
                     pass: env('SMTP_PASSWORD'),
                 },
                 tls: {
                     rejectUnauthorized: env.bool('SMTP_REJECT_UNAUTHORIZED', false),
+                    ciphers: 'SSLv3'
                 },
                 debug: env.bool('SMTP_DEBUG', true),
                 logger: env.bool('SMTP_DEBUG', true),

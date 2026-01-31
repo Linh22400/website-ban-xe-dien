@@ -146,79 +146,85 @@ export default function AdminDashboardPage() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Recent Orders */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-foreground">Đơn Hàng Gần Đây</h2>
-                        <Link href="/admin/orders" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 font-medium">
-                            Xem tất cả <ArrowUpRight className="w-4 h-4" />
-                        </Link>
-                    </div>
+            {/* Charts Area - Full Width for better visibility */}
+            <div className="w-full">
+                <DashboardCharts orders={allOrders} />
+            </div>
 
-                    <div className="bg-card border border-border rounded-3xl overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b border-border bg-muted/50">
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Mã Đơn</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Khách Hàng</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Sản Phẩm</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Tổng Tiền</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Trạng Thái</th>
-                                        <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider">Hành Động</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {recentOrders.map((order) => (
-                                        <tr key={order.id} className="hover:bg-muted/50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="font-mono text-sm font-bold text-foreground">#{order.OrderCode}</span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                                        <Users className="w-4 h-4 text-primary" />
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm font-bold text-foreground">{order.CustomerInfo?.Name || 'Khách lẻ'}</span>
-                                                        <span className="text-xs text-muted-foreground">{order.CustomerInfo?.Phone}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="text-sm text-foreground">{order.VehicleModel?.name || 'Xe Điện'}</span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="text-sm font-bold text-primary">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount)}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                                    ${order.Statuses === 'completed' ? 'bg-green-500/10 text-green-400' :
-                                                        order.Statuses === 'pending' ? 'bg-yellow-500/10 text-yellow-400' :
-                                                            'bg-blue-500/10 text-blue-400'}`}>
-                                                    {order.Statuses === 'completed' ? 'Hoàn thành' :
-                                                        order.Statuses === 'pending' ? 'Chờ xử lý' : order.Statuses}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                <Link href={`/admin/orders/${order.documentId}`} className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition-colors inline-block">
-                                                    <Eye className="w-4 h-4" />
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            {/* Recent Orders */}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-foreground">Đơn Hàng Gần Đây</h2>
+                    <Link href="/admin/orders" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 font-medium">
+                        Xem tất cả <ArrowUpRight className="w-4 h-4" />
+                    </Link>
                 </div>
 
-                {/* Charts Area */}
-                <div className="space-y-6">
-                     <DashboardCharts orders={allOrders} />
+                <div className="bg-card/50 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-white/5 bg-muted/50 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                    <th className="px-6 py-4">Mã đơn</th>
+                                    <th className="px-6 py-4">Khách hàng</th>
+                                    <th className="px-6 py-4">Sản phẩm</th>
+                                    <th className="px-6 py-4">Tổng tiền</th>
+                                    <th className="px-6 py-4">Trạng thái</th>
+                                    <th className="px-6 py-4 text-right">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {recentOrders.map((order) => (
+                                    <tr key={order.id} className="hover:bg-muted/50 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="font-mono text-sm font-bold text-foreground">#{order.OrderCode}</span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                    <Users className="w-4 h-4 text-primary" />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-foreground">{order.CustomerInfo?.Name || 'Khách lẻ'}</span>
+                                                    <span className="text-xs text-muted-foreground">{order.CustomerInfo?.Phone}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="text-sm text-foreground">{order.Items?.[0]?.Model?.Name || 'Sản phẩm'}</span>
+                                            {order.Items && order.Items.length > 1 && (
+                                                <span className="text-xs text-muted-foreground ml-1">+{order.Items.length - 1} khác</span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="text-sm font-bold text-emerald-500">
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.TotalAmount || 0)}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${order.Statuses === 'completed'
+                                                    ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                                                    : order.Statuses === 'pending' || order.Statuses === 'pending_payment'
+                                                        ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                                                        : order.Statuses === 'cancelled'
+                                                            ? 'bg-red-500/10 text-red-500 border-red-500/20'
+                                                            : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                                                }`}>
+                                                {order.Statuses === 'pending_payment' ? 'Chờ thanh toán' :
+                                                    order.Statuses === 'deposit_paid' ? 'Đã cọc' :
+                                                        order.Statuses === 'pending' ? 'Chờ xử lý' : order.Statuses}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <Link href={`/admin/orders/${order.documentId}`} className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition-colors inline-block">
+                                                <Eye className="w-4 h-4" />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

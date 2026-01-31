@@ -9,7 +9,8 @@ import {
     Calendar,
     User,
     MessageSquare,
-    Car
+    Car,
+    DollarSign
 } from "lucide-react";
 import { getAdminLeads } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
@@ -70,6 +71,8 @@ export default function AdminLeadsPage() {
                 return <span className="px-2 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><MessageSquare className="w-3 h-3" /> Liên Hệ</span>;
             case 'quote':
                 return <span className="px-2 py-1 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><MessageSquare className="w-3 h-3" /> Báo Giá</span>;
+            case 'consultation':
+                return <span className="px-2 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-full text-xs font-bold flex items-center gap-1 w-fit"><DollarSign className="w-3 h-3" /> Trả Góp</span>;
             default:
                 return <span className="px-2 py-1 bg-gray-500/10 text-gray-600 dark:text-gray-400 border border-gray-500/20 rounded-full text-xs font-bold w-fit">{type}</span>;
         }
@@ -106,6 +109,7 @@ export default function AdminLeadsPage() {
                         <option value="test-drive">Đăng Ký Lái Thử</option>
                         <option value="contact">Liên Hệ Tư Vấn</option>
                         <option value="quote">Yêu Cầu Báo Giá</option>
+                        <option value="consultation">Tư Vấn Trả Góp</option>
                     </select>
                 </div>
             </div>

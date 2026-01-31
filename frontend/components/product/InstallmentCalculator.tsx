@@ -283,6 +283,16 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                                         />
                                     </div>
                                     <div>
+                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email (Nhận bảng tính chi tiết)</label>
+                                        <input 
+                                            type="email" 
+                                            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                            placeholder="email@example.com"
+                                            value={formData.email}
+                                            onChange={e => setFormData({...formData, email: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
                                         <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Ghi chú (Tuỳ chọn)</label>
                                         <textarea 
                                             className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all h-20 resize-none"

@@ -12,20 +12,28 @@ export default {
         return;
       }
 
+      const isInstallment = result.message?.toLowerCase().includes('trả góp');
+      const emailSubject = isInstallment 
+        ? `[Tư Vấn Trả Góp] ${result.name} - ${result.model}`
+        : `[New Lead] ${result.type.toUpperCase()} - ${result.name}`;
+
       // 1. Email to Admin
       try {
         await strapi.plugins['email'].services.email.send({
           to: adminEmail,
           from: fromEmail,
-          subject: `[New Lead] ${result.type.toUpperCase()} - ${result.name}`,
+          subject: emailSubject,
           html: `
             <h3>New Lead Received</h3>
             <p><strong>Name:</strong> ${result.name}</p>
             <p><strong>Email:</strong> ${result.email}</p>
             <p><strong>Phone:</strong> ${result.phone}</p>
-            <p><strong>Type:</strong> ${result.type}</p>
+            <p><strong>Type:</strong> ${result.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
             <p><strong>Model:</strong> ${result.model || 'N/A'}</p>
-            <p><strong>Message:</strong> ${result.message || 'No message'}</p>
+            <div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
+                <strong>Message / Details:</strong><br/>
+                <pre style="white-space: pre-wrap; font-family: sans-serif;">${result.message || 'No message'}</pre>
+            </div>
             <p><strong>Status:</strong> ${result.statuses}</p>
             <p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
           `,
@@ -36,29 +44,44 @@ export default {
       }
 
       // 2. Email to Customer (Auto-reply)
-      if (result.email) {
+      if (result.email && !result.email.includes('no-email@provided.com')) {
         try {
+          let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
+          let customerBodyContent = '';
+
+          if (isInstallment) {
+            customerSubject = 'Xác nhận yêu cầu Tư Vấn Trả Góp - Xe Điện Đức Duy';
+            customerBodyContent = `
+              <p>Chúng tôi đã nhận được yêu cầu <strong>Tư Vấn Trả Góp</strong> cho sản phẩm <strong>${result.model || 'xe điện'}</strong> của bạn.</p>
+              <p>Dưới đây là thông tin dự toán bạn đã đăng ký:</p>
+              <div style="background-color: #eef2ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                <pre style="white-space: pre-wrap; font-family: sans-serif; margin: 0; color: #1e3a8a;">${result.message}</pre>
+              </div>
+              <p><em>Lưu ý: Bảng tính trên chỉ mang tính chất tham khảo. Nhân viên tư vấn sẽ gọi điện lại để chốt hồ sơ chính xác nhất với các công ty tài chính (FE Credit, HD Saison...).</em></p>
+            `;
+          } else {
+            customerBodyContent = `
+              <p>Chúng tôi đã nhận được yêu cầu <strong>${getErrorTypeLabel(result.type)}</strong> của bạn.</p>
+              <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                  <p style="margin: 0 0 10px 0;"><strong>Lời nhắn:</strong></p>
+                  <p>${result.message || 'Không có'}</p>
+              </div>
+            `;
+          }
+
           await strapi.plugins['email'].services.email.send({
             to: result.email,
             from: fromEmail,
-            subject: 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy',
+            subject: customerSubject,
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
                 <p>Xin chào <strong>${result.name}</strong>,</p>
-                <p>Chúng tôi đã nhận được yêu cầu <strong>${getErrorTypeLabel(result.type)}</strong> của bạn.</p>
-                <p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${result.phone}</strong> trong thời gian sớm nhất (thường trong vòng 24h làm việc).</p>
-                
-                <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                  <p style="margin: 0 0 10px 0;"><strong>Thông tin bạn đã gửi:</strong></p>
-                  <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Sản phẩm quan tâm:</strong> ${result.model || 'Không xác định'}</li>
-                    <li><strong>Lời nhắn:</strong> ${result.message || 'Không có'}</li>
-                  </ul>
-                </div>
-
-                <p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
+                ${customerBodyContent}
+                <p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${result.phone}</strong> trong thời gian sớm nhất (thường trong vòng 15-30 phút trong giờ làm việc).</p>
                 <br/>
+                <p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
                 <p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
               </div>
             `,

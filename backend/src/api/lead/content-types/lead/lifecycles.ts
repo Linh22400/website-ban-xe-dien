@@ -19,7 +19,13 @@ export default {
 
       // 1. Email to Admin
       try {
-        await strapi.plugins['email'].services.email.send({
+        const emailService = strapi.plugin('email').service('email');
+        if (!emailService) {
+           strapi.log.error('Email service not found via strapi.plugin("email").service("email")');
+           return;
+        }
+
+        await emailService.send({
           to: adminEmail,
           from: fromEmail,
           subject: emailSubject,
@@ -69,7 +75,8 @@ export default {
             `;
           }
 
-          await strapi.plugins['email'].services.email.send({
+          const emailService = strapi.plugin('email').service('email');
+          await emailService.send({
             to: result.email,
             from: fromEmail,
             subject: customerSubject,

@@ -317,7 +317,12 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
                 status: 'error',
                 message: err.message,
                 code: err.code,
-                response: err.response
+                stack: err.stack,
+                config: {
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false
+                }
             });
         }
     },

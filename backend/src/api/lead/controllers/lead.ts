@@ -13,6 +13,112 @@ const leadByIp = new Map<string, number[]>();
 const leadByPhone = new Map<string, number[]>();
 const leadByEmail = new Map<string, number[]>();
 
+async function sendLeadEmail(strapi, entity, input) {
+    try {
+        strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
+        
+        const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
+        
+        if (!emailService) {
+            strapi.log.error('[Lead Controller] Email service not found!');
+            return;
+        }
+
+        const adminEmail = process.env.SMTP_USERNAME || 'ln32587@gmail.com';
+        const fromEmail = process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
+        
+        // Normalize phone for display
+        let normalizedPhone = input.phone;
+        if (normalizedPhone.startsWith('+84')) normalizedPhone = '0' + normalizedPhone.slice(3);
+
+        const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
+        const emailSubject = isInstallment
+            ? `[Tư Vấn Trả Góp] ${input.name} - ${input.model || 'N/A'}`
+            : `[New Lead] ${input.type?.toUpperCase()} - ${input.name}`;
+
+        // 1. Send to Admin
+        try {
+            await emailService.send({
+                to: adminEmail,
+                from: fromEmail,
+                subject: emailSubject,
+                html: `
+                    <h3>New Lead Received</h3>
+                    <p><strong>Name:</strong> ${input.name}</p>
+                    <p><strong>Email:</strong> ${input.email}</p>
+                    <p><strong>Phone:</strong> ${normalizedPhone}</p>
+                    <p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
+                    <p><strong>Model:</strong> ${input.model || 'N/A'}</p>
+                    <div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
+                        <strong>Message / Details:</strong><br/>
+                        <pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
+                    </div>
+                    <p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
+                `,
+            });
+            strapi.log.info('[Lead Controller] Admin email sent successfully.');
+        } catch (adminErr) {
+            strapi.log.error('[Lead Controller] Failed to send Admin email:', adminErr);
+        }
+
+        // 2. Send to Customer (Auto-reply)
+        if (input.email && !input.email.includes('no-email')) {
+            try {
+                let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
+                let customerBodyContent = '';
+
+                if (isInstallment) {
+                    customerSubject = 'Xác nhận yêu cầu Tư Vấn Trả Góp - Xe Điện Đức Duy';
+                    customerBodyContent = `
+                        <p>Chúng tôi đã nhận được yêu cầu <strong>Tư Vấn Trả Góp</strong> cho sản phẩm <strong>${input.model || 'xe điện'}</strong> của bạn.</p>
+                        <p>Dưới đây là thông tin dự toán bạn đã đăng ký:</p>
+                        <div style="background-color: #eef2ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                            <pre style="white-space: pre-wrap; font-family: sans-serif; margin: 0; color: #1e3a8a;">${input.message}</pre>
+                        </div>
+                    `;
+                } else {
+                    const typeLabel = {
+                        'test-drive': 'Lái Thử',
+                        'consultation': 'Tư Vấn',
+                        'deposit': 'Đặt Cọc'
+                    }[input.type] || 'Liên Hệ';
+
+                    customerBodyContent = `
+                        <p>Chúng tôi đã nhận được yêu cầu <strong>${typeLabel}</strong> của bạn.</p>
+                        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                            <p style="margin: 0 0 10px 0;"><strong>Lời nhắn:</strong></p>
+                            <p>${input.message || 'Không có'}</p>
+                        </div>
+                    `;
+                }
+
+                await emailService.send({
+                    to: input.email,
+                    from: fromEmail,
+                    subject: customerSubject,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
+                            <p>Xin chào <strong>${input.name}</strong>,</p>
+                            ${customerBodyContent}
+                            <p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất.</p>
+                            <br/>
+                            <p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
+                            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+                            <p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
+                        </div>
+                    `,
+                });
+                strapi.log.info('[Lead Controller] Customer auto-reply sent successfully.');
+            } catch (custErr) {
+                strapi.log.error('[Lead Controller] Failed to send Customer email:', custErr);
+            }
+        }
+    } catch (e) {
+        strapi.log.error('Email sending error:', e);
+    }
+}
+
 function hitRateLimit({ map, key, now, windowMs, maxCount, minIntervalMs }) {
 	const timestamps = map.get(key) || [];
 	// Xóa các mốc thời gian quá cũ (ngoài windowMs)
@@ -173,112 +279,12 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 				},
 			});
 
-			// --- EMAIL SENDING LOGIC (SIMPLIFIED & ROBUST) ---
-			try {
-				strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
-				
-				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
-				
-				if (!emailService) {
-					strapi.log.error('[Lead Controller] Email service not found!');
-				} else {
-					strapi.log.info('[Lead Controller] Email service found.');
-					
-					const adminEmail = process.env.SMTP_USERNAME || 'ln32587@gmail.com';
-					const fromEmail = process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
-					
-					strapi.log.info(`[Lead Controller] Config: User=${adminEmail}`);
-
-					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
-					const emailSubject = isInstallment
-						? `[Tư Vấn Trả Góp] ${input.name} - ${input.model || 'N/A'}`
-						: `[New Lead] ${input.type?.toUpperCase()} - ${input.name}`;
-
-					// 1. Send to Admin
-					try {
-						strapi.log.info(`[Lead Controller] Sending email to Admin...`);
-						await emailService.send({
-							to: adminEmail,
-							from: fromEmail,
-							subject: emailSubject,
-							html: `
-								<h3>New Lead Received</h3>
-								<p><strong>Name:</strong> ${input.name}</p>
-								<p><strong>Email:</strong> ${input.email}</p>
-								<p><strong>Phone:</strong> ${normalizedPhone}</p>
-								<p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
-								<p><strong>Model:</strong> ${input.model || 'N/A'}</p>
-								<div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
-									<strong>Message / Details:</strong><br/>
-									<pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
-								</div>
-								<p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
-							`,
-						});
-						strapi.log.info('[Lead Controller] Admin email sent successfully.');
-					} catch (adminErr) {
-						strapi.log.error('[Lead Controller] Failed to send Admin email:', adminErr);
-					}
-
-					// 2. Send to Customer (Auto-reply)
-					if (input.email && !input.email.includes('no-email')) {
-						try {
-							strapi.log.info(`[Lead Controller] Sending auto-reply to Customer...`);
-							let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
-							let customerBodyContent = '';
-
-							if (isInstallment) {
-								customerSubject = 'Xác nhận yêu cầu Tư Vấn Trả Góp - Xe Điện Đức Duy';
-								customerBodyContent = `
-									<p>Chúng tôi đã nhận được yêu cầu <strong>Tư Vấn Trả Góp</strong> cho sản phẩm <strong>${input.model || 'xe điện'}</strong> của bạn.</p>
-									<p>Dưới đây là thông tin dự toán bạn đã đăng ký:</p>
-									<div style="background-color: #eef2ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-										<pre style="white-space: pre-wrap; font-family: sans-serif; margin: 0; color: #1e3a8a;">${input.message}</pre>
-									</div>
-								`;
-							} else {
-								const typeLabel = {
-									'test-drive': 'Lái Thử',
-									'consultation': 'Tư Vấn',
-									'deposit': 'Đặt Cọc'
-								}[input.type] || 'Liên Hệ';
-
-								customerBodyContent = `
-									<p>Chúng tôi đã nhận được yêu cầu <strong>${typeLabel}</strong> của bạn.</p>
-									<div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-										<p style="margin: 0 0 10px 0;"><strong>Lời nhắn:</strong></p>
-										<p>${input.message || 'Không có'}</p>
-									</div>
-								`;
-							}
-
-							await emailService.send({
-								to: input.email,
-								from: fromEmail,
-								subject: customerSubject,
-								html: `
-									<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-										<h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
-										<p>Xin chào <strong>${input.name}</strong>,</p>
-										${customerBodyContent}
-										<p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất.</p>
-										<br/>
-										<p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
-										<hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-										<p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
-									</div>
-								`,
-							});
-							strapi.log.info('[Lead Controller] Customer auto-reply sent successfully.');
-						} catch (custErr) {
-							strapi.log.error('[Lead Controller] Failed to send Customer email:', custErr);
-						}
-					}
-				}
-			} catch (emailError) {
-				strapi.log.error('Failed to send lead email in controller:', emailError);
-				// Không throw error để FE vẫn nhận success
-			}
+			// --- EMAIL SENDING LOGIC (NON-BLOCKING) ---
+			// We do NOT await this function so the response is returned immediately to the frontend.
+			// This prevents the "spinning" issue if SMTP is blocked or slow.
+			sendLeadEmail(strapi, entity, input).catch(err => {
+				strapi.log.error('Background email sending failed:', err);
+			});
 
 			const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
 			return this.transformResponse(sanitizedEntity);

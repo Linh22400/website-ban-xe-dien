@@ -120,10 +120,21 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 
 			// --- EMAIL SENDING LOGIC (Moved from Lifecycles) ---
 			try {
+				strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
+				
 				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
-				if (emailService) {
+				
+				if (!emailService) {
+					strapi.log.error('[Lead Controller] Email service not found! Check if email plugin is enabled.');
+					strapi.log.info('[Lead Controller] Available plugins:', Object.keys(strapi.plugins));
+				} else {
+					strapi.log.info('[Lead Controller] Email service found.');
+					
 					const adminEmail = process.env.SMTP_USERNAME || 'camauducduy@gmail.com';
 					const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
+					
+					// Log config status (masked)
+					strapi.log.info(`[Lead Controller] SMTP Config: User=${adminEmail ? 'Set' : 'Missing'}, From=${fromEmail}`);
 
 					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
 					const emailSubject = isInstallment
@@ -131,6 +142,7 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 						: `[New Lead] ${input.type?.toUpperCase()} - ${input.name}`;
 
 					// 1. Send to Admin
+					strapi.log.info(`[Lead Controller] Sending email to Admin: ${adminEmail}`);
 					await emailService.send({
 						to: adminEmail,
 						from: fromEmail,
@@ -149,9 +161,11 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 							<p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
 						`,
 					});
+					strapi.log.info('[Lead Controller] Admin email sent successfully.');
 
 					// 2. Send to Customer (Auto-reply)
 					if (input.email && !input.email.includes('no-email')) {
+						strapi.log.info(`[Lead Controller] Sending auto-reply to Customer: ${input.email}`);
 						let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
 						let customerBodyContent = '';
 
@@ -198,6 +212,9 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 								</div>
 							`,
 						});
+						strapi.log.info('[Lead Controller] Customer auto-reply sent successfully.');
+					} else {
+						strapi.log.info('[Lead Controller] Skipping customer email (no valid email provided).');
 					}
 				}
 			} catch (err) {

@@ -127,8 +127,8 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 			try {
 				strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
 				
-				// DIAGNOSTIC: Test raw connectivity to Gmail
-				strapi.log.info('[Lead Controller] DIAGNOSTIC: Testing TCP connection to smtp.gmail.com:587...');
+				// DIAGNOSTIC: Test raw connectivity to Brevo
+				strapi.log.info('[Lead Controller] DIAGNOSTIC: Testing TCP connection to smtp-relay.brevo.com:465...');
 				try {
 					await new Promise((resolve, reject) => {
 						const socket = new net.Socket();
@@ -146,11 +146,11 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 							socket.destroy();
 							reject(err);
 						});
-						socket.connect(587, 'smtp.gmail.com');
+						socket.connect(465, 'smtp-relay.brevo.com');
 					});
 				} catch (netErr) {
 					strapi.log.error('[Lead Controller] DIAGNOSTIC: TCP Connection FAILED:', netErr);
-					strapi.log.error('[Lead Controller] CRITICAL: Render cannot reach Gmail. Please check Render firewall/region blocking.');
+					strapi.log.error('[Lead Controller] CRITICAL: Render cannot reach Brevo (465). Check Firewall.');
 				}
 				
 				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
@@ -161,12 +161,12 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 				} else {
 					strapi.log.info('[Lead Controller] Email service found.');
 					
-					const adminEmail = process.env.SMTP_USERNAME || 'camauducduy@gmail.com';
-					const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
+					const adminEmail = 'a13a6b001@smtp-brevo.com';
+					const fromEmail = process.env.SMTP_FROM || 'no-reply@banxedien.com';
 					
-					// Log config status (masked)
-					strapi.log.info(`[Lead Controller] SMTP Config: User=${adminEmail ? 'Set' : 'Missing'}, From=${fromEmail}`);
-					strapi.log.info(`[Lead Controller] Connection: Host=${process.env.SMTP_HOST || 'default(smtp.gmail.com)'}, Port=${process.env.SMTP_PORT || 'default(587)'}, Secure=${process.env.SMTP_SECURE || 'default(false)'}`);
+					// Log config status
+					strapi.log.info(`[Lead Controller] SMTP Config: User=${adminEmail}, From=${fromEmail}`);
+					strapi.log.info(`[Lead Controller] Connection: FORCED BREVO CONFIG (Host=smtp-relay.brevo.com, Port=465, Secure=true)`);
 
 					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
 					const emailSubject = isInstallment

@@ -11,7 +11,7 @@ import {
     Bike,
     MoreVertical
 } from "lucide-react";
-import { getCars, deleteCar, Car } from "@/lib/api";
+import { getCarsWithMeta, deleteCar, Car } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 
 export default function AdminProductsPage() {
@@ -19,6 +19,12 @@ export default function AdminProductsPage() {
     // Product Data State
     const [products, setProducts] = useState<Car[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
 
     // Filter State
     const [searchTerm, setSearchTerm] = useState("");
@@ -29,27 +35,42 @@ export default function AdminProductsPage() {
         async function fetchProducts() {
             setLoading(true);
             try {
-                const data = await getCars();
-                setProducts(data);
+                const { cars, pagination: meta } = await getCarsWithMeta({
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
+                    search: searchTerm,
+                    type: filterCategory !== 'all' ? (filterCategory === 'Xe Máy Điện' ? 'motorcycle' : 'bicycle') : undefined
+                });
+                
+                setProducts(cars);
+                if (meta) {
+                    setPagination(prev => ({
+                        ...prev,
+                        page: meta.page,
+                        pageSize: meta.pageSize,
+                        pageCount: meta.pageCount,
+                        total: meta.total
+                    }));
+                }
             } catch (error) {
                 console.error("Failed to fetch products", error);
             } finally {
                 setLoading(false);
             }
         }
-        fetchProducts();
-    }, []);
+        
+        // Debounce search
+        const timeoutId = setTimeout(() => {
+            fetchProducts();
+        }, 300);
+        
+        return () => clearTimeout(timeoutId);
+    }, [pagination.page, pagination.pageSize, searchTerm, filterCategory]);
 
-    // Filter Logic
-    const filteredProducts = products.filter(product => {
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            `SP-${product.id}00`.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = filterCategory === "all" ||
-            (filterCategory === 'Xe Máy Điện' && product.type === 'motorcycle') ||
-            (filterCategory === 'Xe Đạp Điện' && product.type === 'bicycle');
-
-        return matchesSearch && matchesCategory;
-    });
+    // Reset page when filters change
+    useEffect(() => {
+        setPagination(prev => ({ ...prev, page: 1 }));
+    }, [searchTerm, filterCategory]);
 
     // Delete Handler
     const handleDelete = async (id: string, name: string) => {
@@ -59,11 +80,33 @@ export default function AdminProductsPage() {
 
             const success = await deleteCar(token, id);
             if (success) {
-                setProducts(products.filter(p => p.documentId !== id));
+                // Refresh data
+                const { cars, pagination: meta } = await getCarsWithMeta({
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
+                    search: searchTerm,
+                    type: filterCategory !== 'all' ? (filterCategory === 'Xe Máy Điện' ? 'motorcycle' : 'bicycle') : undefined
+                });
+                setProducts(cars);
+                if (meta) {
+                    setPagination(prev => ({
+                        ...prev,
+                        page: meta.page,
+                        pageSize: meta.pageSize,
+                        pageCount: meta.pageCount,
+                        total: meta.total
+                    }));
+                }
                 alert("Đã xóa sản phẩm thành công!");
             } else {
                 alert("Không thể xóa sản phẩm. Vui lòng thử lại.");
             }
+        }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
         }
     };
 
@@ -148,8 +191,8 @@ export default function AdminProductsPage() {
                                         Đang tải dữ liệu...
                                     </td>
                                 </tr>
-                            ) : filteredProducts.length > 0 ? (
-                                filteredProducts.map((product) => (
+                            ) : products.length > 0 ? (
+                                products.map((product) => (
                                     <tr key={product.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
                                             <div className="flex items-center gap-4">
@@ -214,6 +257,30 @@ export default function AdminProductsPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Hiển thị {products.length} trên tổng số {pagination.total} kết quả</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page} / {pagination.pageCount}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

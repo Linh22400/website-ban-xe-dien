@@ -10,7 +10,9 @@ import {
     User,
     MessageSquare,
     Car,
-    DollarSign
+    DollarSign,
+    ChevronLeft,
+    ChevronRight
 } from "lucide-react";
 import { getAdminLeads } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
@@ -31,6 +33,15 @@ export default function AdminLeadsPage() {
     const { token } = useAuth();
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
+    
+    // Pagination State
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
+
     const [searchTerm, setSearchTerm] = useState("");
     const [filterType, setFilterType] = useState("all");
 
@@ -39,8 +50,22 @@ export default function AdminLeadsPage() {
             if (token) {
                 try {
                     setLoading(true);
-                    const data = await getAdminLeads(token);
+                    const { data, meta } = await getAdminLeads(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm,
+                        type: filterType
+                    });
+                    
                     setLeads(data);
+                    
+                    if (meta && meta.pagination) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pagination.pageCount,
+                            total: meta.pagination.total
+                        }));
+                    }
                 } catch (error) {
                     console.error("Failed to fetch leads", error);
                 } finally {
@@ -48,19 +73,26 @@ export default function AdminLeadsPage() {
                 }
             }
         }
-        fetchLeads();
-    }, [token]);
+        
+        // Debounce search
+        const timeoutId = setTimeout(() => {
+            fetchLeads();
+        }, 300);
+        
+        return () => clearTimeout(timeoutId);
+    }, [token, pagination.page, pagination.pageSize, searchTerm, filterType]);
 
-    const filteredLeads = leads.filter(lead => {
-        const matchesSearch =
-            lead.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.phone?.includes(searchTerm);
+    // Handle Page Change
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
+    };
 
-        const matchesType = filterType === "all" || lead.type === filterType;
-
-        return matchesSearch && matchesType;
-    });
+    // Reset page when filters change
+    useEffect(() => {
+        setPagination(prev => ({ ...prev, page: 1 }));
+    }, [searchTerm, filterType]);
 
     const getTypeBadge = (type: string) => {
         switch (type) {
@@ -132,8 +164,8 @@ export default function AdminLeadsPage() {
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
-                            ) : filteredLeads.length > 0 ? (
-                                filteredLeads.map((lead) => (
+                            ) : leads.length > 0 ? (
+                                leads.map((lead) => (
                                     <tr key={lead.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
                                             <div className="font-bold text-foreground">{lead.name}</div>
@@ -185,6 +217,30 @@ export default function AdminLeadsPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Hiển thị {leads.length} trên tổng số {pagination.total} kết quả</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page} / {pagination.pageCount}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

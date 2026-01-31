@@ -51,6 +51,12 @@ export default function AdminOrdersPage() {
     const { user, token: authToken } = useAuth();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
 
     // Filtering State
     const [searchTerm, setSearchTerm] = useState("");
@@ -63,11 +69,22 @@ export default function AdminOrdersPage() {
             try {
                 // Use real token if available, otherwise try public access (empty string)
                 const token = authToken || "";
-                const { data } = await getAdminOrders(token, {
+                const { data, meta } = await getAdminOrders(token, {
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
                     status: filterStatus,
                     search: searchTerm
                 });
                 setOrders(data);
+                if (meta) {
+                    setPagination(prev => ({
+                        ...prev,
+                        page: meta.pagination.page,
+                        pageSize: meta.pagination.pageSize,
+                        pageCount: meta.pagination.pageCount,
+                        total: meta.pagination.total
+                    }));
+                }
             } catch (error) {
                 console.error("Failed to fetch orders", error);
             } finally {
@@ -81,7 +98,18 @@ export default function AdminOrdersPage() {
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [filterStatus, searchTerm]);
+    }, [pagination.page, pagination.pageSize, filterStatus, searchTerm]);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setPagination(prev => ({ ...prev, page: 1 }));
+    }, [searchTerm, filterStatus]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -197,13 +225,27 @@ export default function AdminOrdersPage() {
                     </table>
                 </div>
 
-                {/* Pagination (Static for now) */}
-                <div className="p-4 border-t border-white/10 flex items-center justify-between text-sm text-muted-foreground">
-                    <div>Hiển thị {orders.length} kết quả</div>
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Hiển thị {orders.length} trên tổng số {pagination.total} kết quả</div>
                     <div className="flex gap-2">
-                        <button className="px-3 py-1 bg-white/5 rounded hover:bg-white/10 disabled:opacity-50" disabled>Trước</button>
-                        <button className="px-3 py-1 bg-primary text-black font-bold rounded">1</button>
-                        <button className="px-3 py-1 bg-white/5 rounded hover:bg-white/10" disabled>Sau</button>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page} / {pagination.pageCount}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
                     </div>
                 </div>
             </div>

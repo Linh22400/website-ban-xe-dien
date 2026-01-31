@@ -55,7 +55,7 @@ export default function AdminDashboardPage() {
 
                     // 3. Fetch Users (Customers)
                     const users = await getUsers(token);
-                    setTotalCustomers(users.length);
+                    setTotalCustomers(users.meta?.pagination?.total || 0);
 
                 } catch (error) {
                     console.error("Failed to fetch dashboard data", error);
@@ -107,7 +107,7 @@ export default function AdminDashboardPage() {
     ];
 
     if (loading) {
-        return <div className="text-white">Đang tải dữ liệu tổng quan...</div>;
+        return <div className="text-muted-foreground">Đang tải dữ liệu tổng quan...</div>;
     }
 
     return (
@@ -160,11 +160,11 @@ export default function AdminDashboardPage() {
                     </Link>
                 </div>
 
-                <div className="bg-card/50 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
+                <div className="bg-card/50 border border-border rounded-2xl overflow-hidden backdrop-blur-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-white/5 bg-muted/50 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                <tr className="border-b border-border bg-muted/50 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
                                     <th className="px-6 py-4">Mã đơn</th>
                                     <th className="px-6 py-4">Khách hàng</th>
                                     <th className="px-6 py-4">Sản phẩm</th>
@@ -173,7 +173,7 @@ export default function AdminDashboardPage() {
                                     <th className="px-6 py-4 text-right">Hành động</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-border">
                                 {recentOrders.map((order) => (
                                     <tr key={order.id} className="hover:bg-muted/50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">

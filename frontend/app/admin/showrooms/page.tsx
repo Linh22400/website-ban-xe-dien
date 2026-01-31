@@ -19,17 +19,53 @@ export default function AdminShowroomsPage() {
     const [showrooms, setShowrooms] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     useEffect(() => {
         loadShowrooms();
-    }, [token]);
+    }, [token, pagination.page, pagination.pageSize, searchTerm]);
 
     const loadShowrooms = async () => {
         if (token) {
             setLoading(true);
-            const data = await getShowroomsAdmin(token);
-            setShowrooms(data);
-            setLoading(false);
+            try {
+                const { data, meta } = await getShowroomsAdmin(token, {
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
+                    search: searchTerm
+                });
+                setShowrooms(data);
+                if (meta) {
+                    setPagination(prev => ({
+                        ...prev,
+                        pageCount: meta.pageCount || 1,
+                        total: meta.total || 0
+                    }));
+                }
+            } catch (error) {
+                console.error("Failed to fetch showrooms", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
         }
     };
 
@@ -46,12 +82,6 @@ export default function AdminShowroomsPage() {
             alert("Lỗi khi xóa cửa hàng. Vui lòng thử lại.");
         }
     };
-
-    const filteredShowrooms = showrooms.filter(s =>
-        s.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.Address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.City?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     return (
         <div className="space-y-6">
@@ -102,8 +132,8 @@ export default function AdminShowroomsPage() {
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
-                            ) : filteredShowrooms.length > 0 ? (
-                                filteredShowrooms.map((showroom) => (
+                            ) : showrooms.length > 0 ? (
+                                showrooms.map((showroom) => (
                                     <tr key={showroom.id} className="hover:bg-muted/50 transition-colors group">
                                         <td className="p-4 pl-6">
                                             <div className="font-bold text-foreground">{showroom.Name}</div>
@@ -161,6 +191,30 @@ export default function AdminShowroomsPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Trang {pagination.page} / {pagination.pageCount} (Tổng {pagination.total} kết quả)</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1 || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

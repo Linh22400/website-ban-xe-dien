@@ -1001,9 +1001,24 @@ export async function loginUser(data: LoginData): Promise<AuthResponse | null> {
     }
 }
 
-export async function getUsers(token: string): Promise<User[]> {
+export async function getUsers(token: string, params: any = {}): Promise<{ data: User[], meta?: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/users?sort=createdAt:desc`, {
+        const { page = 1, pageSize = 25, search } = params;
+        
+        // Strapi /api/users uses start/limit for pagination, NOT pagination[page]
+        const queryParts = [
+            `sort=createdAt:desc`,
+            `start=${(page - 1) * pageSize}`,
+            `limit=${pageSize}`
+        ];
+
+        if (search) {
+             const q = encodeURIComponent(search);
+             queryParts.push(`filters[$or][0][username][$containsi]=${q}`);
+             queryParts.push(`filters[$or][1][email][$containsi]=${q}`);
+        }
+
+        const response = await fetch(`${STRAPI_URL}/api/users?${queryParts.join('&')}&populate=role`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -1011,21 +1026,23 @@ export async function getUsers(token: string): Promise<User[]> {
 
         if (!response.ok) {
             console.error('Failed to fetch users:', await response.text());
-            return [];
+            return { data: [] };
         }
 
         const users = await response.json();
-        return users.map((u: any) => ({
+        const mappedUsers = users.map((u: any) => ({
             id: u.id,
             username: u.username,
             email: u.email,
             blocked: u.blocked,
             createdAt: u.createdAt,
-            role: u.role?.name || 'Customer' // Strapi usually returns role object if populated, specific handling might be needed depending on permission
+            role: u.role?.name || 'Customer'
         }));
+        
+        return { data: mappedUsers };
     } catch (error) {
         console.error('Error fetching users:', error);
-        return [];
+        return { data: [] };
     }
 }
 
@@ -1087,9 +1104,18 @@ export async function getUserLeads(token: string): Promise<any[]> {
     }
 }
 
-export async function getAdminLeads(token: string): Promise<any[]> {
+export async function getAdminLeads(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/leads?populate=users_permissions_user&sort=createdAt:desc`, {
+        const { page = 1, pageSize = 20, search } = params;
+        let url = `${STRAPI_URL}/api/leads?populate=users_permissions_user&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+             url += `&filters[$or][0][name][$containsi]=${encodeURIComponent(search)}`;
+             url += `&filters[$or][1][email][$containsi]=${encodeURIComponent(search)}`;
+             url += `&filters[$or][2][phone][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        const response = await fetch(url, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -1098,11 +1124,11 @@ export async function getAdminLeads(token: string): Promise<any[]> {
 
         if (!response.ok) {
             console.error('Failed to get admin leads:', await response.text());
-            return [];
+            return { data: [], meta: {} };
         }
 
         const data = await response.json();
-        return data.data.map((item: any) => ({
+        const mappedData = data.data.map((item: any) => ({
             id: item.id,
             ...item.attributes, // Handle v4 structure if needed, or flat v5
             // In v5 flat response:
@@ -1116,9 +1142,10 @@ export async function getAdminLeads(token: string): Promise<any[]> {
             createdAt: item.createdAt,
             user: item.users_permissions_user // if populated
         }));
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error('Error getting admin leads:', error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 
@@ -1246,15 +1273,29 @@ export async function getAccessoryBySlug(slug: string): Promise<Accessory | unde
 
 // Accessories Management API (Admin)
 
-export async function getAccessoriesAdmin(token: string): Promise<any[]> {
+export async function getAccessoriesAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc`, {
+        const { page = 1, pageSize = 20, search, category } = params;
+        
+        let url = `${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+            url += `&filters[name][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        if (category && category !== 'all') {
+            url += `&filters[category][$eq]=${encodeURIComponent(category)}`;
+        }
+
+        const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
-        if (!response.ok) return [];
+        
+        if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
-        return data.data.map((item: any) => {
+        
+        const mappedData = data.data.map((item: any) => {
             const attrs = item.attributes || item;
             return {
                 id: item.id,
@@ -1268,9 +1309,11 @@ export async function getAccessoriesAdmin(token: string): Promise<any[]> {
                 image: attrs.image || attrs.Image || null
             };
         });
+
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin accessories:", error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 
@@ -1365,22 +1408,30 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 // Showroom Management API for Admin
-export async function getShowroomsAdmin(token: string): Promise<any[]> {
+export async function getShowroomsAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/showrooms?populate=*&sort=createdAt:desc`, {
+        const { page = 1, pageSize = 20, search } = params;
+        let url = `${STRAPI_URL}/api/showrooms?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+            url += `&filters[$or][0][Name][$containsi]=${encodeURIComponent(search)}&filters[$or][1][Address][$containsi]=${encodeURIComponent(search)}&filters[$or][2][City][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
-        if (!response.ok) return [];
+        if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
-        return data.data.map((item: any) => ({
+        const mappedData = data.data.map((item: any) => ({
             id: item.id,
             documentId: item.documentId,
             ...item
         }));
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin showrooms:", error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 
@@ -1435,18 +1486,25 @@ export async function deleteShowroom(token: string, documentId: string): Promise
 }
 
 // Hero Slides (Banner) Management API for Admin
-export async function getHeroSlidesAdmin(token: string): Promise<any[]> {
+export async function getHeroSlidesAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc`, {
+        const { page = 1, pageSize = 20, search } = params;
+        let url = `${STRAPI_URL}/api/hero-slides?populate=*&sort=order:asc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+            url += `&filters[title][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
-        if (!response.ok) return [];
+        if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
 
         if (DEBUG_LOG) console.log("Hero Slides Raw Response:", JSON.stringify(data.data?.[0], null, 2));
 
-        return data.data.map((item: any) => {
+        const mappedData = data.data.map((item: any) => {
             // Strapi v5 flat structure - fields are at root level
             return {
                 id: item.id,
@@ -1460,9 +1518,11 @@ export async function getHeroSlidesAdmin(token: string): Promise<any[]> {
                 image: item.image // image should be populated object with { id, url, ... }
             };
         });
+
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin hero slides:", error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 
@@ -1539,22 +1599,30 @@ export async function getArticleCategories(token: string): Promise<any[]> {
     }
 }
 
-export async function getArticlesAdmin(token: string): Promise<any[]> {
+export async function getArticlesAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/articles?populate=Cover_image&populate=category&sort=Published_Date:desc`, {
+        const { page = 1, pageSize = 20, search } = params;
+        let url = `${STRAPI_URL}/api/articles?populate=Cover_image&populate=category&sort=Published_Date:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+             url += `&filters[title][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
-        if (!response.ok) return [];
+        if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
-        return data.data.map((item: any) => ({
+        const mappedData = data.data.map((item: any) => ({
             id: item.id,
             documentId: item.documentId,
             ...item
         }));
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin articles:", error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 
@@ -1657,15 +1725,23 @@ export async function getAccessoryById(token: string, documentId: string): Promi
 }
 
 // Promotions Management API (Admin)
-export async function getPromotionsAdmin(token: string): Promise<any[]> {
+export async function getPromotionsAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/promotions?populate=*&sort=createdAt:desc`, {
+        const { page = 1, pageSize = 20, search } = params;
+        let url = `${STRAPI_URL}/api/promotions?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+             url += `&filters[$or][0][title][$containsi]=${encodeURIComponent(search)}`;
+             url += `&filters[$or][1][code][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
-        if (!response.ok) return [];
+        if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
-        return data.data.map((item: any) => {
+        const mappedData = data.data.map((item: any) => {
             const attrs = item.attributes || item; // Support V4 nested or V5 flat
 
             // Normalize Image
@@ -1696,9 +1772,10 @@ export async function getPromotionsAdmin(token: string): Promise<any[]> {
                 image: imageData || null
             };
         });
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin promotions:", error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 export async function createPromotion(token: string, data: any): Promise<boolean> {
@@ -1792,20 +1869,27 @@ export async function getPromotionById(token: string, documentId: string): Promi
 }
 
 // Product Categories Management API (Admin)
-export async function getProductCategoriesAdmin(token: string): Promise<any[]> {
+export async function getProductCategoriesAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/categories?populate=*&locale=vi&sort=createdAt:desc`, {
+        const { page = 1, pageSize = 20, search } = params;
+        let url = `${STRAPI_URL}/api/categories?populate=*&locale=vi&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+
+        if (search) {
+            url += `&filters[$or][0][name][$containsi]=${encodeURIComponent(search)}&filters[$or][1][slug][$containsi]=${encodeURIComponent(search)}`;
+        }
+
+        const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
 
         if (!response.ok) {
             console.error(`Fetch categories failed: ${response.status}`);
-            return [];
+            return { data: [], meta: {} };
         }
 
         const data = await response.json();
-        return data.data.map((item: any) => {
+        const mappedData = data.data.map((item: any) => {
             const attrs = item.attributes || item;
 
             // Normalize Image
@@ -1829,9 +1913,10 @@ export async function getProductCategoriesAdmin(token: string): Promise<any[]> {
                 count: attrs.products?.data?.length || 0
             };
         });
+        return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.warn("Product categories error:", error);
-        return [];
+        return { data: [], meta: {} };
     }
 }
 

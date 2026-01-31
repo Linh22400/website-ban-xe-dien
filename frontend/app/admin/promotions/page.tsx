@@ -21,14 +21,40 @@ export default function AdminPromotionsPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState("all");
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
+
+    // Debounce search and filter
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm, filterStatus]);
 
     useEffect(() => {
         async function fetchPromotions() {
             if (token) {
                 try {
                     setLoading(true);
-                    const data = await getPromotionsAdmin(token);
+                    const { data, meta } = await getPromotionsAdmin(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm,
+                        status: filterStatus
+                    });
                     setPromotions(data);
+                    if (meta) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pageCount || 1,
+                            total: meta.total || 0
+                        }));
+                    }
                 } catch (error) {
                     console.error("Failed to fetch promotions", error);
                 } finally {
@@ -37,29 +63,34 @@ export default function AdminPromotionsPage() {
             }
         }
         fetchPromotions();
-    }, [token]);
+    }, [token, pagination.page, pagination.pageSize, searchTerm, filterStatus]);
 
-    const filteredPromotions = promotions.filter(promo => {
-        const matchesSearch = promo.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            promo.code?.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const now = new Date();
-        const expiry = new Date(promo.expiryDate);
-        const isActive = promo.isActive && expiry > now;
-
-        const matchesStatus = filterStatus === "all" ||
-            (filterStatus === "active" && isActive) ||
-            (filterStatus === "expired" && !isActive);
-
-        return matchesSearch && matchesStatus;
-    });
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
+    };
 
     const handleDelete = async (id: string, title: string) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa khuyến mãi "${title}" không?`)) {
             if (token) {
                 const success = await deletePromotion(token, id);
                 if (success) {
-                    setPromotions(promotions.filter(p => p.documentId !== id));
+                    // Refresh data
+                    const { data, meta } = await getPromotionsAdmin(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm,
+                        status: filterStatus
+                    });
+                    setPromotions(data);
+                    if (meta) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pageCount || 1,
+                            total: meta.total || 0
+                        }));
+                    }
                     alert("Đã xóa khuyến mãi thành công!");
                 } else {
                     alert("Không thể xóa khuyến mãi. Vui lòng thử lại.");
@@ -130,20 +161,24 @@ export default function AdminPromotionsPage() {
                                 <tr>
                                     <td colSpan={6} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
-                            ) : filteredPromotions.length > 0 ? (
-                                filteredPromotions.map((promo) => {
+                            ) : promotions.length > 0 ? (
+                                promotions.map((promo) => {
                                     const now = new Date();
                                     const expiry = new Date(promo.expiryDate);
                                     const isActive = promo.isActive && expiry > now;
+                                    
+                                    const imgUrl = promo.image?.url
+                                        ? (promo.image.url.startsWith('http') ? promo.image.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}${promo.image.url}`)
+                                        : null;
 
                                     return (
                                         <tr key={promo.id} className="hover:bg-muted/50 transition-colors group">
                                             <td className="p-4 pl-6">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground overflow-hidden">
-                                                        {promo.image?.url ? (
+                                                        {imgUrl ? (
                                                             <img
-                                                                src={promo.image.url}
+                                                                src={imgUrl}
                                                                 alt={promo.title}
                                                                 className="w-full h-full object-cover"
                                                             />
@@ -207,6 +242,30 @@ export default function AdminPromotionsPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Trang {pagination.page} / {pagination.pageCount} (Tổng {pagination.total} kết quả)</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1 || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

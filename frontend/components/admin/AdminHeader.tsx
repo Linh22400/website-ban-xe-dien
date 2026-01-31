@@ -103,7 +103,7 @@ export default function AdminHeader() {
     };
 
     return (
-        <header className="h-20 bg-card/50 backdrop-blur-sm border-b border-white/10 px-8 flex items-center justify-between sticky top-0 z-40">
+        <header className="h-20 bg-card/50 backdrop-blur-sm border-b border-border px-8 flex items-center justify-between sticky top-0 z-40">
             {/* Search Bar */}
             <div className="flex-1 max-w-xl relative" ref={searchRef}>
                 <div className="relative z-50">
@@ -114,12 +114,12 @@ export default function AdminHeader() {
                         value={searchQuery}
                         onChange={handleSearchInput}
                         onFocus={() => searchQuery.length > 0 && setShowSearchDropdown(true)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-primary transition-colors text-white"
+                        className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
                     />
                     {searchQuery && (
                         <button
                             onClick={() => { setSearchQuery(""); setShowSearchDropdown(false); }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
                             <X className="w-4 h-4" />
                         </button>
@@ -128,9 +128,9 @@ export default function AdminHeader() {
 
                 {/* Search Dropdown */}
                 {showSearchDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-xl shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto">
                         {hasResults ? (
-                            <div className="divide-y divide-white/5">
+                            <div className="divide-y divide-border">
                                 {/* Orders */}
                                 {filteredResults.orders.length > 0 && (
                                     <div className="p-2">
@@ -139,13 +139,13 @@ export default function AdminHeader() {
                                             <div
                                                 key={`order-${order.id}`}
                                                 onClick={() => handleResultClick(`/admin/orders/${order.id}`)}
-                                                className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg cursor-pointer group"
+                                                className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg cursor-pointer group"
                                             >
-                                                <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg group-hover:bg-blue-500/20">
+                                                <div className="p-2 bg-blue-500/10 text-blue-500 rounded-lg group-hover:bg-blue-500/20">
                                                     <ShoppingCart className="w-4 h-4" />
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white">{order.code}</div>
+                                                    <div className="text-sm font-bold text-foreground">{order.code}</div>
                                                     <div className="text-xs text-muted-foreground">{order.customerName} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.total)}</div>
                                                 </div>
                                             </div>
@@ -161,13 +161,13 @@ export default function AdminHeader() {
                                             <div
                                                 key={`product-${product.id}`}
                                                 onClick={() => handleResultClick(`/admin/products/new?id=${product.id}`)}
-                                                className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg cursor-pointer group"
+                                                className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg cursor-pointer group"
                                             >
-                                                <div className="p-2 bg-green-500/10 text-green-400 rounded-lg group-hover:bg-green-500/20">
+                                                <div className="p-2 bg-green-500/10 text-green-500 rounded-lg group-hover:bg-green-500/20">
                                                     <Package className="w-4 h-4" />
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white">{product.name}</div>
+                                                    <div className="text-sm font-bold text-foreground">{product.name}</div>
                                                     <div className="text-xs text-muted-foreground">SKU: SP-{product.id}00 - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</div>
                                                 </div>
                                             </div>
@@ -183,13 +183,13 @@ export default function AdminHeader() {
                                             <div
                                                 key={`customer-${customer.id}`}
                                                 onClick={() => handleResultClick(`/admin/customers`)}
-                                                className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg cursor-pointer group"
+                                                className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg cursor-pointer group"
                                             >
-                                                <div className="p-2 bg-purple-500/10 text-purple-400 rounded-lg group-hover:bg-purple-500/20">
+                                                <div className="p-2 bg-purple-500/10 text-purple-500 rounded-lg group-hover:bg-purple-500/20">
                                                     <Users className="w-4 h-4" />
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white">{customer.name}</div>
+                                                    <div className="text-sm font-bold text-foreground">{customer.name}</div>
                                                     <div className="text-xs text-muted-foreground">{customer.phone} - {customer.email}</div>
                                                 </div>
                                             </div>
@@ -213,7 +213,7 @@ export default function AdminHeader() {
                 <div className="relative">
                     <button
                         onClick={() => setShowNotifications(!showNotifications)}
-                        className="relative p-2 hover:bg-white/5 rounded-full transition-colors"
+                        className="relative p-2 hover:bg-muted/50 rounded-full transition-colors"
                     >
                         <Bell className="w-5 h-5 text-muted-foreground" />
                         {unreadCount > 0 && (
@@ -228,9 +228,9 @@ export default function AdminHeader() {
                                 className="fixed inset-0 z-40"
                                 onClick={() => setShowNotifications(false)}
                             />
-                            <div className="absolute right-0 top-full mt-2 w-80 bg-card border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
-                                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
-                                    <h3 className="font-bold text-white">Thông Báo</h3>
+                            <div className="absolute right-0 top-full mt-2 w-80 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
+                                <div className="p-4 border-b border-border flex justify-between items-center bg-muted/50">
+                                    <h3 className="font-bold text-foreground">Thông Báo</h3>
                                     <button
                                         onClick={markAllRead}
                                         className="text-xs text-primary hover:underline"
@@ -244,9 +244,9 @@ export default function AdminHeader() {
                                             <div
                                                 key={notif.id}
                                                 onClick={() => handleNotificationClick(notif.link)}
-                                                className={`p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer ${!notif.read ? 'bg-primary/5' : ''}`}
+                                                className={`p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer ${!notif.read ? 'bg-primary/5' : ''}`}
                                             >
-                                                <p className={`text-sm mb-1 ${!notif.read ? 'font-bold text-white' : 'text-gray-400'}`}>
+                                                <p className={`text-sm mb-1 ${!notif.read ? 'font-bold text-foreground' : 'text-muted-foreground'}`}>
                                                     {notif.title}
                                                 </p>
                                                 <span className="text-xs text-muted-foreground">{notif.time}</span>
@@ -258,10 +258,10 @@ export default function AdminHeader() {
                                         </div>
                                     )}
                                 </div>
-                                <div className="p-3 text-center border-t border-white/10 bg-white/5">
+                                <div className="p-3 text-center border-t border-border bg-muted/50">
                                     <button
                                         onClick={() => alert("Trang quản lý thông báo chi tiết đang được phát triển!")}
-                                        className="text-xs text-muted-foreground hover:text-white transition-colors"
+                                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         Xem tất cả
                                     </button>
@@ -272,16 +272,16 @@ export default function AdminHeader() {
                 </div>
 
                 {/* Profile */}
-                <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+                <div className="flex items-center gap-3 pl-6 border-l border-border">
                     <div className="text-right hidden md:block">
-                        <div className="text-sm font-bold text-gray-900 dark:text-white">
+                        <div className="text-sm font-bold text-foreground">
                             {user?.username || "Admin"}
                         </div>
                         <div className="text-xs text-muted-foreground">
                             {user ? "Quản trị viên" : "Staff"}
                         </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-white/10 overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-border overflow-hidden">
                         <User className="w-5 h-5 text-primary" />
                     </div>
                 </div>

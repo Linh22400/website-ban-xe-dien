@@ -23,15 +23,23 @@ interface Customer {
     blocked: boolean;
     createdAt: string;
     role: string;
-    phone?: string; // Not in default Strapi user, placeholder
-    orders?: number; // Placeholder
-    totalSpent?: number; // Placeholder
+    phone?: string;
+    orders?: number;
+    totalSpent?: number;
 }
 
 export default function AdminCustomersPage() {
     const { token } = useAuth();
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(true);
+    
+    // Pagination State
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 20,
+        pageCount: 1,
+        total: 0
+    });
 
     const [searchTerm, setSearchTerm] = useState("");
     const [filterRole, setFilterRole] = useState("all");
@@ -41,9 +49,15 @@ export default function AdminCustomersPage() {
             if (token) {
                 try {
                     setLoading(true);
-                    const users = await getUsers(token);
+                    // Server-side pagination and search
+                    const { data, meta } = await getUsers(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm
+                    });
+                    
                     // Map API users to Customer interface with placeholders
-                    const mappedUsers = users.map((u: any) => ({
+                    const mappedUsers = data.map((u: any) => ({
                         id: u.id, // Ensure ID is number
                         username: u.username,
                         email: u.email,
@@ -55,6 +69,16 @@ export default function AdminCustomersPage() {
                         totalSpent: 0
                     }));
                     setCustomers(mappedUsers);
+                    
+                    if (meta && meta.pagination) {
+                        setPagination(prev => ({
+                            ...prev,
+                            page: meta.pagination.page,
+                            pageSize: meta.pagination.pageSize,
+                            pageCount: meta.pagination.pageCount,
+                            total: meta.pagination.total
+                        }));
+                    }
                 } catch (error) {
                     console.error("Failed to load users", error);
                 } finally {
@@ -62,16 +86,34 @@ export default function AdminCustomersPage() {
                 }
             }
         }
-        fetchUsers();
-    }, [token]);
+        
+        // Debounce search
+        const timeoutId = setTimeout(() => {
+            fetchUsers();
+        }, 300);
+        
+        return () => clearTimeout(timeoutId);
+    }, [token, pagination.page, pagination.pageSize, searchTerm]);
 
-    // Filter logic
+    // Client-side filter for Role (only applies to current page data)
+    // Note: Ideally role filtering should be server-side, but standard Strapi Users API 
+    // requires complex filtering for relations which might not be enabled by default.
+    // We prioritize pagination and search for now.
     const filteredCustomers = customers.filter(customer => {
-        const matchesSearch = customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.email.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = filterRole === "all" || customer.role.toLowerCase().includes(filterRole);
-        return matchesSearch && matchesRole;
+        return matchesRole;
     });
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
+    };
+    
+    // Reset page when search changes
+    useEffect(() => {
+        setPagination(prev => ({ ...prev, page: 1 }));
+    }, [searchTerm]);
 
     const getRoleBadge = (role: string) => {
         const lowerRole = role.toLowerCase();
@@ -84,7 +126,7 @@ export default function AdminCustomersPage() {
         }
     };
 
-    if (loading) {
+    if (loading && customers.length === 0) {
         return <div className="text-foreground">Đang tải danh sách khách hàng...</div>;
     }
 
@@ -178,12 +220,37 @@ export default function AdminCustomersPage() {
                             ) : (
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                                        Không tìm thấy khách hàng nào phù hợp.
+                                        {loading ? 'Đang tải...' : 'Không tìm thấy khách hàng nào phù hợp.'}
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Hiển thị {customers.length} trên tổng số {pagination.total} kết quả</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1 || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page} / {pagination.pageCount}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            // Disable Next if we received fewer items than pageSize, meaning we reached end
+                            disabled={pagination.page >= pagination.pageCount || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

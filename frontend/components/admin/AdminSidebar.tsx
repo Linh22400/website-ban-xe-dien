@@ -88,14 +88,14 @@ export default function AdminSidebar() {
     const { logout } = useAuth();
 
     return (
-        <aside className="fixed left-0 top-0 w-64 h-screen bg-card border-r border-white/10 flex flex-col z-50">
+        <aside className="fixed left-0 top-0 w-64 h-screen bg-card border-r border-border flex flex-col z-50">
             {/* Logo */}
-            <div className="p-6 border-b border-white/10 flex items-center gap-3">
+            <div className="p-6 border-b border-border flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
                     <Bike className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                    <h1 className="font-bold text-lg text-white leading-none">Admin</h1>
+                    <h1 className="font-bold text-lg text-foreground leading-none">Admin</h1>
                     <span className="text-xs text-muted-foreground">XE ĐIỆN ĐỨC DUY</span>
                 </div>
             </div>
@@ -111,8 +111,8 @@ export default function AdminSidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                                ? "bg-primary text-black font-bold shadow-lg shadow-primary/20"
-                                : "text-muted-foreground hover:bg-white/5 hover:text-white"
+                                ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                 }`}
                         >
                             <Icon className="w-5 h-5" />
@@ -123,10 +123,10 @@ export default function AdminSidebar() {
             </nav>
 
             {/* User & Logout */}
-            <div className="p-4 border-t border-white/10">
+            <div className="p-4 border-t border-border">
                 <button
                     onClick={logout}
-                    className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-500 hover:bg-red-500/10 transition-colors"
                 >
                     <LogOut className="w-5 h-5" />
                     Đăng Xuất

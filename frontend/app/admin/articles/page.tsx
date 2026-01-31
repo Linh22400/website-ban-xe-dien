@@ -21,21 +21,57 @@ export default function AdminArticlesPage() {
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
 
     // Fallback URL logic
     const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     useEffect(() => {
         if (token) {
             loadArticles();
         }
-    }, [token]);
+    }, [token, pagination.page, pagination.pageSize, searchTerm]);
 
     const loadArticles = async () => {
         setLoading(true);
-        const data = await getArticlesAdmin(token!);
-        setArticles(data);
-        setLoading(false);
+        try {
+            const { data, meta } = await getArticlesAdmin(token!, {
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                search: searchTerm
+            });
+            setArticles(data);
+            if (meta) {
+                setPagination(prev => ({
+                    ...prev,
+                    pageCount: meta.pageCount || 1,
+                    total: meta.total || 0
+                }));
+            }
+        } catch (error) {
+            console.error("Failed to load articles", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
     };
 
     const handleDelete = async (documentId: string, title: string) => {
@@ -46,16 +82,12 @@ export default function AdminArticlesPage() {
         const success = await deleteArticle(token!, documentId);
         if (success) {
             alert("Đã xóa bài viết thành công!");
+            // Refresh current page
             loadArticles();
         } else {
             alert("Lỗi khi xóa bài viết!");
         }
     };
-
-    const filteredArticles = articles.filter(article =>
-        article.Title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        article.Author?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     return (
         <div className="space-y-6">
@@ -107,8 +139,8 @@ export default function AdminArticlesPage() {
                                         Đang tải dữ liệu...
                                     </td>
                                 </tr>
-                            ) : filteredArticles.length > 0 ? (
-                                filteredArticles.map((article) => {
+                            ) : articles.length > 0 ? (
+                                articles.map((article) => {
                                     // Handle image URL safely
                                     const coverUrl = article.Cover_image?.url
                                         ? (article.Cover_image.url.startsWith('http') ? article.Cover_image.url : `${STRAPI_URL}${article.Cover_image.url}`)
@@ -197,6 +229,30 @@ export default function AdminArticlesPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Trang {pagination.page} / {pagination.pageCount} (Tổng {pagination.total} kết quả)</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1 || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

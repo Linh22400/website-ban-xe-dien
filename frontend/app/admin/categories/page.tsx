@@ -18,14 +18,39 @@ export default function AdminCategoriesPage() {
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     useEffect(() => {
         async function fetchCategories() {
             if (token) {
                 try {
                     setLoading(true);
-                    const data = await getProductCategoriesAdmin(token);
+                    const { data, meta } = await getProductCategoriesAdmin(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm
+                    });
                     setCategories(data);
+                    if (meta) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pageCount || 1,
+                            total: meta.total || 0
+                        }));
+                    }
                 } catch (error) {
                     console.error("Failed to fetch categories", error);
                 } finally {
@@ -34,19 +59,33 @@ export default function AdminCategoriesPage() {
             }
         }
         fetchCategories();
-    }, [token]);
+    }, [token, pagination.page, pagination.pageSize, searchTerm]);
 
-    const filteredCategories = categories.filter(cat =>
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cat.slug.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
+    };
 
     const handleDelete = async (id: string, name: string) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa danh mục "${name}" không?`)) {
             if (token) {
                 const success = await deleteProductCategory(token, id);
                 if (success) {
-                    setCategories(categories.filter(c => c.documentId !== id));
+                    // Refresh data
+                    const { data, meta } = await getProductCategoriesAdmin(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm
+                    });
+                    setCategories(data);
+                    if (meta) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pageCount || 1,
+                            total: meta.total || 0
+                        }));
+                    }
                     alert("Đã xóa danh mục thành công!");
                 } else {
                     alert("Không thể xóa danh mục. Vui lòng kiểm tra lại (có thể danh mục này đang chứa sản phẩm).");
@@ -104,51 +143,57 @@ export default function AdminCategoriesPage() {
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
-                            ) : filteredCategories.length > 0 ? (
-                                filteredCategories.map((cat) => (
-                                    <tr key={cat.id} className="hover:bg-muted/50 transition-colors group">
-                                        <td className="p-4 pl-6">
-                                            {cat.image?.url ? (
-                                                <img
-                                                    src={cat.image.url}
-                                                    alt={cat.name}
-                                                    className="w-12 h-12 object-cover rounded-lg border border-border"
-                                                />
-                                            ) : (
-                                                <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center border border-border">
-                                                    <Layers className="w-5 h-5 text-muted-foreground" />
+                            ) : categories.length > 0 ? (
+                                categories.map((cat) => {
+                                    const imgUrl = cat.image?.url
+                                        ? (cat.image.url.startsWith('http') ? cat.image.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}${cat.image.url}`)
+                                        : null;
+
+                                    return (
+                                        <tr key={cat.id} className="hover:bg-muted/50 transition-colors group">
+                                            <td className="p-4 pl-6">
+                                                {imgUrl ? (
+                                                    <img
+                                                        src={imgUrl}
+                                                        alt={cat.name}
+                                                        className="w-12 h-12 object-cover rounded-lg border border-border"
+                                                    />
+                                                ) : (
+                                                    <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center border border-border">
+                                                        <Layers className="w-5 h-5 text-muted-foreground" />
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="p-4 font-bold text-foreground">
+                                                {cat.name}
+                                            </td>
+                                            <td className="p-4 text-sm font-mono text-muted-foreground">
+                                                /{cat.slug}
+                                            </td>
+                                            <td className="p-4 text-sm text-muted-foreground max-w-xs truncate" title={cat.description}>
+                                                {cat.description || "---"}
+                                            </td>
+                                            <td className="p-4 text-right pr-6">
+                                                <div className="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                                                    <Link
+                                                        href={`/admin/categories/${cat.documentId}`}
+                                                        className="p-2 bg-muted hover:bg-muted/80 text-blue-600 dark:text-blue-400 rounded-lg transition-colors"
+                                                        title="Chỉnh sửa"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDelete(cat.documentId, cat.name)}
+                                                        className="p-2 bg-muted hover:bg-red-500/20 hover:text-red-500 text-muted-foreground rounded-lg transition-colors"
+                                                        title="Xóa"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
                                                 </div>
-                                            )}
-                                        </td>
-                                        <td className="p-4 font-bold text-foreground">
-                                            {cat.name}
-                                        </td>
-                                        <td className="p-4 text-sm font-mono text-muted-foreground">
-                                            /{cat.slug}
-                                        </td>
-                                        <td className="p-4 text-sm text-muted-foreground max-w-xs truncate" title={cat.description}>
-                                            {cat.description || "---"}
-                                        </td>
-                                        <td className="p-4 text-right pr-6">
-                                            <div className="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                                                <Link
-                                                    href={`/admin/categories/${cat.documentId}`}
-                                                    className="p-2 bg-muted hover:bg-muted/80 text-blue-600 dark:text-blue-400 rounded-lg transition-colors"
-                                                    title="Chỉnh sửa"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDelete(cat.documentId, cat.name)}
-                                                    className="p-2 bg-muted hover:bg-red-500/20 hover:text-red-500 text-muted-foreground rounded-lg transition-colors"
-                                                    title="Xóa"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Không tìm thấy danh mục nào.</td>
@@ -156,6 +201,30 @@ export default function AdminCategoriesPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Trang {pagination.page} / {pagination.pageCount} (Tổng {pagination.total} kết quả)</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1 || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

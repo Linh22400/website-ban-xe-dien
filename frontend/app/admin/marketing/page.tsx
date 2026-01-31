@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
+    Search,
     Image as ImageIcon,
     Plus,
     Edit,
@@ -23,6 +24,13 @@ export default function AdminMarketingPage() {
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
+    const [searchTerm, setSearchTerm] = useState("");
 
     // Form state
     const [formTitle, setFormTitle] = useState("");
@@ -35,16 +43,46 @@ export default function AdminMarketingPage() {
     const [formImagePreview, setFormImagePreview] = useState("");
     const [formImageId, setFormImageId] = useState<number | undefined>();
 
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
     useEffect(() => {
         loadSlides();
-    }, [token]);
+    }, [token, pagination.page, pagination.pageSize, searchTerm]);
 
     const loadSlides = async () => {
         if (token) {
             setLoading(true);
-            const data = await getHeroSlidesAdmin(token);
-            setSlides(data);
-            setLoading(false);
+            try {
+                const { data, meta } = await getHeroSlidesAdmin(token, {
+                    page: pagination.page,
+                    pageSize: pagination.pageSize,
+                    search: searchTerm
+                });
+                setSlides(data);
+                if (meta) {
+                    setPagination(prev => ({
+                        ...prev,
+                        pageCount: meta.pageCount || 1,
+                        total: meta.total || 0
+                    }));
+                }
+            } catch (error) {
+                console.error("Failed to fetch slides", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
         }
     };
 
@@ -184,6 +222,18 @@ export default function AdminMarketingPage() {
                     <Plus className="w-5 h-5" />
                     Thêm Banner
                 </button>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <input
+                    type="text"
+                    placeholder="Tìm kiếm banner theo tiêu đề..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-card/50 border border-border rounded-xl pl-12 pr-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
+                />
             </div>
 
             {/* Add/Edit Form */}
@@ -366,13 +416,27 @@ export default function AdminMarketingPage() {
                 )}
             </div>
 
-            {/* Pagination (Static for now) */}
+            {/* Pagination */}
             <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
-                <div>Hiển thị {slides.length} kết quả</div>
+                <div>Trang {pagination.page} / {pagination.pageCount} (Tổng {pagination.total} kết quả)</div>
                 <div className="flex gap-2">
-                    <button className="px-3 py-1 bg-muted rounded hover:bg-muted/80 disabled:opacity-50" disabled>Trước</button>
-                    <button className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded">1</button>
-                    <button className="px-3 py-1 bg-muted rounded hover:bg-muted/80" disabled>Sau</button>
+                    <button 
+                        onClick={() => handlePageChange(pagination.page - 1)}
+                        disabled={pagination.page <= 1 || loading}
+                        className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        Trước
+                    </button>
+                    <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                        {pagination.page}
+                    </span>
+                    <button 
+                        onClick={() => handlePageChange(pagination.page + 1)}
+                        disabled={pagination.page >= pagination.pageCount || loading}
+                        className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        Sau
+                    </button>
                 </div>
             </div>
         </div>

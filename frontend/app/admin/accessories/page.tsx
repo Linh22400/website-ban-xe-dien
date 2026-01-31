@@ -19,14 +19,40 @@ export default function AdminAccessoriesPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterCategory, setFilterCategory] = useState("all");
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        pageCount: 1,
+        total: 0
+    });
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm, filterCategory]);
 
     useEffect(() => {
         async function fetchAccessories() {
             if (token) {
                 try {
                     setLoading(true);
-                    const data = await getAccessoriesAdmin(token);
+                    const { data, meta } = await getAccessoriesAdmin(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm,
+                        category: filterCategory
+                    });
                     setAccessories(data);
+                    if (meta) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pageCount || 1,
+                            total: meta.total || 0
+                        }));
+                    }
                 } catch (error) {
                     console.error("Failed to fetch accessories", error);
                 } finally {
@@ -35,20 +61,34 @@ export default function AdminAccessoriesPage() {
             }
         }
         fetchAccessories();
-    }, [token]);
+    }, [token, pagination.page, pagination.pageSize, searchTerm, filterCategory]);
 
-    const filteredAccessories = accessories.filter(acc => {
-        const matchesSearch = acc.name?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = filterCategory === "all" || acc.category === filterCategory;
-        return matchesSearch && matchesCategory;
-    });
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pageCount) {
+            setPagination(prev => ({ ...prev, page: newPage }));
+        }
+    };
 
     const handleDelete = async (id: string, name: string) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa phụ kiện "${name}" không?`)) {
             if (token) {
                 const success = await deleteAccessory(token, id);
                 if (success) {
-                    setAccessories(accessories.filter(acc => acc.documentId !== id));
+                    // Refresh data
+                    const { data, meta } = await getAccessoriesAdmin(token, {
+                        page: pagination.page,
+                        pageSize: pagination.pageSize,
+                        search: searchTerm,
+                        category: filterCategory
+                    });
+                    setAccessories(data);
+                    if (meta) {
+                        setPagination(prev => ({
+                            ...prev,
+                            pageCount: meta.pageCount || 1,
+                            total: meta.total || 0
+                        }));
+                    }
                     alert("Đã xóa phụ kiện thành công!");
                 } else {
                     alert("Không thể xóa phụ kiện. Vui lòng thử lại.");
@@ -135,8 +175,8 @@ export default function AdminAccessoriesPage() {
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</td>
                                 </tr>
-                            ) : filteredAccessories.length > 0 ? (
-                                filteredAccessories.map((acc) => {
+                            ) : accessories.length > 0 ? (
+                                accessories.map((acc) => {
                                     // Handle image URL
                                     let imgUrl = "";
                                     if (acc.image?.url) {
@@ -203,6 +243,30 @@ export default function AdminAccessoriesPage() {
                             )}
                         </tbody>
                     </table>
+                </div>
+                
+                {/* Pagination */}
+                <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
+                    <div>Trang {pagination.page} / {pagination.pageCount} (Tổng {pagination.total} kết quả)</div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => handlePageChange(pagination.page - 1)}
+                            disabled={pagination.page <= 1 || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Trước
+                        </button>
+                        <span className="px-3 py-1 bg-primary text-primary-foreground font-bold rounded flex items-center">
+                            {pagination.page}
+                        </span>
+                        <button 
+                            onClick={() => handlePageChange(pagination.page + 1)}
+                            disabled={pagination.page >= pagination.pageCount || loading}
+                            className="px-3 py-1 bg-card border border-border rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Sau
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

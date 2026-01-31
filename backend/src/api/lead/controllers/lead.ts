@@ -288,4 +288,37 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 			return ctx.internalServerError('Failed to create lead');
 		}
 	},
+
+    async testEmail(ctx) {
+        try {
+            const emailService = strapi.plugin('email').service('email');
+            const to = ctx.query.to || 'ln32587@gmail.com';
+            const from = process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
+            
+            await emailService.send({
+                to,
+                from,
+                subject: 'Test Email from Render (Port 587) - ' + new Date().toISOString(),
+                text: `This is a test email to verify SMTP configuration.\nFrom: ${from}\nTo: ${to}`,
+            });
+            
+            return ctx.send({ 
+                status: 'success', 
+                message: `Email sent successfully to ${to}`,
+                config: {
+                    user: process.env.SMTP_USERNAME ? '***' : 'missing',
+                    host: 'smtp.gmail.com',
+                    port: 587
+                }
+            });
+        } catch (err) {
+            strapi.log.error('Test email failed:', err);
+            return ctx.badRequest('Failed to send email', { 
+                status: 'error',
+                message: err.message,
+                code: err.code,
+                response: err.response
+            });
+        }
+    },
 }));

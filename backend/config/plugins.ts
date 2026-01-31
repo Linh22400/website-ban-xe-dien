@@ -3,14 +3,18 @@ export default ({ env }) => ({
         config: {
             provider: 'nodemailer',
             providerOptions: {
-                // SIMPLEST GMAIL CONFIGURATION
-                service: 'Gmail', // Nodemailer auto-sets host: smtp.gmail.com, port: 465, secure: true
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false, // Use STARTTLS (secure: false) for port 587
                 auth: {
                     user: env('SMTP_USERNAME'),
                     pass: env('SMTP_PASSWORD'),
                 },
                 debug: true,
                 logger: true,
+                tls: {
+                    rejectUnauthorized: false, // Helps avoid self-signed cert errors in some environments
+                },
             },
             settings: {
                 defaultFrom: env('SMTP_FROM', 'no-reply@example.com'),

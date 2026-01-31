@@ -78,7 +78,7 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
     };
 
     return (
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-800 overflow-hidden my-8 relative">
+        <div className="bg-card text-card-foreground rounded-2xl shadow-lg border border-border overflow-hidden my-8 relative">
             <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
                 <div className="flex items-center gap-3">
                     <Calculator className="w-6 h-6" />
@@ -88,11 +88,11 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 dark:border-zinc-800">
+            <div className="flex border-b border-border">
                 <button
                     onClick={() => setActiveTab('finance')}
                     className={`flex-1 py-4 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors
-            ${activeTab === 'finance' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50 dark:bg-blue-900/10' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}
+            ${activeTab === 'finance' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50 dark:bg-blue-900/10' : 'text-muted-foreground hover:text-foreground'}
           `}
                 >
                     <Building2 className="w-4 h-4" />
@@ -101,7 +101,7 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                 <button
                     onClick={() => setActiveTab('credit')}
                     className={`flex-1 py-4 px-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors
-            ${activeTab === 'credit' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50 dark:bg-blue-900/10' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}
+            ${activeTab === 'credit' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50 dark:bg-blue-900/10' : 'text-muted-foreground hover:text-foreground'}
           `}
                 >
                     <CreditCard className="w-4 h-4" />
@@ -115,7 +115,7 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                         {/* Sliders */}
                         <div>
                             <div className="flex justify-between mb-2">
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Trả trước ({downPaymentPercent}%)</label>
+                                <label className="text-sm font-medium text-foreground">Trả trước ({downPaymentPercent}%)</label>
                                 <span className="font-bold text-blue-600">{formatCurrency(financePlan.downPayment)}</span>
                             </div>
                             <input
@@ -125,12 +125,12 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                                 step="10"
                                 value={downPaymentPercent}
                                 onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-blue-600"
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Kỳ hạn vay</label>
+                            <label className="text-sm font-medium text-foreground mb-2 block">Kỳ hạn vay</label>
                             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                 {[6, 9, 12, 18, 24].map((m) => (
                                     <button
@@ -139,7 +139,7 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                                         className={`py-2 px-1 rounded-lg text-sm font-medium border transition-all
                       ${term === m
                                                 ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                                                : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-zinc-700 hover:border-blue-400'}
+                                                : 'bg-card text-foreground border-border hover:border-blue-400'}
                     `}
                                     >
                                         {m} tháng
@@ -149,23 +149,23 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                         </div>
 
                         {/* Result */}
-                        <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-xl p-4 border border-gray-100 dark:border-zinc-800">
+                        <div className="bg-muted/50 rounded-xl p-4 border border-border">
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-gray-600 dark:text-gray-400">Góp mỗi tháng</span>
+                                <span className="text-muted-foreground">Góp mỗi tháng</span>
                                 <span className="text-2xl font-bold text-blue-600">{formatCurrency(financePlan.monthlyPayment)}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-gray-500">Lãi suất phẳng tham khảo</span>
-                                <span className="text-gray-900 dark:text-white font-medium">
+                                <span className="text-muted-foreground">Lãi suất phẳng tham khảo</span>
+                                <span className="text-foreground font-medium">
                                     {term <= 12 ? '0% (Ưu đãi)' : '1.8% - 2.5%'}
                                 </span>
                             </div>
                             <div className="flex justify-between items-center text-sm mt-1">
-                                <span className="text-gray-500">Tổng tiền phải trả</span>
-                                <span className="text-gray-900 dark:text-white font-medium">{formatCurrency(financePlan.totalPayable + financePlan.downPayment)}</span>
+                                <span className="text-muted-foreground">Tổng tiền phải trả</span>
+                                <span className="text-foreground font-medium">{formatCurrency(financePlan.totalPayable + financePlan.downPayment)}</span>
                             </div>
                         </div>
-                        <p className="text-xs text-gray-400 text-center italic">
+                        <p className="text-xs text-muted-foreground text-center italic">
                             * Số liệu chỉ mang tính chất tham khảo. Duyệt hồ sơ qua ACS, HD Saison, FE Credit.
                         </p>
                     </div>
@@ -175,14 +175,14 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                     <div className="space-y-6">
                         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg flex items-start gap-3">
                             <Info className="w-5 h-5 text-green-600 mt-0.5" />
-                            <div className="text-sm text-green-800 dark:text-green-300">
+                            <div className="text-sm text-green-800 dark:text-green-600">
                                 Trả góp qua thẻ tín dụng (Visa/Mastercard/JCB) của 26 ngân hàng liên kết. 
                                 <span className="font-bold block mt-1">Lãi suất 0% - Không cần duyệt hồ sơ.</span>
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Kỳ hạn</label>
+                            <label className="text-sm font-medium text-foreground mb-2 block">Kỳ hạn</label>
                             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                                 {[3, 6, 9, 12].map((m) => (
                                     <button
@@ -191,7 +191,7 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                                         className={`py-2 px-1 rounded-lg text-sm font-medium border transition-all
                       ${term === m
                                                 ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                                                : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-zinc-700 hover:border-blue-400'}
+                                                : 'bg-card text-foreground border-border hover:border-blue-400'}
                     `}
                                     >
                                         {m} tháng
@@ -200,34 +200,34 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-xl p-4 border border-gray-100 dark:border-zinc-800">
+                        <div className="bg-muted/50 rounded-xl p-4 border border-border">
                              <div className="flex justify-between items-center mb-2">
-                                <span className="text-gray-600 dark:text-gray-400">Góp mỗi tháng</span>
+                                <span className="text-muted-foreground">Góp mỗi tháng</span>
                                 <span className="text-2xl font-bold text-blue-600">
                                     {formatCurrency(Math.round(price / term))}
                                 </span>
                             </div>
                              <div className="flex justify-between items-center text-sm">
-                                <span className="text-gray-500">Trả trước</span>
-                                <span className="text-gray-900 dark:text-white font-medium">0 ₫</span>
+                                <span className="text-muted-foreground">Trả trước</span>
+                                <span className="text-foreground font-medium">0 ₫</span>
                             </div>
                              <div className="flex justify-between items-center text-sm mt-1">
-                                <span className="text-gray-500">Phí chuyển đổi (ước tính)</span>
-                                <span className="text-gray-900 dark:text-white font-medium">~ {formatCurrency(price * 0.02)}</span>
+                                <span className="text-muted-foreground">Phí chuyển đổi (ước tính)</span>
+                                <span className="text-foreground font-medium">~ {formatCurrency(price * 0.02)}</span>
                             </div>
                         </div>
                     </div>
                 )}
 
                 {/* Call To Action */}
-                <div className="mt-6 pt-6 border-t border-gray-100 dark:border-zinc-800">
+                <div className="mt-6 pt-6 border-t border-border">
                     <button
                         onClick={handleRegisterConsultation}
                         className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                         Đăng Ký Tư Vấn Trả Góp
                     </button>
-                    <p className="text-xs text-center text-gray-500 mt-2">
+                    <p className="text-xs text-center text-muted-foreground mt-2">
                         Chúng tôi sẽ liên hệ lại trong vòng 15 phút để hỗ trợ làm hồ sơ.
                     </p>
                 </div>
@@ -235,11 +235,11 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
 
             {/* Consultation Form Modal/Overlay */}
             {showForm && (
-                <div className="absolute inset-0 z-50 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-                    <div className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-zinc-700 p-6 relative">
+                <div className="absolute inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="w-full max-w-sm bg-card text-card-foreground rounded-2xl shadow-2xl border border-border p-6 relative">
                         <button 
                             onClick={() => setShowForm(false)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
                         >
                             ✕
                         </button>
@@ -249,53 +249,53 @@ export default function InstallmentCalculator({ price, productName = 'Sản ph�
                                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
                                 </div>
-                                <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Gửi thành công!</h4>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                <h4 className="text-xl font-bold text-foreground mb-2">Gửi thành công!</h4>
+                                <p className="text-muted-foreground text-sm">
                                     Cảm ơn bạn đã đăng ký. Nhân viên tư vấn sẽ liên hệ với bạn sớm nhất.
                                 </p>
                             </div>
                         ) : (
                             <>
-                                <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Thông Tin Liên Hệ</h4>
-                                <p className="text-sm text-gray-500 mb-4">Để lại thông tin để được tư vấn hồ sơ trả góp tốt nhất.</p>
+                                <h4 className="text-lg font-bold text-foreground mb-1">Thông Tin Liên Hệ</h4>
+                                <p className="text-sm text-muted-foreground mb-4">Để lại thông tin để được tư vấn hồ sơ trả góp tốt nhất.</p>
                                 
                                 <form onSubmit={handleSubmit} className="space-y-4">
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Họ tên *</label>
+                                        <label className="block text-xs font-medium text-foreground mb-1">Họ tên *</label>
                                         <input 
                                             required
                                             type="text" 
-                                            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                            className="w-full px-3 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                             placeholder="Nguyễn Văn A"
                                             value={formData.name}
                                             onChange={e => setFormData({...formData, name: e.target.value})}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Số điện thoại *</label>
+                                        <label className="block text-xs font-medium text-foreground mb-1">Số điện thoại *</label>
                                         <input 
                                             required
                                             type="tel" 
-                                            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                            className="w-full px-3 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                             placeholder="0912 xxx xxx"
                                             value={formData.phone}
                                             onChange={e => setFormData({...formData, phone: e.target.value})}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email (Nhận bảng tính chi tiết)</label>
+                                        <label className="block text-xs font-medium text-foreground mb-1">Email (Nhận bảng tính chi tiết)</label>
                                         <input 
                                             type="email" 
-                                            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                            className="w-full px-3 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                             placeholder="email@example.com"
                                             value={formData.email}
                                             onChange={e => setFormData({...formData, email: e.target.value})}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Ghi chú (Tuỳ chọn)</label>
+                                        <label className="block text-xs font-medium text-foreground mb-1">Ghi chú (Tuỳ chọn)</label>
                                         <textarea 
-                                            className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all h-20 resize-none"
+                                            className="w-full px-3 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-2 focus:ring-blue-500 outline-none transition-all h-20 resize-none"
                                             placeholder="Ví dụ: Gọi cho tôi sau 5h chiều..."
                                             value={formData.note}
                                             onChange={e => setFormData({...formData, note: e.target.value})}

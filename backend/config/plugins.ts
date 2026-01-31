@@ -3,16 +3,15 @@ export default ({ env }) => ({
         config: {
             provider: 'nodemailer',
             providerOptions: {
-                // FORCE BREVO CONFIGURATION FOR RENDER (Port 587 STARTTLS)
-                host: 'smtp-relay.brevo.com',
-                port: 587,
-                secure: false, // Must be FALSE for Port 587
+                // SWITCH TO GMAIL SMTP (Best for @gmail.com senders)
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true, // SSL for Gmail
                 auth: {
-                    user: 'a13a6b001@smtp-brevo.com',
-                    pass: env('SMTP_PASSWORD'), 
+                    user: env('SMTP_USERNAME'), // Your Gmail address
+                    pass: env('SMTP_PASSWORD'), // Your Gmail App Password
                 },
                 tls: {
-                    ciphers: 'SSLv3', // Compatibility mode
                     rejectUnauthorized: false, 
                 },
                 debug: true,

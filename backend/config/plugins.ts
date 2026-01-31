@@ -5,15 +5,21 @@ export default ({ env }) => ({
             providerOptions: {
                 host: 'smtp.gmail.com',
                 port: 587,
-                secure: false, // Use STARTTLS (secure: false) for port 587
+                secure: false, // Use STARTTLS
                 auth: {
                     user: env('SMTP_USERNAME'),
                     pass: env('SMTP_PASSWORD'),
                 },
+                // CONNECTION SETTINGS
+                connectionTimeout: 20000, // 20s
+                socketTimeout: 20000,
+                // FORCE IPv4 (Fix for Render/Docker ETIMEDOUT)
+                localAddress: '0.0.0.0', 
+                
                 debug: true,
                 logger: true,
                 tls: {
-                    rejectUnauthorized: false, // Helps avoid self-signed cert errors in some environments
+                    rejectUnauthorized: false,
                 },
             },
             settings: {

@@ -290,40 +290,97 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 	},
 
     async testEmail(ctx) {
+        const report = [];
+        let nodemailer;
         try {
-            const emailService = strapi.plugin('email').service('email');
-            const to = ctx.query.to || 'ln32587@gmail.com';
-            const from = process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
-            
-            await emailService.send({
-                to,
-                from,
-                subject: 'Test Email from Render (Port 587) - ' + new Date().toISOString(),
-                text: `This is a test email to verify SMTP configuration.\nFrom: ${from}\nTo: ${to}`,
-            });
-            
-            return ctx.send({ 
-                status: 'success', 
-                message: `Email sent successfully to ${to}`,
-                config: {
-                    user: process.env.SMTP_USERNAME ? '***' : 'missing',
-                    host: 'smtp.gmail.com',
-                    port: 587
-                }
-            });
-        } catch (err) {
-            strapi.log.error('Test email failed:', err);
-            return ctx.badRequest('Failed to send email', { 
-                status: 'error',
-                message: err.message,
-                code: err.code,
-                stack: err.stack,
-                config: {
-                    host: 'smtp.gmail.com',
-                    port: 587,
-                    secure: false
-                }
-            });
+            // Try to load nodemailer directly to bypass Strapi config for testing
+            nodemailer = require('nodemailer'); 
+        } catch (e) {
+            // Fallback if direct require fails (unlikely in backend)
         }
+
+        const user = process.env.SMTP_USERNAME;
+        const pass = process.env.SMTP_PASSWORD;
+        const to = ctx.query.to || user || 'ln32587@gmail.com';
+
+        // Strategy List
+        const strategies = [
+            { name: 'Port 587 (STARTTLS) + IPv4', host: 'smtp.gmail.com', port: 587, secure: false, localAddress: '0.0.0.0' },
+            { name: 'Port 465 (SSL) + IPv4', host: 'smtp.gmail.com', port: 465, secure: true, localAddress: '0.0.0.0' },
+            { name: 'Port 587 (Default)', host: 'smtp.gmail.com', port: 587, secure: false },
+            { name: 'Port 2525 (Brevo/Alt)', host: 'smtp-relay.brevo.com', port: 587, secure: false }, // Just to check connectivity
+        ];
+
+        if (!user || !pass) {
+             report.push({ error: 'Missing SMTP_USERNAME or SMTP_PASSWORD in env' });
+        } else if (nodemailer) {
+            for (const strat of strategies) {
+                try {
+                    console.log(`Testing Strategy: ${strat.name}`);
+                    const transporter = nodemailer.createTransport({
+                        host: strat.host,
+                        port: strat.port,
+                        secure: strat.secure,
+                        auth: { user, pass },
+                        localAddress: strat.localAddress, // Force IPv4 if set
+                        connectionTimeout: 10000, // 10s
+                        tls: { rejectUnauthorized: false },
+                        logger: true,
+                        debug: true
+                    });
+
+                    await transporter.verify();
+                    report.push({ strategy: strat.name, status: 'SUCCESS - CONNECTED' });
+
+                    // Try sending real email
+                    await transporter.sendMail({
+                        from: user,
+                        to: to,
+                        subject: `[Test] Success via ${strat.name}`,
+                        text: `Connection successful using ${strat.name}.`
+                    });
+                    
+                    return ctx.send({ 
+                        status: 'success', 
+                        message: `Email sent via ${strat.name}`,
+                        report 
+                    });
+
+                } catch (err) {
+                    console.error(`Strategy ${strat.name} failed:`, err.message);
+                    report.push({ 
+                        strategy: strat.name, 
+                        status: 'FAILED', 
+                        error: err.message, 
+                        code: err.code 
+                    });
+                }
+            }
+        } else {
+            report.push({ error: 'Nodemailer library not found for advanced testing' });
+        }
+
+        // Fallback: Try Strapi default service as last resort
+        try {
+             const emailService = strapi.plugin('email').service('email');
+             await emailService.send({
+                to,
+                from: user || 'no-reply@banxedien.com',
+                subject: 'Test via Strapi Service',
+                text: 'Fallback test'
+             });
+             return ctx.send({ status: 'success', message: 'Sent via Strapi Default', report });
+        } catch (err) {
+            report.push({ strategy: 'Strapi Default', status: 'FAILED', error: err.message });
+        }
+
+        return ctx.badRequest('All SMTP strategies failed. Render might be blocking ports.', { 
+            status: 'error',
+            report,
+            env_check: {
+                has_user: !!user,
+                has_pass: !!pass
+            }
+        });
     },
 }));

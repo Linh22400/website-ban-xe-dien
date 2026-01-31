@@ -127,8 +127,8 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 			try {
 				strapi.log.info(`[Lead Controller] Starting email logic for lead: ${entity.id}`);
 				
-				// DIAGNOSTIC: Test raw connectivity to Brevo
-				strapi.log.info('[Lead Controller] DIAGNOSTIC: Testing TCP connection to smtp-relay.brevo.com:465...');
+				// DIAGNOSTIC: Test raw connectivity to Brevo (587)
+				strapi.log.info('[Lead Controller] DIAGNOSTIC: Testing TCP connection to smtp-relay.brevo.com:587...');
 				try {
 					await new Promise((resolve, reject) => {
 						const socket = new net.Socket();
@@ -146,11 +146,11 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 							socket.destroy();
 							reject(err);
 						});
-						socket.connect(465, 'smtp-relay.brevo.com');
+						socket.connect(587, 'smtp-relay.brevo.com');
 					});
 				} catch (netErr) {
 					strapi.log.error('[Lead Controller] DIAGNOSTIC: TCP Connection FAILED:', netErr);
-					strapi.log.error('[Lead Controller] CRITICAL: Render cannot reach Brevo (465). Check Firewall.');
+					strapi.log.error('[Lead Controller] CRITICAL: Render cannot reach Brevo (587). Check Firewall.');
 				}
 				
 				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
@@ -166,7 +166,7 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 					
 					// Log config status
 					strapi.log.info(`[Lead Controller] SMTP Config: User=${adminEmail}, From=${fromEmail}`);
-					strapi.log.info(`[Lead Controller] Connection: FORCED BREVO CONFIG (Host=smtp-relay.brevo.com, Port=465, Secure=true)`);
+					strapi.log.info(`[Lead Controller] Connection: FORCED BREVO CONFIG (Host=smtp-relay.brevo.com, Port=587, Secure=false)`);
 
 					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
 					const emailSubject = isInstallment

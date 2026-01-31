@@ -3,16 +3,17 @@ export default ({ env }) => ({
         config: {
             provider: 'nodemailer',
             providerOptions: {
-                // FORCE BREVO CONFIGURATION FOR DEBUGGING
+                // FORCE BREVO CONFIGURATION FOR RENDER (Port 587 STARTTLS)
                 host: 'smtp-relay.brevo.com',
-                port: 465,
-                secure: true, // SSL for 465
+                port: 587,
+                secure: false, // Must be FALSE for Port 587
                 auth: {
-                    user: 'a13a6b001@smtp-brevo.com', // Force correct user
+                    user: 'a13a6b001@smtp-brevo.com',
                     pass: env('SMTP_PASSWORD'), 
                 },
                 tls: {
-                    rejectUnauthorized: false, // Bypass certificate issues if any
+                    ciphers: 'SSLv3', // Compatibility mode
+                    rejectUnauthorized: false, 
                 },
                 debug: true,
                 logger: true,

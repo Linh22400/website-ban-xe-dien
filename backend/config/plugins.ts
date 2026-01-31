@@ -15,7 +15,9 @@ export default ({ env }) => ({
                 },
                 debug: env.bool('SMTP_DEBUG', false),
                 logger: env.bool('SMTP_DEBUG', false),
-                // ... any other options
+                connectionTimeout: 20000, // 20 seconds
+                greetingTimeout: 20000,
+                socketTimeout: 20000,
             },
             settings: {
                 defaultFrom: env('SMTP_FROM', 'no-reply@example.com'),

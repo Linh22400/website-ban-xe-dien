@@ -139,6 +139,7 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 					
 					// Log config status (masked)
 					strapi.log.info(`[Lead Controller] SMTP Config: User=${adminEmail ? 'Set' : 'Missing'}, From=${fromEmail}`);
+					strapi.log.info(`[Lead Controller] Connection: Host=${process.env.SMTP_HOST || 'default(smtp.gmail.com)'}, Port=${process.env.SMTP_PORT || 'default(587)'}, Secure=${process.env.SMTP_SECURE || 'default(false)'}`);
 
 					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
 					const emailSubject = isInstallment

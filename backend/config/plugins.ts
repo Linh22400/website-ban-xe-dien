@@ -3,21 +3,20 @@ export default ({ env }) => ({
         config: {
             provider: 'nodemailer',
             providerOptions: {
-                host: env('SMTP_HOST', 'smtp.gmail.com'),
-                port: env('SMTP_PORT', 587),
-                secure: env.bool('SMTP_SECURE', false),
+                // Use 'service: Gmail' for best compatibility with Gmail
+                service: 'Gmail',
                 auth: {
                     user: env('SMTP_USERNAME'),
                     pass: env('SMTP_PASSWORD'),
                 },
                 tls: {
-                    rejectUnauthorized: env.bool('SMTP_REJECT_UNAUTHORIZED', true),
+                    rejectUnauthorized: env.bool('SMTP_REJECT_UNAUTHORIZED', false), // Allow self-signed certs if needed
                 },
-                debug: env.bool('SMTP_DEBUG', false),
-                logger: env.bool('SMTP_DEBUG', false),
-                connectionTimeout: 20000, // 20 seconds
-                greetingTimeout: 20000,
-                socketTimeout: 20000,
+                debug: env.bool('SMTP_DEBUG', true),
+                logger: env.bool('SMTP_DEBUG', true),
+                connectionTimeout: 60000, // 60 seconds
+                greetingTimeout: 30000,
+                socketTimeout: 60000,
             },
             settings: {
                 defaultFrom: env('SMTP_FROM', 'no-reply@example.com'),

@@ -3,15 +3,16 @@ export default ({ env }) => ({
         config: {
             provider: 'nodemailer',
             providerOptions: {
-                host: 'smtp.gmail.com',
+                // Use Brevo (formerly Sendinblue) SMTP
+                host: 'smtp-relay.brevo.com',
                 port: 587,
-                secure: false, // Must be false for 587
+                secure: false,
                 auth: {
-                    user: env('SMTP_USERNAME'),
-                    pass: env('SMTP_PASSWORD'),
+                    user: env('SMTP_USERNAME'), // Your Brevo login email
+                    pass: env('SMTP_PASSWORD'), // Your Brevo SMTP Master Password
                 },
                 tls: {
-                    rejectUnauthorized: false, // Help with self-signed certs issues
+                    rejectUnauthorized: false,
                 },
                 debug: true,
                 logger: true,

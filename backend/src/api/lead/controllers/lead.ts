@@ -118,6 +118,94 @@ export default factories.createCoreController('api::lead.lead', ({ strapi }) => 
 				},
 			});
 
+			// --- EMAIL SENDING LOGIC (Moved from Lifecycles) ---
+			try {
+				const emailService = strapi.plugin('email')?.service('email') || strapi.plugins?.['email']?.services?.email;
+				if (emailService) {
+					const adminEmail = process.env.SMTP_USERNAME || 'camauducduy@gmail.com';
+					const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USERNAME || 'no-reply@banxedien.com';
+
+					const isInstallment = (input.message || '').toLowerCase().includes('trả góp') || input.type === 'consultation';
+					const emailSubject = isInstallment
+						? `[Tư Vấn Trả Góp] ${input.name} - ${input.model || 'N/A'}`
+						: `[New Lead] ${input.type?.toUpperCase()} - ${input.name}`;
+
+					// 1. Send to Admin
+					await emailService.send({
+						to: adminEmail,
+						from: fromEmail,
+						subject: emailSubject,
+						html: `
+							<h3>New Lead Received</h3>
+							<p><strong>Name:</strong> ${input.name}</p>
+							<p><strong>Email:</strong> ${input.email}</p>
+							<p><strong>Phone:</strong> ${normalizedPhone}</p>
+							<p><strong>Type:</strong> ${input.type} ${isInstallment ? '(Trả Góp)' : ''}</p>
+							<p><strong>Model:</strong> ${input.model || 'N/A'}</p>
+							<div style="background: #f5f5f5; padding: 10px; border-radius: 5px;">
+								<strong>Message / Details:</strong><br/>
+								<pre style="white-space: pre-wrap; font-family: sans-serif;">${input.message || 'No message'}</pre>
+							</div>
+							<p><strong>Created At:</strong> ${new Date().toLocaleString('vi-VN')}</p>
+						`,
+					});
+
+					// 2. Send to Customer (Auto-reply)
+					if (input.email && !input.email.includes('no-email')) {
+						let customerSubject = 'Xác nhận yêu cầu liên hệ - Xe Điện Đức Duy';
+						let customerBodyContent = '';
+
+						if (isInstallment) {
+							customerSubject = 'Xác nhận yêu cầu Tư Vấn Trả Góp - Xe Điện Đức Duy';
+							customerBodyContent = `
+								<p>Chúng tôi đã nhận được yêu cầu <strong>Tư Vấn Trả Góp</strong> cho sản phẩm <strong>${input.model || 'xe điện'}</strong> của bạn.</p>
+								<p>Dưới đây là thông tin dự toán bạn đã đăng ký:</p>
+								<div style="background-color: #eef2ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+									<pre style="white-space: pre-wrap; font-family: sans-serif; margin: 0; color: #1e3a8a;">${input.message}</pre>
+								</div>
+								<p><em>Lưu ý: Bảng tính trên chỉ mang tính chất tham khảo. Nhân viên tư vấn sẽ gọi điện lại để chốt hồ sơ chính xác nhất với các công ty tài chính (FE Credit, HD Saison...).</em></p>
+							`;
+						} else {
+							const typeLabel = {
+								'test-drive': 'Lái Thử',
+								'consultation': 'Tư Vấn',
+								'deposit': 'Đặt Cọc'
+							}[input.type] || 'Liên Hệ';
+
+							customerBodyContent = `
+								<p>Chúng tôi đã nhận được yêu cầu <strong>${typeLabel}</strong> của bạn.</p>
+								<div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+									<p style="margin: 0 0 10px 0;"><strong>Lời nhắn:</strong></p>
+									<p>${input.message || 'Không có'}</p>
+								</div>
+							`;
+						}
+
+						await emailService.send({
+							to: input.email,
+							from: fromEmail,
+							subject: customerSubject,
+							html: `
+								<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+									<h3 style="color: #2563eb;">Cảm ơn bạn đã liên hệ với Xe Điện Đức Duy!</h3>
+									<p>Xin chào <strong>${input.name}</strong>,</p>
+									${customerBodyContent}
+									<p>Đội ngũ tư vấn sẽ liên hệ lại với bạn qua số điện thoại <strong>${normalizedPhone}</strong> trong thời gian sớm nhất (thường trong vòng 15-30 phút trong giờ làm việc).</p>
+									<br/>
+									<p>Nếu bạn cần hỗ trợ gấp, vui lòng liên hệ Hotline: <strong>094 342 4787</strong></p>
+									<hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+									<p style="color: #6b7280; font-size: 14px;">Trân trọng,<br/>Đội ngũ Xe Điện Đức Duy</p>
+								</div>
+							`,
+						});
+					}
+				}
+			} catch (err) {
+				strapi.log.error('Failed to send lead email in controller:', err);
+				// Do not throw error to avoid failing the lead creation
+			}
+			// ---------------------------------------------------
+
 			const sanitized = await this.sanitizeOutput(entity, ctx);
 			return this.transformResponse(sanitized);
 		} catch (error) {

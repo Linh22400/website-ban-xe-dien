@@ -41,7 +41,7 @@ function ShowroomForm() {
                 // Since we don't have a getShowroomById in API yet, we can filter from list or fetch single
                 // For efficiency/time, we'll re-use the list fetch and find. 
                 // Better approach would be adding getShowroomById(id) later.
-                const list = await getShowroomsAdmin(token!);
+                const { data: list } = await getShowroomsAdmin(token!);
                 const found = list.find(s => s.documentId === documentId);
 
                 if (found) {

@@ -6,10 +6,32 @@ import { CheckCircle, Calendar, MapPin, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 import { SubHeading, SectionHeading, ThemeText } from '@/components/common/ThemeText';
+import { useEffect, useState } from 'react';
+import { getShowrooms } from '@/lib/order-api';
 
 export default function OrderSuccess() {
     const { createdOrder, resetCheckout } = useCheckout();
     const { total } = useCart();
+    const [showroomName, setShowroomName] = useState<string>('');
+
+    useEffect(() => {
+        const fetchShowroomName = async () => {
+            if (createdOrder?.SelectedShowroom && typeof createdOrder.SelectedShowroom !== 'object') {
+                try {
+                    // Since we only have getShowrooms (list), we fetch all and find by ID.
+                    // This is cached so it's efficient enough.
+                    const showrooms = await getShowrooms();
+                    const found = showrooms.find(s => s.id === Number(createdOrder.SelectedShowroom));
+                    if (found) {
+                        setShowroomName(found.Name);
+                    }
+                } catch (err) {
+                    console.error("Failed to fetch showroom name:", err);
+                }
+            }
+        };
+        fetchShowroomName();
+    }, [createdOrder?.SelectedShowroom]);
 
     if (!createdOrder) {
         return (
@@ -45,8 +67,8 @@ export default function OrderSuccess() {
                         <div>
                             <p className="text-sm text-muted-foreground mb-1">Khách hàng</p>
                             <ThemeText className="font-medium">{createdOrder.CustomerInfo?.FullName || 'N/A'}</ThemeText>
-                            <p className="text-sm text-white/70">{createdOrder.CustomerInfo?.Phone || 'N/A'}</p>
-                            <p className="text-sm text-white/70">{createdOrder.CustomerInfo?.Email || 'N/A'}</p>
+                            <p className="text-sm text-muted-foreground">{createdOrder.CustomerInfo?.Phone || 'N/A'}</p>
+                            <p className="text-sm text-muted-foreground">{createdOrder.CustomerInfo?.Email || 'N/A'}</p>
                         </div>
 
                         <div>
@@ -56,7 +78,11 @@ export default function OrderSuccess() {
                                     createdOrder.PaymentMethod === 'full_payment' ? 'Thanh toán đầy đủ' : 'Trả góp'}
                             </ThemeText>
                             <p className="text-sm text-primary font-bold">
-                                {formatCurrency(createdOrder.DepositAmount ?? 0)}
+                                {formatCurrency(
+                                    createdOrder.PaymentMethod === 'full_payment' 
+                                        ? (createdOrder.TotalAmount ?? (total + total * 0.1)) 
+                                        : (createdOrder.DepositAmount ?? 0)
+                                )}
                             </p>
                             <p className="text-xs text-muted-foreground">
                                 Tổng thanh toán (đã gồm VAT): {formatCurrency(createdOrder.TotalAmount ?? (total + total * 0.1))}
@@ -74,7 +100,7 @@ export default function OrderSuccess() {
                                 <ThemeText className="font-medium">
                                     {typeof createdOrder.SelectedShowroom === 'object'
                                         ? createdOrder.SelectedShowroom.Name
-                                        : `Showroom #${createdOrder.SelectedShowroom}`}
+                                        : (showroomName || `Showroom #${createdOrder.SelectedShowroom}`)}
                                 </ThemeText>
                             </div>
                         )}

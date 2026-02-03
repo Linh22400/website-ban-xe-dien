@@ -527,28 +527,52 @@ export default function PaymentGatewaySelector() {
                                     try {
                                         // 1. Create Strapi Order first
                                         const orderData = getOrderData();
+                                        
+                                        // Ensure gateway is set to paypal
                                         orderData.PreferredGateway = 'paypal';
                                         
                                         // Use calculated amount
                                         const amountToPay = paymentMethod === 'deposit' ? depositAmount : totalAmount;
                                         
+                                        // Create order in Strapi
                                         const result = await createOrder(orderData);
                                         if (!result.data) throw new Error("Failed to create order");
                                         
-                                        // 2. Create PayPal Order via Backend
-                                        // Backend will convert VND to USD
+                                        // Save order to context/local storage so we can retrieve it later
+                                        setCreatedOrder(result.data);
+                                        
+                                        // 2. Create PayPal Order
                                         const paypalOrderId = await createPayPalOrder(result.data.OrderCode, amountToPay);
                                         return paypalOrderId;
                                     } catch (err: any) {
-                                        console.error("PayPal Create Order Error:", err);
-                                        setErrorMessage(err.message || "Không thể khởi tạo thanh toán PayPal");
+                                        console.error("PayPal Create Error:", err);
+                                        setErrorMessage(err.message || "Không thể tạo đơn hàng PayPal");
                                         throw err;
                                     }
                                 }}
                                 onApprove={async (data: any, actions: any) => {
                                     try {
-                                        await capturePayPalOrder(data.orderID);
+                                        console.log("PayPal Approved:", data);
+                                        
+                                        // 3. Capture Payment on Backend
+                                        // Backend will update order status to 'paid'
+                                        const captureResult = await capturePayPalOrder(data.orderID);
+                                        console.log("Capture Result:", captureResult);
+                                        
+                                        // 4. Update local state and move to success step
+                                        // Ensure we have the order info
+                                        if (captureResult && captureResult.OrderCode) {
+                                             setCreatedOrder({
+                                                ...captureResult,
+                                                OrderCode: captureResult.OrderCode,
+                                                PaymentStatus: 'completed',
+                                                Statuses: 'processing'
+                                             });
+                                        }
+                                        
+                                        // Move to success step immediately
                                         goToNextStep();
+                                        
                                     } catch (err: any) {
                                         console.error("PayPal Capture Error:", err);
                                         setErrorMessage(err.message || "Thanh toán PayPal thất bại");

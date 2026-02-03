@@ -122,7 +122,8 @@ export default {
       console.log('PayPal Capture Response:', JSON.stringify(data, null, 2));
 
       // Update Order Status in Strapi if Payment Successful
-      if (data.status === 'COMPLETED') {
+      // In Sandbox, we treat COMPLETED as success
+      if (data.status === 'COMPLETED' || data.status === 'APPROVED') {
         const purchaseUnit = data.purchase_units?.[0];
         const orderCode = purchaseUnit?.reference_id; 
         
@@ -161,6 +162,11 @@ export default {
               });
               
               console.log(`Order ${orderCode} updated to PAID (PayPal) and PUBLISHED`);
+              
+              // Return order info so frontend can use it
+              data.OrderCode = orderCode;
+              data.OrderId = order.id;
+              
             } else {
                 console.warn(`Order not found for PayPal update: ${orderCode}`);
             }

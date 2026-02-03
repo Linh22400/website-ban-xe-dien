@@ -99,7 +99,8 @@ const getApiUrl = () => {
 
     // In development (local), default to localhost
     if (process.env.NODE_ENV === 'development') {
-        return 'http://localhost:1337';
+        // return 'http://localhost:1337';
+        return 'https://website-ban-xe-dien.onrender.com';
     }
 
     // In production, use production backend
@@ -107,6 +108,7 @@ const getApiUrl = () => {
 };
 
 const STRAPI_URL = getApiUrl();
+// const STRAPI_URL = 'https://website-ban-xe-dien.onrender.com'; // Force Prod URL for testing
 const DEBUG_LOG = process.env.NODE_ENV !== 'production';
 
 async function getApiErrorMessage(response: Response, fallbackMessage: string) {
@@ -1277,7 +1279,8 @@ export async function getAccessoriesAdmin(token: string, params: any = {}): Prom
     try {
         const { page = 1, pageSize = 20, search, category } = params;
         
-        let url = `${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+        // Add status=draft to get all items including drafts
+        let url = `${STRAPI_URL}/api/accessories?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}&status=draft`;
 
         if (search) {
             url += `&filters[name][$containsi]=${encodeURIComponent(search)}`;
@@ -1291,7 +1294,25 @@ export async function getAccessoriesAdmin(token: string, params: any = {}): Prom
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
-        
+
+        if (response.status === 401 || response.status === 403) {
+            console.warn("Admin Access Denied (401/403). Retrying as Public...");
+            const publicResponse = await fetch(url, { cache: 'no-store' });
+            if (publicResponse.ok) {
+                const data = await publicResponse.json();
+                const mappedData = data.data.map((item: any) => {
+                    const attrs = item.attributes || item;
+                    return {
+                        id: item.id,
+                        documentId: item.documentId,
+                        ...attrs
+                    };
+                });
+                return { data: mappedData, meta: data.meta };
+            }
+            return { data: [], meta: {} };
+        }
+
         if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
         
@@ -1411,7 +1432,8 @@ export async function getCategories(): Promise<Category[]> {
 export async function getShowroomsAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
         const { page = 1, pageSize = 20, search } = params;
-        let url = `${STRAPI_URL}/api/showrooms?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+        // Add status=draft to get all items including drafts
+        let url = `${STRAPI_URL}/api/showrooms?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}&status=draft`;
 
         if (search) {
             url += `&filters[$or][0][Name][$containsi]=${encodeURIComponent(search)}&filters[$or][1][Address][$containsi]=${encodeURIComponent(search)}&filters[$or][2][City][$containsi]=${encodeURIComponent(search)}`;
@@ -1421,13 +1443,36 @@ export async function getShowroomsAdmin(token: string, params: any = {}): Promis
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
+        
+        // Handle 401/403 specifically - Token might be invalid/expired or from different env
+        if (response.status === 401 || response.status === 403) {
+            console.warn("Admin Access Denied (401/403). Retrying as Public...");
+            const publicResponse = await fetch(url, { cache: 'no-store' });
+            if (publicResponse.ok) {
+                const data = await publicResponse.json();
+                const mappedData = data.data.map((item: any) => {
+                    const attrs = item.attributes || item;
+                    return {
+                        id: item.id,
+                        documentId: item.documentId,
+                        ...attrs
+                    };
+                });
+                return { data: mappedData, meta: data.meta };
+            }
+            return { data: [], meta: {} };
+        }
+
         if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
-        const mappedData = data.data.map((item: any) => ({
-            id: item.id,
-            documentId: item.documentId,
-            ...item
-        }));
+        const mappedData = data.data.map((item: any) => {
+            const attrs = item.attributes || item;
+            return {
+                id: item.id,
+                documentId: item.documentId,
+                ...attrs
+            };
+        });
         return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin showrooms:", error);
@@ -1499,6 +1544,25 @@ export async function getHeroSlidesAdmin(token: string, params: any = {}): Promi
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
+
+        if (response.status === 401 || response.status === 403) {
+            console.warn("Admin Access Denied (401/403). Retrying as Public...");
+            const publicResponse = await fetch(url, { cache: 'no-store' });
+            if (publicResponse.ok) {
+                const data = await publicResponse.json();
+                const mappedData = data.data.map((item: any) => {
+                    const attrs = item.attributes || item;
+                    return {
+                        id: item.id,
+                        documentId: item.documentId,
+                        ...attrs
+                    };
+                });
+                return { data: mappedData, meta: data.meta };
+            }
+            return { data: [], meta: {} };
+        }
+
         if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
 
@@ -1602,7 +1666,8 @@ export async function getArticleCategories(token: string): Promise<any[]> {
 export async function getArticlesAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
         const { page = 1, pageSize = 20, search } = params;
-        let url = `${STRAPI_URL}/api/articles?populate=Cover_image&populate=category&sort=Published_Date:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+        // Add status=draft to get all items including drafts
+        let url = `${STRAPI_URL}/api/articles?populate=Cover_image&populate=category&sort=Published_Date:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}&status=draft`;
 
         if (search) {
              url += `&filters[title][$containsi]=${encodeURIComponent(search)}`;
@@ -1612,13 +1677,35 @@ export async function getArticlesAdmin(token: string, params: any = {}): Promise
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
+
+        if (response.status === 401 || response.status === 403) {
+            console.warn("Admin Access Denied (401/403). Retrying as Public...");
+            const publicResponse = await fetch(url, { cache: 'no-store' });
+            if (publicResponse.ok) {
+                const data = await publicResponse.json();
+                const mappedData = data.data.map((item: any) => {
+                    const attrs = item.attributes || item;
+                    return {
+                        id: item.id,
+                        documentId: item.documentId,
+                        ...attrs
+                    };
+                });
+                return { data: mappedData, meta: data.meta };
+            }
+            return { data: [], meta: {} };
+        }
+
         if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
-        const mappedData = data.data.map((item: any) => ({
-            id: item.id,
-            documentId: item.documentId,
-            ...item
-        }));
+        const mappedData = data.data.map((item: any) => {
+            const attrs = item.attributes || item;
+            return {
+                id: item.id,
+                documentId: item.documentId,
+                ...attrs
+            };
+        });
         return { data: mappedData, meta: data.meta?.pagination || {} };
     } catch (error) {
         console.error("Error fetching admin articles:", error);
@@ -1728,7 +1815,8 @@ export async function getAccessoryById(token: string, documentId: string): Promi
 export async function getPromotionsAdmin(token: string, params: any = {}): Promise<{ data: any[], meta: any }> {
     try {
         const { page = 1, pageSize = 20, search } = params;
-        let url = `${STRAPI_URL}/api/promotions?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
+        // Add status=draft to get all items including drafts
+        let url = `${STRAPI_URL}/api/promotions?populate=*&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}&status=draft`;
 
         if (search) {
              url += `&filters[$or][0][title][$containsi]=${encodeURIComponent(search)}`;
@@ -1739,6 +1827,25 @@ export async function getPromotionsAdmin(token: string, params: any = {}): Promi
             headers: { Authorization: `Bearer ${token}` },
             cache: 'no-store'
         });
+
+        if (response.status === 401 || response.status === 403) {
+            console.warn("Admin Access Denied (401/403). Retrying as Public...");
+            const publicResponse = await fetch(url, { cache: 'no-store' });
+            if (publicResponse.ok) {
+                const data = await publicResponse.json();
+                const mappedData = data.data.map((item: any) => {
+                    const attrs = item.attributes || item;
+                    return {
+                        id: item.id,
+                        documentId: item.documentId,
+                        ...attrs
+                    };
+                });
+                return { data: mappedData, meta: data.meta };
+            }
+            return { data: [], meta: {} };
+        }
+
         if (!response.ok) return { data: [], meta: {} };
         const data = await response.json();
         const mappedData = data.data.map((item: any) => {

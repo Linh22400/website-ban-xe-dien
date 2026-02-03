@@ -1,7 +1,24 @@
 import { Order, OrderData, CreateOrderResponse, Showroom } from '@/types/order';
 import qs from 'qs';
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+// Auto-detect Strapi URL based on environment (Same logic as api.ts)
+const getApiUrl = () => {
+    // If explicitly set, use it
+    if (process.env.NEXT_PUBLIC_STRAPI_URL) {
+        return process.env.NEXT_PUBLIC_STRAPI_URL;
+    }
+
+    // In development (local), default to localhost
+    if (process.env.NODE_ENV === 'development') {
+        // return 'http://localhost:1337';
+        return 'https://website-ban-xe-dien.onrender.com';
+    }
+
+    // In production, use production backend
+    return 'https://website-ban-xe-dien.onrender.com';
+};
+
+const STRAPI_URL = getApiUrl();
 
 async function getApiErrorMessage(response: Response, fallbackMessage: string) {
     try {
@@ -90,6 +107,11 @@ export async function getAdminOrders(token: string, params: any = {}): Promise<{
             },
             cache: 'no-store',
         });
+
+        if (response.status === 401 || response.status === 403) {
+            console.error("Admin Orders Access Denied (401/403). Token may be invalid.");
+            return { data: [], meta: {} };
+        }
 
         if (!response.ok) throw new Error('Failed to fetch admin orders');
 

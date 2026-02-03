@@ -555,20 +555,27 @@ export default function PaymentGatewaySelector() {
                                         console.log("PayPal Approved:", data);
                                         
                                         // 3. Capture Payment on Backend
-                                        // Backend will update order status to 'paid'
                                         const captureResult = await capturePayPalOrder(data.orderID);
                                         console.log("Capture Result:", captureResult);
                                         
                                         // 4. Update local state and move to success step
-                                        // Ensure we have the order info
-                                        if (captureResult && captureResult.OrderCode) {
-                                             setCreatedOrder({
-                                                ...captureResult,
-                                                OrderCode: captureResult.OrderCode,
-                                                PaymentStatus: 'completed',
-                                                Statuses: 'processing'
-                                             });
-                                        }
+                                        // Re-construct the full order object using current form data + backend result
+                                        // This ensures CustomerInfo and PaymentMethod are preserved correctly for Sandbox
+                                        const currentFormData = getOrderData();
+                                        
+                                        const updatedOrder = {
+                                            ...captureResult, // ID and backend fields
+                                            ...currentFormData, // CustomerInfo, SelectedShowroom, etc.
+                                            OrderCode: captureResult.OrderCode,
+                                            PaymentStatus: 'completed',
+                                            Statuses: 'processing',
+                                            PreferredGateway: 'paypal',
+                                            // Explicitly preserve payment method from local state
+                                            PaymentMethod: paymentMethod
+                                        };
+
+                                        console.log("Final Order State for Success Page:", updatedOrder);
+                                        setCreatedOrder(updatedOrder);
                                         
                                         // Move to success step immediately
                                         goToNextStep();
